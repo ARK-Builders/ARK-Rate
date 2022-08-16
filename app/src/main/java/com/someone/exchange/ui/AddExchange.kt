@@ -25,7 +25,11 @@ class AddExchange(
     val visible: SnapshotStateMap<String, Boolean>,
 ) {
     @Composable
-    fun AddExchangeView(modifier: Modifier, searchResult: SnapshotStateMap<String, String>) {
+    fun AddExchangeView(
+        modifier: Modifier,
+        searchResult: SnapshotStateMap<String, String>,
+        setNowActivity: () -> Unit
+    ) {
         var searchContent by remember { mutableStateOf("") }
         val focusManager = LocalFocusManager.current
         return Column(modifier = modifier) {
@@ -55,6 +59,7 @@ class AddExchange(
                         count[it] = ""
                         visible[it] = true
                         focusManager.clearFocus()
+                        setNowActivity()
                     })) {
                         Text(
                             "$it          ",

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
@@ -44,8 +45,6 @@ fun Create(filePath: String) {
                     },
                     actions = {
                         IconButton(onClick = {
-//                            count["a"] = 0.05.toString()
-//                            visibilities["a"] = true
                             nowActivity = "Add"
                         }) {
                             Icon(Icons.Filled.Add, contentDescription = "add transformation")
@@ -73,7 +72,7 @@ fun Create(filePath: String) {
                         AddExchange(appDatabase, count, visibilities).AddExchangeView(
                             Modifier.fillMaxSize().padding(16.dp, 16.dp, 16.dp),
                             a
-                        )
+                        ) { nowActivity = "Input" }
                     }
                 }
             },
@@ -84,7 +83,11 @@ fun Create(filePath: String) {
             },
             floatingActionButton = {
                 ExtendedFloatingActionButton(text = {
-                    Icon(Icons.Filled.ArrowForward, "go to output")
+                    when (nowActivity) {
+                        "Input" -> Icon(Icons.Filled.ArrowForward, "go to output")
+                        "Output" -> Icon(Icons.Filled.ArrowBack, "back to Input")
+                        "Add" -> Icon(Icons.Filled.ArrowBack, "back to Input")
+                    }
                 }, onClick = {
                     when (nowActivity) {
                         "Add" -> {
