@@ -128,7 +128,7 @@ class OutputActivity {
                                         exchange.forEach {
                                             Box(modifier = Modifier.fillMaxWidth().height(32.dp)) {
                                                 val format = DecimalFormat("0.###")
-                                                format.roundingMode = RoundingMode.FLOOR
+                                                format.roundingMode = RoundingMode.HALF_DOWN
                                                 Text(
                                                     it.key,
                                                     modifier = Modifier.align(Alignment.CenterStart)
