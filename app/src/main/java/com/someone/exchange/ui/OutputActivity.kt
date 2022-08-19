@@ -41,6 +41,7 @@ class OutputActivity {
         val exchange: SnapshotStateMap<String, Double> = remember { mutableStateMapOf() }
         thread {
             rates = getAllRatesWithCache(filePath)
+            Thread.sleep(500)
             calculateTotal(count, rates!!).forEach {
                 total[it.key] = it.value
             }
