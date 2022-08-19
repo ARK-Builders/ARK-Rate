@@ -41,7 +41,7 @@ fun getAllRatesWithCache(filePath: String): rates {
     }
     val origin = file.readText()
     val json = jsonAdapter.fromJson(origin)
-    if ((json?.timestamp ?: 0) + 86400 < System.currentTimeMillis()) {
+    if ((json?.timestamp ?: 0) + 86400 < System.currentTimeMillis() / 1000) {
         val result = getAllRates()
         file.writeText(jsonAdapter.toJson(result))
         return result
