@@ -1,10 +1,7 @@
 package com.someone.exchange.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
@@ -54,21 +51,21 @@ class AddExchange(
             }
             LazyColumn() {
                 items(searchResult.keys.toList().sorted()) {
-                    Row(Modifier.fillMaxWidth().height(32.dp).clickable(onClick = {
-                        appDatabase.setExchange(it, 0.0)
-                        count[it] = ""
+                    Box(Modifier.fillMaxWidth().height(32.dp).clickable(onClick = {
+                        appDatabase.setExchange(it, -1.0)
+                        count[it] = "-1.0"
                         visible[it] = true
                         focusManager.clearFocus()
                         setNowActivity()
                     })) {
                         Text(
-                            "$it          ",
-                            modifier = Modifier.align(Alignment.CenterVertically),
+                            it,
+                            modifier = Modifier.align(Alignment.CenterStart),
                         )
                         currencies.currencies[it]?.let { it1 ->
                             Text(
                                 it1,
-                                modifier = Modifier.align(Alignment.CenterVertically)
+                                modifier = Modifier.align(Alignment.CenterEnd)
                             )
                         }
                     }

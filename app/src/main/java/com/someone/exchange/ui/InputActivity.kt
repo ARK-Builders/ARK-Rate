@@ -2,9 +2,8 @@ package com.someone.exchange.ui
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
@@ -15,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -29,10 +29,15 @@ class InputActivity(
     fun InputView(modifier: Modifier) {
         return LazyColumn(modifier = modifier) {
             items(count.size) { i ->
-                AnimatedVisibility(visible[count.keys.toList()[i]]!!) {
+                AnimatedVisibility(
+                    visible[count.keys.toList()[i]]!!,
+                    exit = slideOutHorizontally()
+                ) {
                     Row {
                         OutlinedTextField(
-                            value = count[count.keys.toList()[i]].toString(),
+                            value = if ((count[count.keys.toList()[i]]
+                                    ?: "-1.0").toDouble() == -1.0
+                            ) "" else count[count.keys.toList()[i]].toString(),
                             onValueChange = { a: String ->
                                 var oneDot = true
                                 val result = a.filter {
@@ -46,7 +51,7 @@ class InputActivity(
                                 appDatabase.setExchange(
                                     count.keys.toList()[i],
                                     if (result.isEmpty()) {
-                                        0.0
+                                        -1.0
                                     } else {
                                         result.toDouble()
                                     }
@@ -64,6 +69,18 @@ class InputActivity(
                         }, modifier = Modifier.padding(8.dp)) {
                             Icon(Icons.Filled.Delete, "Delete")
                         }
+                    }
+                }
+            }
+
+            //if don't have any exchange show this text
+            if (count.size == 0) {
+                item {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            text = "Click the Add button at the top right to add a new exchange rate."
+                        )
                     }
                 }
             }

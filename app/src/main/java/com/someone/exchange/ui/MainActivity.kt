@@ -1,5 +1,8 @@
 package com.someone.exchange.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,6 +21,7 @@ import com.someone.exchange.storage.AppDatabase
 import com.someone.exchange.ui.theme.ExchangeTheme
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun Create(filePath: String) {
     val scope = rememberCoroutineScope()
@@ -25,19 +29,26 @@ fun Create(filePath: String) {
     val scaffoldState = rememberScaffoldState()
     val count = remember { mutableStateMapOf<String, String>() }
     val visibilities = remember { mutableStateMapOf<String, Boolean>() }
+    val viewVisibility = remember {
+        mutableStateMapOf<Views, Boolean>(
+            Views.Input to true,
+            Views.Output to false,
+            Views.Add to false
+        )
+    }
     appDatabase.getAllExchange().forEach {
         count[it.name] = it.number.toString()
         visibilities[it.name] = true
     }
     var nowActivity by remember {
-        mutableStateOf("Input")
+        mutableStateOf(Views.Input)
     }
     return ExchangeTheme {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = {
                 TopAppBar(
-                    title = { Text(text = "Input") },
+                    title = { Text(text = Views.Input.name) },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
                             Icon(Icons.Filled.Menu, contentDescription = null)
@@ -45,7 +56,10 @@ fun Create(filePath: String) {
                     },
                     actions = {
                         IconButton(onClick = {
-                            nowActivity = "Add"
+                            viewVisibility[nowActivity] = false
+                            viewVisibility[Views.Add] = true
+                            nowActivity = Views.Add
+
                         }) {
                             Icon(Icons.Filled.Add, contentDescription = "add transformation")
                         }
@@ -53,28 +67,37 @@ fun Create(filePath: String) {
                 )
             },
             content = {
-                when (nowActivity) {
-                    "Input" -> {
-                        InputActivity(
-                            appDatabase, count, visibilities
-                        ).InputView(
-                            modifier = Modifier.fillMaxSize()
-                                .padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                        )
-                    }
-                    "Output" -> {}
-                    "Add" -> {
-                        val a =
-                            remember<SnapshotStateMap<String, String>> { mutableStateMapOf() }
-                        a.putAll(
-                            currencies.currencies
-                        )
-                        AddExchange(appDatabase, count, visibilities).AddExchangeView(
-                            Modifier.fillMaxSize().padding(16.dp, 16.dp, 16.dp),
-                            a
-                        ) { nowActivity = "Input" }
+
+                AnimatedVisibility(viewVisibility[Views.Input]!!) {
+                    InputActivity(
+                        appDatabase, count, visibilities
+                    ).InputView(
+                        modifier = Modifier.fillMaxSize()
+                            .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                    )
+                }
+                AnimatedVisibility(viewVisibility[Views.Output]!!) {
+                    OutputActivity().outputActivity(
+                        modifier = Modifier.fillMaxSize()
+                            .padding(start = 16.dp, top = 16.dp, end = 16.dp), count, filePath
+                    )
+                }
+                AnimatedVisibility(viewVisibility[Views.Add]!!) {
+                    val a =
+                        remember<SnapshotStateMap<String, String>> { mutableStateMapOf() }
+                    a.putAll(
+                        currencies.currencies
+                    )
+                    AddExchange(appDatabase, count, visibilities).AddExchangeView(
+                        Modifier.fillMaxSize().padding(16.dp, 16.dp, 16.dp),
+                        a
+                    ) {
+                        viewVisibility[Views.Input] = true
+                        viewVisibility[nowActivity] = false
+                        nowActivity = Views.Input
                     }
                 }
+
             },
             drawerContent = {
                 Column(modifier = Modifier.fillMaxSize()) {
@@ -84,19 +107,39 @@ fun Create(filePath: String) {
             floatingActionButton = {
                 ExtendedFloatingActionButton(text = {
                     when (nowActivity) {
-                        "Input" -> Icon(Icons.Filled.ArrowForward, "go to output")
-                        "Output" -> Icon(Icons.Filled.ArrowBack, "back to Input")
-                        "Add" -> Icon(Icons.Filled.ArrowBack, "back to Input")
+                        Views.Input -> Icon(Icons.Filled.ArrowForward, "go to output")
+                        Views.Output -> Icon(Icons.Filled.ArrowBack, "back to Input")
+                        Views.Add -> Icon(Icons.Filled.ArrowBack, "back to Input")
                     }
                 }, onClick = {
+                    visibilities.forEach { (s, b) ->
+                        if (!b) {
+                            count.remove(s)
+                        }
+                    }
                     when (nowActivity) {
-                        "Add" -> {
-                            nowActivity = "Input"
+                        Views.Add -> {
+                            viewVisibility[Views.Input] = true
+                            viewVisibility[nowActivity] = false
+                            nowActivity = Views.Input
+                        }
+                        Views.Input -> {
+                            viewVisibility[Views.Output] = true
+                            viewVisibility[nowActivity] = false
+                            nowActivity = Views.Output
+                        }
+                        Views.Output -> {
+                            viewVisibility[Views.Input] = true
+                            viewVisibility[nowActivity] = false
+                            nowActivity = Views.Input
                         }
                     }
                 })
             }
         )
     }
+}
 
+enum class Views {
+    Input, Output, Add
 }

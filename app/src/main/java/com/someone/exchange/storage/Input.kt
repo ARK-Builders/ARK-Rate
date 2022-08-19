@@ -20,7 +20,7 @@ class AppDatabase(val filePath: String) {
 
     fun getAllExchange(): List<Exchange> {
         if (!File(filePath).canWrite()) {
-            File(filePath).writeText("""{"total":[{"name":"USD","number":0.0}]}""")
+            File(filePath).writeText("""{"total":[]}""")
         }
         val origin = File(filePath).readText()
         val moshi: Moshi = Moshi.Builder().build()
@@ -32,7 +32,7 @@ class AppDatabase(val filePath: String) {
     fun setExchange(name: String, value: Double) {
 
         if (!File(filePath).canWrite()) {
-            File(filePath).writeText("""{"total":[{"name":"USD","number":0.0}]}""")
+            File(filePath).writeText("""{"total":[]}""")
         }
         val origin = File(filePath).readText()
         val moshi: Moshi = Moshi.Builder().build()
@@ -56,7 +56,7 @@ class AppDatabase(val filePath: String) {
 
     fun remove(name: String) {
         if (!File(filePath).canWrite()) {
-            File(filePath).writeText("""{"total":[{"name":"USD","number":0.0}]}""")
+            File(filePath).writeText("""{"total":[]}""")
         }
         val origin = File(filePath).readText()
         val moshi: Moshi = Moshi.Builder().build()
