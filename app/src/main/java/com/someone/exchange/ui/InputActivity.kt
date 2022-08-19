@@ -33,7 +33,7 @@ class InputActivity(
                     visible[count.keys.toList()[i]]!!,
                     exit = slideOutHorizontally()
                 ) {
-                    Row {
+                    Row(modifier.fillMaxWidth()) {
                         OutlinedTextField(
                             value = if ((count[count.keys.toList()[i]]
                                     ?: "-1.0").toDouble() == -1.0
@@ -61,7 +61,7 @@ class InputActivity(
                             },
                             label = { Text(count.keys.toList()[i]) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.size(320.dp, 60.dp),
+                            modifier = Modifier.height(60.dp).fillMaxWidth(0.9f),
                             maxLines = 1
                         )
                         IconButton(onClick = {
