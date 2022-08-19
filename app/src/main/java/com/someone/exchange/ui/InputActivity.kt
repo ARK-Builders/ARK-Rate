@@ -56,7 +56,8 @@ class InputActivity(
                                         result.toDouble()
                                     }
                                 )
-                                count[count.keys.toList()[i]] = result
+                                count[count.keys.toList()[i]] =
+                                    (result.ifEmpty { (-1.0).toString() })
                             },
                             label = { Text(count.keys.toList()[i]) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

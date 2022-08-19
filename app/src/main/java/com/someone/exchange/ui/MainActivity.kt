@@ -85,7 +85,7 @@ fun Create(filePath: String) {
                     )
                 }
                 AnimatedVisibility(viewVisibility[Views.Output]!!) {
-                    OutputActivity().outputActivity(
+                    OutputActivity().Activity(
                         modifier = Modifier.fillMaxSize()
                             .padding(start = 16.dp, top = 16.dp, end = 16.dp), count, filePath
                     )
