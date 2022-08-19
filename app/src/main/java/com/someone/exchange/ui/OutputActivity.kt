@@ -30,7 +30,7 @@ import kotlin.concurrent.thread
 
 class OutputActivity {
     @Composable
-    fun Activity(
+    fun activity(
         modifier: Modifier,
         count: SnapshotStateMap<String, String>,
         filePath: String,
