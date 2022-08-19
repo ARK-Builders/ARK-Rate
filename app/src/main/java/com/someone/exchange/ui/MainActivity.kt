@@ -3,9 +3,9 @@ package com.someone.exchange.ui
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -14,12 +14,20 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import com.someone.exchange.R
 import com.someone.exchange.network.currencies
 import com.someone.exchange.storage.AppDatabase
 import com.someone.exchange.ui.theme.ExchangeTheme
 import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
@@ -83,21 +91,55 @@ fun Create(filePath: String) {
                     )
                 }
                 AnimatedVisibility(viewVisibility[Views.Add]!!) {
-                    val a =
-                        remember<SnapshotStateMap<String, String>> { mutableStateMapOf() }
-                    a.putAll(
-                        currencies.currencies
-                    )
-                    AddExchange(appDatabase, count, visibilities).AddExchangeView(
-                        Modifier.fillMaxSize().padding(16.dp, 16.dp, 16.dp),
-                        a
-                    ) {
-                        viewVisibility[Views.Input] = true
-                        viewVisibility[nowActivity] = false
-                        nowActivity = Views.Input
+                    Box(Modifier.fillMaxSize()) {
+                        var loading by remember { mutableStateOf(true) }
+                        val a = remember<SnapshotStateMap<String, String>> { mutableStateMapOf() }
+                        thread {
+                            a.putAll(
+                                currencies.get(filePath)
+                            )
+                            loading = false
+                        }
+                        AnimatedVisibility(
+                            loading,
+                            modifier = Modifier.align(Alignment.Center),
+                            exit = fadeOut()
+                        ) {
+                            Column {
+                                val imgLoader = ImageLoader.Builder(LocalContext.current)
+                                    .components {
+                                        if (Build.VERSION.SDK_INT >= 28) {
+                                            add(ImageDecoderDecoder.Factory())
+                                        } else {
+                                            add(GifDecoder.Factory())
+                                        }
+                                    }
+                                    .build()
+                                val mPainter = rememberAsyncImagePainter(
+                                    R.drawable.loading,
+                                    imgLoader
+                                )
+                                Image(
+                                    painter = mPainter,
+                                    "Loading...",
+                                    modifier = Modifier.size(64.dp)
+                                )
+                                Text("Loading...")
+                            }
+                        }
+                        AnimatedVisibility(!loading) {
+                            AddExchange(appDatabase, count, visibilities).AddExchangeView(
+                                Modifier.fillMaxSize().padding(16.dp, 16.dp, 16.dp),
+                                a,
+                                filePath
+                            ) {
+                                viewVisibility[Views.Input] = true
+                                viewVisibility[nowActivity] = false
+                                nowActivity = Views.Input
+                            }
+                        }
                     }
                 }
-
             },
             drawerContent = {
                 Column(modifier = Modifier.fillMaxSize()) {

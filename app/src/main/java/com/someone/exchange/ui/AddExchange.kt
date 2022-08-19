@@ -25,7 +25,8 @@ class AddExchange(
     fun AddExchangeView(
         modifier: Modifier,
         searchResult: SnapshotStateMap<String, String>,
-        setNowActivity: () -> Unit
+        filePath: String,
+        setNowActivity: () -> Unit,
     ) {
         var searchContent by remember { mutableStateOf("") }
         val focusManager = LocalFocusManager.current
@@ -38,7 +39,7 @@ class AddExchange(
                         for (i in searchResult.keys.size - 1 downTo 0) {
                             searchResult.remove(searchResult.keys.toList()[i])
                         }
-                        val from = currencies.currencies.filter {
+                        val from = currencies.get(filePath = filePath).filter {
                             return@filter it.key.indexOf(it1.uppercase()) != -1
                         }
                         searchResult.putAll(from)
@@ -49,7 +50,7 @@ class AddExchange(
                     }
                 )
             }
-            LazyColumn() {
+            LazyColumn {
                 items(searchResult.keys.toList().sorted()) {
                     Box(Modifier.fillMaxWidth().height(32.dp).clickable(onClick = {
                         appDatabase.setExchange(it, -1.0)

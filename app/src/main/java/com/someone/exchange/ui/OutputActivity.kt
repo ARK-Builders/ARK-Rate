@@ -21,8 +21,8 @@ import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import com.someone.exchange.network.Crypto
 import com.someone.exchange.network.getAllRatesWithCache
-import com.someone.exchange.network.rates
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -36,16 +36,21 @@ class OutputActivity {
         filePath: String,
     ) {
         var loading by remember { mutableStateOf(true) }
-        var rates: rates?
+        var rates: MutableMap<String, Double>
         val total: SnapshotStateMap<String, Double> = remember { mutableStateMapOf() }
         val exchange: SnapshotStateMap<String, Double> = remember { mutableStateMapOf() }
         thread {
-            rates = getAllRatesWithCache(filePath)
+            rates = getAllRatesWithCache(filePath).toMutableMap()
+            Crypto().getCryptoPriceWithCache(filePath).map {
+                if (it.key.takeLast(4) == "USDT") {
+                    rates[it.key.dropLast(4)] = UtilsBigDecimal.div(1.0, it.value)
+                }
+            }
             Thread.sleep(500)
-            calculateTotal(count, rates!!).forEach {
+            calculateTotal(count, rates).forEach {
                 total[it.key] = it.value
             }
-            calculateExchange(count, rates!!).forEach {
+            calculateExchange(count, rates).forEach {
                 exchange[it.key] = it.value
             }
             loading = false
@@ -150,7 +155,7 @@ class OutputActivity {
 
     private fun calculateTotal(
         count: SnapshotStateMap<String, String>,
-        rates: rates
+        rates: Map<String, Double>
     ): Map<String, Double> {
         val result = mutableMapOf<String, Double>()
         var USD = 0.0
@@ -158,12 +163,12 @@ class OutputActivity {
         count.forEach {
             USD += UtilsBigDecimal.mul(
                 if ((if (it.value.isEmpty()) 0.0 else it.value.toDouble()) == -1.0) 0.0 else it.value.toDouble(),
-                UtilsBigDecimal.div(1.0, rates.rates[it.key]!!)
+                UtilsBigDecimal.div(1.0, rates[it.key]!!)
             )
         }
 
         count.forEach {
-            result[it.key] = UtilsBigDecimal.mul(USD, rates.rates[it.key]!!)
+            result[it.key] = UtilsBigDecimal.mul(USD, rates[it.key]!!)
         }
 
         return result
@@ -171,7 +176,7 @@ class OutputActivity {
 
     private fun calculateExchange(
         count: SnapshotStateMap<String, String>,
-        rates: rates
+        rates: Map<String, Double>
     ): Map<String, Double> {
 
         val result = mutableMapOf<String, Double>()
@@ -180,16 +185,16 @@ class OutputActivity {
         count.forEach {
             USD += UtilsBigDecimal.mul(
                 if (it.value.isEmpty()) 0.0 else it.value.toDouble(),
-                UtilsBigDecimal.div(1.0, rates.rates[it.key]!!)
+                UtilsBigDecimal.div(1.0, rates[it.key]!!)
             )
         }
 
         count.forEach { i ->
-            val iToUsd = UtilsBigDecimal.div(1.0, rates.rates[i.key]!!)
+            val iToUsd = UtilsBigDecimal.div(1.0, rates[i.key]!!)
             count.forEach { j ->
                 if (j.key != i.key) {
                     result["${i.key}/${j.key}"] =
-                        UtilsBigDecimal.mul(iToUsd, rates.rates[j.key]!!)
+                        UtilsBigDecimal.mul(iToUsd, rates[j.key]!!)
                 }
             }
         }
