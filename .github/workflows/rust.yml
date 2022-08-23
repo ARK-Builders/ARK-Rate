@@ -22,11 +22,12 @@ jobs:
       - name: Build
         run: cargo build --verbose
       - name: run
-        working-directory: "./rates-cache"
-        run: cargo run
+        run: |
+          cd ./rates-cache
+          cargo run
       - name: push
-        working-directory: "./rates-cache"
         run: |-
+          cd ./rates-cache
           git config --global user.email "bot@github.com" && git config --global user.name "Steam-Bot"
           git add .
           git commit -m "update rates"
