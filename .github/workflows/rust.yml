@@ -35,5 +35,4 @@ jobs:
           git config --global user.email "bot@github.com" && git config --global user.name "Steam-Bot"
           git add .
           git commit -m "update rates"
-          git pull
           git push
