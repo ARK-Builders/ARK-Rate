@@ -18,7 +18,7 @@ data class rates(
 fun getAllRates(): rates {
     val client = OkHttpClient()
     val request = Request.Builder()
-        .url("https://raw.githubusercontent.com/someone120/OpenExchangeRatesCache/main/latest.json")
+        .url("https://raw.githubusercontent.com/someone120/ARK-Rate/dev-someone120/rates-cache/latest.json")
         .build()
 
     val response = client.newCall(request).execute().body!!.string()

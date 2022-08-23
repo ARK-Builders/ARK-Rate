@@ -1,0 +1,38 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "main" ,"dev-someone120" ]
+  pull_request:
+    branches: [ "main","dev-someone120" ]
+  workflow_dispatch:
+  schedule:
+    - cron: "10 * * * *"
+
+env:
+  CARGO_TERM_COLOR: always
+  APP_ID: ${{ secrets.APP_ID }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: |
+          cd ./rates-cache
+          pwd
+          cargo build --verbose
+      - name: run
+        run: |
+          cd ./rates-cache
+          pwd
+          cargo run
+      - name: push
+        run: |-
+          cd ./rates-cache
+          git config --global user.email "bot@github.com" && git config --global user.name "Steam-Bot"
+          git add .
+          git commit -m "update rates"
+          git push
