@@ -15,18 +15,17 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
-      - name: checkout to workfile
-        run: cd rates-cache
       - name: Build
         run: cargo build --verbose
       - name: run
+        working-directory: "./rates-cache"
         run: cargo run
       - name: push
+        working-directory: "./rates-cache"
         run: |-
           git config --global user.email "bot@github.com" && git config --global user.name "Steam-Bot"
           git add .
