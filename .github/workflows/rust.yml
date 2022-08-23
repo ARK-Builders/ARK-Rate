@@ -20,10 +20,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build
-        run: cargo build --verbose
+        run: |
+          cd ./rates-cache
+          pwd
+          cargo build --verbose
       - name: run
         run: |
           cd ./rates-cache
+          pwd
           cargo run
       - name: push
         run: |-
