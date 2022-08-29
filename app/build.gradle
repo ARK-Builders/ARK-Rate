@@ -19,11 +19,32 @@ android {
             useSupportLibrary true
         }
     }
+    signingConfigs {
+        testRelease {
+            storeFile project.rootProject.file('./testRelease.jks')
+            storePassword "arkrate"
+            keyAlias "key0"
+            keyPassword "arkrate"
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
 
     buildTypes {
+        debug {
+            manifestPlaceholders = [
+                    appIcon : "@mipmap/ic_launcher_debug",
+                    appLabel: "@string/app_name_debug"
+            ]
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.testRelease
+            manifestPlaceholders = [
+                    appIcon : "@mipmap/ic_launcher",
+                    appLabel: "@string/app_name"
+            ]
         }
     }
     compileOptions {
