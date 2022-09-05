@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ARK Rate</string>
+    <string name="app_name_debug">ARK Rate [Debug]</string>
 </resources>
