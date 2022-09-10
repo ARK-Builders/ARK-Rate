@@ -13,6 +13,7 @@
         android:label="${appLabel}"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name=".App"
         android:theme="@style/Theme.Exchange"
         tools:targetApi="31">
         <activity
