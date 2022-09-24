@@ -1,6 +1,8 @@
 package space.taran.arkrate.ui
 
+import android.app.Activity
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
@@ -67,6 +69,16 @@ fun Create(filePath: String) {
     var nowActivity by remember {
         mutableStateOf(Views.Input)
     }
+    val activity = (LocalContext.current as? Activity)
+
+    BackHandler(true, onBack = {
+        if (nowActivity != Views.Input) {
+            viewVisibility[Views.Input] = true
+            viewVisibility[nowActivity] = false
+            nowActivity = Views.Input
+        } else
+            activity?.finish()
+    })
     return ExchangeTheme {
         Scaffold(
             scaffoldState = scaffoldState,
