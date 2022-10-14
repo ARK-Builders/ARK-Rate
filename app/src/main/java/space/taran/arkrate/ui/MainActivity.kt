@@ -5,14 +5,30 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.*
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,12 +38,12 @@ import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import kotlin.concurrent.thread
+import kotlinx.coroutines.launch
 import space.taran.arkrate.R
 import space.taran.arkrate.network.currencies
 import space.taran.arkrate.storage.AppDatabase
 import space.taran.arkrate.ui.theme.ExchangeTheme
-import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
 
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
@@ -74,68 +90,73 @@ fun Create(filePath: String) {
                     }
                 )
             },
-            content = {
-
-                AnimatedVisibility(viewVisibility[Views.Input]!!) {
-                    InputActivity(
-                        appDatabase, count, visibilities
-                    ).InputView(
-                        modifier = Modifier.fillMaxSize()
-                            .padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                    )
-                }
-                AnimatedVisibility(viewVisibility[Views.Output]!!) {
-                    OutputActivity().activity(
-                        modifier = Modifier.fillMaxSize()
-                            .padding(start = 16.dp, top = 16.dp, end = 16.dp), count, filePath
-                    )
-                }
-                AnimatedVisibility(viewVisibility[Views.Add]!!) {
-                    Box(Modifier.fillMaxSize()) {
-                        var loading by remember { mutableStateOf(true) }
-                        val a = remember<SnapshotStateMap<String, String>> { mutableStateMapOf() }
-                        thread {
-                            a.putAll(
-                                currencies.get(filePath)
-                            )
-                            loading = false
-                        }
-                        AnimatedVisibility(
-                            loading,
-                            modifier = Modifier.align(Alignment.Center),
-                            exit = fadeOut()
-                        ) {
-                            Column {
-                                val imgLoader = ImageLoader.Builder(LocalContext.current)
-                                    .components {
-                                        if (Build.VERSION.SDK_INT >= 28) {
-                                            add(ImageDecoderDecoder.Factory())
-                                        } else {
-                                            add(GifDecoder.Factory())
-                                        }
-                                    }
-                                    .build()
-                                val mPainter = rememberAsyncImagePainter(
-                                    R.drawable.loading,
-                                    imgLoader
+            content = { contentPadding ->
+                Box(modifier = Modifier.padding(contentPadding)) {
+                    AnimatedVisibility(viewVisibility[Views.Input]!!) {
+                        InputActivity(
+                            appDatabase, count, visibilities
+                        ).InputView(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        )
+                    }
+                    AnimatedVisibility(viewVisibility[Views.Output]!!) {
+                        OutputActivity().activity(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 16.dp, top = 16.dp, end = 16.dp), count, filePath
+                        )
+                    }
+                    AnimatedVisibility(viewVisibility[Views.Add]!!) {
+                        Box(Modifier.fillMaxSize()) {
+                            var loading by remember { mutableStateOf(true) }
+                            val a = remember<SnapshotStateMap<String, String>> { mutableStateMapOf() }
+                            thread {
+                                a.putAll(
+                                    currencies.get(filePath)
                                 )
-                                Image(
-                                    painter = mPainter,
-                                    "Loading...",
-                                    modifier = Modifier.size(64.dp)
-                                )
-                                Text("Loading...")
+                                loading = false
                             }
-                        }
-                        AnimatedVisibility(!loading) {
-                            AddExchange(appDatabase, count, visibilities).AddExchangeView(
-                                Modifier.fillMaxSize().padding(16.dp, 16.dp, 16.dp),
-                                a,
-                                filePath
+                            AnimatedVisibility(
+                                loading,
+                                modifier = Modifier.align(Alignment.Center),
+                                exit = fadeOut()
                             ) {
-                                viewVisibility[Views.Input] = true
-                                viewVisibility[nowActivity] = false
-                                nowActivity = Views.Input
+                                Column {
+                                    val imgLoader = ImageLoader.Builder(LocalContext.current)
+                                        .components {
+                                            if (Build.VERSION.SDK_INT >= 28) {
+                                                add(ImageDecoderDecoder.Factory())
+                                            } else {
+                                                add(GifDecoder.Factory())
+                                            }
+                                        }
+                                        .build()
+                                    val mPainter = rememberAsyncImagePainter(
+                                        R.drawable.loading,
+                                        imgLoader
+                                    )
+                                    Image(
+                                        painter = mPainter,
+                                        "Loading...",
+                                        modifier = Modifier.size(64.dp)
+                                    )
+                                    Text("Loading...")
+                                }
+                            }
+                            AnimatedVisibility(!loading) {
+                                AddExchange(appDatabase, count, visibilities).AddExchangeView(
+                                    Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp, 16.dp, 16.dp),
+                                    a,
+                                    filePath
+                                ) {
+                                    viewVisibility[Views.Input] = true
+                                    viewVisibility[nowActivity] = false
+                                    nowActivity = Views.Input
+                                }
                             }
                         }
                     }

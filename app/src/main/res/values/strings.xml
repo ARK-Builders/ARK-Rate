@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">ARK Rate</string>
     <string name="app_name_debug">ARK Rate [Debug]</string>
+
+    <string name="crash_dialog_description">Sorry, the application crashed. Please send a report to the developers.</string>
+    <string name="crash_dialog_title">Crash</string>
+    <string name="crash_dialog_comment">You can add a comment here:</string>
+
 </resources>
