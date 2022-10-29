@@ -11,7 +11,7 @@ data class total(
 
 @JsonClass(generateAdapter = true)
 data class Exchange(
-    val name: String,
+    var name: String,
     var number: Double
 )
 
