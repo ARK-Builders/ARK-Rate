@@ -1,4 +1,4 @@
-package space.taran.arkrate.storage
+package space.taran.arkrate.data.assets
 
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -14,7 +14,6 @@ data class Exchange(
     var name: String,
     var number: Double
 )
-
 
 class AppDatabase(val filePath: String) {
 

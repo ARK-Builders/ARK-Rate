@@ -1,4 +1,4 @@
-package space.taran.arkrate
+package space.taran.arkrate.presentation
 
 import android.app.Application
 import kotlinx.coroutines.CoroutineScope
@@ -9,6 +9,9 @@ import org.acra.config.httpSender
 import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
 import org.acra.sender.HttpSender
+import space.taran.arkrate.BuildConfig
+import space.taran.arkrate.R
+import space.taran.arkrate.di.DIManager
 import space.taran.arkrate.utils.Config
 
 class App: Application() {
@@ -16,6 +19,7 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
         initAcra()
+        DIManager.init(this)
     }
 
     private fun initAcra() = CoroutineScope(Dispatchers.IO).launch {
