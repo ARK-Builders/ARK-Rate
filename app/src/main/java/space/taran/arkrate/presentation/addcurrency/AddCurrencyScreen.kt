@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import kotlinx.coroutines.launch
 import space.taran.arkrate.di.DIManager
 
 @Composable
@@ -22,10 +21,9 @@ fun AddCurrencyScreen(navController: NavController) {
     val viewModel: AddCurrencyViewModel =
         viewModel(factory = DIManager.component.addCurrencyVMFactory())
     var filter by remember { mutableStateOf("") }
-    val filteredCodeToCurrency = viewModel.codeToCurrency?.filter { (code, _) ->
+    val filteredCurrencyNameList = viewModel.currencyNameList?.filter { (code, _) ->
         code.startsWith(filter.uppercase())
-    } ?: emptyMap()
-
+    } ?: emptyList()
 
     Column(Modifier.fillMaxSize()) {
         Row {
@@ -41,12 +39,12 @@ fun AddCurrencyScreen(navController: NavController) {
             )
         }
         LazyColumn {
-            items(filteredCodeToCurrency.keys.sorted()) { code ->
+            items(filteredCurrencyNameList.sortedBy { it.code }) { currencyName ->
                 CurrencyItem(
-                    code = code,
-                    currency = filteredCodeToCurrency[code]!!,
+                    code = currencyName.code,
+                    currency = currencyName.name,
                     onAdd = {
-                        viewModel.addCurrency(code)
+                        viewModel.addCurrency(currencyName.code)
                         navController.popBackStack()
                     }
                 )

@@ -4,19 +4,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Card
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,20 +33,10 @@ fun AssetsScreen(navController: NavController) {
     val viewModel: AssetsViewModel =
         viewModel(factory = DIManager.component.assetsVMFactory())
 
-    val codeToAmount = viewModel.codeToAmount ?: return
-
     Box(Modifier.fillMaxSize()) {
-        if (codeToAmount.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = "Click the Add button at the top right to add a new exchange rate."
-                )
-            }
-        }
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(
-                codeToAmount,
+                viewModel.currencyAmountList,
                 key = { it.code }
             ) { (code, amount) ->
                 CurrencyEditItem(

@@ -28,7 +28,7 @@ class SummaryViewModel(
         val count = assetsRepo.allCurrencyAmount().map {
             it.code to it.amount
         }.toMap()
-        val rates = currencyRepo.codeToRate().associate { it.code to it.rate }
+        val rates = currencyRepo.getCurrencyRate().associate { it.code to it.rate }
         val result = mutableMapOf<String, Double>()
         var USD = 0.0
 
@@ -47,7 +47,7 @@ class SummaryViewModel(
         val count = assetsRepo.allCurrencyAmount().map {
             it.code to it.amount
         }.toMap()
-        val rates = currencyRepo.codeToRate().associate { it.code to it.rate }
+        val rates = currencyRepo.getCurrencyRate().associate { it.code to it.rate }
         val result = mutableMapOf<String, Double>()
 
         count.forEach { i ->

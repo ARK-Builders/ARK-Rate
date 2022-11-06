@@ -3,6 +3,7 @@ package space.taran.arkrate.data.crypto
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import space.taran.arkrate.data.CurrencyName
 import space.taran.arkrate.data.CurrencyRate
 import space.taran.arkrate.data.CurrencyRepo
 import java.util.concurrent.TimeUnit
@@ -20,7 +21,7 @@ class CryptoCurrencyRepo @Inject constructor(
         }
     private var updatedTS: Long? = null
 
-    override suspend fun codeToRate(): List<CurrencyRate> =
+    override suspend fun getCurrencyRate(): List<CurrencyRate> =
         withContext(Dispatchers.IO) {
             Log.d("T", "$dayInMillis")
             if (cryptoWithRates == null ||
@@ -32,10 +33,9 @@ class CryptoCurrencyRepo @Inject constructor(
             cryptoWithRates!!
         }
 
-    override suspend fun codeToCurrency(): Map<String, String> =
-        codeToRate().map { (key, _) ->
-            key to ""
-        }.toMap()
+    override suspend fun getCurrencyName(): List<CurrencyName> = getCurrencyRate().map {
+        CurrencyName(it.code, name = "")
+    }
 
     // api returns pairs like ETHBTC, ETHBNB, ETHTRX, ETHUSDT
     // we only take USDT pairs

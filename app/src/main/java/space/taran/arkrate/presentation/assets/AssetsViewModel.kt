@@ -1,8 +1,6 @@
 package space.taran.arkrate.presentation.assets
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -15,14 +13,15 @@ import javax.inject.Singleton
 class AssetsViewModel(
     private val assetsRepo: AssetsRepo
 ): ViewModel() {
-    var codeToAmount by mutableStateOf<List<CurrencyAmount>?>(null)
+    var currencyAmountList = mutableStateListOf<CurrencyAmount>()
 
     init {
         viewModelScope.launch {
             assetsRepo.init()
-            codeToAmount = assetsRepo.allCurrencyAmount()
+            currencyAmountList.addAll(assetsRepo.allCurrencyAmount())
             assetsRepo.allCurrencyAmountFlow().collect {
-                codeToAmount = it!!
+                currencyAmountList.clear()
+                currencyAmountList.addAll(it!!)
             }
         }
     }

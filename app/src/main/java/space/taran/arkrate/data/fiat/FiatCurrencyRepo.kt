@@ -2,6 +2,7 @@ package space.taran.arkrate.data.fiat
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import space.taran.arkrate.data.CurrencyName
 import space.taran.arkrate.data.CurrencyRate
 import space.taran.arkrate.data.CurrencyRepo
 import java.util.concurrent.TimeUnit
@@ -19,7 +20,7 @@ class FiatCurrencyRepo @Inject constructor(
         }
     private var updatedTS: Long? = null
 
-    override suspend fun codeToRate(): List<CurrencyRate> =
+    override suspend fun getCurrencyRate(): List<CurrencyRate> =
         withContext(Dispatchers.IO) {
             if (cryptoWithRates == null ||
                 updatedTS!! + dayInMillis < System.currentTimeMillis()
@@ -32,10 +33,10 @@ class FiatCurrencyRepo @Inject constructor(
             cryptoWithRates!!
         }
 
-    override suspend fun codeToCurrency(): Map<String, String> =
-        codeToRate().map { (key, _) ->
-            key to fiatCodeToCurrency[key]!!
-        }.toMap()
+    override suspend fun getCurrencyName(): List<CurrencyName> =
+        getCurrencyRate().map {
+            CurrencyName(it.code, fiatCodeToCurrency[it.code]!!)
+        }
 
     private val dayInMillis = TimeUnit.DAYS.toMillis(1)
 }

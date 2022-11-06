@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import space.taran.arkrate.data.CurrencyName
 import space.taran.arkrate.data.GeneralCurrencyRepo
 import space.taran.arkrate.data.assets.AssetsRepo
 import javax.inject.Inject
@@ -16,11 +17,11 @@ class AddCurrencyViewModel(
     private val assetsRepo: AssetsRepo,
     private val currencyRepo: GeneralCurrencyRepo
 ): ViewModel() {
-    var codeToCurrency by mutableStateOf<Map<String, String>?>(null)
+    var currencyNameList by mutableStateOf<List<CurrencyName>?>(null)
 
     init {
         viewModelScope.launch {
-            codeToCurrency = currencyRepo.codeToCurrency()
+            currencyNameList = currencyRepo.getCurrencyName()
         }
     }
 
