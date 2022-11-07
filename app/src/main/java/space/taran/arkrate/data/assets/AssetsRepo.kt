@@ -1,12 +1,15 @@
 package space.taran.arkrate.data.assets
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import space.taran.arkrate.data.CurrencyAmount
-import space.taran.arkrate.data.db.AssetsDao
 import space.taran.arkrate.data.db.AssetsLocalDataSource
+import space.taran.arkrate.utils.replace
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,35 +17,44 @@ import javax.inject.Singleton
 class AssetsRepo @Inject constructor(
     private val local: AssetsLocalDataSource
 ) {
-    private val codeToAmount = mutableListOf<CurrencyAmount>()
-    private val codeToAmountFlow = MutableSharedFlow<List<CurrencyAmount>>()
+    private var currencyAmountList = listOf<CurrencyAmount>()
+    private val currencyAmountFlow =
+        MutableStateFlow<List<CurrencyAmount>>(emptyList())
+    private val scope = CoroutineScope(Dispatchers.IO)
 
-    suspend fun init() = withContext(Dispatchers.IO) {
-        codeToAmount.addAll(local.getAll())
-        codeToAmountFlow.emit(codeToAmount)
+    init {
+        scope.launch {
+            currencyAmountList = local.getAll()
+            currencyAmountFlow.emit(currencyAmountList)
+        }
     }
 
-    fun allCurrencyAmount() = codeToAmount
+    fun allCurrencyAmount(): List<CurrencyAmount> = currencyAmountList
 
-    fun allCurrencyAmountFlow(): SharedFlow<List<CurrencyAmount>?> = codeToAmountFlow
+    fun allCurrencyAmountFlow(): StateFlow<List<CurrencyAmount>> = currencyAmountFlow
 
-    suspend fun setCurrencyAmount(code: String, amount: Double) {
-        codeToAmount.find {
-            it.code == code
-        }?.let {
-            it.amount = amount
-        } ?: let {
-            codeToAmount.add(CurrencyAmount(code, amount))
+    suspend fun setCurrencyAmount(code: String, amount: Double) =
+        withContext(Dispatchers.IO) {
+            currencyAmountList.find {
+                it.code == code
+            }?.let { currencyAmount ->
+                currencyAmountList = currencyAmountList.replace(
+                    currencyAmount,
+                    currencyAmount.copy(amount = amount)
+                )
+            } ?: let {
+                currencyAmountList =
+                    currencyAmountList + CurrencyAmount(code, amount)
+            }
+            currencyAmountFlow.emit(currencyAmountList.toList())
+            local.insert(CurrencyAmount(code, amount))
         }
-        codeToAmountFlow.emit(codeToAmount)
-        local.insert(CurrencyAmount(code, amount))
-    }
 
-    suspend fun removeCurrency(code: String) {
-        codeToAmount.find { it.code == code }?.let {
-            codeToAmount.remove(it)
+    suspend fun removeCurrency(code: String) = withContext(Dispatchers.IO) {
+        currencyAmountList.find { it.code == code }?.let {
+            currencyAmountList = currencyAmountList - it
         }
-        codeToAmountFlow.emit(codeToAmount)
+        currencyAmountFlow.emit(currencyAmountList)
         local.delete(code)
     }
 }

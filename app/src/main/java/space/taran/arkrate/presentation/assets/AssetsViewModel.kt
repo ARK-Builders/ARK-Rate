@@ -1,5 +1,6 @@
 package space.taran.arkrate.presentation.assets
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -17,11 +18,9 @@ class AssetsViewModel(
 
     init {
         viewModelScope.launch {
-            assetsRepo.init()
-            currencyAmountList.addAll(assetsRepo.allCurrencyAmount())
             assetsRepo.allCurrencyAmountFlow().collect {
                 currencyAmountList.clear()
-                currencyAmountList.addAll(it!!)
+                currencyAmountList.addAll(it)
             }
         }
     }
