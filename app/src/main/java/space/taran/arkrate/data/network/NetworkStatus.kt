@@ -1,4 +1,4 @@
-package space.taran.arkrate.data
+package space.taran.arkrate.data.network
 
 import android.content.Context
 import android.net.ConnectivityManager

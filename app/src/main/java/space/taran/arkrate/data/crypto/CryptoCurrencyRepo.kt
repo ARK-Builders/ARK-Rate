@@ -1,16 +1,12 @@
 package space.taran.arkrate.data.crypto
 
-import android.util.Log
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import space.taran.arkrate.data.CurrencyName
 import space.taran.arkrate.data.CurrencyRate
 import space.taran.arkrate.data.CurrencyRepo
 import space.taran.arkrate.data.CurrencyType
-import space.taran.arkrate.data.NetworkStatus
+import space.taran.arkrate.data.network.NetworkStatus
 import space.taran.arkrate.data.db.CurrencyRateLocalDataSource
 import space.taran.arkrate.data.db.FetchTimestampDataSource
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 

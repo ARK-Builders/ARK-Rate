@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import space.taran.arkrate.data.db.CurrencyRateLocalDataSource
 import space.taran.arkrate.data.db.FetchTimestampDataSource
+import space.taran.arkrate.data.network.NetworkStatus
 import space.taran.arkrate.utils.withContextAndLock
 import java.util.concurrent.TimeUnit
 

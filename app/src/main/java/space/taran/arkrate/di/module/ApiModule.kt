@@ -8,6 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import space.taran.arkrate.data.crypto.CryptoAPI
 import space.taran.arkrate.data.fiat.FiatAPI
+import space.taran.arkrate.data.network.OkHttpClientBuilder
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -15,8 +16,8 @@ import javax.inject.Singleton
 class ApiModule {
     @Singleton
     @Provides
-    fun cryptoAPI(): CryptoAPI {
-        val httpClient = OkHttpClient.Builder().build()
+    fun cryptoAPI(clientBuilder: OkHttpClientBuilder): CryptoAPI {
+        val httpClient = clientBuilder.build()
         val gson = GsonBuilder().create()
 
         return Retrofit.Builder()
@@ -29,8 +30,8 @@ class ApiModule {
 
     @Singleton
     @Provides
-    fun fiatAPI(): FiatAPI {
-        val httpClient = OkHttpClient.Builder().build()
+    fun fiatAPI(clientBuilder: OkHttpClientBuilder): FiatAPI {
+        val httpClient = clientBuilder.build()
         val gson = GsonBuilder().create()
 
         return Retrofit.Builder()
