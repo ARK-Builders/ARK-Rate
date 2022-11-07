@@ -6,36 +6,30 @@ import kotlinx.coroutines.withContext
 import space.taran.arkrate.data.CurrencyName
 import space.taran.arkrate.data.CurrencyRate
 import space.taran.arkrate.data.CurrencyRepo
+import space.taran.arkrate.data.CurrencyType
+import space.taran.arkrate.data.NetworkStatus
+import space.taran.arkrate.data.db.CurrencyRateLocalDataSource
+import space.taran.arkrate.data.db.FetchTimestampDataSource
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class CryptoCurrencyRepo @Inject constructor(
-    private val cryptoAPI: CryptoAPI
-) : CurrencyRepo {
-    private var cryptoWithRates: List<CurrencyRate>? = null
-        set(value) {
-            updatedTS = System.currentTimeMillis()
-            field = value
+    private val cryptoAPI: CryptoAPI,
+    private val local: CurrencyRateLocalDataSource,
+    private val networkStatus: NetworkStatus,
+    private val fetchTimestampDataSource: FetchTimestampDataSource
+) : CurrencyRepo(local, networkStatus, fetchTimestampDataSource) {
+    override val type = CurrencyType.CRYPTO
+
+    override suspend fun fetchRemote(): List<CurrencyRate> =
+        cryptoAPI.getCryptoRates().findUSDTPairs()
+
+    override suspend fun getCurrencyName(): List<CurrencyName> =
+        getCurrencyRate().map {
+            CurrencyName(it.code, name = "")
         }
-    private var updatedTS: Long? = null
-
-    override suspend fun getCurrencyRate(): List<CurrencyRate> =
-        withContext(Dispatchers.IO) {
-            Log.d("T", "$dayInMillis")
-            if (cryptoWithRates == null ||
-                updatedTS!! + dayInMillis < System.currentTimeMillis()
-            ) {
-                cryptoWithRates = cryptoAPI.getCryptoRates().findUSDTPairs()
-            }
-
-            cryptoWithRates!!
-        }
-
-    override suspend fun getCurrencyName(): List<CurrencyName> = getCurrencyRate().map {
-        CurrencyName(it.code, name = "")
-    }
 
     // api returns pairs like ETHBTC, ETHBNB, ETHTRX, ETHUSDT
     // we only take USDT pairs
@@ -46,6 +40,4 @@ class CryptoCurrencyRepo @Inject constructor(
             } else
                 null
         }
-
-    private val dayInMillis = TimeUnit.DAYS.toMillis(1)
 }

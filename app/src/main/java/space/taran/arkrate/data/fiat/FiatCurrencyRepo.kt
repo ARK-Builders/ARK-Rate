@@ -5,40 +5,32 @@ import kotlinx.coroutines.withContext
 import space.taran.arkrate.data.CurrencyName
 import space.taran.arkrate.data.CurrencyRate
 import space.taran.arkrate.data.CurrencyRepo
+import space.taran.arkrate.data.CurrencyType
+import space.taran.arkrate.data.NetworkStatus
+import space.taran.arkrate.data.db.CurrencyRateLocalDataSource
+import space.taran.arkrate.data.db.FetchTimestampDataSource
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FiatCurrencyRepo @Inject constructor(
-    private val fiatAPI: FiatAPI
-) : CurrencyRepo {
-    private var cryptoWithRates: List<CurrencyRate>? = null
-        set(value) {
-            updatedTS = System.currentTimeMillis()
-            field = value
-        }
-    private var updatedTS: Long? = null
+    private val fiatAPI: FiatAPI,
+    private val local: CurrencyRateLocalDataSource,
+    private val networkStatus: NetworkStatus,
+    private val fetchTimestampDataSource: FetchTimestampDataSource
+) : CurrencyRepo(local, networkStatus, fetchTimestampDataSource) {
+    override val type = CurrencyType.FIAT
 
-    override suspend fun getCurrencyRate(): List<CurrencyRate> =
-        withContext(Dispatchers.IO) {
-            if (cryptoWithRates == null ||
-                updatedTS!! + dayInMillis < System.currentTimeMillis()
-            ) {
-                cryptoWithRates = fiatAPI.get().rates.map { (code, rate) ->
-                    CurrencyRate(code, 1.0/rate)
-                }
-            }
-
-            cryptoWithRates!!
+    override suspend fun fetchRemote(): List<CurrencyRate> =
+        fiatAPI.get().rates.map { (code, rate) ->
+            CurrencyRate(code, 1.0 / rate)
         }
 
     override suspend fun getCurrencyName(): List<CurrencyName> =
         getCurrencyRate().map {
             CurrencyName(it.code, fiatCodeToCurrency[it.code]!!)
         }
-
-    private val dayInMillis = TimeUnit.DAYS.toMillis(1)
 }
 
 private val fiatCodeToCurrency = mutableMapOf(

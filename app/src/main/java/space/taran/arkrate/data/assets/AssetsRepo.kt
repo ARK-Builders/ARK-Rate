@@ -5,17 +5,20 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.withContext
 import space.taran.arkrate.data.CurrencyAmount
+import space.taran.arkrate.data.db.AssetsDao
+import space.taran.arkrate.data.db.AssetsLocalDataSource
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AssetsRepo(
-    private val dbPath: String
+@Singleton
+class AssetsRepo @Inject constructor(
+    private val local: AssetsLocalDataSource
 ) {
-    private val db = AppDatabase(dbPath)
     private val codeToAmount = mutableListOf<CurrencyAmount>()
     private val codeToAmountFlow = MutableSharedFlow<List<CurrencyAmount>>()
 
     suspend fun init() = withContext(Dispatchers.IO) {
-        codeToAmount.addAll(
-            db.getAllExchange().map { CurrencyAmount(it.name, it.number) })
+        codeToAmount.addAll(local.getAll())
         codeToAmountFlow.emit(codeToAmount)
     }
 
@@ -32,7 +35,7 @@ class AssetsRepo(
             codeToAmount.add(CurrencyAmount(code, amount))
         }
         codeToAmountFlow.emit(codeToAmount)
-        db.setExchange(code, amount)
+        local.insert(CurrencyAmount(code, amount))
     }
 
     suspend fun removeCurrency(code: String) {
@@ -40,6 +43,6 @@ class AssetsRepo(
             codeToAmount.remove(it)
         }
         codeToAmountFlow.emit(codeToAmount)
-        db.remove(code)
+        local.delete(code)
     }
 }

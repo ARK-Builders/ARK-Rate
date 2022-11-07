@@ -7,7 +7,7 @@ import dagger.Component
 import space.taran.arkrate.data.GeneralCurrencyRepo
 import space.taran.arkrate.data.assets.AssetsRepo
 import space.taran.arkrate.di.module.ApiModule
-import space.taran.arkrate.di.module.RepoModule
+import space.taran.arkrate.di.module.DBModule
 import space.taran.arkrate.presentation.summary.SummaryViewModelFactory
 import space.taran.arkrate.presentation.addcurrency.AddCurrencyViewModelFactory
 import space.taran.arkrate.presentation.assets.AssetsViewModelFactory
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Component(
     modules = [
         ApiModule::class,
-        RepoModule::class
+        DBModule::class
     ]
 )
 interface AppComponent {

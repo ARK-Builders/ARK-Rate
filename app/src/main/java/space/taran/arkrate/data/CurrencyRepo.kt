@@ -1,12 +1,55 @@
 package space.taran.arkrate.data
 
-import kotlinx.coroutines.flow.StateFlow
+import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import space.taran.arkrate.data.db.CurrencyRateLocalDataSource
+import space.taran.arkrate.data.db.FetchTimestampDataSource
+import space.taran.arkrate.utils.withContextAndLock
+import java.util.concurrent.TimeUnit
 
-interface CurrencyRepo {
+abstract class CurrencyRepo(
+    private val local: CurrencyRateLocalDataSource,
+    private val networkStatus: NetworkStatus,
+    private val fetchTimestampDataSource: FetchTimestampDataSource
+) {
+    protected abstract val type: CurrencyType
+    private var currencyRates: List<CurrencyRate>? = null
+    private var updatedTS: Long? = null
+    private val mutex = Mutex()
 
-    // ETH -> 1500.0
-    suspend fun getCurrencyRate(): List<CurrencyRate>
+    suspend fun getCurrencyRate(): List<CurrencyRate> =
+        withContextAndLock(Dispatchers.IO, mutex) {
+            if (!networkStatus.isOnline()) {
+                currencyRates = local.getByType(type)
+                return@withContextAndLock currencyRates!!
+            }
 
-    // ETH -> Ethereum
-    suspend fun getCurrencyName(): List<CurrencyName>
+            updatedTS ?: let {
+                updatedTS = fetchTimestampDataSource.getTimestamp(type)
+            }
+
+            if (
+                updatedTS == null ||
+                updatedTS!! + dayInMillis < System.currentTimeMillis()
+            ) {
+                currencyRates = fetchRemote()
+                launch { fetchTimestampDataSource.rememberTimestamp(type) }
+                launch { local.insert(currencyRates!!, type) }
+                updatedTS = System.currentTimeMillis()
+            }
+
+            currencyRates ?: let {
+                currencyRates = local.getByType(type)
+            }
+            Log.d("Test", "${currencyRates!!.sortedBy { it.code }}")
+            return@withContextAndLock currencyRates!!
+        }
+
+    protected abstract suspend fun fetchRemote(): List<CurrencyRate>
+
+    abstract suspend fun getCurrencyName(): List<CurrencyName>
+
+    private val dayInMillis = TimeUnit.DAYS.toMillis(1)
 }
