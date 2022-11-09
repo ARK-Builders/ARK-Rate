@@ -28,8 +28,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import space.taran.arkrate.data.CurrencyAmount
 import space.taran.arkrate.di.DIManager
 import space.taran.arkrate.presentation.Screen
+import space.taran.arkrate.utils.removeFractionalPartIfEmpty
 
 @Composable
 fun AssetsScreen(navController: NavController) {
@@ -41,17 +43,11 @@ fun AssetsScreen(navController: NavController) {
             items(
                 viewModel.currencyAmountList,
                 key = { it.code }
-            ) { (code, amount) ->
+            ) { currencyAmount ->
                 CurrencyEditItem(
                     modifier = Modifier,
-                    code = code,
-                    amount = amount,
-                    onAmountChanged = { newAmount ->
-                        viewModel.onAmountChanged(code, newAmount)
-                    },
-                    onCurrencyRemoved = {
-                        viewModel.onCurrencyRemoved(code)
-                    }
+                    currencyAmount,
+                    viewModel
                 )
             }
         }
@@ -77,16 +73,20 @@ fun AssetsScreen(navController: NavController) {
 @Composable
 private fun CurrencyEditItem(
     modifier: Modifier,
-    code: String,
-    amount: Double,
-    onAmountChanged: (Double) -> Unit,
-    onCurrencyRemoved: (String) -> Unit,
+    currencyAmount: CurrencyAmount,
+    viewModel: AssetsViewModel,
 ) {
-    var currencyAmount by remember { mutableStateOf(amount) }
+    val code = currencyAmount.code
+    var amountInput by remember {
+        mutableStateOf(
+            if (currencyAmount.amount == 0.0) ""
+            else currencyAmount.amount.removeFractionalPartIfEmpty()
+        )
+    }
     val clearIcon = @Composable {
         IconButton(onClick = {
-            currencyAmount = 0.0
-            onAmountChanged(currencyAmount)
+            amountInput =
+                viewModel.onAmountChanged(code, amountInput, "")
         }) {
             Icon(
                 Icons.Default.Clear,
@@ -97,15 +97,13 @@ private fun CurrencyEditItem(
     Row(modifier.padding(horizontal = 20.dp, vertical = 4.dp)) {
         OutlinedTextField(
             modifier = Modifier.weight(1f),
-            value = if (currencyAmount == 0.0) "" else currencyAmount.toString(),
-            onValueChange = {
-                currencyAmount = try {
-                    it.toDouble().also { newAmount ->
-                        onAmountChanged(newAmount)
-                    }
-                } catch (e: Exception) {
-                    currencyAmount
-                }
+            value = amountInput,
+            onValueChange = { newInput ->
+                amountInput = viewModel.onAmountChanged(
+                    code,
+                    amountInput,
+                    newInput
+                )
             },
             trailingIcon = clearIcon,
             label = { Text(code) },
@@ -114,7 +112,7 @@ private fun CurrencyEditItem(
         )
         IconButton(
             modifier = Modifier.padding(8.dp),
-            onClick = { onCurrencyRemoved(code) }
+            onClick = { viewModel.onCurrencyRemoved(code) }
         ) {
             Icon(Icons.Filled.Delete, "Delete")
         }

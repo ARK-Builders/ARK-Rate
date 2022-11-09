@@ -1,6 +1,5 @@
 package space.taran.arkrate.presentation.assets
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -25,8 +24,26 @@ class AssetsViewModel(
         }
     }
 
-    fun onAmountChanged(code: String, amount: Double) = viewModelScope.launch {
-        assetsRepo.setCurrencyAmount(code, amount)
+    fun onAmountChanged(code: String, oldInput: String, newInput: String): String {
+        val containsDigitsAndDot = Regex("[0-9]*\\.?[0-9]*")
+        if (!containsDigitsAndDot.matches(newInput))
+            return oldInput
+
+        val containsDigit = Regex(".*[0-9].*")
+        if (!containsDigit.matches(newInput)) {
+            viewModelScope.launch {
+                assetsRepo.setCurrencyAmount(code, 0.0)
+            }
+            return newInput
+        }
+
+        viewModelScope.launch {
+            assetsRepo.setCurrencyAmount(code, newInput.toDouble())
+        }
+
+        val leadingZeros = "^0+(?=\\d)".toRegex()
+
+        return newInput.replace(leadingZeros,"")
     }
 
     fun onCurrencyRemoved(code: String) = viewModelScope.launch {
