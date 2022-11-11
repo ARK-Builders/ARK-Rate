@@ -21,7 +21,7 @@ class ApiModule {
         val gson = GsonBuilder().create()
 
         return Retrofit.Builder()
-            .baseUrl("https://api.binance.com")
+            .baseUrl("https://raw.githubusercontent.com")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(httpClient)
             .build()

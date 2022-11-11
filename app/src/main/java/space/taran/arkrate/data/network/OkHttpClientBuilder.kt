@@ -19,25 +19,6 @@ import javax.net.ssl.X509TrustManager
 class OkHttpClientBuilder @Inject constructor(val context: Context) {
     fun build(): OkHttpClient {
         val agent = WebSettings.getDefaultUserAgent(context)
-        val logInterceptor = HttpLoggingInterceptor()
-        logInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        val manager = object : X509TrustManager {
-            override fun checkClientTrusted(
-                chain: Array<out X509Certificate>?,
-                authType: String?
-            ) {
-            }
-
-            override fun checkServerTrusted(
-                chain: Array<out X509Certificate>?,
-                authType: String?
-            ) {
-            }
-
-            override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-        }
-        val sslContext = SSLContext.getInstance("SSL")
-        sslContext.init(null, arrayOf(manager), SecureRandom())
 
         val client = OkHttpClient.Builder()
             .addNetworkInterceptor { chain ->
@@ -48,9 +29,6 @@ class OkHttpClientBuilder @Inject constructor(val context: Context) {
                         .build()
                 )
             }
-            .addInterceptor(logInterceptor)
-            .sslSocketFactory(sslContext.socketFactory, manager)
-            .hostnameVerifier { _, _ -> true }
             .build()
 
         return client

@@ -3,6 +3,6 @@ package space.taran.arkrate.data.crypto
 import retrofit2.http.GET
 
 interface CryptoAPI {
-    @GET("/api/v3/ticker/price")
+    @GET("/ARK-Builders/ark-exchange-rates/main/crypto-rates.json")
     suspend fun getCryptoRates(): List<CryptoRateResponse>
 }
