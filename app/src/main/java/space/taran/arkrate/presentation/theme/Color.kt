@@ -1,4 +1,4 @@
-package space.taran.arkrate.ui.theme
+package space.taran.arkrate.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
