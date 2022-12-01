@@ -35,10 +35,13 @@ abstract class CurrencyRepo(
                 updatedTS == null ||
                 updatedTS!! + dayInMillis < System.currentTimeMillis()
             ) {
-                currencyRates = fetchRemote()
-                launch { fetchTimestampDataSource.rememberTimestamp(type) }
-                launch { local.insert(currencyRates!!, type) }
-                updatedTS = System.currentTimeMillis()
+                val result = fetchRemoteSafe()
+                result.onSuccess {
+                    currencyRates = it
+                    launch { fetchTimestampDataSource.rememberTimestamp(type) }
+                    launch { local.insert(currencyRates!!, type) }
+                    updatedTS = System.currentTimeMillis()
+                }
             }
 
             currencyRates ?: let {
@@ -47,6 +50,15 @@ abstract class CurrencyRepo(
             Log.d("Test", "${currencyRates!!.sortedBy { it.code }}")
             return@withContextAndLock currencyRates!!
         }
+
+    private suspend fun fetchRemoteSafe(): Result<List<CurrencyRate>> {
+        return try {
+            Result.success(fetchRemote())
+        } catch (e: Exception) {
+            Log.e("Fetch currency error", "currency type [$type]", e)
+            Result.failure(e)
+        }
+    }
 
     protected abstract suspend fun fetchRemote(): List<CurrencyRate>
 
