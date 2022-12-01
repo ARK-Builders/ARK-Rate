@@ -20,20 +20,11 @@ class CryptoCurrencyRepo @Inject constructor(
     override val type = CurrencyType.CRYPTO
 
     override suspend fun fetchRemote(): List<CurrencyRate> =
-        cryptoAPI.getCryptoRates().findUSDTPairs()
+        cryptoAPI.getCryptoRates()
+            .map { CurrencyRate(it.symbol.uppercase(), it.current_price) }
 
     override suspend fun getCurrencyName(): List<CurrencyName> =
         getCurrencyRate().map {
             CurrencyName(it.code, name = "")
-        }
-
-    // api returns pairs like ETHBTC, ETHBNB, ETHTRX, ETHUSDT
-    // we only take USDT pairs
-    private fun List<CryptoRateResponse>.findUSDTPairs() =
-        mapNotNull { (code, price) ->
-            if (code.takeLast(4) == "USDT") {
-                CurrencyRate(code.dropLast(4), price)
-            } else
-                null
         }
 }
