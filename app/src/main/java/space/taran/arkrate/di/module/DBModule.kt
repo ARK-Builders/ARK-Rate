@@ -26,5 +26,8 @@ class DBModule {
     fun rateDao(db: Database) = db.rateDao()
 
     @Provides
+    fun pairAlertDao(db: Database) = db.pairAlertDao()
+
+    @Provides
     fun fetchTimestampDao(db: Database) = db.fetchTimestampDao()
 }

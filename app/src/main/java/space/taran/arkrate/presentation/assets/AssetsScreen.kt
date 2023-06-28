@@ -16,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,14 +26,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import space.taran.arkrate.data.CurrencyAmount
 import space.taran.arkrate.di.DIManager
 import space.taran.arkrate.presentation.Screen
+import space.taran.arkrate.presentation.destinations.AddCurrencyScreenDestination
+import space.taran.arkrate.presentation.destinations.AssetsScreenDestination
 import space.taran.arkrate.utils.removeFractionalPartIfEmpty
 
+@RootNavGraph(start = true)
+@Destination
 @Composable
-fun AssetsScreen(navController: NavController) {
+fun AssetsScreen(navigator: DestinationsNavigator) {
     val viewModel: AssetsViewModel =
         viewModel(factory = DIManager.component.assetsVMFactory())
 
@@ -55,17 +60,15 @@ fun AssetsScreen(navController: NavController) {
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(10.dp),
-            onClick = { navController.navigate(Screen.AddCurrency.name) },
+            onClick = {
+                navigator.navigate(
+                    AddCurrencyScreenDestination(
+                        fromScreen = AssetsScreenDestination.route
+                    )
+                )
+            },
         ) {
             Icon(Icons.Filled.Add, contentDescription = "Add")
-        }
-        FloatingActionButton(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(10.dp),
-            onClick = { navController.navigate(Screen.Summary.name) },
-        ) {
-            Icon(Icons.Filled.List, contentDescription = "Summary")
         }
     }
 }
