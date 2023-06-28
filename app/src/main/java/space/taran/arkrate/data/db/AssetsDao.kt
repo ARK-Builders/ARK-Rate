@@ -6,6 +6,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import space.taran.arkrate.data.CurrencyAmount
 import javax.inject.Inject
 
@@ -24,6 +26,9 @@ interface AssetsDao {
     @Query("SELECT * FROM RoomCurrencyAmount")
     suspend fun getAll(): List<RoomCurrencyAmount>
 
+    @Query("SELECT * FROM RoomCurrencyAmount")
+    fun allFlow(): Flow<List<RoomCurrencyAmount>>
+
     @Query("DELETE FROM RoomCurrencyAmount where code = :code")
     suspend fun delete(code: String)
 }
@@ -33,6 +38,9 @@ class AssetsLocalDataSource @Inject constructor(val dao: AssetsDao) {
         dao.insert(currencyAmount.toRoom())
 
     suspend fun getAll() = dao.getAll().map { it.toCurrencyAmount() }
+
+    fun allFlow() =
+        dao.allFlow().map { list -> list.map { it.toCurrencyAmount() } }
 
     suspend fun delete(code: String) = dao.delete(code)
 }

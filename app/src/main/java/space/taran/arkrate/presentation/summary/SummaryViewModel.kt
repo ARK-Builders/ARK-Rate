@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import space.taran.arkrate.data.GeneralCurrencyRepo
 import space.taran.arkrate.data.assets.AssetsRepo
@@ -22,6 +24,10 @@ class SummaryViewModel(
             calculateTotal()
             calculateExchange()
         }
+        assetsRepo.allCurrencyAmountFlow().onEach {
+            calculateTotal()
+            calculateExchange()
+        }.launchIn(viewModelScope)
     }
 
     private suspend fun calculateTotal() {

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ramcosta.composedestinations.annotation.Destination
 import space.taran.arkrate.di.DIManager
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -21,6 +22,7 @@ private val format = DecimalFormat("0.######").apply {
     roundingMode = RoundingMode.HALF_DOWN
 }
 
+@Destination
 @Composable
 fun SummaryScreen() {
     val viewModel: SummaryViewModel =

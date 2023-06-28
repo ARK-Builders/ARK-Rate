@@ -2,6 +2,7 @@ package space.taran.arkrate.data.assets
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,20 +19,17 @@ class AssetsRepo @Inject constructor(
     private val local: AssetsLocalDataSource
 ) {
     private var currencyAmountList = listOf<CurrencyAmount>()
-    private val currencyAmountFlow =
-        MutableStateFlow<List<CurrencyAmount>>(emptyList())
     private val scope = CoroutineScope(Dispatchers.IO)
 
     init {
         scope.launch {
             currencyAmountList = local.getAll()
-            currencyAmountFlow.emit(currencyAmountList)
         }
     }
 
     fun allCurrencyAmount(): List<CurrencyAmount> = currencyAmountList
 
-    fun allCurrencyAmountFlow(): StateFlow<List<CurrencyAmount>> = currencyAmountFlow
+    fun allCurrencyAmountFlow(): Flow<List<CurrencyAmount>> = local.allFlow()
 
     suspend fun setCurrencyAmount(code: String, amount: Double) =
         withContext(Dispatchers.IO) {
@@ -46,7 +44,6 @@ class AssetsRepo @Inject constructor(
                 currencyAmountList =
                     currencyAmountList + CurrencyAmount(code, amount)
             }
-            currencyAmountFlow.emit(currencyAmountList.toList())
             local.insert(CurrencyAmount(code, amount))
         }
 
@@ -54,7 +51,6 @@ class AssetsRepo @Inject constructor(
         currencyAmountList.find { it.code == code }?.let {
             currencyAmountList = currencyAmountList - it
         }
-        currencyAmountFlow.emit(currencyAmountList)
         local.delete(code)
     }
 }

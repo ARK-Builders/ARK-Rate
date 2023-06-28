@@ -14,10 +14,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.ramcosta.composedestinations.annotation.Destination
 import space.taran.arkrate.di.DIManager
+import space.taran.arkrate.presentation.destinations.AssetsScreenDestination
+import space.taran.arkrate.presentation.destinations.PairAlertConditionScreenDestination
+import space.taran.arkrate.presentation.shared.SharedViewModel
+import space.taran.arkrate.presentation.utils.activityViewModel
 
+@Destination
 @Composable
-fun AddCurrencyScreen(navController: NavController) {
+fun AddCurrencyScreen(
+    navController: NavController,
+    sharedViewModel: SharedViewModel = activityViewModel(),
+    fromScreen: String,
+    numeratorNotDenominator: Boolean? = null,
+    pairAlertConditionId: Long? = null
+) {
     val viewModel: AddCurrencyViewModel =
         viewModel(factory = DIManager.component.addCurrencyVMFactory())
     var filter by remember { mutableStateOf("") }
@@ -44,7 +56,15 @@ fun AddCurrencyScreen(navController: NavController) {
                     code = currencyName.code,
                     currency = currencyName.name,
                     onAdd = {
-                        viewModel.addCurrency(currencyName.code)
+                        when (fromScreen) {
+                            AssetsScreenDestination.route -> viewModel.addCurrency(currencyName.code)
+                            PairAlertConditionScreenDestination.route ->
+                                sharedViewModel.onAlertConditionCodePicked(
+                                    currencyName.code,
+                                    numeratorNotDenominator!!,
+                                    pairAlertConditionId!!
+                                )
+                        }
                         navController.popBackStack()
                     }
                 )
