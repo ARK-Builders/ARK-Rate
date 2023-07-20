@@ -20,3 +20,5 @@ We value transparency and honesty, so the app does not collect any user data and
 
 
 **With ARK Rate, you will always stay informed about fresh currency rates, no matter where you are and what you have in your pocket. Join our community of users and find out why ARK Rate is your perfect choice for currency handling!**
+
+<a href="https://www.buymeacoffee.com/arkbuilders" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
