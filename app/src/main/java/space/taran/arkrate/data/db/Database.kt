@@ -12,8 +12,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         RoomFetchTimestamp::class,
         RoomPairAlertCondition::class
     ],
-    version = 2,
-    exportSchema = true
+    version = 3,
+    exportSchema = true,
 )
 abstract class Database : RoomDatabase() {
     abstract fun assetsDao(): AssetsDao

@@ -12,19 +12,23 @@ import javax.inject.Singleton
 
 class AssetsViewModel(
     private val assetsRepo: AssetsRepo
-): ViewModel() {
+) : ViewModel() {
     var currencyAmountList = mutableStateListOf<CurrencyAmount>()
 
     init {
         viewModelScope.launch {
-            assetsRepo.allCurrencyAmountFlow().collect {
+            assetsRepo.allCurrencyAmountFlow().collect { list ->
                 currencyAmountList.clear()
-                currencyAmountList.addAll(it)
+                currencyAmountList.addAll(list.sortedBy { it.id })
             }
         }
     }
 
-    fun onAmountChanged(code: String, oldInput: String, newInput: String): String {
+    fun onAmountChanged(
+        amount: CurrencyAmount,
+        oldInput: String,
+        newInput: String
+    ): String {
         val containsDigitsAndDot = Regex("[0-9]*\\.?[0-9]*")
         if (!containsDigitsAndDot.matches(newInput))
             return oldInput
@@ -32,18 +36,18 @@ class AssetsViewModel(
         val containsDigit = Regex(".*[0-9].*")
         if (!containsDigit.matches(newInput)) {
             viewModelScope.launch {
-                assetsRepo.setCurrencyAmount(code, 0.0)
+                assetsRepo.setCurrencyAmount(amount.copy(amount = 0.0))
             }
             return newInput
         }
 
         viewModelScope.launch {
-            assetsRepo.setCurrencyAmount(code, newInput.toDouble())
+            assetsRepo.setCurrencyAmount(amount.copy(amount = newInput.toDouble()))
         }
 
         val leadingZeros = "^0+(?=\\d)".toRegex()
 
-        return newInput.replace(leadingZeros,"")
+        return newInput.replace(leadingZeros, "")
     }
 
     fun onCurrencyRemoved(code: String) = viewModelScope.launch {
@@ -54,7 +58,7 @@ class AssetsViewModel(
 @Singleton
 class AssetsViewModelFactory @Inject constructor(
     private val assetsRepo: AssetsRepo
-): ViewModelProvider.Factory {
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AssetsViewModel(assetsRepo) as T
     }

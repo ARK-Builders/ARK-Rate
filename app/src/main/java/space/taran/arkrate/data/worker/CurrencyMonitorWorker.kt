@@ -7,7 +7,7 @@ import space.taran.arkrate.data.CurrencyRate
 import space.taran.arkrate.data.GeneralCurrencyRepo
 import space.taran.arkrate.data.db.PairAlertConditionRepo
 import space.taran.arkrate.di.DIManager
-import space.taran.arkrate.domain.PairAlertCondition
+import space.taran.arkrate.data.PairAlertCondition
 import space.taran.arkrate.presentation.utils.NotificationUtils
 import javax.inject.Inject
 

@@ -10,9 +10,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import space.taran.arkrate.R
-import space.taran.arkrate.domain.PairAlertCondition
+import space.taran.arkrate.data.PairAlertCondition
 import space.taran.arkrate.presentation.MainActivity
-import kotlin.random.Random
 
 object NotificationUtils {
     fun showPairAlert(

@@ -1,6 +1,6 @@
 package space.taran.arkrate.data
 
 data class CurrencyRate(
-    val code: String,
+    val code: CurrencyCode,
     val rate: Double
 )
