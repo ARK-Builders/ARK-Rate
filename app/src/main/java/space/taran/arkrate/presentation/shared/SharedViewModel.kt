@@ -9,9 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import space.taran.arkrate.data.db.PairAlertConditionRepo
-import space.taran.arkrate.domain.CurrencyCode
-import space.taran.arkrate.domain.PairAlertCondition
-import space.taran.arkrate.utils.replace
+import space.taran.arkrate.data.CurrencyCode
+import space.taran.arkrate.data.PairAlertCondition
 import javax.inject.Inject
 import javax.inject.Singleton
 

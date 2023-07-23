@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import space.taran.arkrate.data.CurrencyAmount
 import space.taran.arkrate.data.CurrencyName
 import space.taran.arkrate.data.GeneralCurrencyRepo
 import space.taran.arkrate.data.assets.AssetsRepo
+import space.taran.arkrate.data.CurrencyCode
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,8 +27,10 @@ class AddCurrencyViewModel(
         }
     }
 
-    fun addCurrency(code: String) = viewModelScope.launch {
-        assetsRepo.setCurrencyAmount(code, 0.0)
+    fun addCurrency(code: CurrencyCode) = viewModelScope.launch {
+        assetsRepo.findByCode(code) ?: let {
+            assetsRepo.setCurrencyAmount(CurrencyAmount(code = code, amount = 0.0))
+        }
     }
 }
 

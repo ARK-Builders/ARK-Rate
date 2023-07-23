@@ -8,12 +8,13 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import space.taran.arkrate.data.CurrencyRate
 import space.taran.arkrate.data.CurrencyType
+import space.taran.arkrate.data.CurrencyCode
 import javax.inject.Inject
 
 @Entity
 data class RoomCurrencyRate(
     @PrimaryKey
-    val code: String,
+    val code: CurrencyCode,
     val currencyType: String,
     val rate: Double
 )

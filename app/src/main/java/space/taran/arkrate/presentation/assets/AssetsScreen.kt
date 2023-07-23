@@ -31,7 +31,6 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import space.taran.arkrate.data.CurrencyAmount
 import space.taran.arkrate.di.DIManager
-import space.taran.arkrate.presentation.Screen
 import space.taran.arkrate.presentation.destinations.AddCurrencyScreenDestination
 import space.taran.arkrate.presentation.destinations.AssetsScreenDestination
 import space.taran.arkrate.utils.removeFractionalPartIfEmpty
@@ -76,20 +75,20 @@ fun AssetsScreen(navigator: DestinationsNavigator) {
 @Composable
 private fun CurrencyEditItem(
     modifier: Modifier,
-    currencyAmount: CurrencyAmount,
+    amount: CurrencyAmount,
     viewModel: AssetsViewModel,
 ) {
-    val code = currencyAmount.code
+    val code = amount.code
     var amountInput by remember {
         mutableStateOf(
-            if (currencyAmount.amount == 0.0) ""
-            else currencyAmount.amount.removeFractionalPartIfEmpty()
+            if (amount.amount == 0.0) ""
+            else amount.amount.removeFractionalPartIfEmpty()
         )
     }
     val clearIcon = @Composable {
         IconButton(onClick = {
             amountInput =
-                viewModel.onAmountChanged(code, amountInput, "")
+                viewModel.onAmountChanged(amount, amountInput, "")
         }) {
             Icon(
                 Icons.Default.Clear,
@@ -103,7 +102,7 @@ private fun CurrencyEditItem(
             value = amountInput,
             onValueChange = { newInput ->
                 amountInput = viewModel.onAmountChanged(
-                    code,
+                    amount,
                     amountInput,
                     newInput
                 )

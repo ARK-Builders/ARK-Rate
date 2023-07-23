@@ -9,12 +9,14 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import space.taran.arkrate.data.CurrencyAmount
+import space.taran.arkrate.data.CurrencyCode
 import javax.inject.Inject
 
 @Entity
 data class RoomCurrencyAmount(
-    @PrimaryKey
-    val code: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val code: CurrencyCode,
     val amount: Double
 )
 
@@ -26,11 +28,14 @@ interface AssetsDao {
     @Query("SELECT * FROM RoomCurrencyAmount")
     suspend fun getAll(): List<RoomCurrencyAmount>
 
+    @Query("SELECT * FROM RoomCurrencyAmount WHERE code = :code")
+    suspend fun getByCode(code: CurrencyCode): RoomCurrencyAmount?
+
     @Query("SELECT * FROM RoomCurrencyAmount")
     fun allFlow(): Flow<List<RoomCurrencyAmount>>
 
     @Query("DELETE FROM RoomCurrencyAmount where code = :code")
-    suspend fun delete(code: String)
+    suspend fun delete(code: CurrencyCode)
 }
 
 class AssetsLocalDataSource @Inject constructor(val dao: AssetsDao) {
@@ -39,11 +44,14 @@ class AssetsLocalDataSource @Inject constructor(val dao: AssetsDao) {
 
     suspend fun getAll() = dao.getAll().map { it.toCurrencyAmount() }
 
+    suspend fun getByCode(code: CurrencyCode) =
+        dao.getByCode(code)?.toCurrencyAmount()
+
     fun allFlow() =
         dao.allFlow().map { list -> list.map { it.toCurrencyAmount() } }
 
     suspend fun delete(code: String) = dao.delete(code)
 }
 
-private fun RoomCurrencyAmount.toCurrencyAmount() = CurrencyAmount(code, amount)
-private fun CurrencyAmount.toRoom() = RoomCurrencyAmount(code, amount)
+private fun RoomCurrencyAmount.toCurrencyAmount() = CurrencyAmount(id, code, amount)
+private fun CurrencyAmount.toRoom() = RoomCurrencyAmount(id, code, amount)

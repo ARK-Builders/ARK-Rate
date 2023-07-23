@@ -1,9 +1,9 @@
-package space.taran.arkrate.domain
+package space.taran.arkrate.data
 
 data class PairAlertCondition(
     val id: Long,
-    val numeratorCode: String,
-    val denominatorCode: String,
+    val numeratorCode: CurrencyCode,
+    val denominatorCode: CurrencyCode,
     val ratio: Float,
     var moreNotLess: Boolean
 ) {
