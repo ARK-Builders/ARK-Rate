@@ -1,4 +1,4 @@
-# ARK Rate: Handy Currency Converter by ARK Builders
+# ARK Rate: Handy Exchange Calculator by ARK Builders
 
 **ARK Rate** is a powerful and user-friendly currency converter allowing you to quickly and accurately convert any currency to another. But there's more! ARK Rate stands out from other apps with its unique features.
 
