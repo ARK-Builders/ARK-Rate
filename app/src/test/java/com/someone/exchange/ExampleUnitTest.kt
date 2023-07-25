@@ -1,4 +1,4 @@
-package space.taran.arkrate
+package dev.arkbuilders.rate
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

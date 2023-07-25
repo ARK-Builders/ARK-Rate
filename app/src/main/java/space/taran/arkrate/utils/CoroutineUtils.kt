@@ -1,4 +1,4 @@
-package space.taran.arkrate.utils
+package dev.arkbuilders.rate.utils
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.sync.Mutex

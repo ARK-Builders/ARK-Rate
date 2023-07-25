@@ -1,4 +1,4 @@
-package space.taran.arkrate.di
+package dev.arkbuilders.rate.di
 
 import android.app.Application
 

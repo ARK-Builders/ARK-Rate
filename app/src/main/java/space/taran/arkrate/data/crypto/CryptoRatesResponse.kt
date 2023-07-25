@@ -1,4 +1,4 @@
-package space.taran.arkrate.data.crypto
+package dev.arkbuilders.rate.data.crypto
 
 data class CryptoRateResponse(
     val symbol: String,

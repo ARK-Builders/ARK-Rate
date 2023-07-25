@@ -1,4 +1,4 @@
-package space.taran.arkrate.data
+package dev.arkbuilders.rate.data
 
 data class CurrencyName(
     val code: CurrencyCode,

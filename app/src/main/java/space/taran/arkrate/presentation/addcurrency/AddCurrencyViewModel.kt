@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation.addcurrency
+package dev.arkbuilders.rate.presentation.addcurrency
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import space.taran.arkrate.data.CurrencyAmount
-import space.taran.arkrate.data.CurrencyName
-import space.taran.arkrate.data.GeneralCurrencyRepo
-import space.taran.arkrate.data.assets.AssetsRepo
-import space.taran.arkrate.data.CurrencyCode
+import dev.arkbuilders.rate.data.CurrencyAmount
+import dev.arkbuilders.rate.data.CurrencyName
+import dev.arkbuilders.rate.data.GeneralCurrencyRepo
+import dev.arkbuilders.rate.data.assets.AssetsRepo
+import dev.arkbuilders.rate.data.CurrencyCode
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,4 +1,4 @@
-package space.taran.arkrate.utils
+package dev.arkbuilders.rate.utils
 
 fun Double.removeFractionalPartIfEmpty(): String {
     val integerPart = this.toInt()

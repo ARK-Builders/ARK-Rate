@@ -1,4 +1,4 @@
-package space.taran.arkrate.data.crypto
+package dev.arkbuilders.rate.data.crypto
 
 import retrofit2.http.GET
 

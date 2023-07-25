@@ -1,4 +1,4 @@
-package space.taran.arkrate.data.db
+package dev.arkbuilders.rate.data.db
 
 import androidx.room.Dao
 import androidx.room.Entity
@@ -6,9 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import space.taran.arkrate.data.CurrencyRate
-import space.taran.arkrate.data.CurrencyType
-import space.taran.arkrate.data.CurrencyCode
+import dev.arkbuilders.rate.data.CurrencyRate
+import dev.arkbuilders.rate.data.CurrencyType
+import dev.arkbuilders.rate.data.CurrencyCode
 import javax.inject.Inject
 
 @Entity

@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation.addcurrency
+package dev.arkbuilders.rate.presentation.addcurrency
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,11 +15,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
-import space.taran.arkrate.di.DIManager
-import space.taran.arkrate.presentation.destinations.AssetsScreenDestination
-import space.taran.arkrate.presentation.destinations.PairAlertConditionScreenDestination
-import space.taran.arkrate.presentation.shared.SharedViewModel
-import space.taran.arkrate.presentation.utils.activityViewModel
+import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
+import dev.arkbuilders.rate.presentation.shared.SharedViewModel
+import dev.arkbuilders.rate.presentation.utils.activityViewModel
 
 @Destination
 @Composable

@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation.utils
+package dev.arkbuilders.rate.presentation.utils
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,9 +9,9 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import space.taran.arkrate.R
-import space.taran.arkrate.data.PairAlertCondition
-import space.taran.arkrate.presentation.MainActivity
+import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.data.PairAlertCondition
+import dev.arkbuilders.rate.presentation.MainActivity
 
 object NotificationUtils {
     fun showPairAlert(

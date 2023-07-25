@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation.assets
+package dev.arkbuilders.rate.presentation.assets
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -29,11 +29,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import space.taran.arkrate.data.CurrencyAmount
-import space.taran.arkrate.di.DIManager
-import space.taran.arkrate.presentation.destinations.AddCurrencyScreenDestination
-import space.taran.arkrate.presentation.destinations.AssetsScreenDestination
-import space.taran.arkrate.utils.removeFractionalPartIfEmpty
+import dev.arkbuilders.rate.data.CurrencyAmount
+import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
+import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 
 @RootNavGraph(start = true)
 @Destination

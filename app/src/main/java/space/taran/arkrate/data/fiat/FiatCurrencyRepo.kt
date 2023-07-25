@@ -1,12 +1,12 @@
-package space.taran.arkrate.data.fiat
+package dev.arkbuilders.rate.data.fiat
 
-import space.taran.arkrate.data.CurrencyName
-import space.taran.arkrate.data.CurrencyRate
-import space.taran.arkrate.data.CurrencyRepo
-import space.taran.arkrate.data.CurrencyType
-import space.taran.arkrate.data.network.NetworkStatus
-import space.taran.arkrate.data.db.CurrencyRateLocalDataSource
-import space.taran.arkrate.data.db.FetchTimestampDataSource
+import dev.arkbuilders.rate.data.CurrencyName
+import dev.arkbuilders.rate.data.CurrencyRate
+import dev.arkbuilders.rate.data.CurrencyRepo
+import dev.arkbuilders.rate.data.CurrencyType
+import dev.arkbuilders.rate.data.network.NetworkStatus
+import dev.arkbuilders.rate.data.db.CurrencyRateLocalDataSource
+import dev.arkbuilders.rate.data.db.FetchTimestampDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
 

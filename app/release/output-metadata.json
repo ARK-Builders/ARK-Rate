@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "space.taran.arkrate",
+  "applicationId": "dev.arkbuilders.rate",
   "variantName": "release",
   "elements": [
     {

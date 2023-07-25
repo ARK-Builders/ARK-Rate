@@ -1,4 +1,4 @@
-package space.taran.arkrate.data.db
+package dev.arkbuilders.rate.data.db
 
 import androidx.room.Dao
 import androidx.room.Entity
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import space.taran.arkrate.data.PairAlertCondition
+import dev.arkbuilders.rate.data.PairAlertCondition
 import javax.inject.Inject
 import javax.inject.Singleton
 

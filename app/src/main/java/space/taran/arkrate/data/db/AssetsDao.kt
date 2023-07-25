@@ -1,4 +1,4 @@
-package space.taran.arkrate.data.db
+package dev.arkbuilders.rate.data.db
 
 import androidx.room.Dao
 import androidx.room.Entity
@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import space.taran.arkrate.data.CurrencyAmount
-import space.taran.arkrate.data.CurrencyCode
+import dev.arkbuilders.rate.data.CurrencyAmount
+import dev.arkbuilders.rate.data.CurrencyCode
 import javax.inject.Inject
 
 @Entity

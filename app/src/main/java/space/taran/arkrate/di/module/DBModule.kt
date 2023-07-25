@@ -1,11 +1,11 @@
-package space.taran.arkrate.di.module
+package dev.arkbuilders.rate.di.module
 
 import android.app.Application
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
-import space.taran.arkrate.data.db.Database
-import space.taran.arkrate.data.db.Database.Companion.DB_NAME
+import dev.arkbuilders.rate.data.db.Database
+import dev.arkbuilders.rate.data.db.Database.Companion.DB_NAME
 import javax.inject.Singleton
 
 @Module

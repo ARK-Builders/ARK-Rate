@@ -1,4 +1,4 @@
-package space.taran.arkrate.data.fiat
+package dev.arkbuilders.rate.data.fiat
 
 data class FiatRateResponse(
     val timestamp: Long,

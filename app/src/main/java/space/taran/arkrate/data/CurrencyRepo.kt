@@ -1,13 +1,13 @@
-package space.taran.arkrate.data
+package dev.arkbuilders.rate.data
 
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import space.taran.arkrate.data.db.CurrencyRateLocalDataSource
-import space.taran.arkrate.data.db.FetchTimestampDataSource
-import space.taran.arkrate.data.network.NetworkStatus
-import space.taran.arkrate.utils.withContextAndLock
+import dev.arkbuilders.rate.data.db.CurrencyRateLocalDataSource
+import dev.arkbuilders.rate.data.db.FetchTimestampDataSource
+import dev.arkbuilders.rate.data.network.NetworkStatus
+import dev.arkbuilders.rate.utils.withContextAndLock
 import java.util.concurrent.TimeUnit
 
 abstract class CurrencyRepo(

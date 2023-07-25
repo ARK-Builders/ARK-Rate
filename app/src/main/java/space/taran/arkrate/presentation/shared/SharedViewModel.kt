@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation.shared
+package dev.arkbuilders.rate.presentation.shared
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -8,9 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import space.taran.arkrate.data.db.PairAlertConditionRepo
-import space.taran.arkrate.data.CurrencyCode
-import space.taran.arkrate.data.PairAlertCondition
+import dev.arkbuilders.rate.data.db.PairAlertConditionRepo
+import dev.arkbuilders.rate.data.CurrencyCode
+import dev.arkbuilders.rate.data.PairAlertCondition
 import javax.inject.Inject
 import javax.inject.Singleton
 

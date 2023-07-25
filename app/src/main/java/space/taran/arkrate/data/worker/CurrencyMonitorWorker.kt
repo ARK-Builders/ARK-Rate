@@ -1,14 +1,14 @@
-package space.taran.arkrate.data.worker
+package dev.arkbuilders.rate.data.worker
 
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import space.taran.arkrate.data.CurrencyRate
-import space.taran.arkrate.data.GeneralCurrencyRepo
-import space.taran.arkrate.data.db.PairAlertConditionRepo
-import space.taran.arkrate.di.DIManager
-import space.taran.arkrate.data.PairAlertCondition
-import space.taran.arkrate.presentation.utils.NotificationUtils
+import dev.arkbuilders.rate.data.CurrencyRate
+import dev.arkbuilders.rate.data.GeneralCurrencyRepo
+import dev.arkbuilders.rate.data.db.PairAlertConditionRepo
+import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.data.PairAlertCondition
+import dev.arkbuilders.rate.presentation.utils.NotificationUtils
 import javax.inject.Inject
 
 class CurrencyMonitorWorker(val context: Context, params: WorkerParameters) :

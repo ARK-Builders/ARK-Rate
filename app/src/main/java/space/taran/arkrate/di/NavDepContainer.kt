@@ -1,8 +1,8 @@
-package space.taran.arkrate.di
+package dev.arkbuilders.rate.di
 
 import androidx.lifecycle.SavedStateHandle
-import space.taran.arkrate.presentation.MainActivity
-import space.taran.arkrate.presentation.shared.SharedViewModel
+import dev.arkbuilders.rate.presentation.MainActivity
+import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 
 class NavDepContainer(
     val activity: MainActivity

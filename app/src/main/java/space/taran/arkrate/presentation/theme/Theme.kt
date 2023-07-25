@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation.theme
+package dev.arkbuilders.rate.presentation.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

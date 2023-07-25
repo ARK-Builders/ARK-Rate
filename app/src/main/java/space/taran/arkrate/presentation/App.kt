@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation
+package dev.arkbuilders.rate.presentation
 
 import android.app.Application
 import androidx.work.Constraints
@@ -14,10 +14,10 @@ import org.acra.config.httpSender
 import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
 import org.acra.sender.HttpSender
-import space.taran.arkrate.BuildConfig
-import space.taran.arkrate.R
-import space.taran.arkrate.data.worker.CurrencyMonitorWorker
-import space.taran.arkrate.di.DIManager
+import dev.arkbuilders.rate.BuildConfig
+import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
+import dev.arkbuilders.rate.di.DIManager
 import java.util.concurrent.TimeUnit
 
 class App : Application() {

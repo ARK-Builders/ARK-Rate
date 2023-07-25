@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation.pairalert
+package dev.arkbuilders.rate.presentation.pairalert
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -37,12 +37,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import space.taran.arkrate.data.PairAlertCondition
-import space.taran.arkrate.presentation.destinations.AddCurrencyScreenDestination
-import space.taran.arkrate.presentation.destinations.PairAlertConditionScreenDestination
-import space.taran.arkrate.presentation.shared.SharedViewModel
-import space.taran.arkrate.presentation.utils.activityViewModel
-import space.taran.arkrate.utils.removeFractionalPartIfEmpty
+import dev.arkbuilders.rate.data.PairAlertCondition
+import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
+import dev.arkbuilders.rate.presentation.shared.SharedViewModel
+import dev.arkbuilders.rate.presentation.utils.activityViewModel
+import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 
 @Destination
 @Composable

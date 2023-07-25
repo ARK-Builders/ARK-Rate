@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation.utils
+package dev.arkbuilders.rate.presentation.utils
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavBackStackEntry
 import androidx.savedstate.SavedStateRegistryOwner
-import space.taran.arkrate.di.NavDepContainer
-import space.taran.arkrate.presentation.LocalDependencyContainer
+import dev.arkbuilders.rate.di.NavDepContainer
+import dev.arkbuilders.rate.presentation.LocalDependencyContainer
 
 @Composable
 inline fun <reified VM : ViewModel> viewModel(

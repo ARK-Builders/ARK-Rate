@@ -1,11 +1,11 @@
-package space.taran.arkrate.data.assets
+package dev.arkbuilders.rate.data.assets
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import space.taran.arkrate.data.CurrencyAmount
-import space.taran.arkrate.data.db.AssetsLocalDataSource
-import space.taran.arkrate.data.CurrencyCode
+import dev.arkbuilders.rate.data.CurrencyAmount
+import dev.arkbuilders.rate.data.db.AssetsLocalDataSource
+import dev.arkbuilders.rate.data.CurrencyCode
 import javax.inject.Inject
 import javax.inject.Singleton
 

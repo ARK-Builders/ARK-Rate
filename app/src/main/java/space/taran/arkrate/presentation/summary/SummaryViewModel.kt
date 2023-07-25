@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation.summary
+package dev.arkbuilders.rate.presentation.summary
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import space.taran.arkrate.data.GeneralCurrencyRepo
-import space.taran.arkrate.data.assets.AssetsRepo
+import dev.arkbuilders.rate.data.GeneralCurrencyRepo
+import dev.arkbuilders.rate.data.assets.AssetsRepo
 import javax.inject.Inject
 import javax.inject.Singleton
 

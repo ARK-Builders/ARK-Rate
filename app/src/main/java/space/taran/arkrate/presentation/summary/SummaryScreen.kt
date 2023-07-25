@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation.summary
+package dev.arkbuilders.rate.presentation.summary
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import space.taran.arkrate.di.DIManager
+import dev.arkbuilders.rate.di.DIManager
 import java.math.RoundingMode
 import java.text.DecimalFormat
 

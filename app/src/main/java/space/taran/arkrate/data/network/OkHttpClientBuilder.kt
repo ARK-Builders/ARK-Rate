@@ -1,4 +1,4 @@
-package space.taran.arkrate.data.network
+package dev.arkbuilders.rate.data.network
 
 import android.content.Context
 import android.webkit.WebSettings

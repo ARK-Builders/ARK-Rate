@@ -1,19 +1,19 @@
-package space.taran.arkrate.di
+package dev.arkbuilders.rate.di
 
 import android.app.Application
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import space.taran.arkrate.data.GeneralCurrencyRepo
-import space.taran.arkrate.data.assets.AssetsRepo
-import space.taran.arkrate.data.worker.CurrencyMonitorWorker
-import space.taran.arkrate.di.module.ApiModule
-import space.taran.arkrate.di.module.DBModule
-import space.taran.arkrate.presentation.summary.SummaryViewModelFactory
-import space.taran.arkrate.presentation.addcurrency.AddCurrencyViewModelFactory
-import space.taran.arkrate.presentation.assets.AssetsViewModelFactory
-import space.taran.arkrate.presentation.shared.SharedViewModel
-import space.taran.arkrate.presentation.shared.SharedViewModelFactory
+import dev.arkbuilders.rate.data.GeneralCurrencyRepo
+import dev.arkbuilders.rate.data.assets.AssetsRepo
+import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
+import dev.arkbuilders.rate.di.module.ApiModule
+import dev.arkbuilders.rate.di.module.DBModule
+import dev.arkbuilders.rate.presentation.summary.SummaryViewModelFactory
+import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyViewModelFactory
+import dev.arkbuilders.rate.presentation.assets.AssetsViewModelFactory
+import dev.arkbuilders.rate.presentation.shared.SharedViewModel
+import dev.arkbuilders.rate.presentation.shared.SharedViewModelFactory
 import javax.inject.Singleton
 
 @Singleton

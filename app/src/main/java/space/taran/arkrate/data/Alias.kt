@@ -1,3 +1,3 @@
-package space.taran.arkrate.data
+package dev.arkbuilders.rate.data
 
 typealias CurrencyCode = String

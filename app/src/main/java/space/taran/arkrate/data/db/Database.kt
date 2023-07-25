@@ -1,4 +1,4 @@
-package space.taran.arkrate.data.db
+package dev.arkbuilders.rate.data.db
 
 import androidx.room.AutoMigration
 import androidx.room.RoomDatabase

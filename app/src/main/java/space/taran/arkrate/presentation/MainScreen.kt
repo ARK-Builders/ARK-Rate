@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation
+package dev.arkbuilders.rate.presentation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -10,9 +10,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.rememberNavHostEngine
-import space.taran.arkrate.presentation.destinations.AddCurrencyScreenDestination
-import space.taran.arkrate.presentation.ui.AnimatedRateBottomNavigation
-import space.taran.arkrate.presentation.ui.RateScaffold
+import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
+import dev.arkbuilders.rate.presentation.ui.AnimatedRateBottomNavigation
+import dev.arkbuilders.rate.presentation.ui.RateScaffold
 
 
 @Composable

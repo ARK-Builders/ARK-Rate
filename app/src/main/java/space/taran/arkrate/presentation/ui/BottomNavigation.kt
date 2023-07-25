@@ -1,4 +1,4 @@
-package space.taran.arkrate.presentation.ui
+package dev.arkbuilders.rate.presentation.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -17,11 +17,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ramcosta.composedestinations.spec.Direction
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
-import space.taran.arkrate.R
-import space.taran.arkrate.presentation.destinations.AssetsScreenDestination
-import space.taran.arkrate.presentation.destinations.Destination
-import space.taran.arkrate.presentation.destinations.PairAlertConditionScreenDestination
-import space.taran.arkrate.presentation.destinations.SummaryScreenDestination
+import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.Destination
+import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.SummaryScreenDestination
 
 sealed class BottomNavItem(
     var title: String,
