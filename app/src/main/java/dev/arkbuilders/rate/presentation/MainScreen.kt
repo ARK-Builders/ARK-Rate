@@ -1,6 +1,8 @@
 package dev.arkbuilders.rate.presentation
 
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +15,7 @@ import com.ramcosta.composedestinations.rememberNavHostEngine
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.ui.AnimatedRateBottomNavigation
 import dev.arkbuilders.rate.presentation.ui.RateScaffold
+import dev.arkbuilders.rate.presentation.utils.keyboardAsState
 
 
 @Composable
@@ -20,6 +23,7 @@ fun MainScreen() {
     val engine = rememberNavHostEngine()
     val navController = engine.rememberNavController()
 
+    val isKeyboardOpen by keyboardAsState()
     val bottomBarVisible = rememberSaveable { mutableStateOf(false) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -33,7 +37,11 @@ fun MainScreen() {
         }
     }
 
+    if (isKeyboardOpen)
+        bottomBarVisible.value = false
+
     RateScaffold(
+        modifier = Modifier.systemBarsPadding().imePadding(),
         navController = navController,
         bottomBar = { destination ->
             AnimatedRateBottomNavigation(
@@ -54,12 +62,5 @@ fun MainScreen() {
             modifier = Modifier.padding(it)
         )
     }
-}
-
-enum class Screen(val route: String) {
-    Assets("assets"),
-    AddCurrency("addCurrency/{from}"),
-    Summary("summary"),
-    PairAlert("pairAlert")
 }
 

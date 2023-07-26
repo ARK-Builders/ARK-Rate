@@ -3,8 +3,10 @@ package dev.arkbuilders.rate.presentation.assets
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.FloatingActionButton
@@ -54,20 +56,7 @@ fun AssetsScreen(navigator: DestinationsNavigator) {
                     viewModel
                 )
             }
-        }
-        FloatingActionButton(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(10.dp),
-            onClick = {
-                navigator.navigate(
-                    AddCurrencyScreenDestination(
-                        fromScreen = AssetsScreenDestination.route
-                    )
-                )
-            },
-        ) {
-            Icon(Icons.Filled.Add, contentDescription = "Add")
+            ItemAdd(viewModel, navigator)
         }
     }
 }
@@ -117,6 +106,34 @@ private fun CurrencyEditItem(
             onClick = { viewModel.onCurrencyRemoved(code) }
         ) {
             Icon(Icons.Filled.Delete, "Delete")
+        }
+    }
+}
+
+private fun LazyListScope.ItemAdd(
+    viewModel: AssetsViewModel,
+    navigator: DestinationsNavigator,
+) {
+    if (viewModel.initialized) {
+        item {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .padding(10.dp),
+                    onClick = {
+                        navigator.navigate(
+                            AddCurrencyScreenDestination(
+                                fromScreen = AssetsScreenDestination.route
+                            )
+                        )
+                    },
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add")
+                }
+            }
         }
     }
 }
