@@ -1,6 +1,8 @@
 package dev.arkbuilders.rate.presentation.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.BottomNavigation
@@ -55,8 +57,8 @@ fun AnimatedRateBottomNavigation(
 ) {
     AnimatedVisibility(
         visible = bottomBarVisible.value,
-        enter = slideInVertically(initialOffsetY = { it }),
-        exit = slideOutVertically(targetOffsetY = { it }),
+        enter = fadeIn(),
+        exit = fadeOut(),
         content = { RateBottomNavigation(currentDestination, onBottomBarItemClick) }
     )
 }

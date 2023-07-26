@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.core.view.WindowCompat
 import dev.arkbuilders.rate.di.NavDepContainer
 import dev.arkbuilders.rate.presentation.theme.ARKRateTheme
 
@@ -18,6 +19,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             ARKRateTheme {
                 CompositionLocalProvider(LocalDependencyContainer provides dependencyContainer) {

@@ -1,6 +1,9 @@
 package dev.arkbuilders.rate.presentation.assets
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -14,12 +17,14 @@ class AssetsViewModel(
     private val assetsRepo: AssetsRepo
 ) : ViewModel() {
     var currencyAmountList = mutableStateListOf<CurrencyAmount>()
+    var initialized by mutableStateOf(false)
 
     init {
         viewModelScope.launch {
             assetsRepo.allCurrencyAmountFlow().collect { list ->
                 currencyAmountList.clear()
                 currencyAmountList.addAll(list.sortedBy { it.id })
+                initialized = true
             }
         }
     }
