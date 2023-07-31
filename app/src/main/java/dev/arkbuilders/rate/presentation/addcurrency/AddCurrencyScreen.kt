@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.presentation.addcurrency
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,16 +11,22 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.utils.activityViewModel
+import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecycle
 
 @Destination
 @Composable
@@ -32,10 +39,29 @@ fun AddCurrencyScreen(
 ) {
     val viewModel: AddCurrencyViewModel =
         viewModel(factory = DIManager.component.addCurrencyVMFactory())
+    val ctx = LocalContext.current
     var filter by remember { mutableStateOf("") }
     val filteredCurrencyNameList = viewModel.currencyNameList?.filter { (code, _) ->
         code.startsWith(filter.uppercase())
     } ?: emptyList()
+
+
+    viewModel.eventsFlow.collectInLaunchedEffectWithLifecycle { event ->
+        when (event) {
+            AddCurrencyEvent.NavigateBack -> navController.popBackStack()
+            is AddCurrencyEvent.NotifyCurrencyAdded -> {
+                Toast.makeText(
+                    ctx,
+                    ctx.getString(
+                        R.string.currency_is_already_added_to_assets,
+                        event.code
+                    ),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
 
     Column(Modifier.fillMaxSize()) {
         Row {
@@ -57,15 +83,18 @@ fun AddCurrencyScreen(
                     currency = currencyName.name,
                     onAdd = {
                         when (fromScreen) {
-                            AssetsScreenDestination.route -> viewModel.addCurrency(currencyName.code)
-                            PairAlertConditionScreenDestination.route ->
+                            AssetsScreenDestination.route -> viewModel.addCurrency(
+                                currencyName.code
+                            )
+                            PairAlertConditionScreenDestination.route -> {
                                 sharedViewModel.onAlertConditionCodePicked(
                                     currencyName.code,
                                     numeratorNotDenominator!!,
                                     pairAlertConditionId!!
                                 )
+                                navController.popBackStack()
+                            }
                         }
-                        navController.popBackStack()
                     }
                 )
             }
