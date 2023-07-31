@@ -58,6 +58,22 @@ fun AssetsScreen(navigator: DestinationsNavigator) {
             }
             ItemAdd(viewModel, navigator)
         }
+        if (viewModel.initialized && viewModel.currencyAmountList.isEmpty()) {
+            FloatingActionButton(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(10.dp),
+                onClick = {
+                    navigator.navigate(
+                        AddCurrencyScreenDestination(
+                            fromScreen = AssetsScreenDestination.route
+                        )
+                    )
+                },
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = "Add")
+            }
+        }
     }
 }
 
@@ -114,7 +130,7 @@ private fun LazyListScope.ItemAdd(
     viewModel: AssetsViewModel,
     navigator: DestinationsNavigator,
 ) {
-    if (viewModel.initialized) {
+    if (viewModel.initialized && viewModel.currencyAmountList.isNotEmpty()) {
         item {
             Box(
                 modifier = Modifier.fillMaxWidth(),
