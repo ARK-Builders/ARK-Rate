@@ -12,14 +12,21 @@ import dev.arkbuilders.rate.data.CurrencyName
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
 import dev.arkbuilders.rate.data.assets.AssetsRepo
 import dev.arkbuilders.rate.data.CurrencyCode
+import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton
+
+sealed class AddCurrencyEvent {
+    class NotifyCurrencyAdded(val code: CurrencyCode) : AddCurrencyEvent()
+    object NavigateBack : AddCurrencyEvent()
+}
 
 class AddCurrencyViewModel(
     private val assetsRepo: AssetsRepo,
     private val currencyRepo: GeneralCurrencyRepo
-): ViewModel() {
+) : ViewModel() {
     var currencyNameList by mutableStateOf<List<CurrencyName>?>(null)
+    val eventsFlow = MutableSharedFlow<AddCurrencyEvent>()
 
     init {
         viewModelScope.launch {
@@ -28,8 +35,11 @@ class AddCurrencyViewModel(
     }
 
     fun addCurrency(code: CurrencyCode) = viewModelScope.launch {
-        assetsRepo.findByCode(code) ?: let {
+        assetsRepo.findByCode(code)?.let {
+            eventsFlow.emit(AddCurrencyEvent.NotifyCurrencyAdded(code))
+        } ?: let {
             assetsRepo.setCurrencyAmount(CurrencyAmount(code = code, amount = 0.0))
+            eventsFlow.emit(AddCurrencyEvent.NavigateBack)
         }
     }
 }
@@ -38,8 +48,8 @@ class AddCurrencyViewModel(
 class AddCurrencyViewModelFactory @Inject constructor(
     private val assetsRepo: AssetsRepo,
     private val currencyRepo: GeneralCurrencyRepo
-): ViewModelProvider.Factory {
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return  AddCurrencyViewModel(assetsRepo, currencyRepo) as T
+        return AddCurrencyViewModel(assetsRepo, currencyRepo) as T
     }
 }
