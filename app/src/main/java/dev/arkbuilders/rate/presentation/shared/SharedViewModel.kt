@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import dev.arkbuilders.rate.data.db.PairAlertConditionRepo
 import dev.arkbuilders.rate.data.CurrencyCode
 import dev.arkbuilders.rate.data.PairAlertCondition
+import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,6 +21,8 @@ class SharedViewModel(
 
     var pairAlertConditions = mutableStateListOf<PairAlertCondition>()
     var newCondition by mutableStateOf(PairAlertCondition.defaultInstance())
+
+    var quickCurrencyPickedFlow = MutableSharedFlow<CurrencyCode>()
 
     init {
         viewModelScope.launch {
@@ -113,6 +116,12 @@ class SharedViewModel(
             val id = alertConditionRepo.insert(newCondition)
             pairAlertConditions.add(newCondition.copy(id = id))
             newCondition = PairAlertCondition.defaultInstance()
+        }
+    }
+
+    fun onQuickCurrencyPicked(code: CurrencyCode) {
+        viewModelScope.launch {
+            quickCurrencyPickedFlow.emit(code)
         }
     }
 }

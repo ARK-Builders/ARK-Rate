@@ -24,6 +24,7 @@ import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecycle
@@ -92,6 +93,10 @@ fun AddCurrencyScreen(
                                     numeratorNotDenominator!!,
                                     pairAlertConditionId!!
                                 )
+                                navController.popBackStack()
+                            }
+                            QuickScreenDestination.route -> {
+                                sharedViewModel.onQuickCurrencyPicked(currencyName.code)
                                 navController.popBackStack()
                             }
                         }

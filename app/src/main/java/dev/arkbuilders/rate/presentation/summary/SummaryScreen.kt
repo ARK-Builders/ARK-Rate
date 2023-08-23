@@ -13,8 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
+import dev.arkbuilders.rate.data.CurrencyAmount
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.presentation.destinations.SummaryScreenDestination
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
@@ -24,11 +27,26 @@ private val format = DecimalFormat("0.######").apply {
 
 @Destination
 @Composable
-fun SummaryScreen() {
+fun SummaryScreen(
+    amount: CurrencyAmount? = null
+) {
     val viewModel: SummaryViewModel =
-        viewModel(factory = DIManager.component.summaryViewModelFactory())
+        viewModel(
+            factory = DIManager.component.summaryViewModelFactory().create(amount)
+        )
     Box(Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.align(Alignment.Center)) {
+            amount?.let {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "Quick ${amount.code}", fontSize = 20.sp)
+                    }
+                }
+            }
             item {
                 TotalCard(viewModel)
             }

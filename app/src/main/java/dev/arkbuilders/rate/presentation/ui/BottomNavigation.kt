@@ -3,56 +3,57 @@ package dev.arkbuilders.rate.presentation.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.ramcosta.composedestinations.spec.Direction
-import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.Destination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.SummaryScreenDestination
 
 sealed class BottomNavItem(
     var title: String,
     var icon: Int,
-    var direction: DirectionDestinationSpec
+    var route: String,
 ) {
     object Assets : BottomNavItem(
         "Assets",
         R.drawable.ic_list,
-        AssetsScreenDestination
+        AssetsScreenDestination.route
     )
 
     object Summary : BottomNavItem(
         "Summary",
         R.drawable.ic_list_alt,
-        SummaryScreenDestination
+        SummaryScreenDestination.invoke(amount = null).route
     )
 
     object PairAlert : BottomNavItem(
         "Notifications",
         R.drawable.ic_notifications,
-        PairAlertConditionScreenDestination
+        PairAlertConditionScreenDestination.route
+    )
+
+    object Quick : BottomNavItem(
+        "Quick",
+        R.drawable.currency_exchange,
+        QuickScreenDestination.route
     )
 }
 
 @Composable
 fun AnimatedRateBottomNavigation(
     currentDestination: Destination,
-    onBottomBarItemClick: (Direction) -> Unit,
+    onBottomBarItemClick: (String) -> Unit,
     bottomBarVisible: State<Boolean>
 ) {
     AnimatedVisibility(
@@ -66,11 +67,12 @@ fun AnimatedRateBottomNavigation(
 @Composable
 fun RateBottomNavigation(
     currentDestination: Destination,
-    onBottomBarItemClick: (Direction) -> Unit
+    onBottomBarItemClick: (String) -> Unit
 ) {
     val items = listOf(
         BottomNavItem.Assets,
         BottomNavItem.Summary,
+        BottomNavItem.Quick,
         BottomNavItem.PairAlert,
     )
 
@@ -95,8 +97,8 @@ fun RateBottomNavigation(
                 selectedContentColor = Color.Black,
                 unselectedContentColor = Color.Black.copy(0.4f),
                 alwaysShowLabel = true,
-                selected = currentDestination == item.direction,
-                onClick = { onBottomBarItemClick(item.direction) }
+                selected = item.route.contains(currentDestination.baseRoute),
+                onClick = { onBottomBarItemClick(item.route) }
             )
         }
     }

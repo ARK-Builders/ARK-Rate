@@ -12,6 +12,7 @@ import dev.arkbuilders.rate.di.module.DBModule
 import dev.arkbuilders.rate.presentation.summary.SummaryViewModelFactory
 import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyViewModelFactory
 import dev.arkbuilders.rate.presentation.assets.AssetsViewModelFactory
+import dev.arkbuilders.rate.presentation.quick.QuickViewModelFactory
 import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.shared.SharedViewModelFactory
 import javax.inject.Singleton
@@ -24,9 +25,10 @@ import javax.inject.Singleton
     ]
 )
 interface AppComponent {
-    fun summaryViewModelFactory(): SummaryViewModelFactory
+    fun summaryViewModelFactory(): SummaryViewModelFactory.Factory
     fun assetsVMFactory(): AssetsViewModelFactory
     fun addCurrencyVMFactory(): AddCurrencyViewModelFactory
+    fun quickVMFactory(): QuickViewModelFactory.Factory
     fun sharedVMFactory(): SharedViewModelFactory
 
     fun generalCurrencyRepo(): GeneralCurrencyRepo
