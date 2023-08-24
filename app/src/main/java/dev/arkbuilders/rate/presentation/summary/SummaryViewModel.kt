@@ -100,6 +100,12 @@ class SummaryViewModel(
             currencyRepo.getCurrencyRate().associate { it.code to it.rate }
         val result = mutableMapOf<String, Double>()
 
+        amountsList.find {
+            it.code == selectedAmount!!.code
+        }?.let { duplicate ->
+            amountsList.remove(duplicate)
+        }
+
         amountsList.add(0, selectedAmount!!)
 
         amountsList.forEach { iterAmount1 ->

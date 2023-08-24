@@ -15,28 +15,30 @@ import dev.arkbuilders.rate.data.CurrencyCode
 import dev.arkbuilders.rate.data.QuickCurrency
 import dev.arkbuilders.rate.data.assets.AssetsRepo
 import dev.arkbuilders.rate.data.db.QuickCurrencyRepo
-import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyEvent
 import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
+
+class CurrencyAttraction(
+    val code: CurrencyCode,
+    val attractionRatio: Double
+)
 
 class QuickViewModel(
     val sharedViewModel: SharedViewModel,
     val assetsRepo: AssetsRepo,
     val quickCurrencyRepo: QuickCurrencyRepo,
 ) : ViewModel() {
-    val quickCurrencyList = mutableStateListOf<CurrencyCode>()
+    val currencyAttractionList = mutableStateListOf<CurrencyAttraction>()
     var selectedCurrency: CurrencyAmount? by mutableStateOf(null)
     val navigateToSummary = MutableSharedFlow<CurrencyAmount>()
 
     init {
         quickCurrencyRepo.allFlow().onEach { currencies ->
-            quickCurrencyList.clear()
-            quickCurrencyList.addAll(currencies.map { it.code })
+            currencyAttractionList.clear()
+            currencyAttractionList.addAll(calculateAttraction(currencies))
         }.launchIn(viewModelScope)
 
         sharedViewModel.quickCurrencyPickedFlow.onEach { code ->
@@ -49,8 +51,9 @@ class QuickViewModel(
     }
 
     fun onExchange() = viewModelScope.launch {
-        var usedCount = quickCurrencyRepo.getByCode(selectedCurrency!!.code)?.usedCount
-            ?: 0
+        var usedCount =
+            quickCurrencyRepo.getByCode(selectedCurrency!!.code)?.usedCount
+                ?: 0
         quickCurrencyRepo.insert(QuickCurrency(selectedCurrency!!.code, ++usedCount))
         navigateToSummary.emit(selectedCurrency!!)
     }
@@ -74,6 +77,26 @@ class QuickViewModel(
         val leadingZeros = "^0+(?=\\d)".toRegex()
 
         return newInput.replace(leadingZeros, "")
+    }
+
+    private fun calculateAttraction(
+        quick: List<QuickCurrency>
+    ): List<CurrencyAttraction> {
+        val max = quick.maxOfOrNull { it.usedCount }?.toDouble()
+
+        var attraction = quick.map {
+            CurrencyAttraction(it.code, attractionRatio = it.usedCount / max!! )
+        }.sortedBy { it.attractionRatio }
+
+        // most attractive in center
+        val attraction1 = attraction.filterIndexed { index, _ -> index % 2 == 0 }
+        val attraction2Reversed = attraction
+            .filterIndexed { index, _ -> index % 2 == 1 }
+            .reversed()
+
+        attraction = attraction1 + attraction2Reversed
+
+        return attraction
     }
 }
 

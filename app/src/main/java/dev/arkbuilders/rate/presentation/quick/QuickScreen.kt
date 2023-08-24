@@ -1,14 +1,9 @@
-@file:OptIn(
-    ExperimentalMaterialApi::class,
-    ExperimentalFoundationApi::class
-)
+@file:OptIn(ExperimentalFoundationApi::class)
 
 package dev.arkbuilders.rate.presentation.quick
 
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -27,13 +21,14 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
-import androidx.compose.material.Chip
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -45,19 +40,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrencyAmount
-import dev.arkbuilders.rate.data.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyEvent
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.SummaryScreenDestination
@@ -101,18 +91,22 @@ private fun SelectQuickCurrency(
             modifier = Modifier
                 .wrapContentSize()
                 .weight(1f),
-            columns = StaggeredGridCells.Fixed(3)
+            columns = StaggeredGridCells.Fixed(3),
+            horizontalArrangement = Arrangement.Center
         ) {
             items(
-                viewModel.quickCurrencyList,
-                key = { it }
+                viewModel.currencyAttractionList,
+                key = { it.code }
             ) {
-                QuickItem(viewModel, code = it)
+                QuickItem(viewModel, it)
             }
         }
-        Button(modifier = Modifier
-            .padding(10.dp)
-            .wrapContentSize(),
+        Button(
+            modifier = Modifier
+                .padding(10.dp)
+                .wrapContentSize(),
+            colors = ButtonDefaults
+                .buttonColors(backgroundColor = MaterialTheme.colors.secondary),
             onClick = {
                 navigator.navigate(
                     AddCurrencyScreenDestination(
@@ -174,20 +168,30 @@ private fun InputAmount(
     }
 }
 
+private const val minHeight = 50
+private const val maxHeight = 110
+private const val minFontSize = 12
+private const val maxFontSize = 20
+private const val heightDiff = maxHeight - minHeight
+private const val fontSizeDiff = maxFontSize - minFontSize
+
 @Composable
-private fun QuickItem(viewModel: QuickViewModel, code: CurrencyCode) {
+private fun QuickItem(viewModel: QuickViewModel, attraction: CurrencyAttraction) {
+    val height = (minHeight + heightDiff * attraction.attractionRatio).dp
+    val fontSize = (minFontSize + fontSizeDiff * attraction.attractionRatio).sp
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(height)
             .padding(10.dp)
             .clip(RoundedCornerShape(10))
             .background(Color.LightGray)
             .clickable {
-                viewModel.onCurrencySelected(code)
+                viewModel.onCurrencySelected(attraction.code)
             },
         contentAlignment = Alignment.Center
     ) {
-        Text(text = code)
+        Text(text = attraction.code, fontSize = fontSize)
     }
 }
