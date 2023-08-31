@@ -163,7 +163,7 @@ private fun InputAmount(
                 viewModel.onExchange()
             }
         ) {
-            Text(text = "Exchange", fontSize = 20.sp)
+            Text(text = "Convert", fontSize = 20.sp)
         }
     }
 }
