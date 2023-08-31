@@ -2,12 +2,9 @@
 
 package dev.arkbuilders.rate.presentation.quick
 
-import android.view.MotionEvent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,16 +30,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,8 +56,11 @@ import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecy
 import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 import eu.wewox.tagcloud.TagCloud
 import eu.wewox.tagcloud.TagCloudItemScope
-import eu.wewox.tagcloud.TagCloudState
 import eu.wewox.tagcloud.rememberTagCloudState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 @Destination
 @Composable
@@ -107,7 +106,7 @@ private fun SelectQuickCurrency(
                         .padding(64.dp)
                 ) {
                     items(list) {
-                        QuickItem(tagCloudState, viewModel, it)
+                        QuickItem(viewModel, it)
                     }
                 }
             }
@@ -188,12 +187,27 @@ private const val fontSizeDiff = maxFontSize - minFontSize
 
 @Composable
 private fun TagCloudItemScope.QuickItem(
-    state: TagCloudState,
     viewModel: QuickViewModel,
     attraction: CurrencyAttraction
 ) {
     val height = (minSize + sizeDiff * attraction.attractionRatio).dp
     val fontSize = (minFontSize + fontSizeDiff * attraction.attractionRatio).sp
+
+    val scope = rememberCoroutineScope()
+    var handleClick = remember { true }
+    val timerDelay = remember { 300L }
+    var timerJob: Job? = remember { null }
+
+    fun onPress() {
+        timerJob?.cancel()
+        handleClick = true
+        timerJob = scope.launch {
+            delay(timerDelay)
+            if (isActive) {
+                handleClick = false
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -209,17 +223,17 @@ private fun TagCloudItemScope.QuickItem(
                     while (true) {
                         val event = awaitPointerEvent()
                         when (event.type) {
-                            PointerEventType.Press -> {
-                                state.gestureEnabled = false
-                            }
+                            PointerEventType.Press -> { onPress() }
                             PointerEventType.Release -> {
-                                state.gestureEnabled = true
+                                if (handleClick) {
+                                    viewModel.onCurrencySelected(attraction.code)
+                                }
                             }
                         }
                     }
                 }
             }
-            .clickable { viewModel.onCurrencySelected(attraction.code) },
+            .clickable { },
         contentAlignment = Alignment.Center
     ) {
         Text(text = attraction.code, fontSize = fontSize)
