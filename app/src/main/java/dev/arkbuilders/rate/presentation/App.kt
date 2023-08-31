@@ -18,12 +18,14 @@ import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.DIManager
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Timber.plant(Timber.DebugTree())
         initAcra()
         DIManager.init(this)
 

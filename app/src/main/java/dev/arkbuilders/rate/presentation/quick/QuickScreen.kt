@@ -15,15 +15,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
@@ -55,6 +50,9 @@ import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecycle
 import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
+import eu.wewox.tagcloud.TagCloud
+import eu.wewox.tagcloud.TagCloudItemScope
+import eu.wewox.tagcloud.rememberTagCloudState
 
 @Destination
 @Composable
@@ -87,18 +85,17 @@ private fun SelectQuickCurrency(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LazyVerticalStaggeredGrid(
-            modifier = Modifier
-                .wrapContentSize()
-                .weight(1f),
-            columns = StaggeredGridCells.Fixed(3),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            items(
-                viewModel.currencyAttractionList,
-                key = { it.code }
-            ) {
-                QuickItem(viewModel, it)
+
+        viewModel.currencyAttractionList.let { list ->
+            if (list.isNotEmpty()) {
+                TagCloud(
+                    state = rememberTagCloudState(),
+                    modifier = Modifier.fillMaxWidth().weight(1f).padding(64.dp)
+                ) {
+                    items(list) {
+                        QuickItem(viewModel, it)
+                    }
+                }
             }
         }
         Button(
@@ -168,21 +165,26 @@ private fun InputAmount(
     }
 }
 
-private const val minHeight = 50
-private const val maxHeight = 110
+private const val minSize = 70
+private const val maxSize = 140
 private const val minFontSize = 12
 private const val maxFontSize = 20
-private const val heightDiff = maxHeight - minHeight
+private const val sizeDiff = maxSize - minSize
 private const val fontSizeDiff = maxFontSize - minFontSize
 
 @Composable
-private fun QuickItem(viewModel: QuickViewModel, attraction: CurrencyAttraction) {
-    val height = (minHeight + heightDiff * attraction.attractionRatio).dp
+private fun TagCloudItemScope.QuickItem(
+    viewModel: QuickViewModel,
+    attraction: CurrencyAttraction
+) {
+    val height = (minSize + sizeDiff * attraction.attractionRatio).dp
     val fontSize = (minFontSize + fontSizeDiff * attraction.attractionRatio).sp
 
     Box(
         modifier = Modifier
-            .fillMaxWidth()
+            .tagCloudItemFade()
+            .tagCloudItemScaleDown()
+            .width(height)
             .height(height)
             .padding(10.dp)
             .clip(RoundedCornerShape(10))
