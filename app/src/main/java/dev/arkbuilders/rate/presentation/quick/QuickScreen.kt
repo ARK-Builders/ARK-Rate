@@ -1,10 +1,13 @@
-@file:OptIn(ExperimentalFoundationApi::class)
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 
 package dev.arkbuilders.rate.presentation.quick
 
+import android.view.MotionEvent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,9 +35,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,6 +60,7 @@ import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecy
 import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 import eu.wewox.tagcloud.TagCloud
 import eu.wewox.tagcloud.TagCloudItemScope
+import eu.wewox.tagcloud.TagCloudState
 import eu.wewox.tagcloud.rememberTagCloudState
 
 @Destination
@@ -86,14 +95,19 @@ private fun SelectQuickCurrency(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        val tagCloudState = rememberTagCloudState()
+
         viewModel.currencyAttractionList.let { list ->
             if (list.isNotEmpty()) {
                 TagCloud(
-                    state = rememberTagCloudState(),
-                    modifier = Modifier.fillMaxWidth().weight(1f).padding(64.dp)
+                    state = tagCloudState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(64.dp)
                 ) {
                     items(list) {
-                        QuickItem(viewModel, it)
+                        QuickItem(tagCloudState, viewModel, it)
                     }
                 }
             }
@@ -174,6 +188,7 @@ private const val fontSizeDiff = maxFontSize - minFontSize
 
 @Composable
 private fun TagCloudItemScope.QuickItem(
+    state: TagCloudState,
     viewModel: QuickViewModel,
     attraction: CurrencyAttraction
 ) {
@@ -189,9 +204,22 @@ private fun TagCloudItemScope.QuickItem(
             .padding(10.dp)
             .clip(RoundedCornerShape(10))
             .background(Color.LightGray)
-            .clickable {
-                viewModel.onCurrencySelected(attraction.code)
-            },
+            .pointerInput(Unit) {
+                awaitPointerEventScope {
+                    while (true) {
+                        val event = awaitPointerEvent()
+                        when (event.type) {
+                            PointerEventType.Press -> {
+                                state.gestureEnabled = false
+                            }
+                            PointerEventType.Release -> {
+                                state.gestureEnabled = true
+                            }
+                        }
+                    }
+                }
+            }
+            .clickable { viewModel.onCurrencySelected(attraction.code) },
         contentAlignment = Alignment.Center
     ) {
         Text(text = attraction.code, fontSize = fontSize)
