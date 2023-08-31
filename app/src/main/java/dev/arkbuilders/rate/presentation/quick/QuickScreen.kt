@@ -30,15 +30,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,10 +58,6 @@ import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 import eu.wewox.tagcloud.TagCloud
 import eu.wewox.tagcloud.TagCloudItemScope
 import eu.wewox.tagcloud.rememberTagCloudState
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 
 @Destination
 @Composable
@@ -190,24 +187,12 @@ private fun TagCloudItemScope.QuickItem(
     viewModel: QuickViewModel,
     attraction: CurrencyAttraction
 ) {
+    val touchSlop = LocalViewConfiguration.current.touchSlop
     val height = (minSize + sizeDiff * attraction.attractionRatio).dp
     val fontSize = (minFontSize + fontSizeDiff * attraction.attractionRatio).sp
 
-    val scope = rememberCoroutineScope()
-    var handleClick = remember { true }
-    val timerDelay = remember { 300L }
-    var timerJob: Job? = remember { null }
-
-    fun onPress() {
-        timerJob?.cancel()
-        handleClick = true
-        timerJob = scope.launch {
-            delay(timerDelay)
-            if (isActive) {
-                handleClick = false
-            }
-        }
-    }
+    var currentPointerPosition = remember { Offset.Unspecified }
+    var pointerMoveDistance = remember { 0f }
 
     Box(
         modifier = Modifier
@@ -222,10 +207,20 @@ private fun TagCloudItemScope.QuickItem(
                 awaitPointerEventScope {
                     while (true) {
                         val event = awaitPointerEvent()
+                        val pointer = event.changes.last()
                         when (event.type) {
-                            PointerEventType.Press -> { onPress() }
+                            PointerEventType.Press -> {
+                                currentPointerPosition = pointer.position
+                                pointerMoveDistance = 0f
+                            }
+                            PointerEventType.Move -> {
+                                val newPos = pointer.position
+                                val diff = currentPointerPosition - newPos
+                                pointerMoveDistance += diff.getDistance()
+                                currentPointerPosition = newPos
+                            }
                             PointerEventType.Release -> {
-                                if (handleClick) {
+                                if (pointerMoveDistance < touchSlop) {
                                     viewModel.onCurrencySelected(attraction.code)
                                 }
                             }
