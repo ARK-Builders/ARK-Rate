@@ -6,6 +6,7 @@ import dagger.BindsInstance
 import dagger.Component
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
 import dev.arkbuilders.rate.data.assets.AssetsRepo
+import dev.arkbuilders.rate.data.preferences.Preferences
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.module.ApiModule
 import dev.arkbuilders.rate.di.module.DBModule
@@ -13,7 +14,7 @@ import dev.arkbuilders.rate.presentation.summary.SummaryViewModelFactory
 import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyViewModelFactory
 import dev.arkbuilders.rate.presentation.assets.AssetsViewModelFactory
 import dev.arkbuilders.rate.presentation.quick.QuickViewModelFactory
-import dev.arkbuilders.rate.presentation.shared.SharedViewModel
+import dev.arkbuilders.rate.presentation.settings.SettingsViewModelFactory
 import dev.arkbuilders.rate.presentation.shared.SharedViewModelFactory
 import javax.inject.Singleton
 
@@ -30,6 +31,7 @@ interface AppComponent {
     fun addCurrencyVMFactory(): AddCurrencyViewModelFactory
     fun quickVMFactory(): QuickViewModelFactory.Factory
     fun sharedVMFactory(): SharedViewModelFactory
+    fun settingsVMFactory(): SettingsViewModelFactory
 
     fun generalCurrencyRepo(): GeneralCurrencyRepo
     fun assetsRepo(): AssetsRepo

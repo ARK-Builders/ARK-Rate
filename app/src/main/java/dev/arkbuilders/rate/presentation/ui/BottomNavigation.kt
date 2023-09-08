@@ -18,6 +18,7 @@ import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.Destination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.SettingsScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.SummaryScreenDestination
 
 sealed class BottomNavItem(
@@ -38,7 +39,7 @@ sealed class BottomNavItem(
     )
 
     object PairAlert : BottomNavItem(
-        "Notifications",
+        "Alerts",
         R.drawable.ic_notifications,
         PairAlertConditionScreenDestination.route
     )
@@ -48,6 +49,13 @@ sealed class BottomNavItem(
         R.drawable.currency_exchange,
         QuickScreenDestination.route
     )
+
+    object Settings: BottomNavItem(
+        "Settings",
+        R.drawable.ic_settings,
+        SettingsScreenDestination.route
+    )
+
 }
 
 @Composable
@@ -74,6 +82,7 @@ fun RateBottomNavigation(
         BottomNavItem.Summary,
         BottomNavItem.Quick,
         BottomNavItem.PairAlert,
+        BottomNavItem.Settings
     )
 
     BottomNavigation(

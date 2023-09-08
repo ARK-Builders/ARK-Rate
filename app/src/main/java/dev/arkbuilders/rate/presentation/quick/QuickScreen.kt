@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -35,11 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -91,20 +90,36 @@ private fun SelectQuickCurrency(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        val tagCloudState = rememberTagCloudState()
-
-        viewModel.currencyAttractionList.let { list ->
-            if (list.isNotEmpty()) {
-                TagCloud(
-                    state = tagCloudState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(64.dp)
-                ) {
-                    items(list) {
-                        QuickItem(viewModel, it)
+        if (viewModel.showAsTagCloud) {
+            val tagCloudState = rememberTagCloudState()
+            viewModel.currencyAttractionList.let { list ->
+                if (list.isNotEmpty()) {
+                    TagCloud(
+                        state = tagCloudState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(64.dp)
+                    ) {
+                        items(list) {
+                            CloudQuickItem(viewModel, it)
+                        }
                     }
+                }
+            }
+        } else {
+            LazyVerticalStaggeredGrid(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .weight(1f),
+                columns = StaggeredGridCells.Fixed(3),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                items(
+                    viewModel.currencyAttractionList,
+                    key = { it.code }
+                ) {
+                    QuickItem(viewModel, it)
                 }
             }
         }
@@ -183,7 +198,7 @@ private const val sizeDiff = maxSize - minSize
 private const val fontSizeDiff = maxFontSize - minFontSize
 
 @Composable
-private fun TagCloudItemScope.QuickItem(
+private fun TagCloudItemScope.CloudQuickItem(
     viewModel: QuickViewModel,
     attraction: CurrencyAttraction
 ) {
@@ -200,6 +215,27 @@ private fun TagCloudItemScope.QuickItem(
             .clip(RoundedCornerShape(10))
             .background(Color.LightGray)
             .clickable { viewModel.onCurrencySelected(attraction.code) },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = attraction.code, fontSize = fontSize)
+    }
+}
+
+@Composable
+private fun QuickItem(viewModel: QuickViewModel, attraction: CurrencyAttraction) {
+    val height = (minSize + sizeDiff * attraction.attractionRatio).dp
+    val fontSize = (minFontSize + fontSizeDiff * attraction.attractionRatio).sp
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height)
+            .padding(10.dp)
+            .clip(RoundedCornerShape(10))
+            .background(Color.LightGray)
+            .clickable {
+                viewModel.onCurrencySelected(attraction.code)
+            },
         contentAlignment = Alignment.Center
     ) {
         Text(text = attraction.code, fontSize = fontSize)

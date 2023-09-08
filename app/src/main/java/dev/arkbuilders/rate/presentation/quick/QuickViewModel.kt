@@ -15,6 +15,8 @@ import dev.arkbuilders.rate.data.CurrencyCode
 import dev.arkbuilders.rate.data.QuickCurrency
 import dev.arkbuilders.rate.data.assets.AssetsRepo
 import dev.arkbuilders.rate.data.db.QuickCurrencyRepo
+import dev.arkbuilders.rate.data.preferences.PreferenceKey
+import dev.arkbuilders.rate.data.preferences.Preferences
 import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
@@ -30,20 +32,26 @@ class QuickViewModel(
     val sharedViewModel: SharedViewModel,
     val assetsRepo: AssetsRepo,
     val quickCurrencyRepo: QuickCurrencyRepo,
+    val prefs: Preferences
 ) : ViewModel() {
     val currencyAttractionList = mutableStateListOf<CurrencyAttraction>()
     var selectedCurrency: CurrencyAmount? by mutableStateOf(null)
     val navigateToSummary = MutableSharedFlow<CurrencyAmount>()
+    var showAsTagCloud by mutableStateOf(true)
 
     init {
-        quickCurrencyRepo.allFlow().onEach { currencies ->
-            currencyAttractionList.clear()
-            currencyAttractionList.addAll(calculateAttraction(currencies))
-        }.launchIn(viewModelScope)
+        viewModelScope.launch {
+            showAsTagCloud = prefs.get(PreferenceKey.QuickScreenTagCloud)
 
-        sharedViewModel.quickCurrencyPickedFlow.onEach { code ->
-            selectedCurrency = CurrencyAmount(code = code, amount = 0.0)
-        }.launchIn(viewModelScope)
+            quickCurrencyRepo.allFlow().onEach { currencies ->
+                currencyAttractionList.clear()
+                currencyAttractionList.addAll(calculateAttraction(currencies))
+            }.launchIn(viewModelScope)
+
+            sharedViewModel.quickCurrencyPickedFlow.onEach { code ->
+                selectedCurrency = CurrencyAmount(code = code, amount = 0.0)
+            }.launchIn(viewModelScope)
+        }
     }
 
     fun onCurrencySelected(code: CurrencyCode) {
@@ -103,10 +111,11 @@ class QuickViewModel(
 class QuickViewModelFactory @AssistedInject constructor(
     @Assisted private val sharedViewModel: SharedViewModel,
     private val assetsRepo: AssetsRepo,
-    private val quickCurrencyRepo: QuickCurrencyRepo
+    private val quickCurrencyRepo: QuickCurrencyRepo,
+    private val prefs: Preferences
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return QuickViewModel(sharedViewModel, assetsRepo, quickCurrencyRepo) as T
+        return QuickViewModel(sharedViewModel, assetsRepo, quickCurrencyRepo, prefs) as T
     }
 
     @AssistedFactory
