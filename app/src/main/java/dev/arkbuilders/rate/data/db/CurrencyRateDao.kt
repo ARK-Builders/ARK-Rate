@@ -38,6 +38,8 @@ class CurrencyRateLocalDataSource @Inject constructor(val dao: CurrencyRateDao) 
         dao.getByType(currencyType.name).map { it.toCurrencyRate() }
 }
 
-private fun RoomCurrencyRate.toCurrencyRate() = CurrencyRate(code, rate)
+private fun RoomCurrencyRate.toCurrencyRate() =
+    CurrencyRate(CurrencyType.valueOf(currencyType), code, rate)
+
 private fun CurrencyRate.toRoom(currencyType: CurrencyType) =
     RoomCurrencyRate(code, currencyType.name, rate)

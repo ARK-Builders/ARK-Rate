@@ -42,8 +42,9 @@ fun AddCurrencyScreen(
         viewModel(factory = DIManager.component.addCurrencyVMFactory())
     val ctx = LocalContext.current
     var filter by remember { mutableStateOf("") }
-    val filteredCurrencyNameList = viewModel.currencyNameList?.filter { (code, _) ->
-        code.startsWith(filter.uppercase())
+    val filteredCurrencyNameList = viewModel.currencyNameList?.filter { (code, name) ->
+        code.startsWith(filter, ignoreCase = true) ||
+                name.contains(filter, ignoreCase = true)
     } ?: emptyList()
 
 

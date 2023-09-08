@@ -2,6 +2,7 @@ package dev.arkbuilders.rate.presentation.settings
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -15,15 +16,28 @@ import javax.inject.Singleton
 
 class SettingsViewModel(
     private val prefs: Preferences
-): ViewModel() {
+) : ViewModel() {
 
-    var quickScreenTagCloud = mutableStateOf(false)
+    val currencyRoundPrefs = mutableMapOf<PreferenceKey<Int>, MutableState<String>>()
+    val boolPrefs = mutableMapOf<PreferenceKey<Boolean>, MutableState<Boolean>>()
 
     var initialized by mutableStateOf(false)
 
     init {
         viewModelScope.launch {
-            quickScreenTagCloud.value = prefs.get(PreferenceKey.QuickScreenTagCloud)
+            listOf(
+                PreferenceKey.QuickScreenTagCloud,
+                PreferenceKey.CrashReport
+            ).forEach {
+                boolPrefs[it] = mutableStateOf(prefs.get(it))
+            }
+            listOf(
+                PreferenceKey.FiatFiatRateRound,
+                PreferenceKey.CryptoCryptoRateRound,
+                PreferenceKey.FiatCryptoRateRound
+            ).forEach {
+                currencyRoundPrefs[it] = mutableStateOf(prefs.get(it).toString())
+            }
         }
 
         initialized = true
@@ -38,6 +52,15 @@ class SettingsViewModel(
         prefs.set(key, newValue)
     }
 
+    fun onRoundSave(
+        key: PreferenceKey<Int>,
+        state: MutableState<String>,
+        _value: String
+    ) = viewModelScope.launch {
+        val value = _value.ifEmpty { "0" }
+        state.value = value
+        prefs.set(key, value.toInt())
+    }
 }
 
 @Singleton

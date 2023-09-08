@@ -1,5 +1,8 @@
 package dev.arkbuilders.rate.data.fiat
 
+import android.content.Context
+import com.google.gson.Gson
+import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrencyName
 import dev.arkbuilders.rate.data.CurrencyRate
 import dev.arkbuilders.rate.data.CurrencyRepo
@@ -12,6 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FiatCurrencyRepo @Inject constructor(
+    private val ctx: Context,
     private val fiatAPI: FiatAPI,
     private val local: CurrencyRateLocalDataSource,
     private val networkStatus: NetworkStatus,
@@ -21,7 +25,7 @@ class FiatCurrencyRepo @Inject constructor(
 
     override suspend fun fetchRemote(): List<CurrencyRate> =
         fiatAPI.get().rates.map { (code, rate) ->
-            CurrencyRate(code, 1.0 / rate)
+            CurrencyRate(type, code, 1.0 / rate)
         }
 
     override suspend fun getCurrencyName(): List<CurrencyName> =

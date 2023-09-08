@@ -16,23 +16,28 @@ import org.acra.ktx.initAcra
 import org.acra.sender.HttpSender
 import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.DIManager
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+import java.util.prefs.Preferences
 
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
-        initAcra()
         DIManager.init(this)
+        initAcra()
 
         initWorker()
     }
 
     private fun initAcra() = CoroutineScope(Dispatchers.IO).launch {
+        if (!DIManager.component.prefs().get(PreferenceKey.CrashReport))
+            return@launch
+
         initAcra {
             buildConfigClass = BuildConfig::class.java
             reportFormat = StringFormat.JSON
@@ -49,6 +54,7 @@ class App : Application() {
             }
         }
     }
+
 
     private fun initWorker() {
         val workManager = WorkManager.getInstance(this)

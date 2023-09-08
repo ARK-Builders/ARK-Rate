@@ -21,7 +21,7 @@ class CryptoCurrencyRepo @Inject constructor(
 
     override suspend fun fetchRemote(): List<CurrencyRate> =
         cryptoAPI.getCryptoRates()
-            .map { CurrencyRate(it.symbol.uppercase(), it.current_price) }
+            .map { CurrencyRate(type, it.symbol.uppercase(), it.current_price) }
 
     override suspend fun getCurrencyName(): List<CurrencyName> =
         getCurrencyRate().map {

@@ -129,7 +129,7 @@ private fun ExchangeCard(viewModel: SummaryViewModel) {
                                 modifier = Modifier.align(Alignment.CenterStart)
                             )
                             Text(
-                                format.format(it.value),
+                                it.value,
                                 modifier = Modifier.align(Alignment.CenterEnd)
                             )
                             Divider()

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -11,11 +12,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 sealed class PreferenceKey<out T>(val defaultValue: T) {
-    object QuickScreenTagCloud: PreferenceKey<Boolean>(true)
+    object QuickScreenTagCloud : PreferenceKey<Boolean>(true)
+    object FiatFiatRateRound : PreferenceKey<Int>(2)
+    object CryptoCryptoRateRound : PreferenceKey<Int>(2)
+    object FiatCryptoRateRound : PreferenceKey<Int>(2)
+    object CrashReport : PreferenceKey<Boolean>(true)
 }
 
 @Singleton
-class Preferences @Inject constructor(val context: Context)  {
+class Preferences @Inject constructor(val context: Context) {
     private val SHARED_PREFERENCES_KEY = "user_preferences"
 
     private val Context.preferencesDatastore by preferencesDataStore(
@@ -46,6 +51,17 @@ class Preferences @Inject constructor(val context: Context)  {
         val result = when (key) {
             PreferenceKey.QuickScreenTagCloud ->
                 booleanPreferencesKey("quick_screen_tag_cloud")
+
+            PreferenceKey.FiatFiatRateRound ->
+                intPreferencesKey("round_fiat_fiat")
+
+            PreferenceKey.CryptoCryptoRateRound ->
+                intPreferencesKey("round_crypto_crypto")
+
+            PreferenceKey.FiatCryptoRateRound ->
+                intPreferencesKey("round_crypto_fiat")
+
+            PreferenceKey.CrashReport -> booleanPreferencesKey("crash_report")
         }
 
         return result as Preferences.Key<T>

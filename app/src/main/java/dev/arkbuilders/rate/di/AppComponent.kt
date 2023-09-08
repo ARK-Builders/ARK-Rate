@@ -33,6 +33,8 @@ interface AppComponent {
     fun sharedVMFactory(): SharedViewModelFactory
     fun settingsVMFactory(): SettingsViewModelFactory
 
+    fun prefs(): Preferences
+
     fun generalCurrencyRepo(): GeneralCurrencyRepo
     fun assetsRepo(): AssetsRepo
     fun inject(currencyMonitorWorker: CurrencyMonitorWorker)
