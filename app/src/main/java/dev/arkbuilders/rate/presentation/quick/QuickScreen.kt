@@ -187,12 +187,8 @@ private fun TagCloudItemScope.QuickItem(
     viewModel: QuickViewModel,
     attraction: CurrencyAttraction
 ) {
-    val touchSlop = LocalViewConfiguration.current.touchSlop
     val height = (minSize + sizeDiff * attraction.attractionRatio).dp
     val fontSize = (minFontSize + fontSizeDiff * attraction.attractionRatio).sp
-
-    var currentPointerPosition = remember { Offset.Unspecified }
-    var pointerMoveDistance = remember { 0f }
 
     Box(
         modifier = Modifier
@@ -203,32 +199,7 @@ private fun TagCloudItemScope.QuickItem(
             .padding(10.dp)
             .clip(RoundedCornerShape(10))
             .background(Color.LightGray)
-            .pointerInput(Unit) {
-                awaitPointerEventScope {
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        val pointer = event.changes.last()
-                        when (event.type) {
-                            PointerEventType.Press -> {
-                                currentPointerPosition = pointer.position
-                                pointerMoveDistance = 0f
-                            }
-                            PointerEventType.Move -> {
-                                val newPos = pointer.position
-                                val diff = currentPointerPosition - newPos
-                                pointerMoveDistance += diff.getDistance()
-                                currentPointerPosition = newPos
-                            }
-                            PointerEventType.Release -> {
-                                if (pointerMoveDistance < touchSlop) {
-                                    viewModel.onCurrencySelected(attraction.code)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            .clickable { },
+            .clickable { viewModel.onCurrencySelected(attraction.code) },
         contentAlignment = Alignment.Center
     ) {
         Text(text = attraction.code, fontSize = fontSize)
