@@ -295,6 +295,7 @@ private fun TextEditNumberDialog(
     }
 
     Surface(
+        shape = RoundedCornerShape(10.dp),
         color = Color.White
     ) {
 
