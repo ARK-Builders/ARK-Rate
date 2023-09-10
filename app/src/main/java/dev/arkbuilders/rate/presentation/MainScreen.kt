@@ -10,17 +10,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.rememberNavHostEngine
+import com.ramcosta.composedestinations.utils.startDestination
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.ui.AnimatedRateBottomNavigation
 import dev.arkbuilders.rate.presentation.ui.RateScaffold
 import dev.arkbuilders.rate.presentation.utils.keyboardAsState
 
 
 @Composable
-fun MainScreen() {
+fun MainScreen(startFromQuickScreen: Boolean) {
     val engine = rememberNavHostEngine()
     val navController = engine.rememberNavController()
 
@@ -57,11 +58,16 @@ fun MainScreen() {
             )
         }
     ) {
+        val startRoute = if (startFromQuickScreen)
+            QuickScreenDestination.startDestination
+        else
+            AssetsScreenDestination.startDestination
         DestinationsNavHost(
             engine = engine,
             navController = navController,
             navGraph = NavGraphs.root,
-            modifier = Modifier.padding(it)
+            modifier = Modifier.padding(it),
+            startRoute = startRoute
         )
     }
 }
