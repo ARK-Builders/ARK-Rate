@@ -26,6 +26,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -42,10 +43,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.data.CurrencyAmount
+import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
@@ -57,6 +60,7 @@ import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 import eu.wewox.tagcloud.TagCloud
 import eu.wewox.tagcloud.TagCloudItemScope
 import eu.wewox.tagcloud.rememberTagCloudState
+import kotlinx.coroutines.launch
 
 @Destination
 @Composable
@@ -89,7 +93,21 @@ private fun SelectQuickCurrency(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Plain")
+            Switch(
+                checked = viewModel.showAsTagCloud,
+                onCheckedChange = { checked ->
+                    viewModel.apply {
+                        showAsTagCloud = checked
+                        viewModelScope.launch {
+                            prefs.set(PreferenceKey.QuickScreenTagCloud, checked)
+                        }
+                    }
+                }
+            )
+            Text(text = "3D")
+        }
         if (viewModel.showAsTagCloud) {
             val tagCloudState = rememberTagCloudState()
             viewModel.currencyAttractionList.let { list ->

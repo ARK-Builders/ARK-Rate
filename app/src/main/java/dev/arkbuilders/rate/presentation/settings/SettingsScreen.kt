@@ -75,17 +75,6 @@ private fun Settings(vm: SettingsViewModel) {
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        SettingsGroup(name = R.string.appearance) {
-            SettingsSwitchComp(
-                name = R.string.show_quick_currency_as_tag_cloud,
-                state = vm.boolPrefs[PreferenceKey.QuickScreenTagCloud]!!
-            ) { state ->
-                vm.onToggle(
-                    PreferenceKey.QuickScreenTagCloud,
-                    state
-                )
-            }
-        }
         SettingsGroup(name = R.string.currencies) {
             SettingsNumberComp(
                 name = R.string.fiat_fiat_rate_round,
