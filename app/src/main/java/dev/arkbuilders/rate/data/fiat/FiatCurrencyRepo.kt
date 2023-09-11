@@ -3,11 +3,11 @@ package dev.arkbuilders.rate.data.fiat
 import android.content.Context
 import com.google.gson.Gson
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.CurrencyCode
-import dev.arkbuilders.rate.data.CurrencyName
-import dev.arkbuilders.rate.data.CurrencyRate
-import dev.arkbuilders.rate.data.CurrencyRepo
-import dev.arkbuilders.rate.data.CurrencyType
+import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.data.model.CurrencyName
+import dev.arkbuilders.rate.data.model.CurrencyRate
+import dev.arkbuilders.rate.data.model.CurrencyRepo
+import dev.arkbuilders.rate.data.model.CurrencyType
 import dev.arkbuilders.rate.data.network.NetworkStatus
 import dev.arkbuilders.rate.data.db.CurrencyRateLocalDataSource
 import dev.arkbuilders.rate.data.db.FetchTimestampDataSource

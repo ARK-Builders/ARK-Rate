@@ -37,7 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import dev.arkbuilders.rate.data.PairAlertCondition
+import dev.arkbuilders.rate.data.model.PairAlertCondition
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.presentation.shared.SharedViewModel

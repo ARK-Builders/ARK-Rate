@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.data.CurrencyAmount
-import dev.arkbuilders.rate.data.CurrencyType
+import dev.arkbuilders.rate.data.model.CurrencyAmount
+import dev.arkbuilders.rate.data.model.CurrencyType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

@@ -1,4 +1,6 @@
-package dev.arkbuilders.rate.data
+package dev.arkbuilders.rate.data.model
+
+import dev.arkbuilders.rate.data.model.CurrencyCode
 
 data class PairAlertCondition(
     val id: Long,

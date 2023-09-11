@@ -61,7 +61,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.CurrencyAmount
+import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.data.preferences.QuickScreenShowAs
 import dev.arkbuilders.rate.data.preferences.QuickScreenSortedBy

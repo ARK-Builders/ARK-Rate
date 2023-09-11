@@ -10,11 +10,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.data.CurrencyAmount
-import dev.arkbuilders.rate.data.CurrencyCode
-import dev.arkbuilders.rate.data.CurrencyName
+import dev.arkbuilders.rate.data.model.CurrencyAmount
+import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.data.model.CurrencyName
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.QuickCurrency
+import dev.arkbuilders.rate.data.model.QuickCurrency
 import dev.arkbuilders.rate.data.assets.AssetsRepo
 import dev.arkbuilders.rate.data.db.QuickCurrencyRepo
 import dev.arkbuilders.rate.data.preferences.PreferenceKey

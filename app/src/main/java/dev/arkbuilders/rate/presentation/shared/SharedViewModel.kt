@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import dev.arkbuilders.rate.data.db.PairAlertConditionRepo
-import dev.arkbuilders.rate.data.CurrencyCode
-import dev.arkbuilders.rate.data.PairAlertCondition
+import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.data.model.PairAlertCondition
 import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton

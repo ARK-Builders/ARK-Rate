@@ -2,6 +2,9 @@ package dev.arkbuilders.rate.data
 
 import dev.arkbuilders.rate.data.crypto.CryptoCurrencyRepo
 import dev.arkbuilders.rate.data.fiat.FiatCurrencyRepo
+import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.data.model.CurrencyName
+import dev.arkbuilders.rate.data.model.CurrencyRate
 import javax.inject.Inject
 import javax.inject.Singleton
 
