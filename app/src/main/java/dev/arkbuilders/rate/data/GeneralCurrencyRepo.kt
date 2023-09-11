@@ -24,4 +24,12 @@ class GeneralCurrencyRepo @Inject constructor(
         currencyRepos.fold(emptyList()) { currencyName, repo ->
             currencyName + repo.getCurrencyName()
         }
+
+    suspend fun currencyNameByCode(code: CurrencyCode): CurrencyName {
+        return fiatRepo.getCurrencyRate().find { it.code == code }?.let {
+            fiatRepo.currencyNameByCode(code)
+        } ?: let {
+            cryptoRepo.currencyNameByCode(code)
+        }
+    }
 }

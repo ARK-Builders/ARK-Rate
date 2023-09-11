@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.data.crypto
 
+import dev.arkbuilders.rate.data.CurrencyCode
 import dev.arkbuilders.rate.data.CurrencyName
 import dev.arkbuilders.rate.data.CurrencyRate
 import dev.arkbuilders.rate.data.CurrencyRepo
@@ -27,4 +28,7 @@ class CryptoCurrencyRepo @Inject constructor(
         getCurrencyRate().map {
             CurrencyName(it.code, name = "")
         }
+
+    override suspend fun currencyNameByCode(code: CurrencyCode) =
+        CurrencyName(code, name = "")
 }

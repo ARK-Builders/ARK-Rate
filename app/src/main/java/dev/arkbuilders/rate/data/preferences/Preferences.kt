@@ -11,8 +11,17 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+enum class QuickScreenShowAs {
+    TAG_CLOUD, LIST, GRID
+}
+
+enum class QuickScreenSortedBy {
+    USED_COUNT, USED_TIME
+}
+
 sealed class PreferenceKey<out T>(val defaultValue: T) {
-    object QuickScreenTagCloud : PreferenceKey<Boolean>(true)
+    object QuickScreenShowAsKey : PreferenceKey<Int>(0)
+    object QuickScreenSortedByKey : PreferenceKey<Int>(0)
     object FiatFiatRateRound : PreferenceKey<Int>(2)
     object CryptoCryptoRateRound : PreferenceKey<Int>(2)
     object FiatCryptoRateRound : PreferenceKey<Int>(2)
@@ -49,8 +58,11 @@ class Preferences @Inject constructor(val context: Context) {
 
     private fun <T> resolveKey(key: PreferenceKey<T>): Preferences.Key<T> {
         val result = when (key) {
-            PreferenceKey.QuickScreenTagCloud ->
-                booleanPreferencesKey("quick_screen_tag_cloud")
+            PreferenceKey.QuickScreenSortedByKey ->
+                intPreferencesKey("quick_screen_sorted_by")
+
+            PreferenceKey.QuickScreenShowAsKey ->
+                intPreferencesKey("quick_screen_show_as")
 
             PreferenceKey.FiatFiatRateRound ->
                 intPreferencesKey("round_fiat_fiat")
@@ -62,6 +74,7 @@ class Preferences @Inject constructor(val context: Context) {
                 intPreferencesKey("round_crypto_fiat")
 
             PreferenceKey.CrashReport -> booleanPreferencesKey("crash_report")
+
         }
 
         return result as Preferences.Key<T>

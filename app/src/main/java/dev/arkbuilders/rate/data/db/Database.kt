@@ -13,10 +13,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         RoomPairAlertCondition::class,
         RoomQuickCurrency::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
     autoMigrations = [
-        AutoMigration(from = 3, to = 4)
+        AutoMigration(from = 3, to = 5)
     ]
 )
 abstract class Database : RoomDatabase() {

@@ -3,6 +3,7 @@ package dev.arkbuilders.rate.data.fiat
 import android.content.Context
 import com.google.gson.Gson
 import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.data.CurrencyCode
 import dev.arkbuilders.rate.data.CurrencyName
 import dev.arkbuilders.rate.data.CurrencyRate
 import dev.arkbuilders.rate.data.CurrencyRepo
@@ -32,6 +33,9 @@ class FiatCurrencyRepo @Inject constructor(
         getCurrencyRate().map {
             CurrencyName(it.code, fiatCodeToCurrency[it.code]!!)
         }
+
+    override suspend fun currencyNameByCode(code: CurrencyCode) =
+        CurrencyName(code, fiatCodeToCurrency[code]!!)
 }
 
 private val fiatCodeToCurrency = mutableMapOf(

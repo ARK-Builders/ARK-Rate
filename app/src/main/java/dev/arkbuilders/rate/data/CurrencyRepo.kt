@@ -64,5 +64,7 @@ abstract class CurrencyRepo(
 
     abstract suspend fun getCurrencyName(): List<CurrencyName>
 
+    abstract suspend fun currencyNameByCode(code: CurrencyCode): CurrencyName
+
     private val dayInMillis = TimeUnit.DAYS.toMillis(1)
 }

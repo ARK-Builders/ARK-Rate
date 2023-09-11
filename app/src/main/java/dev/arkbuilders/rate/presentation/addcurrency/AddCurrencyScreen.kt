@@ -30,6 +30,8 @@ import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecycle
+import java.time.Instant
+import java.util.Calendar
 
 @Destination
 @Composable
@@ -82,6 +84,7 @@ fun AddCurrencyScreen(
                 }
             )
         }
+
         LazyColumn {
             items(filteredCurrencyNameList.sortedBy { it.code }) { currencyName ->
                 CurrencyItem(

@@ -25,7 +25,6 @@ class SettingsViewModel(
     init {
         viewModelScope.launch {
             listOf(
-                PreferenceKey.QuickScreenTagCloud,
                 PreferenceKey.CrashReport
             ).forEach {
                 boolPrefs[it] = mutableStateOf(prefs.get(it))

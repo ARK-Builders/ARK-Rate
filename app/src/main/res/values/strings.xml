@@ -14,4 +14,9 @@
     <string name="fiat_fiat_rate_round">Fiat/fiat rate round</string>
     <string name="crypto_crypto_rate_round">Crypto/crypto rate round</string>
     <string name="fiat_crypto_rate_round">Fiat/crypto rate round</string>
+    <string name="show_as_tag_cloud">3D</string>
+    <string name="show_as_grid">Grid</string>
+    <string name="show_as_list">List</string>
+    <string name="sorted_by_used_count">Used count</string>
+    <string name="sorted_by_used_time">Used time</string>
 </resources>

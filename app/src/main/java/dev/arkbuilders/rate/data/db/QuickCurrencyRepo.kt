@@ -18,7 +18,8 @@ import javax.inject.Singleton
 data class RoomQuickCurrency(
     @PrimaryKey
     val code: CurrencyCode,
-    val usedCount: Int
+    val usedCount: Int,
+    val usedTime: Long
 )
 
 @Dao
@@ -55,5 +56,5 @@ class QuickCurrencyRepo @Inject constructor(val dao: QuickCurrencyDao) {
     suspend fun delete(code: CurrencyCode) = dao.delete(code)
 }
 
-private fun QuickCurrency.toRoom() = RoomQuickCurrency(code, usedCount)
-private fun RoomQuickCurrency.toQuickCurrency() = QuickCurrency(code, usedCount)
+private fun QuickCurrency.toRoom() = RoomQuickCurrency(code, usedCount, usedTime)
+private fun RoomQuickCurrency.toQuickCurrency() = QuickCurrency(code, usedCount, usedTime)
