@@ -70,7 +70,7 @@ fun AnimatedRateBottomNavigation(
         transitionSpec = {
             slideInVertically { height -> height } with
                     slideOutVertically { height -> height }
-        }, label = ""
+        }
     ) { expanded ->
         if (expanded)
             RateBottomNavigation(currentDestination, onBottomBarItemClick)
