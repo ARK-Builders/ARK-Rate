@@ -3,9 +3,9 @@ package dev.arkbuilders.rate.data.assets
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import dev.arkbuilders.rate.data.CurrencyAmount
+import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.db.AssetsLocalDataSource
-import dev.arkbuilders.rate.data.CurrencyCode
+import dev.arkbuilders.rate.data.model.CurrencyCode
 import javax.inject.Inject
 import javax.inject.Singleton
 

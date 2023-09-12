@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.data
+package dev.arkbuilders.rate.data.model
 
 data class PairAlertCondition(
     val id: Long,

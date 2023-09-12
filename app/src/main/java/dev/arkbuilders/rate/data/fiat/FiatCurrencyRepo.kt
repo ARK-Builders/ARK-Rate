@@ -1,9 +1,11 @@
 package dev.arkbuilders.rate.data.fiat
 
-import dev.arkbuilders.rate.data.CurrencyName
-import dev.arkbuilders.rate.data.CurrencyRate
-import dev.arkbuilders.rate.data.CurrencyRepo
-import dev.arkbuilders.rate.data.CurrencyType
+import android.content.Context
+import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.data.model.CurrencyName
+import dev.arkbuilders.rate.data.model.CurrencyRate
+import dev.arkbuilders.rate.data.model.CurrencyRepo
+import dev.arkbuilders.rate.data.model.CurrencyType
 import dev.arkbuilders.rate.data.network.NetworkStatus
 import dev.arkbuilders.rate.data.db.CurrencyRateLocalDataSource
 import dev.arkbuilders.rate.data.db.FetchTimestampDataSource
@@ -12,6 +14,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FiatCurrencyRepo @Inject constructor(
+    private val ctx: Context,
     private val fiatAPI: FiatAPI,
     private val local: CurrencyRateLocalDataSource,
     private val networkStatus: NetworkStatus,
@@ -21,13 +24,16 @@ class FiatCurrencyRepo @Inject constructor(
 
     override suspend fun fetchRemote(): List<CurrencyRate> =
         fiatAPI.get().rates.map { (code, rate) ->
-            CurrencyRate(code, 1.0 / rate)
+            CurrencyRate(type, code, 1.0 / rate)
         }
 
     override suspend fun getCurrencyName(): List<CurrencyName> =
         getCurrencyRate().map {
             CurrencyName(it.code, fiatCodeToCurrency[it.code]!!)
         }
+
+    override suspend fun currencyNameByCode(code: CurrencyCode) =
+        CurrencyName(code, fiatCodeToCurrency[code]!!)
 }
 
 private val fiatCodeToCurrency = mutableMapOf(

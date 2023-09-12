@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import dev.arkbuilders.rate.data.CurrencyAmount
+import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.assets.AssetsRepo
 import javax.inject.Inject
 import javax.inject.Singleton

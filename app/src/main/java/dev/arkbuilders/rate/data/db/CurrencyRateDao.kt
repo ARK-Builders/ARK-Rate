@@ -6,9 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import dev.arkbuilders.rate.data.CurrencyRate
-import dev.arkbuilders.rate.data.CurrencyType
-import dev.arkbuilders.rate.data.CurrencyCode
+import dev.arkbuilders.rate.data.model.CurrencyRate
+import dev.arkbuilders.rate.data.model.CurrencyType
+import dev.arkbuilders.rate.data.model.CurrencyCode
 import javax.inject.Inject
 
 @Entity
@@ -38,6 +38,8 @@ class CurrencyRateLocalDataSource @Inject constructor(val dao: CurrencyRateDao) 
         dao.getByType(currencyType.name).map { it.toCurrencyRate() }
 }
 
-private fun RoomCurrencyRate.toCurrencyRate() = CurrencyRate(code, rate)
+private fun RoomCurrencyRate.toCurrencyRate() =
+    CurrencyRate(CurrencyType.valueOf(currencyType), code, rate)
+
 private fun CurrencyRate.toRoom(currencyType: CurrencyType) =
     RoomCurrencyRate(code, currencyType.name, rate)

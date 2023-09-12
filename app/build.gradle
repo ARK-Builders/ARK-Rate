@@ -3,15 +3,16 @@ plugins {
     id 'kotlin-kapt'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp' version "1.8.21-1.0.11"
+    id 'kotlin-parcelize'
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "dev.arkbuilders.rate"
         minSdk 23
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
         setProperty("archivesBaseName", "ark-rate")
@@ -97,9 +98,12 @@ dependencies {
     implementation "androidx.room:room-ktx:2.5.1"
     kapt "androidx.room:room-compiler:2.5.1"
 
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
     implementation "androidx.work:work-runtime-ktx:2.8.1"
+    implementation 'io.github.oleksandrbalan:tagcloud:1.0.1'
 
     implementation 'io.github.raamcosta.compose-destinations:core:1.7.41-beta'
     ksp 'io.github.raamcosta.compose-destinations:ksp:1.7.41-beta'

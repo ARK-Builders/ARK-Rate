@@ -9,17 +9,21 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import dev.arkbuilders.rate.data.db.PairAlertConditionRepo
-import dev.arkbuilders.rate.data.CurrencyCode
-import dev.arkbuilders.rate.data.PairAlertCondition
+import dev.arkbuilders.rate.data.db.QuickBaseCurrencyRepo
+import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.data.model.PairAlertCondition
+import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 class SharedViewModel(
-    private val alertConditionRepo: PairAlertConditionRepo
+    private val alertConditionRepo: PairAlertConditionRepo,
+    private val quickBaseCurrencyRepo: QuickBaseCurrencyRepo
 ) : ViewModel() {
-
     var pairAlertConditions = mutableStateListOf<PairAlertCondition>()
     var newCondition by mutableStateOf(PairAlertCondition.defaultInstance())
+
+    var quickCurrencyPickedFlow = MutableSharedFlow<CurrencyCode>()
 
     init {
         viewModelScope.launch {
@@ -115,13 +119,29 @@ class SharedViewModel(
             newCondition = PairAlertCondition.defaultInstance()
         }
     }
+
+    fun onQuickBaseCurrencyPicked(code: CurrencyCode) {
+        viewModelScope.launch {
+            quickBaseCurrencyRepo.insert(code)
+        }
+    }
+
+    fun onQuickCurrencyPicked(code: CurrencyCode) {
+        viewModelScope.launch {
+            quickCurrencyPickedFlow.emit(code)
+        }
+    }
 }
 
 @Singleton
 class SharedViewModelFactory @Inject constructor(
-    private val alertConditionRepo: PairAlertConditionRepo
+    private val alertConditionRepo: PairAlertConditionRepo,
+    private val quickBaseCurrencyRepo: QuickBaseCurrencyRepo
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SharedViewModel(alertConditionRepo) as T
+        return SharedViewModel(
+            alertConditionRepo,
+            quickBaseCurrencyRepo
+        ) as T
     }
 }

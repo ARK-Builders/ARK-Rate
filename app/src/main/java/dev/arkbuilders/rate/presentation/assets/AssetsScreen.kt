@@ -1,6 +1,7 @@
 package dev.arkbuilders.rate.presentation.assets
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,9 +10,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -25,27 +28,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import dev.arkbuilders.rate.data.CurrencyAmount
+import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.SummaryScreenDestination
 import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 
-@RootNavGraph(start = true)
 @Destination
 @Composable
 fun AssetsScreen(navigator: DestinationsNavigator) {
     val viewModel: AssetsViewModel =
         viewModel(factory = DIManager.component.assetsVMFactory())
 
-    Box(Modifier.fillMaxSize()) {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
+    Column(Modifier.fillMaxSize()) {
+        LazyColumn(modifier = Modifier.weight(1f)) {
             items(
                 viewModel.currencyAmountList,
                 key = { it.code }
@@ -58,21 +63,22 @@ fun AssetsScreen(navigator: DestinationsNavigator) {
             }
             ItemAdd(viewModel, navigator)
         }
-        if (viewModel.initialized && viewModel.currencyAmountList.isEmpty()) {
-            FloatingActionButton(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(10.dp),
-                onClick = {
-                    navigator.navigate(
-                        AddCurrencyScreenDestination(
-                            fromScreen = AssetsScreenDestination.route
-                        )
-                    )
-                },
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = "Add")
+        Button(
+            modifier = Modifier
+                .padding(8.dp)
+                .align(Alignment.CenterHorizontally),
+            onClick = {
+                navigator.navigate(
+                    SummaryScreenDestination()
+                )
             }
+        ) {
+            Icon(painterResource(R.drawable.ic_list_alt), contentDescription = "")
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = "Summary",
+                style = MaterialTheme.typography.h6
+            )
         }
     }
 }
@@ -130,7 +136,7 @@ private fun LazyListScope.ItemAdd(
     viewModel: AssetsViewModel,
     navigator: DestinationsNavigator,
 ) {
-    if (viewModel.initialized && viewModel.currencyAmountList.isNotEmpty()) {
+    if (viewModel.initialized) {
         item {
             Box(
                 modifier = Modifier.fillMaxWidth(),

@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -12,11 +13,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
@@ -24,6 +23,7 @@ import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecycle
@@ -35,15 +35,18 @@ fun AddCurrencyScreen(
     sharedViewModel: SharedViewModel = activityViewModel(),
     fromScreen: String,
     numeratorNotDenominator: Boolean? = null,
-    pairAlertConditionId: Long? = null
+    pairAlertConditionId: Long? = null,
+    quickBase: Boolean? = null
 ) {
     val viewModel: AddCurrencyViewModel =
         viewModel(factory = DIManager.component.addCurrencyVMFactory())
     val ctx = LocalContext.current
     var filter by remember { mutableStateOf("") }
-    val filteredCurrencyNameList = viewModel.currencyNameList?.filter { (code, _) ->
-        code.startsWith(filter.uppercase())
-    } ?: emptyList()
+    val filteredCurrencyNameList =
+        viewModel.currencyNameList?.filter { (code, name) ->
+            code.startsWith(filter, ignoreCase = true) ||
+                    name.contains(filter, ignoreCase = true)
+        } ?: emptyList()
 
 
     viewModel.eventsFlow.collectInLaunchedEffectWithLifecycle { event ->
@@ -71,11 +74,14 @@ fun AddCurrencyScreen(
                     .padding(start = 20.dp, end = 20.dp, top = 16.dp),
                 value = filter,
                 onValueChange = { filter = it },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                singleLine = true,
                 label = {
                     Text("Search")
                 }
             )
         }
+
         LazyColumn {
             items(filteredCurrencyNameList.sortedBy { it.code }) { currencyName ->
                 CurrencyItem(
@@ -86,12 +92,25 @@ fun AddCurrencyScreen(
                             AssetsScreenDestination.route -> viewModel.addCurrency(
                                 currencyName.code
                             )
+
                             PairAlertConditionScreenDestination.route -> {
                                 sharedViewModel.onAlertConditionCodePicked(
                                     currencyName.code,
                                     numeratorNotDenominator!!,
                                     pairAlertConditionId!!
                                 )
+                                navController.popBackStack()
+                            }
+
+                            QuickScreenDestination.route -> {
+                                if (quickBase!!) {
+                                    sharedViewModel.onQuickBaseCurrencyPicked(
+                                        currencyName.code
+                                    )
+                                } else
+                                    sharedViewModel.onQuickCurrencyPicked(
+                                        currencyName.code
+                                    )
                                 navController.popBackStack()
                             }
                         }

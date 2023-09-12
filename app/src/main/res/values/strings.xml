@@ -6,4 +6,17 @@
     <string name="crash_dialog_description">Sorry, the application crashed. Please send a report to the developers.</string>
     <string name="crash_dialog_title">Crash</string>
     <string name="crash_dialog_comment">You can add a comment here:</string>
+    <string name="show_quick_currency_as_tag_cloud">Show quick currencies as tag cloud</string>
+    <string name="appearance">Appearance</string>
+    <string name="privacy">Privacy</string>
+    <string name="crash_reports">Crash reports</string>
+    <string name="currencies">Currencies</string>
+    <string name="fiat_fiat_rate_round">Fiat/fiat rate round</string>
+    <string name="crypto_crypto_rate_round">Crypto/crypto rate round</string>
+    <string name="fiat_crypto_rate_round">Fiat/crypto rate round</string>
+    <string name="show_as_tag_cloud">3D</string>
+    <string name="show_as_grid">Grid</string>
+    <string name="show_as_list">List</string>
+    <string name="sorted_by_used_count">Used count</string>
+    <string name="sorted_by_used_time">Used time</string>
 </resources>

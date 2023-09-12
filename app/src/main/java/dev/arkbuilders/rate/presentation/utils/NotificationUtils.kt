@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.PairAlertCondition
+import dev.arkbuilders.rate.data.model.PairAlertCondition
 import dev.arkbuilders.rate.presentation.MainActivity
 
 object NotificationUtils {

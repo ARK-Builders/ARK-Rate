@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import dev.arkbuilders.rate.data.PairAlertCondition
+import dev.arkbuilders.rate.data.model.PairAlertCondition
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import dev.arkbuilders.rate.data.CurrencyAmount
-import dev.arkbuilders.rate.data.CurrencyCode
+import dev.arkbuilders.rate.data.model.CurrencyAmount
+import dev.arkbuilders.rate.data.model.CurrencyCode
 import javax.inject.Inject
 
 @Entity

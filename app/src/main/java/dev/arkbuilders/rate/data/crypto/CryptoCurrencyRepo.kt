@@ -1,9 +1,10 @@
 package dev.arkbuilders.rate.data.crypto
 
-import dev.arkbuilders.rate.data.CurrencyName
-import dev.arkbuilders.rate.data.CurrencyRate
-import dev.arkbuilders.rate.data.CurrencyRepo
-import dev.arkbuilders.rate.data.CurrencyType
+import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.data.model.CurrencyName
+import dev.arkbuilders.rate.data.model.CurrencyRate
+import dev.arkbuilders.rate.data.model.CurrencyRepo
+import dev.arkbuilders.rate.data.model.CurrencyType
 import dev.arkbuilders.rate.data.network.NetworkStatus
 import dev.arkbuilders.rate.data.db.CurrencyRateLocalDataSource
 import dev.arkbuilders.rate.data.db.FetchTimestampDataSource
@@ -21,10 +22,13 @@ class CryptoCurrencyRepo @Inject constructor(
 
     override suspend fun fetchRemote(): List<CurrencyRate> =
         cryptoAPI.getCryptoRates()
-            .map { CurrencyRate(it.symbol.uppercase(), it.current_price) }
+            .map { CurrencyRate(type, it.symbol.uppercase(), it.current_price) }
 
     override suspend fun getCurrencyName(): List<CurrencyName> =
         getCurrencyRate().map {
             CurrencyName(it.code, name = "")
         }
+
+    override suspend fun currencyNameByCode(code: CurrencyCode) =
+        CurrencyName(code, name = "")
 }

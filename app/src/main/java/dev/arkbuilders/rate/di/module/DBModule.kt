@@ -23,6 +23,9 @@ class DBModule {
     fun assetsDao(db: Database) = db.assetsDao()
 
     @Provides
+    fun quickDao(db: Database) = db.quickDao()
+
+    @Provides
     fun rateDao(db: Database) = db.rateDao()
 
     @Provides
@@ -30,4 +33,7 @@ class DBModule {
 
     @Provides
     fun fetchTimestampDao(db: Database) = db.fetchTimestampDao()
+
+    @Provides
+    fun quickBaseDao(db: Database) = db.quickBaseCurrencyDao()
 }

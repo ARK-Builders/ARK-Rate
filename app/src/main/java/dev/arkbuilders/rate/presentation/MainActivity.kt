@@ -6,8 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
+import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.di.NavDepContainer
 import dev.arkbuilders.rate.presentation.theme.ARKRateTheme
+import kotlinx.coroutines.launch
 
 val LocalDependencyContainer = staticCompositionLocalOf<NavDepContainer> {
     error("No dependency container provided!")

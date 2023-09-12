@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.data
+package dev.arkbuilders.rate.data.model
 
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +63,8 @@ abstract class CurrencyRepo(
     protected abstract suspend fun fetchRemote(): List<CurrencyRate>
 
     abstract suspend fun getCurrencyName(): List<CurrencyName>
+
+    abstract suspend fun currencyNameByCode(code: CurrencyCode): CurrencyName
 
     private val dayInMillis = TimeUnit.DAYS.toMillis(1)
 }
