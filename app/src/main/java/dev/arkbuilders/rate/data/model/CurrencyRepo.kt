@@ -1,7 +1,6 @@
 package dev.arkbuilders.rate.data.model
 
 import android.util.Log
-import dev.arkbuilders.rate.data.model.CurrencyCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex

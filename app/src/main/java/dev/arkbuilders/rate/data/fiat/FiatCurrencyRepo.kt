@@ -1,8 +1,6 @@
 package dev.arkbuilders.rate.data.fiat
 
 import android.content.Context
-import com.google.gson.Gson
-import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.model.CurrencyName
 import dev.arkbuilders.rate.data.model.CurrencyRate

@@ -11,12 +11,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         RoomCurrencyRate::class,
         RoomFetchTimestamp::class,
         RoomPairAlertCondition::class,
-        RoomQuickCurrency::class
+        RoomQuickCurrency::class,
+        RoomQuickConvertToCurrency::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = true,
     autoMigrations = [
-        AutoMigration(from = 3, to = 5)
+        AutoMigration(from = 3, to = 6)
     ]
 )
 abstract class Database : RoomDatabase() {
@@ -25,6 +26,7 @@ abstract class Database : RoomDatabase() {
     abstract fun fetchTimestampDao(): FetchTimestampDao
     abstract fun pairAlertDao(): PairAlertConditionDao
     abstract fun quickDao(): QuickCurrencyDao
+    abstract fun quickConvertToCurrencyDao(): QuickConvertToCurrencyDao
 
     companion object {
         const val DB_NAME = "arkrate.db"

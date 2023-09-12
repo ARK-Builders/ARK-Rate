@@ -16,7 +16,9 @@ import dev.arkbuilders.rate.data.model.CurrencyName
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
 import dev.arkbuilders.rate.data.model.QuickCurrency
 import dev.arkbuilders.rate.data.assets.AssetsRepo
+import dev.arkbuilders.rate.data.db.QuickConvertToCurrencyRepo
 import dev.arkbuilders.rate.data.db.QuickCurrencyRepo
+import dev.arkbuilders.rate.data.model.QuickConvertToCurrency
 import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.data.preferences.Preferences
 import dev.arkbuilders.rate.data.preferences.QuickScreenShowAs
@@ -34,14 +36,18 @@ class CurrencyAttraction(
     val attractionRatio: Double
 )
 
+const val CONVERT_TO_LIMIT = 3
+
 class QuickViewModel(
     val sharedViewModel: SharedViewModel,
     val currencyRepo: GeneralCurrencyRepo,
     val assetsRepo: AssetsRepo,
     val quickCurrencyRepo: QuickCurrencyRepo,
+    val quickConvertToCurrencyRepo: QuickConvertToCurrencyRepo,
     val prefs: Preferences
 ) : ViewModel() {
     val currencyAttractionList = mutableStateListOf<CurrencyAttraction>()
+    val quickConvertToCurrency = mutableStateListOf<QuickConvertToCurrency>()
     var selectedCurrency: CurrencyAmount? by mutableStateOf(null)
     val navigateToSummary = MutableSharedFlow<CurrencyAmount>()
     var showAs by mutableStateOf(QuickScreenShowAs.TAG_CLOUD)
@@ -60,6 +66,11 @@ class QuickViewModel(
             quickCurrencyRepo.allFlow().onEach { currencies ->
                 quickCurrencies = currencies
                 calculateAttraction()
+            }.launchIn(viewModelScope)
+
+            quickConvertToCurrencyRepo.allFlow().onEach {
+                quickConvertToCurrency.clear()
+                quickConvertToCurrency.addAll(it)
             }.launchIn(viewModelScope)
 
             sharedViewModel.quickCurrencyPickedFlow.onEach { code ->
@@ -105,6 +116,10 @@ class QuickViewModel(
         val leadingZeros = "^0+(?=\\d)".toRegex()
 
         return newInput.replace(leadingZeros, "")
+    }
+
+    fun onRemoveConvertToCurrency(code: CurrencyCode) = viewModelScope.launch {
+        quickConvertToCurrencyRepo.delete(code)
     }
 
     private suspend fun calculateAttraction() {
@@ -185,6 +200,7 @@ class QuickViewModelFactory @AssistedInject constructor(
     private val assetsRepo: AssetsRepo,
     private val quickCurrencyRepo: QuickCurrencyRepo,
     private val currencyRepo: GeneralCurrencyRepo,
+    private val quickConvertToCurrencyRepo: QuickConvertToCurrencyRepo,
     private val prefs: Preferences,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -193,6 +209,7 @@ class QuickViewModelFactory @AssistedInject constructor(
             currencyRepo,
             assetsRepo,
             quickCurrencyRepo,
+            quickConvertToCurrencyRepo,
             prefs
         ) as T
     }

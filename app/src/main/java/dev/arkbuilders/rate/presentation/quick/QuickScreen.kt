@@ -97,7 +97,7 @@ fun QuickScreen(
     if (viewModel.selectedCurrency == null) {
         SelectQuickCurrency(navigator, viewModel)
     } else {
-        InputAmount(viewModel, viewModel.selectedCurrency!!)
+        QuickScreenInputAmount(navigator, viewModel, viewModel.selectedCurrency!!)
     }
 }
 
@@ -189,7 +189,8 @@ private fun SelectQuickCurrency(
             onClick = {
                 navigator.navigate(
                     AddCurrencyScreenDestination(
-                        fromScreen = QuickScreenDestination.route
+                        fromScreen = QuickScreenDestination.route,
+                        quickScreenConvertTo = false
                     )
                 )
             }
@@ -203,46 +204,6 @@ private fun SelectQuickCurrency(
                 )
                 Text(text = "Search")
             }
-        }
-    }
-}
-
-@Composable
-private fun InputAmount(
-    viewModel: QuickViewModel,
-    amount: CurrencyAmount,
-) {
-    var amountInput by remember {
-        mutableStateOf(
-            if (amount.amount == 0.0) ""
-            else amount.amount.removeFractionalPartIfEmpty()
-        )
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        OutlinedTextField(
-            value = amountInput,
-            onValueChange = { newInput ->
-                amountInput = viewModel.onAmountChanged(
-                    amountInput,
-                    newInput
-                )
-            },
-            label = { Text(viewModel.selectedCurrency!!.code) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            maxLines = 1,
-        )
-        OutlinedButton(
-            modifier = Modifier.padding(8.dp),
-            onClick = {
-                viewModel.onExchange()
-            }
-        ) {
-            Text(text = "Convert", fontSize = 20.sp)
         }
     }
 }

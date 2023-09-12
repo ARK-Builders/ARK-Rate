@@ -40,16 +40,18 @@ fun AddCurrencyScreen(
     sharedViewModel: SharedViewModel = activityViewModel(),
     fromScreen: String,
     numeratorNotDenominator: Boolean? = null,
-    pairAlertConditionId: Long? = null
+    pairAlertConditionId: Long? = null,
+    quickScreenConvertTo: Boolean? = null
 ) {
     val viewModel: AddCurrencyViewModel =
         viewModel(factory = DIManager.component.addCurrencyVMFactory())
     val ctx = LocalContext.current
     var filter by remember { mutableStateOf("") }
-    val filteredCurrencyNameList = viewModel.currencyNameList?.filter { (code, name) ->
-        code.startsWith(filter, ignoreCase = true) ||
-                name.contains(filter, ignoreCase = true)
-    } ?: emptyList()
+    val filteredCurrencyNameList =
+        viewModel.currencyNameList?.filter { (code, name) ->
+            code.startsWith(filter, ignoreCase = true) ||
+                    name.contains(filter, ignoreCase = true)
+        } ?: emptyList()
 
 
     viewModel.eventsFlow.collectInLaunchedEffectWithLifecycle { event ->
@@ -95,6 +97,7 @@ fun AddCurrencyScreen(
                             AssetsScreenDestination.route -> viewModel.addCurrency(
                                 currencyName.code
                             )
+
                             PairAlertConditionScreenDestination.route -> {
                                 sharedViewModel.onAlertConditionCodePicked(
                                     currencyName.code,
@@ -103,8 +106,16 @@ fun AddCurrencyScreen(
                                 )
                                 navController.popBackStack()
                             }
+
                             QuickScreenDestination.route -> {
-                                sharedViewModel.onQuickCurrencyPicked(currencyName.code)
+                                if (quickScreenConvertTo!!) {
+                                    sharedViewModel.onQuickCurrencyConvertToPicked(
+                                        currencyName.code
+                                    )
+                                } else
+                                    sharedViewModel.onQuickCurrencyPicked(
+                                        currencyName.code
+                                    )
                                 navController.popBackStack()
                             }
                         }

@@ -1,7 +1,6 @@
 package dev.arkbuilders.rate.data.model
 
 import android.os.Parcelable
-import dev.arkbuilders.rate.data.model.CurrencyCode
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

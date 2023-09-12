@@ -13,11 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
 import dev.arkbuilders.rate.data.model.CurrencyAmount
+import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.presentation.destinations.SummaryScreenDestination
 import java.math.RoundingMode
 import java.text.DecimalFormat
 

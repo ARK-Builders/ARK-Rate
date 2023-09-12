@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import dev.arkbuilders.rate.data.db.PairAlertConditionRepo
+import dev.arkbuilders.rate.data.db.QuickConvertToCurrencyRepo
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.model.PairAlertCondition
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 class SharedViewModel(
-    private val alertConditionRepo: PairAlertConditionRepo
+    private val alertConditionRepo: PairAlertConditionRepo,
+    private val quickConvertToCurrencyRepo: QuickConvertToCurrencyRepo
 ) : ViewModel() {
 
     var pairAlertConditions = mutableStateListOf<PairAlertCondition>()
@@ -119,6 +121,12 @@ class SharedViewModel(
         }
     }
 
+    fun onQuickCurrencyConvertToPicked(code: CurrencyCode) {
+        viewModelScope.launch {
+            quickConvertToCurrencyRepo.insert(code)
+        }
+    }
+
     fun onQuickCurrencyPicked(code: CurrencyCode) {
         viewModelScope.launch {
             quickCurrencyPickedFlow.emit(code)
@@ -128,9 +136,13 @@ class SharedViewModel(
 
 @Singleton
 class SharedViewModelFactory @Inject constructor(
-    private val alertConditionRepo: PairAlertConditionRepo
+    private val alertConditionRepo: PairAlertConditionRepo,
+    private val quickConvertToCurrencyRepo: QuickConvertToCurrencyRepo
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SharedViewModel(alertConditionRepo) as T
+        return SharedViewModel(
+            alertConditionRepo,
+            quickConvertToCurrencyRepo
+        ) as T
     }
 }
