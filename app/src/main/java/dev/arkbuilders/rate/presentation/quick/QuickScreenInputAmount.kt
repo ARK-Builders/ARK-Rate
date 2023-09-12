@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -18,11 +17,9 @@ import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,23 +32,18 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
-import dev.arkbuilders.rate.presentation.shared.SharedViewModel
-import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 
 @Composable
@@ -121,15 +113,15 @@ fun QuickScreenInputAmount(
                 text = "Convert ${amount.code} to:",
                 style = MaterialTheme.typography.h5
             )
-            viewModel.quickConvertToCurrency.forEach {
-                QuickConvertToCurrencyItem(it.code, viewModel)
+            viewModel.quickBaseCurrency.forEach {
+                QuickBaseCurrencyItem(it.code, viewModel)
             }
             IconButton(
                 onClick = {
                     navigator.navigate(
                         AddCurrencyScreenDestination(
                             fromScreen = QuickScreenDestination.route,
-                            quickScreenConvertTo = true
+                            quickBase = true
                         )
                     )
                 }
@@ -145,7 +137,7 @@ fun QuickScreenInputAmount(
         Button(
             modifier = Modifier.padding(12.dp),
             onClick = {
-                if (viewModel.quickConvertToCurrency.isEmpty()) {
+                if (viewModel.quickBaseCurrency.isEmpty()) {
                     Toast.makeText(
                         ctx,
                         "Add at least one currency to convert into",
@@ -161,7 +153,7 @@ fun QuickScreenInputAmount(
 }
 
 @Composable
-private fun QuickConvertToCurrencyItem(
+private fun QuickBaseCurrencyItem(
     code: CurrencyCode,
     viewModel: QuickViewModel
 ) {
@@ -170,7 +162,7 @@ private fun QuickConvertToCurrencyItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = code, style = MaterialTheme.typography.h6)
-        IconButton(onClick = { viewModel.onRemoveConvertToCurrency(code) }) {
+        IconButton(onClick = { viewModel.onRemoveBaseCurrency(code) }) {
             Icon(
                 painterResource(R.drawable.ic_delete_outline),
                 tint = MaterialTheme.colors.secondary,

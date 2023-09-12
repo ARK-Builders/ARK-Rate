@@ -13,12 +13,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
@@ -30,8 +27,6 @@ import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecycle
-import java.time.Instant
-import java.util.Calendar
 
 @Destination
 @Composable
@@ -41,7 +36,7 @@ fun AddCurrencyScreen(
     fromScreen: String,
     numeratorNotDenominator: Boolean? = null,
     pairAlertConditionId: Long? = null,
-    quickScreenConvertTo: Boolean? = null
+    quickBase: Boolean? = null
 ) {
     val viewModel: AddCurrencyViewModel =
         viewModel(factory = DIManager.component.addCurrencyVMFactory())
@@ -108,8 +103,8 @@ fun AddCurrencyScreen(
                             }
 
                             QuickScreenDestination.route -> {
-                                if (quickScreenConvertTo!!) {
-                                    sharedViewModel.onQuickCurrencyConvertToPicked(
+                                if (quickBase!!) {
+                                    sharedViewModel.onQuickBaseCurrencyPicked(
                                         currencyName.code
                                     )
                                 } else

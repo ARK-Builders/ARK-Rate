@@ -6,6 +6,6 @@ class QuickCurrency(
     val usedTime: Long
 )
 
-class QuickConvertToCurrency(
+class QuickBaseCurrency(
     val code: CurrencyCode
 )

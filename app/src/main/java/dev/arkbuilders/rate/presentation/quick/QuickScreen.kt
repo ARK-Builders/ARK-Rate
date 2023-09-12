@@ -192,7 +192,7 @@ private fun SelectQuickCurrency(
                 navigator.navigate(
                     AddCurrencyScreenDestination(
                         fromScreen = QuickScreenDestination.route,
-                        quickScreenConvertTo = false
+                        quickBase = false
                     )
                 )
             }

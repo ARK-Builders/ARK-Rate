@@ -7,39 +7,39 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import dev.arkbuilders.rate.data.model.CurrencyCode
-import dev.arkbuilders.rate.data.model.QuickConvertToCurrency
+import dev.arkbuilders.rate.data.model.QuickBaseCurrency
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Entity
-data class RoomQuickConvertToCurrency(
+data class RoomQuickBaseCurrency(
     @PrimaryKey
     val code: CurrencyCode
 )
 
 @Dao
-interface QuickConvertToCurrencyDao {
+interface QuickBaseCurrencyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(quickCurrency: RoomQuickConvertToCurrency)
+    suspend fun insert(quickCurrency: RoomQuickBaseCurrency)
 
-    @Query("SELECT * FROM RoomQuickConvertToCurrency")
-    suspend fun getAll(): List<RoomQuickConvertToCurrency>
+    @Query("SELECT * FROM RoomQuickBaseCurrency")
+    suspend fun getAll(): List<RoomQuickBaseCurrency>
 
-    @Query("SELECT * FROM RoomQuickConvertToCurrency")
-    fun allFlow(): Flow<List<RoomQuickConvertToCurrency>>
+    @Query("SELECT * FROM RoomQuickBaseCurrency")
+    fun allFlow(): Flow<List<RoomQuickBaseCurrency>>
 
-    @Query("DELETE FROM RoomQuickConvertToCurrency where code = :code")
+    @Query("DELETE FROM RoomQuickBaseCurrency where code = :code")
     suspend fun delete(code: CurrencyCode)
 }
 
 @Singleton
-class QuickConvertToCurrencyRepo @Inject constructor(
-    private val dao: QuickConvertToCurrencyDao
+class QuickBaseCurrencyRepo @Inject constructor(
+    private val dao: QuickBaseCurrencyDao
 ) {
     suspend fun insert(code: CurrencyCode) =
-        dao.insert(RoomQuickConvertToCurrency(code = code))
+        dao.insert(RoomQuickBaseCurrency(code = code))
 
     suspend fun getAll() = dao.getAll().map { it.toQuickCurrency() }
 
@@ -49,5 +49,5 @@ class QuickConvertToCurrencyRepo @Inject constructor(
     suspend fun delete(code: CurrencyCode) = dao.delete(code)
 }
 
-private fun RoomQuickConvertToCurrency.toQuickCurrency() =
-    QuickConvertToCurrency(code)
+private fun RoomQuickBaseCurrency.toQuickCurrency() =
+    QuickBaseCurrency(code)

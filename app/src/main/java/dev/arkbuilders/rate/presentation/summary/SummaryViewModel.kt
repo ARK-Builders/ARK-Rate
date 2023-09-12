@@ -14,9 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
 import dev.arkbuilders.rate.data.assets.AssetsRepo
-import dev.arkbuilders.rate.data.db.QuickConvertToCurrencyRepo
-import dev.arkbuilders.rate.data.model.CurrencyCode
-import dev.arkbuilders.rate.data.model.QuickConvertToCurrency
+import dev.arkbuilders.rate.data.db.QuickBaseCurrencyRepo
 import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.data.preferences.Preferences
 import java.text.DecimalFormat
@@ -25,7 +23,7 @@ class SummaryViewModel(
     private val selectedAmount: CurrencyAmount?,
     private val assetsRepo: AssetsRepo,
     private val currencyRepo: GeneralCurrencyRepo,
-    private val quickConvertToCurrencyRepo: QuickConvertToCurrencyRepo,
+    private val quickBaseCurrencyRepo: QuickBaseCurrencyRepo,
     private val prefs: Preferences,
 ) : ViewModel() {
     var total = MutableStateFlow<Map<String, Double>?>(null)
@@ -106,7 +104,7 @@ class SummaryViewModel(
     }
 
     private suspend fun calculateSelectedTotal() {
-        val convertToList = quickConvertToCurrencyRepo.getAll().map { it.code }
+        val baseList = quickBaseCurrencyRepo.getAll().map { it.code }
         val rates = currencyRepo
             .getCurrencyRate()
             .associate { it.code to it.rate }
@@ -114,7 +112,7 @@ class SummaryViewModel(
         val USD = selectedAmount!!.amount * rates[selectedAmount.code]!!
         result[selectedAmount.code] = selectedAmount.amount
 
-        convertToList.forEach {
+        baseList.forEach {
             result[it] = USD / rates[it]!!
         }
 
@@ -123,23 +121,23 @@ class SummaryViewModel(
     }
 
     private suspend fun calculateSelectedExchange() {
-        val convertToList =
-            quickConvertToCurrencyRepo.getAll().map { it.code }.toMutableList()
+        val baseList =
+            quickBaseCurrencyRepo.getAll().map { it.code }.toMutableList()
         val rates = currencyRepo
             .getCurrencyRate()
             .associateBy { it.code }
         val result = mutableMapOf<String, String>()
 
-        convertToList.find {
+        baseList.find {
             it == selectedAmount!!.code
         }?.let { duplicate ->
-            convertToList.remove(duplicate)
+            baseList.remove(duplicate)
         }
 
-        convertToList.add(0, selectedAmount!!.code)
+        baseList.add(0, selectedAmount!!.code)
 
-        convertToList.forEach { iter1 ->
-            convertToList.forEach { iter2 ->
+        baseList.forEach { iter1 ->
+            baseList.forEach { iter2 ->
                 if (iter1 == iter2) {
                     return@forEach
                 }
@@ -185,7 +183,7 @@ class SummaryViewModelFactory @AssistedInject constructor(
     @Assisted private val amount: CurrencyAmount?,
     private val assetsRepo: AssetsRepo,
     private val currencyRepo: GeneralCurrencyRepo,
-    private val quickConvertToCurrencyRepo: QuickConvertToCurrencyRepo,
+    private val quickBaseCurrencyRepo: QuickBaseCurrencyRepo,
     private val prefs: Preferences
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -193,7 +191,7 @@ class SummaryViewModelFactory @AssistedInject constructor(
             amount,
             assetsRepo,
             currencyRepo,
-            quickConvertToCurrencyRepo,
+            quickBaseCurrencyRepo,
             prefs
         ) as T
     }
