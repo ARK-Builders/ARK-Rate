@@ -14,10 +14,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         RoomQuickCurrency::class,
         RoomQuickConvertToCurrency::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
     autoMigrations = [
-        AutoMigration(from = 3, to = 6)
+        AutoMigration(from = 3, to = 7)
     ]
 )
 abstract class Database : RoomDatabase() {

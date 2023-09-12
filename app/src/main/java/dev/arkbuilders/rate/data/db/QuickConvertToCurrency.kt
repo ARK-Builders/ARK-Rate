@@ -15,14 +15,13 @@ import javax.inject.Singleton
 
 @Entity
 data class RoomQuickConvertToCurrency(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    @PrimaryKey
     val code: CurrencyCode
 )
 
 @Dao
 interface QuickConvertToCurrencyDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(quickCurrency: RoomQuickConvertToCurrency)
 
     @Query("SELECT * FROM RoomQuickConvertToCurrency")

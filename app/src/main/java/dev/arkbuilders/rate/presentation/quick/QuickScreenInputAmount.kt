@@ -109,18 +109,18 @@ fun QuickScreenInputAmount(
             singleLine = true,
             maxLines = 1,
         )
-        Text(
-            modifier = Modifier.padding(top = 6.dp),
-            text = "Convert ${amount.code} to:",
-            style = MaterialTheme.typography.h5
-        )
         Column(
             modifier = Modifier
                 .weight(1f)
+                .padding(top = 6.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                text = "Convert ${amount.code} to:",
+                style = MaterialTheme.typography.h5
+            )
             viewModel.quickConvertToCurrency.forEach {
                 QuickConvertToCurrencyItem(it.code, viewModel)
             }
