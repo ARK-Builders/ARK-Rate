@@ -23,14 +23,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        lifecycleScope.launch {
-            val assetsRepo = DIManager.component.assetsRepo()
-            val startFromQuickScreen = assetsRepo.allCurrencyAmount().isNotEmpty()
-            setContent {
-                ARKRateTheme {
-                    CompositionLocalProvider(LocalDependencyContainer provides dependencyContainer) {
-                        MainScreen(startFromQuickScreen)
-                    }
+        setContent {
+            ARKRateTheme {
+                CompositionLocalProvider(LocalDependencyContainer provides dependencyContainer) {
+                    MainScreen()
                 }
             }
         }

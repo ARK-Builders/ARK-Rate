@@ -59,6 +59,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.model.CurrencyAmount
@@ -78,6 +79,7 @@ import eu.wewox.tagcloud.TagCloudItemScope
 import eu.wewox.tagcloud.rememberTagCloudState
 import kotlinx.coroutines.launch
 
+@RootNavGraph(start = true)
 @Destination
 @Composable
 fun QuickScreen(

@@ -15,13 +15,16 @@ import com.ramcosta.composedestinations.utils.startDestination
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.SummaryScreenDestination
+import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.ui.AnimatedRateBottomNavigation
 import dev.arkbuilders.rate.presentation.ui.RateScaffold
+import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import dev.arkbuilders.rate.presentation.utils.keyboardAsState
 
 
 @Composable
-fun MainScreen(startFromQuickScreen: Boolean) {
+fun MainScreen() {
     val engine = rememberNavHostEngine()
     val navController = engine.rememberNavController()
 
@@ -35,6 +38,11 @@ fun MainScreen(startFromQuickScreen: Boolean) {
         AddCurrencyScreenDestination.route -> {
             bottomBarVisible.value = false
         }
+
+        SummaryScreenDestination.route -> {
+            bottomBarVisible.value = false
+        }
+
         else -> {
             bottomBarVisible.value = true
         }
@@ -44,7 +52,9 @@ fun MainScreen(startFromQuickScreen: Boolean) {
         bottomBarVisible.value = false
 
     RateScaffold(
-        modifier = Modifier.systemBarsPadding().imePadding(),
+        modifier = Modifier
+            .systemBarsPadding()
+            .imePadding(),
         navController = navController,
         bottomBar = { destination ->
             AnimatedRateBottomNavigation(
@@ -58,16 +68,12 @@ fun MainScreen(startFromQuickScreen: Boolean) {
             )
         }
     ) {
-        val startRoute = if (startFromQuickScreen)
-            QuickScreenDestination.startDestination
-        else
-            AssetsScreenDestination.startDestination
         DestinationsNavHost(
             engine = engine,
             navController = navController,
             navGraph = NavGraphs.root,
             modifier = Modifier.padding(it),
-            startRoute = startRoute
+            startRoute = QuickScreenDestination.startDestination
         )
     }
 }

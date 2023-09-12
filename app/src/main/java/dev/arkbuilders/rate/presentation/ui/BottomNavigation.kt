@@ -32,12 +32,6 @@ sealed class BottomNavItem(
         AssetsScreenDestination.route
     )
 
-    object Summary : BottomNavItem(
-        "Summary",
-        R.drawable.ic_list_alt,
-        SummaryScreenDestination.invoke(amount = null).route
-    )
-
     object PairAlert : BottomNavItem(
         "Alerts",
         R.drawable.ic_notifications,
@@ -78,9 +72,8 @@ fun RateBottomNavigation(
     onBottomBarItemClick: (String) -> Unit
 ) {
     val items = listOf(
-        BottomNavItem.Assets,
-        BottomNavItem.Summary,
         BottomNavItem.Quick,
+        BottomNavItem.Assets,
         BottomNavItem.PairAlert,
         BottomNavItem.Settings
     )

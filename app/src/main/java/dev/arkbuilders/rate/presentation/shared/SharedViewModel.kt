@@ -20,7 +20,6 @@ class SharedViewModel(
     private val alertConditionRepo: PairAlertConditionRepo,
     private val quickConvertToCurrencyRepo: QuickConvertToCurrencyRepo
 ) : ViewModel() {
-
     var pairAlertConditions = mutableStateListOf<PairAlertCondition>()
     var newCondition by mutableStateOf(PairAlertCondition.defaultInstance())
 

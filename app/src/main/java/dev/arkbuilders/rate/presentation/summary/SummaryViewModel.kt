@@ -128,7 +128,6 @@ class SummaryViewModel(
         val rates = currencyRepo
             .getCurrencyRate()
             .associateBy { it.code }
-            .filter { it.key in convertToList }
         val result = mutableMapOf<String, String>()
 
         convertToList.find {
