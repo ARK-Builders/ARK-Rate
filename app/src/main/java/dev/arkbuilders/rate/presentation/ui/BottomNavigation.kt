@@ -1,8 +1,15 @@
+@file:OptIn(ExperimentalAnimationApi::class)
+
 package dev.arkbuilders.rate.presentation.ui
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -44,7 +51,7 @@ sealed class BottomNavItem(
         QuickScreenDestination.route
     )
 
-    object Settings: BottomNavItem(
+    object Settings : BottomNavItem(
         "Settings",
         R.drawable.ic_settings,
         SettingsScreenDestination.route
@@ -58,12 +65,16 @@ fun AnimatedRateBottomNavigation(
     onBottomBarItemClick: (String) -> Unit,
     bottomBarVisible: State<Boolean>
 ) {
-    AnimatedVisibility(
-        visible = bottomBarVisible.value,
-        enter = fadeIn(),
-        exit = fadeOut(),
-        content = { RateBottomNavigation(currentDestination, onBottomBarItemClick) }
-    )
+    AnimatedContent(
+        targetState = bottomBarVisible.value,
+        transitionSpec = {
+            slideInVertically { height -> height } with
+                    slideOutVertically { height -> height }
+        }, label = ""
+    ) { expanded ->
+        if (expanded)
+            RateBottomNavigation(currentDestination, onBottomBarItemClick)
+    }
 }
 
 @Composable
