@@ -13,8 +13,8 @@ android {
         applicationId "dev.arkbuilders.rate"
         minSdk 23
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.2.0"
         setProperty("archivesBaseName", "ark-rate")
 
         def login = System.getenv("ACRA_LOGIN") ?: ""
