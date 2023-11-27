@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 1,
-      "versionName": "1.0",
-      "outputFile": "app-release.apk"
+      "versionCode": 3,
+      "versionName": "1.3.0",
+      "outputFile": "ark-rate-release.apk"
     }
   ],
   "elementType": "File"

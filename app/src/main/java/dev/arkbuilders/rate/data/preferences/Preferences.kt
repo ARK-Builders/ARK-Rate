@@ -50,7 +50,7 @@ class Preferences @Inject constructor(val context: Context) {
         }
     }
 
-    suspend fun <T> flow(key: PreferenceKey<T>) =
+    fun <T> flow(key: PreferenceKey<T>) =
         dataStore.data.map { pref ->
             val prefKey = resolveKey(key)
             pref[prefKey] ?: key.defaultValue
