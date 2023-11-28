@@ -7,15 +7,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.assets.AssetsRepo
+import dev.arkbuilders.rate.data.model.CurrencyAmount
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
-class AssetsViewModel(
-    private val assetsRepo: AssetsRepo
-) : ViewModel() {
+class AssetsViewModel(private val assetsRepo: AssetsRepo) : ViewModel() {
     var currencyAmountList = mutableStateListOf<CurrencyAmount>()
     var initialized by mutableStateOf(false)
 
@@ -29,14 +27,9 @@ class AssetsViewModel(
         }
     }
 
-    fun onAmountChanged(
-        amount: CurrencyAmount,
-        oldInput: String,
-        newInput: String
-    ): String {
+    fun onAmountChanged(amount: CurrencyAmount, oldInput: String, newInput: String): String {
         val containsDigitsAndDot = Regex("[0-9]*\\.?[0-9]*")
-        if (!containsDigitsAndDot.matches(newInput))
-            return oldInput
+        if (!containsDigitsAndDot.matches(newInput)) return oldInput
 
         val containsDigit = Regex(".*[0-9].*")
         if (!containsDigit.matches(newInput)) {
@@ -61,9 +54,8 @@ class AssetsViewModel(
 }
 
 @Singleton
-class AssetsViewModelFactory @Inject constructor(
-    private val assetsRepo: AssetsRepo
-) : ViewModelProvider.Factory {
+class AssetsViewModelFactory @Inject constructor(private val assetsRepo: AssetsRepo) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AssetsViewModel(assetsRepo) as T
     }

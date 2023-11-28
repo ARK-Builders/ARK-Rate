@@ -9,14 +9,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GeneralCurrencyRepo @Inject constructor(
-    val fiatRepo: FiatCurrencyRepo,
-    val cryptoRepo: CryptoCurrencyRepo
-) {
-    private val currencyRepos = listOf(
-        fiatRepo,
-        cryptoRepo
-    )
+class GeneralCurrencyRepo @Inject constructor(val fiatRepo: FiatCurrencyRepo,
+        val cryptoRepo: CryptoCurrencyRepo) {
+    private val currencyRepos = listOf(fiatRepo, cryptoRepo)
 
     suspend fun getCurrencyRate(): List<CurrencyRate> =
         currencyRepos.fold(emptyList()) { codeToRate, repo ->
@@ -31,8 +26,9 @@ class GeneralCurrencyRepo @Inject constructor(
     suspend fun currencyNameByCode(code: CurrencyCode): CurrencyName {
         return fiatRepo.getCurrencyRate().find { it.code == code }?.let {
             fiatRepo.currencyNameByCode(code)
-        } ?: let {
-            cryptoRepo.currencyNameByCode(code)
         }
+            ?: let {
+                cryptoRepo.currencyNameByCode(code)
+            }
     }
 }

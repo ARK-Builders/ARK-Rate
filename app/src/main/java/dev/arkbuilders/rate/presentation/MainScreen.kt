@@ -13,13 +13,10 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.utils.startDestination
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
-import dev.arkbuilders.rate.presentation.destinations.AssetsScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.SummaryScreenDestination
-import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.ui.AnimatedRateBottomNavigation
 import dev.arkbuilders.rate.presentation.ui.RateScaffold
-import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import dev.arkbuilders.rate.presentation.utils.keyboardAsState
 
 
@@ -48,33 +45,24 @@ fun MainScreen() {
         }
     }
 
-    if (isKeyboardOpen)
-        bottomBarVisible.value = false
+    if (isKeyboardOpen) bottomBarVisible.value = false
 
-    RateScaffold(
-        modifier = Modifier
-            .systemBarsPadding()
-            .imePadding(),
-        navController = navController,
-        bottomBar = { destination ->
-            AnimatedRateBottomNavigation(
-                currentDestination = destination,
-                onBottomBarItemClick = {
-                    navController.navigate(it) {
-                        launchSingleTop = true
-                    }
-                },
-                bottomBarVisible = bottomBarVisible
-            )
-        }
-    ) {
-        DestinationsNavHost(
-            engine = engine,
-            navController = navController,
-            navGraph = NavGraphs.root,
-            modifier = Modifier.padding(it),
-            startRoute = QuickScreenDestination.startDestination
-        )
+    RateScaffold(modifier = Modifier.systemBarsPadding().imePadding(),
+                 navController = navController,
+                 bottomBar = { destination ->
+                     AnimatedRateBottomNavigation(currentDestination = destination,
+                                                  onBottomBarItemClick = {
+                                                      navController.navigate(it) {
+                                                          launchSingleTop = true
+                                                      }
+                                                  },
+                                                  bottomBarVisible = bottomBarVisible)
+                 }) {
+        DestinationsNavHost(engine = engine,
+                            navController = navController,
+                            navGraph = NavGraphs.root,
+                            modifier = Modifier.padding(it),
+                            startRoute = QuickScreenDestination.startDestination)
     }
 }
 

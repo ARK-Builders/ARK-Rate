@@ -1,7 +1,6 @@
 package dev.arkbuilders.rate.presentation.utils
 
 import android.Manifest
-import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -18,23 +17,16 @@ import dev.arkbuilders.rate.data.model.PairAlertCondition
 import dev.arkbuilders.rate.presentation.MainActivity
 
 object NotificationUtils {
-    fun showPairAlert(
-        pairAlertCondition: PairAlertCondition,
-        curRatio: Float,
-        ctx: Context
-    ) {
+    fun showPairAlert(pairAlertCondition: PairAlertCondition, curRatio: Float, ctx: Context) {
         val pair = pairAlertCondition
 
-        val title = "❗ ${pair.numeratorCode}/${pair.denominatorCode}" +
-                " ${if (pair.moreNotLess) ">" else "<"} ${pair.ratio}"
-        val builder = NotificationCompat.Builder(ctx, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notifications)
-            .setContentTitle(title)
-            .setContentText(
-                "Current price of ${pair.numeratorCode} is $curRatio ${pair.denominatorCode}"
-            )
-            .setContentIntent(appIntent(ctx))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        val title =
+            "❗ ${pair.numeratorCode}/${pair.denominatorCode}" + " ${if (pair.moreNotLess) ">" else "<"} ${pair.ratio}"
+        val builder =
+            NotificationCompat.Builder(ctx, CHANNEL_ID).setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle(title)
+                .setContentText("Current price of ${pair.numeratorCode} is $curRatio ${pair.denominatorCode}")
+                .setContentIntent(appIntent(ctx)).setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         createNotificationChannel(ctx)
 
@@ -56,12 +48,7 @@ object NotificationUtils {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
-        return PendingIntent.getActivity(
-            ctx,
-            0,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
+        return PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_IMMUTABLE)
     }
 
     private fun createNotificationChannel(ctx: Context) {
@@ -70,10 +57,8 @@ object NotificationUtils {
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID, name, importance)
 
-            val manager = ContextCompat.getSystemService(
-                ctx,
-                android.app.NotificationManager::class.java
-            )
+            val manager =
+                ContextCompat.getSystemService(ctx, android.app.NotificationManager::class.java)
             channel.enableVibration(true)
             manager?.createNotificationChannel(channel)
         }

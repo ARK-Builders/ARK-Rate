@@ -10,11 +10,7 @@ import dev.arkbuilders.rate.data.model.CurrencyType
 import javax.inject.Inject
 
 @Entity
-data class RoomFetchTimestamp(
-    @PrimaryKey
-    val currencyType: String,
-    val timestamp: Long
-)
+data class RoomFetchTimestamp(@PrimaryKey val currencyType: String, val timestamp: Long)
 
 @Dao
 interface FetchTimestampDao {

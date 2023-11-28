@@ -13,9 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
-class SettingsViewModel(
-    private val prefs: Preferences
-) : ViewModel() {
+class SettingsViewModel(private val prefs: Preferences) : ViewModel() {
 
     val currencyRoundPrefs = mutableMapOf<PreferenceKey<Int>, MutableState<String>>()
     val boolPrefs = mutableMapOf<PreferenceKey<Boolean>, MutableState<Boolean>>()
@@ -24,16 +22,12 @@ class SettingsViewModel(
 
     init {
         viewModelScope.launch {
-            listOf(
-                PreferenceKey.CrashReport
-            ).forEach {
+            listOf(PreferenceKey.CrashReport).forEach {
                 boolPrefs[it] = mutableStateOf(prefs.get(it))
             }
-            listOf(
-                PreferenceKey.FiatFiatRateRound,
-                PreferenceKey.CryptoCryptoRateRound,
-                PreferenceKey.FiatCryptoRateRound
-            ).forEach {
+            listOf(PreferenceKey.FiatFiatRateRound,
+                   PreferenceKey.CryptoCryptoRateRound,
+                   PreferenceKey.FiatCryptoRateRound).forEach {
                 currencyRoundPrefs[it] = mutableStateOf(prefs.get(it).toString())
             }
         }
@@ -41,30 +35,24 @@ class SettingsViewModel(
         initialized = true
     }
 
-    fun onToggle(
-        key: PreferenceKey<Boolean>,
-        state: MutableState<Boolean>
-    ) = viewModelScope.launch {
-        val newValue = state.value.not()
-        state.value = newValue
-        prefs.set(key, newValue)
-    }
+    fun onToggle(key: PreferenceKey<Boolean>, state: MutableState<Boolean>) =
+        viewModelScope.launch {
+            val newValue = state.value.not()
+            state.value = newValue
+            prefs.set(key, newValue)
+        }
 
-    fun onRoundSave(
-        key: PreferenceKey<Int>,
-        state: MutableState<String>,
-        _value: String
-    ) = viewModelScope.launch {
-        val value = _value.ifEmpty { "0" }
-        state.value = value
-        prefs.set(key, value.toInt())
-    }
+    fun onRoundSave(key: PreferenceKey<Int>, state: MutableState<String>, _value: String) =
+        viewModelScope.launch {
+            val value = _value.ifEmpty { "0" }
+            state.value = value
+            prefs.set(key, value.toInt())
+        }
 }
 
 @Singleton
-class SettingsViewModelFactory @Inject constructor(
-    private val prefs: Preferences
-) : ViewModelProvider.Factory {
+class SettingsViewModelFactory @Inject constructor(private val prefs: Preferences) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SettingsViewModel(prefs) as T
     }

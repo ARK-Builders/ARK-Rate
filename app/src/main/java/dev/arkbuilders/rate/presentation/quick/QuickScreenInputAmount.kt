@@ -48,19 +48,17 @@ import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 
 @Composable
 fun QuickScreenInputAmount(
-    navigator: DestinationsNavigator,
-    viewModel: QuickViewModel,
-    amount: CurrencyAmount,
-) {
+        navigator: DestinationsNavigator,
+        viewModel: QuickViewModel,
+        amount: CurrencyAmount,
+                          ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val ctx = LocalContext.current
 
     var amountInput by remember {
-        mutableStateOf(
-            if (amount.amount == 0.0) ""
-            else amount.amount.removeFractionalPartIfEmpty()
-        )
+        mutableStateOf(if (amount.amount == 0.0) ""
+                       else amount.amount.removeFractionalPartIfEmpty())
     }
     BackHandler {
         viewModel.selectedCurrency = null
@@ -70,104 +68,63 @@ fun QuickScreenInputAmount(
         focusRequester.requestFocus()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+           verticalArrangement = Arrangement.Center,
+           horizontalAlignment = Alignment.CenterHorizontally) {
         OutlinedTextField(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .focusRequester(focusRequester)
-                .onFocusChanged {
-                    if (it.hasFocus) {
-                        keyboardController?.show()
-                    }
+                modifier = Modifier.padding(top = 8.dp).focusRequester(focusRequester)
+                    .onFocusChanged {
+                        if (it.hasFocus) {
+                            keyboardController?.show()
+                        }
+                    },
+                value = amountInput,
+                onValueChange = { newInput ->
+                    amountInput = viewModel.onAmountChanged(amountInput, newInput)
                 },
-            value = amountInput,
-            onValueChange = { newInput ->
-                amountInput = viewModel.onAmountChanged(
-                    amountInput,
-                    newInput
-                )
-            },
-            label = { Text(viewModel.selectedCurrency!!.code) },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
-            singleLine = true,
-            maxLines = 1,
-        )
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(top = 6.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Convert ${amount.code} to:",
-                style = MaterialTheme.typography.h5
-            )
+                label = { Text(viewModel.selectedCurrency!!.code) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number,
+                                                  imeAction = ImeAction.Done),
+                singleLine = true,
+                maxLines = 1,
+                         )
+        Column(modifier = Modifier.weight(1f).padding(top = 6.dp)
+            .verticalScroll(rememberScrollState()),
+               verticalArrangement = Arrangement.Center,
+               horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = "Convert ${amount.code} to:", style = MaterialTheme.typography.h5)
             viewModel.quickBaseCurrency.forEach {
                 QuickBaseCurrencyItem(it.code, viewModel)
             }
-            IconButton(
-                onClick = {
-                    navigator.navigate(
-                        AddCurrencyScreenDestination(
-                            fromScreen = QuickScreenDestination.route,
-                            quickBase = true
-                        )
-                    )
-                }
-            ) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(R.drawable.ic_add),
-                    tint = MaterialTheme.colors.secondary,
-                    contentDescription = ""
-                )
+            IconButton(onClick = {
+                navigator.navigate(AddCurrencyScreenDestination(fromScreen = QuickScreenDestination.route,
+                                                                quickBase = true))
+            }) {
+                Icon(modifier = Modifier.size(32.dp),
+                     painter = painterResource(R.drawable.ic_add),
+                     tint = MaterialTheme.colors.secondary,
+                     contentDescription = "")
             }
         }
-        Button(
-            modifier = Modifier.padding(12.dp),
-            onClick = {
-                if (viewModel.quickBaseCurrency.isEmpty()) {
-                    Toast.makeText(
-                        ctx,
-                        "Add at least one currency to convert into",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else
-                    viewModel.onExchange()
-            }
-        ) {
+        Button(modifier = Modifier.padding(12.dp), onClick = {
+            if (viewModel.quickBaseCurrency.isEmpty()) {
+                Toast.makeText(ctx, "Add at least one currency to convert into", Toast.LENGTH_SHORT)
+                    .show()
+            } else viewModel.onExchange()
+        }) {
             Text(text = "Convert", fontSize = 20.sp)
         }
     }
 }
 
 @Composable
-private fun QuickBaseCurrencyItem(
-    code: CurrencyCode,
-    viewModel: QuickViewModel
-) {
-    Row(
-        Modifier.padding(top = 5.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+private fun QuickBaseCurrencyItem(code: CurrencyCode, viewModel: QuickViewModel) {
+    Row(Modifier.padding(top = 5.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(text = code, style = MaterialTheme.typography.h6)
         IconButton(onClick = { viewModel.onRemoveBaseCurrency(code) }) {
-            Icon(
-                painterResource(R.drawable.ic_delete_outline),
-                tint = MaterialTheme.colors.secondary,
-                contentDescription = ""
-            )
+            Icon(painterResource(R.drawable.ic_delete_outline),
+                 tint = MaterialTheme.colors.secondary,
+                 contentDescription = "")
         }
     }
 }

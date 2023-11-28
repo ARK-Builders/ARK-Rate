@@ -14,10 +14,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Entity
-data class RoomQuickBaseCurrency(
-    @PrimaryKey
-    val code: CurrencyCode
-)
+data class RoomQuickBaseCurrency(@PrimaryKey val code: CurrencyCode)
 
 @Dao
 interface QuickBaseCurrencyDao {
@@ -35,19 +32,14 @@ interface QuickBaseCurrencyDao {
 }
 
 @Singleton
-class QuickBaseCurrencyRepo @Inject constructor(
-    private val dao: QuickBaseCurrencyDao
-) {
-    suspend fun insert(code: CurrencyCode) =
-        dao.insert(RoomQuickBaseCurrency(code = code))
+class QuickBaseCurrencyRepo @Inject constructor(private val dao: QuickBaseCurrencyDao) {
+    suspend fun insert(code: CurrencyCode) = dao.insert(RoomQuickBaseCurrency(code = code))
 
     suspend fun getAll() = dao.getAll().map { it.toQuickCurrency() }
 
-    fun allFlow() =
-        dao.allFlow().map { list -> list.map { it.toQuickCurrency() } }
+    fun allFlow() = dao.allFlow().map { list -> list.map { it.toQuickCurrency() } }
 
     suspend fun delete(code: CurrencyCode) = dao.delete(code)
 }
 
-private fun RoomQuickBaseCurrency.toQuickCurrency() =
-    QuickBaseCurrency(code)
+private fun RoomQuickBaseCurrency.toQuickCurrency() = QuickBaseCurrency(code)
