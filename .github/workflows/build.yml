@@ -29,5 +29,5 @@ jobs:
     - name: Upload Release APK
       uses: actions/upload-artifact@v3
       with:
-        name: ark-rate-release
-        path: ./app/build/outputs/apk/release/ark-rate-release.apk
+        name: ark-rate
+        path: ./app/build/outputs/apk/release/ark-rate-release-unsigned.apk
