@@ -6,26 +6,26 @@ import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.assets.AssetsRepo
-import dev.arkbuilders.rate.data.db.QuickBaseCurrencyRepo
 import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.model.CurrencyType
-import dev.arkbuilders.rate.data.preferences.PreferenceKey
-import dev.arkbuilders.rate.data.preferences.Preferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import dev.arkbuilders.rate.data.GeneralCurrencyRepo
+import dev.arkbuilders.rate.data.assets.AssetsRepo
+import dev.arkbuilders.rate.data.db.QuickBaseCurrencyRepo
+import dev.arkbuilders.rate.data.preferences.PreferenceKey
+import dev.arkbuilders.rate.data.preferences.Preferences
 import java.text.DecimalFormat
 
 class SummaryViewModel(
-        private val selectedAmount: CurrencyAmount?,
-        private val assetsRepo: AssetsRepo,
-        private val currencyRepo: GeneralCurrencyRepo,
-        private val quickBaseCurrencyRepo: QuickBaseCurrencyRepo,
-        private val prefs: Preferences,
-                      ) : ViewModel() {
+    private val selectedAmount: CurrencyAmount?,
+    private val assetsRepo: AssetsRepo,
+    private val currencyRepo: GeneralCurrencyRepo,
+    private val quickBaseCurrencyRepo: QuickBaseCurrencyRepo,
+    private val prefs: Preferences,
+) : ViewModel() {
     var total = MutableStateFlow<Map<String, Double>?>(null)
     var exchange = MutableStateFlow<Map<String, String>?>(null)
     private lateinit var fiatFiatFormat: DecimalFormat
@@ -94,7 +94,8 @@ class SummaryViewModel(
                     val rate2 = rates[j.key]!!
                     val exchangeRate = rate1.rate / rate2.rate
                     result["${i.key}/${j.key}"] =
-                        pickFormatter(rate1.type, rate2.type).format(exchangeRate)
+                        pickFormatter(rate1.type, rate2.type)
+                            .format(exchangeRate)
                 }
             }
         }
@@ -104,7 +105,9 @@ class SummaryViewModel(
 
     private suspend fun calculateSelectedTotal() {
         val baseList = quickBaseCurrencyRepo.getAll().map { it.code }
-        val rates = currencyRepo.getCurrencyRate().associate { it.code to it.rate }
+        val rates = currencyRepo
+            .getCurrencyRate()
+            .associate { it.code to it.rate }
         val result = mutableMapOf<String, Double>()
         val USD = selectedAmount!!.amount * rates[selectedAmount.code]!!
         result[selectedAmount.code] = selectedAmount.amount
@@ -118,8 +121,11 @@ class SummaryViewModel(
     }
 
     private suspend fun calculateSelectedExchange() {
-        val baseList = quickBaseCurrencyRepo.getAll().map { it.code }.toMutableList()
-        val rates = currencyRepo.getCurrencyRate().associateBy { it.code }
+        val baseList =
+            quickBaseCurrencyRepo.getAll().map { it.code }.toMutableList()
+        val rates = currencyRepo
+            .getCurrencyRate()
+            .associateBy { it.code }
         val result = mutableMapOf<String, String>()
 
         baseList.find {
@@ -136,7 +142,9 @@ class SummaryViewModel(
                     return@forEach
                 }
 
-                if (iter1 == selectedAmount.code || iter2 == selectedAmount.code) {
+                if (iter1 == selectedAmount.code ||
+                    iter2 == selectedAmount.code
+                ) {
                     val rate1 = rates[iter1]!!
                     val rate2 = rates[iter2]!!
 
@@ -151,32 +159,47 @@ class SummaryViewModel(
     }
 
     private fun createFormat(n: Int): DecimalFormat {
-        return if (n == 0) DecimalFormat("0")
-        else DecimalFormat("0." + "#".repeat(n))
+        return if (n == 0)
+            DecimalFormat("0")
+        else
+            DecimalFormat("0." + "#".repeat(n))
     }
 
-    private fun pickFormatter(type1: CurrencyType, type2: CurrencyType): DecimalFormat {
-        if (type1 == CurrencyType.FIAT && type2 == CurrencyType.FIAT) return fiatFiatFormat
+    private fun pickFormatter(
+        type1: CurrencyType,
+        type2: CurrencyType
+    ): DecimalFormat {
+        if (type1 == CurrencyType.FIAT && type2 == CurrencyType.FIAT)
+            return fiatFiatFormat
 
-        if (type1 == CurrencyType.CRYPTO && type2 == CurrencyType.CRYPTO) return cryptoCryptoFormat
+        if (type1 == CurrencyType.CRYPTO && type2 == CurrencyType.CRYPTO)
+            return cryptoCryptoFormat
 
         return fiatCryptoFormat
     }
 }
 
-class SummaryViewModelFactory @AssistedInject constructor(@Assisted private val amount: CurrencyAmount?,
-        private val assetsRepo: AssetsRepo,
-        private val currencyRepo: GeneralCurrencyRepo,
-        private val quickBaseCurrencyRepo: QuickBaseCurrencyRepo,
-        private val prefs: Preferences) : ViewModelProvider.Factory {
+class SummaryViewModelFactory @AssistedInject constructor(
+    @Assisted private val amount: CurrencyAmount?,
+    private val assetsRepo: AssetsRepo,
+    private val currencyRepo: GeneralCurrencyRepo,
+    private val quickBaseCurrencyRepo: QuickBaseCurrencyRepo,
+    private val prefs: Preferences
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SummaryViewModel(amount, assetsRepo, currencyRepo, quickBaseCurrencyRepo, prefs) as T
+        return SummaryViewModel(
+            amount,
+            assetsRepo,
+            currencyRepo,
+            quickBaseCurrencyRepo,
+            prefs
+        ) as T
     }
 
     @AssistedFactory
     interface Factory {
         fun create(
-                @Assisted amount: CurrencyAmount?,
-                  ): SummaryViewModelFactory
+            @Assisted amount: CurrencyAmount?,
+        ): SummaryViewModelFactory
     }
 }

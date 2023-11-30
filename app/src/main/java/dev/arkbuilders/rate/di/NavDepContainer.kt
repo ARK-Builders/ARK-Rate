@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import dev.arkbuilders.rate.presentation.MainActivity
 import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 
-class NavDepContainer(val activity: MainActivity) {
+class NavDepContainer(
+    val activity: MainActivity
+) {
     @Suppress("UNCHECKED_CAST")
     fun <T> createViewModel(modelClass: Class<T>, handle: SavedStateHandle): T {
         return when (modelClass) {

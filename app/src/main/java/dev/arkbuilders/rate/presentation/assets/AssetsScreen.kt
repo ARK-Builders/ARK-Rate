@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.model.CurrencyAmount
@@ -45,76 +46,113 @@ import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 @Destination
 @Composable
 fun AssetsScreen(navigator: DestinationsNavigator) {
-    val viewModel: AssetsViewModel = viewModel(factory = DIManager.component.assetsVMFactory())
+    val viewModel: AssetsViewModel =
+        viewModel(factory = DIManager.component.assetsVMFactory())
 
     Column(Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.weight(1f)) {
-            items(viewModel.currencyAmountList, key = { it.code }) { currencyAmount ->
-                CurrencyEditItem(modifier = Modifier, currencyAmount, viewModel)
+            items(
+                viewModel.currencyAmountList,
+                key = { it.code }
+            ) { currencyAmount ->
+                CurrencyEditItem(
+                    modifier = Modifier,
+                    currencyAmount,
+                    viewModel
+                )
             }
             ItemAdd(viewModel, navigator)
         }
-        Button(modifier = Modifier.padding(8.dp).align(Alignment.CenterHorizontally), onClick = {
-            navigator.navigate(SummaryScreenDestination())
-        }) {
+        Button(
+            modifier = Modifier
+                .padding(8.dp)
+                .align(Alignment.CenterHorizontally),
+            onClick = {
+                navigator.navigate(
+                    SummaryScreenDestination()
+                )
+            }
+        ) {
             Icon(painterResource(R.drawable.ic_list_alt), contentDescription = "")
-            Text(modifier = Modifier.padding(start = 4.dp),
-                 text = "Summary",
-                 style = MaterialTheme.typography.h6)
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = "Summary",
+                style = MaterialTheme.typography.h6
+            )
         }
     }
 }
 
 @Composable
 private fun CurrencyEditItem(
-        modifier: Modifier,
-        amount: CurrencyAmount,
-        viewModel: AssetsViewModel,
-                            ) {
+    modifier: Modifier,
+    amount: CurrencyAmount,
+    viewModel: AssetsViewModel,
+) {
     val code = amount.code
     var amountInput by remember {
-        mutableStateOf(if (amount.amount == 0.0) ""
-                       else amount.amount.removeFractionalPartIfEmpty())
+        mutableStateOf(
+            if (amount.amount == 0.0) ""
+            else amount.amount.removeFractionalPartIfEmpty()
+        )
     }
     val clearIcon = @Composable {
         IconButton(onClick = {
-            amountInput = viewModel.onAmountChanged(amount, amountInput, "")
+            amountInput =
+                viewModel.onAmountChanged(amount, amountInput, "")
         }) {
-            Icon(Icons.Default.Clear, contentDescription = "")
+            Icon(
+                Icons.Default.Clear,
+                contentDescription = ""
+            )
         }
     }
     Row(modifier.padding(horizontal = 20.dp, vertical = 4.dp)) {
         OutlinedTextField(
-                modifier = Modifier.weight(1f),
-                value = amountInput,
-                onValueChange = { newInput ->
-                    amountInput = viewModel.onAmountChanged(amount, amountInput, newInput)
-                },
-                trailingIcon = clearIcon,
-                label = { Text(code) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                maxLines = 1,
-                         )
-        IconButton(modifier = Modifier.padding(8.dp),
-                   onClick = { viewModel.onCurrencyRemoved(code) }) {
+            modifier = Modifier.weight(1f),
+            value = amountInput,
+            onValueChange = { newInput ->
+                amountInput = viewModel.onAmountChanged(
+                    amount,
+                    amountInput,
+                    newInput
+                )
+            },
+            trailingIcon = clearIcon,
+            label = { Text(code) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            maxLines = 1,
+        )
+        IconButton(
+            modifier = Modifier.padding(8.dp),
+            onClick = { viewModel.onCurrencyRemoved(code) }
+        ) {
             Icon(Icons.Filled.Delete, "Delete")
         }
     }
 }
 
 private fun LazyListScope.ItemAdd(
-        viewModel: AssetsViewModel,
-        navigator: DestinationsNavigator,
-                                 ) {
+    viewModel: AssetsViewModel,
+    navigator: DestinationsNavigator,
+) {
     if (viewModel.initialized) {
         item {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
                 FloatingActionButton(
-                        modifier = Modifier.padding(10.dp),
-                        onClick = {
-                            navigator.navigate(AddCurrencyScreenDestination(fromScreen = AssetsScreenDestination.route))
-                        },
-                                    ) {
+                    modifier = Modifier
+                        .padding(10.dp),
+                    onClick = {
+                        navigator.navigate(
+                            AddCurrencyScreenDestination(
+                                fromScreen = AssetsScreenDestination.route
+                            )
+                        )
+                    },
+                ) {
                     Icon(Icons.Filled.Add, contentDescription = "Add")
                 }
             }

@@ -46,11 +46,16 @@ import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 
 @Destination
 @Composable
-fun PairAlertConditionScreen(navigator: DestinationsNavigator,
-        viewModel: SharedViewModel = activityViewModel()) {
+fun PairAlertConditionScreen(
+    navigator: DestinationsNavigator,
+    viewModel: SharedViewModel = activityViewModel()
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(viewModel.pairAlertConditions, key = { it.id }) { condition ->
+            items(
+                viewModel.pairAlertConditions,
+                key = { it.id }
+            ) { condition ->
                 ConditionItem(navigator, condition, viewModel)
             }
             item {
@@ -61,77 +66,142 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator,
 }
 
 @Composable
-private fun ConditionItem(navigator: DestinationsNavigator,
-        condition: PairAlertCondition,
-        viewModel: SharedViewModel) {
+private fun ConditionItem(
+    navigator: DestinationsNavigator,
+    condition: PairAlertCondition,
+    viewModel: SharedViewModel
+) {
     var ratioInput by remember {
-        mutableStateOf(if (condition.ratio == 0.0f) ""
-                       else condition.ratio.removeFractionalPartIfEmpty())
+        mutableStateOf(
+            if (condition.ratio == 0.0f) ""
+            else condition.ratio.removeFractionalPartIfEmpty()
+        )
     }
 
     Card(
-            modifier = Modifier.fillMaxWidth().padding(10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(6.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-        Row(modifier = Modifier.padding(6.dp), verticalAlignment = Alignment.CenterVertically) {
             Fraction(navigator, condition)
-            Button(modifier = Modifier.padding(horizontal = 8.dp).width(40.dp).wrapContentHeight(),
-                   onClick = { viewModel.onConditionMoreLessChanged(condition) }) {
+            Button(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .width(40.dp)
+                    .wrapContentHeight(),
+                onClick = { viewModel.onConditionMoreLessChanged(condition) }
+            ) {
                 Text(if (condition.moreNotLess) ">" else "<")
             }
-            OutlinedTextField(modifier = Modifier.weight(1f).wrapContentHeight()
-                .padding(start = 2.dp, end = 2.dp),
-                              value = ratioInput,
-                              onValueChange = { newInput ->
-                                  ratioInput =
-                                      viewModel.onRatioChanged(condition, ratioInput, newInput)
-                              },
-                              keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentHeight()
+                    .padding(start = 2.dp, end = 2.dp),
+                value = ratioInput,
+                onValueChange = { newInput ->
+                    ratioInput = viewModel.onRatioChanged(
+                        condition,
+                        ratioInput,
+                        newInput
+                    )
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
             AddOrDeleteBtn(viewModel, condition)
         }
     }
 }
 
 @Composable
-private fun Fraction(navigator: DestinationsNavigator, condition: PairAlertCondition) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(modifier = Modifier.wrapContentSize().padding(start = 2.dp, end = 2.dp), onClick = {
-            navigator.navigate(AddCurrencyScreenDestination(fromScreen = PairAlertConditionScreenDestination.route,
-                                                            numeratorNotDenominator = true,
-                                                            pairAlertConditionId = condition.id))
-        }) {
+private fun Fraction(
+    navigator: DestinationsNavigator,
+    condition: PairAlertCondition
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(start = 2.dp, end = 2.dp),
+            onClick = {
+                navigator.navigate(
+                    AddCurrencyScreenDestination(
+                        fromScreen = PairAlertConditionScreenDestination.route,
+                        numeratorNotDenominator = true,
+                        pairAlertConditionId = condition.id
+                    )
+                )
+            }
+        ) {
             Text(condition.numeratorCode)
         }
-        Box(modifier = Modifier.height(2.dp).width(60.dp).background(Color.LightGray))
-        Button(modifier = Modifier.wrapContentSize().padding(start = 2.dp, end = 2.dp), onClick = {
-            navigator.navigate(AddCurrencyScreenDestination(fromScreen = PairAlertConditionScreenDestination.route,
-                                                            numeratorNotDenominator = false,
-                                                            pairAlertConditionId = condition.id))
-        }) {
+        Box(
+            modifier = Modifier
+                .height(2.dp)
+                .width(60.dp)
+                .background(Color.LightGray)
+        )
+        Button(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(start = 2.dp, end = 2.dp),
+            onClick = {
+                navigator.navigate(
+                    AddCurrencyScreenDestination(
+                        fromScreen = PairAlertConditionScreenDestination.route,
+                        numeratorNotDenominator = false,
+                        pairAlertConditionId = condition.id
+                    )
+                )
+            }
+        ) {
             Text(condition.denominatorCode)
         }
     }
 }
 
 @Composable
-private fun AddOrDeleteBtn(viewModel: SharedViewModel, condition: PairAlertCondition) {
+private fun AddOrDeleteBtn(
+    viewModel: SharedViewModel,
+    condition: PairAlertCondition
+) {
     val ctx = LocalContext.current
     if (viewModel.newCondition == condition) {
-        IconButton(modifier = Modifier.padding(8.dp), onClick = {
-            if (!condition.isCompleted()) {
-                Toast.makeText(ctx, "Pair alert is not completed", Toast.LENGTH_SHORT).show()
-                return@IconButton
+        IconButton(
+            modifier = Modifier.padding(8.dp),
+            onClick = {
+                if (!condition.isCompleted()) {
+                    Toast.makeText(
+                        ctx,
+                        "Pair alert is not completed",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@IconButton
+                }
+                viewModel.onNewConditionSave()
             }
-            viewModel.onNewConditionSave()
-        }) {
+        ) {
             Icon(Icons.Filled.Add, "Add")
         }
     } else {
-        IconButton(modifier = Modifier.padding(8.dp), onClick = {
-            Toast.makeText(ctx,
-                           "Remove pair ${condition.numeratorCode}/${condition.denominatorCode}",
-                           Toast.LENGTH_SHORT).show()
-            viewModel.onRemoveCondition(condition)
-        }) {
+        IconButton(
+            modifier = Modifier.padding(8.dp),
+            onClick = {
+                Toast.makeText(
+                    ctx,
+                    "Remove pair ${condition.numeratorCode}/${condition.denominatorCode}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                viewModel.onRemoveCondition(condition)
+            }
+        ) {
             Icon(Icons.Filled.Delete, "Delete")
         }
     }

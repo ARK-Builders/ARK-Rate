@@ -23,10 +23,12 @@ fun keyboardAsState(): State<Boolean> {
 }
 
 @Composable
-fun <T> Flow<T>.collectInLaunchedEffectWithLifecycle(vararg keys: Any?,
-        lifecycle: Lifecycle = LocalLifecycleOwner.current.lifecycle,
-        minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
-        collector: suspend CoroutineScope.(T) -> Unit) {
+fun <T> Flow<T>.collectInLaunchedEffectWithLifecycle(
+    vararg keys: Any?,
+    lifecycle: Lifecycle = LocalLifecycleOwner.current.lifecycle,
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
+    collector: suspend CoroutineScope.(T) -> Unit
+) {
     val flow = this
     val currentCollector by rememberUpdatedState(collector)
 

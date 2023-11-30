@@ -6,16 +6,19 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import dev.arkbuilders.rate.data.model.CurrencyAmount
-import dev.arkbuilders.rate.data.model.CurrencyCode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import dev.arkbuilders.rate.data.model.CurrencyAmount
+import dev.arkbuilders.rate.data.model.CurrencyCode
 import javax.inject.Inject
 
 @Entity
-data class RoomCurrencyAmount(@PrimaryKey(autoGenerate = true) val id: Long = 0,
-        val code: CurrencyCode,
-        val amount: Double)
+data class RoomCurrencyAmount(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val code: CurrencyCode,
+    val amount: Double
+)
 
 @Dao
 interface AssetsDao {
@@ -36,13 +39,16 @@ interface AssetsDao {
 }
 
 class AssetsLocalDataSource @Inject constructor(val dao: AssetsDao) {
-    suspend fun insert(currencyAmount: CurrencyAmount) = dao.insert(currencyAmount.toRoom())
+    suspend fun insert(currencyAmount: CurrencyAmount) =
+        dao.insert(currencyAmount.toRoom())
 
     suspend fun getAll() = dao.getAll().map { it.toCurrencyAmount() }
 
-    suspend fun getByCode(code: CurrencyCode) = dao.getByCode(code)?.toCurrencyAmount()
+    suspend fun getByCode(code: CurrencyCode) =
+        dao.getByCode(code)?.toCurrencyAmount()
 
-    fun allFlow() = dao.allFlow().map { list -> list.map { it.toCurrencyAmount() } }
+    fun allFlow() =
+        dao.allFlow().map { list -> list.map { it.toCurrencyAmount() } }
 
     suspend fun delete(code: String) = dao.delete(code)
 }

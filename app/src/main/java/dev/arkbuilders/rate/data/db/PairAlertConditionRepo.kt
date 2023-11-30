@@ -11,11 +11,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Entity
-data class RoomPairAlertCondition(@PrimaryKey(autoGenerate = true) val id: Long,
-        val numeratorCode: String,
-        val denominatorCode: String,
-        val ratio: Float,
-        val moreNotLess: Boolean)
+data class RoomPairAlertCondition(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
+    val numeratorCode: String,
+    val denominatorCode: String,
+    val ratio: Float,
+    val moreNotLess: Boolean
+)
 
 @Dao
 interface PairAlertConditionDao {
@@ -29,14 +32,18 @@ interface PairAlertConditionDao {
     suspend fun delete(id: Long)
 }
 
-private fun PairAlertCondition.toRoom() =
-    RoomPairAlertCondition(id, numeratorCode, denominatorCode, ratio, moreNotLess)
+private fun PairAlertCondition.toRoom() = RoomPairAlertCondition(
+    id, numeratorCode, denominatorCode, ratio, moreNotLess
+)
 
-private fun RoomPairAlertCondition.toCondition() =
-    PairAlertCondition(id, numeratorCode, denominatorCode, ratio, moreNotLess)
+private fun RoomPairAlertCondition.toCondition() = PairAlertCondition(
+    id, numeratorCode, denominatorCode, ratio, moreNotLess
+)
 
 @Singleton
-class PairAlertConditionRepo @Inject constructor(private val dao: PairAlertConditionDao) {
+class PairAlertConditionRepo @Inject constructor(
+    private val dao: PairAlertConditionDao
+) {
     suspend fun insert(pairAlertCondition: PairAlertCondition) =
         dao.insert(pairAlertCondition.toRoom())
 

@@ -2,25 +2,14 @@ package dev.arkbuilders.rate.presentation.addcurrency
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -41,30 +30,37 @@ import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecy
 
 @Destination
 @Composable
-fun AddCurrencyScreen(navController: NavController,
-        sharedViewModel: SharedViewModel = activityViewModel(),
-        fromScreen: String,
-        numeratorNotDenominator: Boolean? = null,
-        pairAlertConditionId: Long? = null,
-        quickBase: Boolean? = null) {
+fun AddCurrencyScreen(
+    navController: NavController,
+    sharedViewModel: SharedViewModel = activityViewModel(),
+    fromScreen: String,
+    numeratorNotDenominator: Boolean? = null,
+    pairAlertConditionId: Long? = null,
+    quickBase: Boolean? = null
+) {
     val viewModel: AddCurrencyViewModel =
         viewModel(factory = DIManager.component.addCurrencyVMFactory())
     val ctx = LocalContext.current
     var filter by remember { mutableStateOf("") }
-    val filteredCurrencyNameList = viewModel.currencyNameList?.filter { (code, name) ->
-        code.startsWith(filter, ignoreCase = true) || name.contains(filter, ignoreCase = true)
-    }
-        ?: emptyList()
+    val filteredCurrencyNameList =
+        viewModel.currencyNameList?.filter { (code, name) ->
+            code.startsWith(filter, ignoreCase = true) ||
+                    name.contains(filter, ignoreCase = true)
+        } ?: emptyList()
 
 
     viewModel.eventsFlow.collectInLaunchedEffectWithLifecycle { event ->
         when (event) {
             AddCurrencyEvent.NavigateBack -> navController.popBackStack()
             is AddCurrencyEvent.NotifyCurrencyAdded -> {
-                Toast.makeText(ctx,
-                               ctx.getString(R.string.currency_is_already_added_to_assets,
-                                             event.code),
-                               Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    ctx,
+                    ctx.getString(
+                        R.string.currency_is_already_added_to_assets,
+                        event.code
+                    ),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -72,38 +68,54 @@ fun AddCurrencyScreen(navController: NavController,
 
     Column(Modifier.fillMaxSize()) {
         Row {
-            OutlinedTextField(modifier = Modifier.fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 16.dp),
-                              value = filter,
-                              onValueChange = { filter = it },
-                              keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                              singleLine = true,
-                              label = {
-                                  Text("Search")
-                              })
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, top = 16.dp),
+                value = filter,
+                onValueChange = { filter = it },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                singleLine = true,
+                label = {
+                    Text("Search")
+                }
+            )
         }
 
         LazyColumn {
             items(filteredCurrencyNameList.sortedBy { it.code }) { currencyName ->
-                CurrencyItem(code = currencyName.code, currency = currencyName.name, onAdd = {
-                    when (fromScreen) {
-                        AssetsScreenDestination.route -> viewModel.addCurrency(currencyName.code)
+                CurrencyItem(
+                    code = currencyName.code,
+                    currency = currencyName.name,
+                    onAdd = {
+                        when (fromScreen) {
+                            AssetsScreenDestination.route -> viewModel.addCurrency(
+                                currencyName.code
+                            )
 
-                        PairAlertConditionScreenDestination.route -> {
-                            sharedViewModel.onAlertConditionCodePicked(currencyName.code,
-                                                                       numeratorNotDenominator!!,
-                                                                       pairAlertConditionId!!)
-                            navController.popBackStack()
-                        }
+                            PairAlertConditionScreenDestination.route -> {
+                                sharedViewModel.onAlertConditionCodePicked(
+                                    currencyName.code,
+                                    numeratorNotDenominator!!,
+                                    pairAlertConditionId!!
+                                )
+                                navController.popBackStack()
+                            }
 
-                        QuickScreenDestination.route -> {
-                            if (quickBase!!) {
-                                sharedViewModel.onQuickBaseCurrencyPicked(currencyName.code)
-                            } else sharedViewModel.onQuickCurrencyPicked(currencyName.code)
-                            navController.popBackStack()
+                            QuickScreenDestination.route -> {
+                                if (quickBase!!) {
+                                    sharedViewModel.onQuickBaseCurrencyPicked(
+                                        currencyName.code
+                                    )
+                                } else
+                                    sharedViewModel.onQuickCurrencyPicked(
+                                        currencyName.code
+                                    )
+                                navController.popBackStack()
+                            }
                         }
                     }
-                })
+                )
             }
         }
     }
@@ -111,14 +123,23 @@ fun AddCurrencyScreen(navController: NavController,
 
 @Composable
 private fun CurrencyItem(code: String, currency: String, onAdd: () -> Unit) {
-    Column(Modifier.fillMaxWidth().clickable(onClick = { onAdd() }).padding(horizontal = 20.dp)) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clickable(onClick = { onAdd() })
+            .padding(horizontal = 20.dp)
+    ) {
         Spacer(modifier = Modifier.height(2.dp))
         Box(Modifier.fillMaxWidth()) {
-            Text(modifier = Modifier.align(Alignment.CenterStart), text = code, fontSize = 20.sp)
             Text(
-                    modifier = Modifier.align(Alignment.CenterEnd),
-                    text = currency,
-                )
+                modifier = Modifier.align(Alignment.CenterStart),
+                text = code,
+                fontSize = 20.sp
+            )
+            Text(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                text = currency,
+            )
         }
         Divider()
     }

@@ -15,7 +15,8 @@ class DBModule {
     @Provides
     fun database(app: Application): Database {
         return Room.databaseBuilder(app, Database::class.java, DB_NAME)
-            .fallbackToDestructiveMigration().build()
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides

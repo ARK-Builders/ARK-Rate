@@ -10,16 +10,21 @@ import dev.arkbuilders.rate.data.preferences.Preferences
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.module.ApiModule
 import dev.arkbuilders.rate.di.module.DBModule
+import dev.arkbuilders.rate.presentation.summary.SummaryViewModelFactory
 import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyViewModelFactory
 import dev.arkbuilders.rate.presentation.assets.AssetsViewModelFactory
 import dev.arkbuilders.rate.presentation.quick.QuickViewModelFactory
 import dev.arkbuilders.rate.presentation.settings.SettingsViewModelFactory
 import dev.arkbuilders.rate.presentation.shared.SharedViewModelFactory
-import dev.arkbuilders.rate.presentation.summary.SummaryViewModelFactory
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ApiModule::class, DBModule::class])
+@Component(
+    modules = [
+        ApiModule::class,
+        DBModule::class
+    ]
+)
 interface AppComponent {
     fun summaryViewModelFactory(): SummaryViewModelFactory.Factory
     fun assetsVMFactory(): AssetsViewModelFactory
@@ -36,7 +41,9 @@ interface AppComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance application: Application,
-                @BindsInstance context: Context): AppComponent
+        fun create(
+            @BindsInstance application: Application,
+            @BindsInstance context: Context
+        ): AppComponent
     }
 }

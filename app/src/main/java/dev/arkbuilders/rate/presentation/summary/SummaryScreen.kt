@@ -2,22 +2,12 @@ package dev.arkbuilders.rate.presentation.summary
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -25,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import dev.arkbuilders.rate.data.model.CurrencyAmount
+import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -35,14 +26,22 @@ private val format = DecimalFormat("0.######").apply {
 
 @Destination
 @Composable
-fun SummaryScreen(amount: CurrencyAmount? = null) {
+fun SummaryScreen(
+    amount: CurrencyAmount? = null
+) {
     val viewModel: SummaryViewModel =
-        viewModel(factory = DIManager.component.summaryViewModelFactory().create(amount))
+        viewModel(
+            factory = DIManager.component.summaryViewModelFactory().create(amount)
+        )
     Box(Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.align(Alignment.Center)) {
             amount?.let {
                 item {
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(text = "Quick ${amount.code}", fontSize = 20.sp)
                     }
                 }
@@ -60,23 +59,36 @@ fun SummaryScreen(amount: CurrencyAmount? = null) {
 @Composable
 private fun TotalCard(viewModel: SummaryViewModel) {
     val total by viewModel.total.collectAsState()
-    total
-        ?: return
+    total ?: return
     var visible by remember { mutableStateOf(true) }
-    Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 15.dp)
-        .clickable {
-            visible = !visible
-        }, elevation = 8.dp) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 15.dp)
+            .clickable {
+                visible = !visible
+            },
+        elevation = 8.dp
+    ) {
         Column(modifier = Modifier.padding(8.dp)) {
             Text("TOTAL", fontSize = 24.sp)
             Divider()
             AnimatedVisibility(visible) {
                 Column {
                     total!!.forEach {
-                        Box(modifier = Modifier.fillMaxWidth().height(32.dp)) {
-                            Text(it.key, modifier = Modifier.align(Alignment.CenterStart))
-                            Text(format.format(it.value),
-                                 modifier = Modifier.align(Alignment.CenterEnd))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(32.dp)
+                        ) {
+                            Text(
+                                it.key,
+                                modifier = Modifier.align(Alignment.CenterStart)
+                            )
+                            Text(
+                                format.format(it.value),
+                                modifier = Modifier.align(Alignment.CenterEnd)
+                            )
                             Divider()
                         }
                     }
@@ -89,22 +101,36 @@ private fun TotalCard(viewModel: SummaryViewModel) {
 @Composable
 private fun ExchangeCard(viewModel: SummaryViewModel) {
     val exchange by viewModel.exchange.collectAsState()
-    exchange
-        ?: return
+    exchange ?: return
     var visible by remember { mutableStateOf(true) }
-    Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 15.dp)
-        .clickable {
-            visible = !visible
-        }, elevation = 8.dp) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 15.dp)
+            .clickable {
+                visible = !visible
+            },
+        elevation = 8.dp
+    ) {
         Column(modifier = Modifier.padding(8.dp)) {
             Text("EXCHANGE", fontSize = 24.sp)
             Divider()
             AnimatedVisibility(visible) {
                 Column {
                     exchange!!.forEach {
-                        Box(modifier = Modifier.fillMaxWidth().height(32.dp)) {
-                            Text(it.key, modifier = Modifier.align(Alignment.CenterStart))
-                            Text(it.value, modifier = Modifier.align(Alignment.CenterEnd))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(32.dp)
+                        ) {
+                            Text(
+                                it.key,
+                                modifier = Modifier.align(Alignment.CenterStart)
+                            )
+                            Text(
+                                it.value,
+                                modifier = Modifier.align(Alignment.CenterEnd)
+                            )
                             Divider()
                         }
                     }
