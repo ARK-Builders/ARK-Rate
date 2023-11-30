@@ -119,6 +119,6 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:1.4.3"
     debugImplementation "androidx.compose.ui:ui-test-manifest:1.4.3"
 
-    implementation 'ch.acra:acra-http:5.9.6'
+    implementation 'ch.acra:acra-http:5.11.3'
     implementation 'ch.acra:acra-dialog:5.9.6'
 }
