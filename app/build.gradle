@@ -35,16 +35,6 @@ android {
         multiDexEnabled true
 
     }
-    signingConfigs {
-        testRelease {
-            storeFile project.rootProject.file('./testRelease.jks')
-            storePassword "arkrate"
-            keyAlias "key0"
-            keyPassword "arkrate"
-            v1SigningEnabled true
-            v2SigningEnabled true
-        }
-    }
 
     buildTypes {
         debug {
@@ -57,7 +47,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.testRelease
+
             manifestPlaceholders = [
                     appIcon : "@mipmap/ic_launcher",
                     appLabel: "@string/app_name"
@@ -95,6 +85,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
     implementation 'androidx.activity:activity-compose:1.8.1'
 
+
     implementation "com.google.dagger:dagger:2.48"
     ksp "com.google.dagger:dagger-compiler:2.48"
 
@@ -110,11 +101,11 @@ dependencies {
     implementation 'io.github.oleksandrbalan:tagcloud:1.0.1'
 
     implementation 'io.github.raamcosta.compose-destinations:core:1.7.41-beta'
-    ksp 'io.github.raamcosta.compose-destinations:ksp:1.7.41-beta'
+    ksp 'io.github.raamcosta.compose-destinations:ksp:1.9.55'
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -123,9 +114,10 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:1.5.4"
     debugImplementation "androidx.compose.ui:ui-test-manifest:1.5.4"
 
-    implementation 'ch.acra:acra-http:5.9.6'
-    implementation 'ch.acra:acra-dialog:5.9.6'
 
     implementation 'androidx.multidex:multidex:2.0.1'
+
+    implementation 'ch.acra:acra-http:5.11.3'
+    implementation 'ch.acra:acra-dialog:5.11.3'
 
 }
