@@ -31,9 +31,6 @@ android {
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
-
-        multiDexEnabled true
-
     }
 
     buildTypes {
@@ -112,9 +109,6 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.5.4"
     debugImplementation "androidx.compose.ui:ui-tooling:1.5.4"
     debugImplementation "androidx.compose.ui:ui-test-manifest:1.5.4"
-
-
-    implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation 'ch.acra:acra-http:5.11.3'
     implementation 'ch.acra:acra-dialog:5.11.3'
