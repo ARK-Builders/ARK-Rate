@@ -33,6 +33,17 @@ android {
         }
     }
 
+    signingConfigs {
+        testRelease {
+            storeFile project.rootProject.file('keystore.jks')
+            storePassword "sw0rdf1sh"
+            keyAlias "ark-builders-test"
+            keyPassword "rybamech"
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
     buildTypes {
         debug {
             debuggable true
@@ -44,6 +55,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.testRelease
 
             manifestPlaceholders = [
                     appIcon : "@mipmap/ic_launcher",
