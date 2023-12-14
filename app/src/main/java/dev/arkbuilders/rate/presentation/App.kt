@@ -6,6 +6,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import dev.arkbuilders.rate.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +15,6 @@ import org.acra.config.httpSender
 import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
 import org.acra.sender.HttpSender
-import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker

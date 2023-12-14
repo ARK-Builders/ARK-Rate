@@ -12,3 +12,8 @@
 *.tab
 *.tab.values.at
 misc.xml
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab

@@ -1,11 +1,15 @@
 package dev.arkbuilders.rate.presentation.utils
 
+import android.Manifest
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -35,9 +39,17 @@ object NotificationUtils {
         createNotificationChannel(ctx)
 
         with(NotificationManagerCompat.from(ctx)) {
-            notify(pairAlertCondition.id.toInt(), builder.build())
+
+            if (ActivityCompat.checkSelfPermission(ctx,
+                                                   Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            ) {
+
+                notify(pairAlertCondition.id.toInt(), builder.build())
+            }
+
         }
     }
+
 
     private fun appIntent(ctx: Context): PendingIntent {
         val intent = Intent(ctx, MainActivity::class.java).apply {
