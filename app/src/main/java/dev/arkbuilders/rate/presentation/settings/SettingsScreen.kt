@@ -2,8 +2,11 @@
 
 package dev.arkbuilders.rate.presentation.settings
 
+import android.content.Intent
+import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,17 +44,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.di.DIManager
+
+private val PRIVACY_POLICY_URL = "https://app-privacy-policy-generator.firebaseapp.com/"
 
 @Destination
 @Composable
@@ -60,7 +69,10 @@ fun SettingsScreen() {
         viewModel(factory = DIManager.component.settingsVMFactory())
 
     if (vm.initialized) {
-        Settings(vm)
+        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            Settings(Modifier.weight(1f), vm)
+            PrivacyPolicy()
+        }
     } else {
         Box(modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator()
@@ -69,11 +81,26 @@ fun SettingsScreen() {
 }
 
 @Composable
-private fun Settings(vm: SettingsViewModel) {
+private fun PrivacyPolicy() {
+    val ctx = LocalContext.current
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Text(
+            modifier = Modifier.clickable {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(PRIVACY_POLICY_URL)
+                ctx.startActivity(intent)
+            },
+            text = "Privacy policy",
+            textDecoration = TextDecoration.Underline
+        )
+    }
+}
+
+@Composable
+private fun Settings(modifier: Modifier = Modifier, vm: SettingsViewModel) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(16.dp)
     ) {
         SettingsGroup(name = R.string.currencies) {
             SettingsNumberComp(
@@ -116,15 +143,17 @@ private fun Settings(vm: SettingsViewModel) {
                 onCheck = { true }
             )
         }
-        SettingsGroup(name = R.string.privacy) {
-            SettingsSwitchComp(
-                name = R.string.crash_reports,
-                state = vm.boolPrefs[PreferenceKey.CrashReport]!!
-            ) { state ->
-                vm.onToggle(
-                    PreferenceKey.CrashReport,
-                    state
-                )
+        if (!BuildConfig.GOOGLE_PLAY_BUILD) {
+            SettingsGroup(name = R.string.privacy) {
+                SettingsSwitchComp(
+                    name = R.string.crash_reports,
+                    state = vm.boolPrefs[PreferenceKey.CrashReport]!!
+                ) { state ->
+                    vm.onToggle(
+                        PreferenceKey.CrashReport,
+                        state
+                    )
+                }
             }
         }
     }
