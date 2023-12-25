@@ -19,4 +19,6 @@
     <string name="show_as_list">List</string>
     <string name="sorted_by_used_count">Used count</string>
     <string name="sorted_by_used_time">Used time</string>
+    <string name="pair_alerts_desc">App in the background checks the specified exchange rates once a day and if the condition matches, then displays a notification.</string>
+    <string name="ok">OK</string>
 </resources>
