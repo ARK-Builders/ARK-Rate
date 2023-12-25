@@ -22,7 +22,7 @@ android {
         buildConfigField "String", "ACRA_LOGIN", "\"$login\""
         buildConfigField "String", "ACRA_PASS", "\"$password\""
         buildConfigField "String", "ACRA_URI", "\"$uri\""
-        buildConfigField "boolean", "GOOGLE_PLAY_BUILD", "true"
+        buildConfigField "boolean", "GOOGLE_PLAY_BUILD", "false"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

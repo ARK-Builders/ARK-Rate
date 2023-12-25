@@ -60,8 +60,6 @@ import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.di.DIManager
 
-private val PRIVACY_POLICY_URL = "https://app-privacy-policy-generator.firebaseapp.com/"
-
 @Destination
 @Composable
 fun SettingsScreen() {
@@ -69,10 +67,7 @@ fun SettingsScreen() {
         viewModel(factory = DIManager.component.settingsVMFactory())
 
     if (vm.initialized) {
-        Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            Settings(Modifier.weight(1f), vm)
-            PrivacyPolicy()
-        }
+        Settings(vm)
     } else {
         Box(modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator()
@@ -83,23 +78,35 @@ fun SettingsScreen() {
 @Composable
 private fun PrivacyPolicy() {
     val ctx = LocalContext.current
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Text(
-            modifier = Modifier.clickable {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(PRIVACY_POLICY_URL)
-                ctx.startActivity(intent)
-            },
-            text = "Privacy policy",
-            textDecoration = TextDecoration.Underline
-        )
+    val url = stringResource(id = R.string.privacy_policy_url)
+    Surface(
+        color = Color.Transparent,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        onClick = {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            ctx.startActivity(intent)
+        },
+    ) {
+        Column {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(id = R.string.privacy_policy),
+                style = MaterialTheme.typography.body1,
+            )
+            Divider()
+        }
+
     }
 }
 
 @Composable
-private fun Settings(modifier: Modifier = Modifier, vm: SettingsViewModel) {
+private fun Settings(vm: SettingsViewModel) {
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         SettingsGroup(name = R.string.currencies) {
@@ -143,8 +150,9 @@ private fun Settings(modifier: Modifier = Modifier, vm: SettingsViewModel) {
                 onCheck = { true }
             )
         }
-        if (!BuildConfig.GOOGLE_PLAY_BUILD) {
-            SettingsGroup(name = R.string.privacy) {
+        SettingsGroup(name = R.string.privacy) {
+            PrivacyPolicy()
+            if (!BuildConfig.GOOGLE_PLAY_BUILD) {
                 SettingsSwitchComp(
                     name = R.string.crash_reports,
                     state = vm.boolPrefs[PreferenceKey.CrashReport]!!
@@ -274,7 +282,7 @@ fun SettingsNumberComp(
                         modifier = Modifier.size(24.dp)
                     )
                 }
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Column(modifier = Modifier.padding(8.dp)) {
                     Text(
                         text = stringResource(id = name),
