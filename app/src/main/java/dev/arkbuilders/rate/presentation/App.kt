@@ -29,7 +29,9 @@ class App : Application() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
         DIManager.init(this)
-        initAcra()
+        
+        if (!BuildConfig.GOOGLE_PLAY_BUILD)
+            initAcra()
 
         initWorker()
     }

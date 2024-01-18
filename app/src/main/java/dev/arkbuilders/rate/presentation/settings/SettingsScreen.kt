@@ -2,8 +2,11 @@
 
 package dev.arkbuilders.rate.presentation.settings
 
+import android.content.Intent
+import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,14 +44,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.di.DIManager
@@ -69,11 +76,38 @@ fun SettingsScreen() {
 }
 
 @Composable
+private fun PrivacyPolicy() {
+    val ctx = LocalContext.current
+    val url = stringResource(id = R.string.privacy_policy_url)
+    Surface(
+        color = Color.Transparent,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        onClick = {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            ctx.startActivity(intent)
+        },
+    ) {
+        Column {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(id = R.string.privacy_policy),
+                style = MaterialTheme.typography.body1,
+            )
+            Divider()
+        }
+
+    }
+}
+
+@Composable
 private fun Settings(vm: SettingsViewModel) {
     Column(
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
             .padding(16.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         SettingsGroup(name = R.string.currencies) {
             SettingsNumberComp(
@@ -117,14 +151,17 @@ private fun Settings(vm: SettingsViewModel) {
             )
         }
         SettingsGroup(name = R.string.privacy) {
-            SettingsSwitchComp(
-                name = R.string.crash_reports,
-                state = vm.boolPrefs[PreferenceKey.CrashReport]!!
-            ) { state ->
-                vm.onToggle(
-                    PreferenceKey.CrashReport,
-                    state
-                )
+            PrivacyPolicy()
+            if (!BuildConfig.GOOGLE_PLAY_BUILD) {
+                SettingsSwitchComp(
+                    name = R.string.crash_reports,
+                    state = vm.boolPrefs[PreferenceKey.CrashReport]!!
+                ) { state ->
+                    vm.onToggle(
+                        PreferenceKey.CrashReport,
+                        state
+                    )
+                }
             }
         }
     }
@@ -245,7 +282,7 @@ fun SettingsNumberComp(
                         modifier = Modifier.size(24.dp)
                     )
                 }
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Column(modifier = Modifier.padding(8.dp)) {
                     Text(
                         text = stringResource(id = name),

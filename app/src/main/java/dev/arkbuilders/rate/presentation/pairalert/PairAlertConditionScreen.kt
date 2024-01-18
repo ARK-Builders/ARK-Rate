@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -31,16 +33,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.model.PairAlertCondition
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.presentation.shared.SharedViewModel
+import dev.arkbuilders.rate.presentation.theme.Purple500
 import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 
@@ -50,8 +59,27 @@ fun PairAlertConditionScreen(
     navigator: DestinationsNavigator,
     viewModel: SharedViewModel = activityViewModel()
 ) {
+    var descDialog by remember { mutableStateOf(false) }
+
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    IconButton(
+                        modifier = Modifier.padding(top = 16.dp, end = 8.dp),
+                        onClick = { descDialog = true }
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_question_mark),
+                            contentDescription = "",
+                            tint = Purple500
+                        )
+                    }
+                }
+            }
             items(
                 viewModel.pairAlertConditions,
                 key = { it.id }
@@ -63,6 +91,11 @@ fun PairAlertConditionScreen(
             }
         }
     }
+
+    if (descDialog)
+        DescDialog {
+            descDialog = false
+        }
 }
 
 @Composable
@@ -203,6 +236,33 @@ private fun AddOrDeleteBtn(
             }
         ) {
             Icon(Icons.Filled.Delete, "Delete")
+        }
+    }
+}
+
+@Composable
+private fun DescDialog(onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = Color.White
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.pair_alerts_desc),
+                    textAlign = TextAlign.Center
+                )
+                Button(
+                    modifier = Modifier.padding(top = 10.dp),
+                    onClick = { onDismiss() }) {
+                    Text(text = stringResource(R.string.ok))
+                }
+            }
         }
     }
 }
