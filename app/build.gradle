@@ -110,7 +110,7 @@ dependencies {
     implementation 'io.github.oleksandrbalan:tagcloud:1.1.0'
 
     implementation 'io.github.raamcosta.compose-destinations:core:1.10.0'
-    ksp 'io.github.raamcosta.compose-destinations:ksp:1.9.62'
+    ksp 'io.github.raamcosta.compose-destinations:ksp:1.10.0'
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
