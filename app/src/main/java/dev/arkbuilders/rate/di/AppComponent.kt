@@ -7,6 +7,7 @@ import dagger.Component
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
 import dev.arkbuilders.rate.data.assets.AssetsRepo
 import dev.arkbuilders.rate.data.preferences.Preferences
+import dev.arkbuilders.rate.data.worker.AppWorkerFactory
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.module.ApiModule
 import dev.arkbuilders.rate.di.module.DBModule
@@ -34,6 +35,7 @@ interface AppComponent {
     fun addPairAlertVMFactory(): AddPairAlertViewModelFactory
     fun quickVMFactory(): QuickViewModelFactory.Factory
     fun settingsVMFactory(): SettingsViewModelFactory
+    fun appWorkerFactory(): AppWorkerFactory
 
     fun prefs(): Preferences
 

@@ -24,7 +24,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import java.util.prefs.Preferences
 
-class App : Application() {
+class App : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
@@ -80,4 +80,9 @@ class App : Application() {
             workRequest
         )
     }
+
+    override fun getWorkManagerConfiguration() = Configuration.Builder()
+        .setMinimumLoggingLevel(android.util.Log.INFO)
+        .setWorkerFactory(DIManager.component.appWorkerFactory())
+        .build()
 }
