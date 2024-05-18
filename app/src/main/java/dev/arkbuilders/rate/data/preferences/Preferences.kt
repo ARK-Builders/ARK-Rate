@@ -5,7 +5,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dev.arkbuilders.rate.data.model.CurrencyCode
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -20,12 +22,13 @@ enum class QuickScreenSortedBy {
 }
 
 sealed class PreferenceKey<out T>(val defaultValue: T) {
-    object QuickScreenShowAsKey : PreferenceKey<Int>(0)
-    object QuickScreenSortedByKey : PreferenceKey<Int>(0)
-    object FiatFiatRateRound : PreferenceKey<Int>(2)
-    object CryptoCryptoRateRound : PreferenceKey<Int>(2)
-    object FiatCryptoRateRound : PreferenceKey<Int>(2)
-    object CrashReport : PreferenceKey<Boolean>(true)
+    data object QuickScreenShowAsKey : PreferenceKey<Int>(0)
+    data object QuickScreenSortedByKey : PreferenceKey<Int>(0)
+    data object FiatFiatRateRound : PreferenceKey<Int>(2)
+    data object CryptoCryptoRateRound : PreferenceKey<Int>(2)
+    data object FiatCryptoRateRound : PreferenceKey<Int>(2)
+    data object CrashReport : PreferenceKey<Boolean>(true)
+    data object BaseCurrencyCode: PreferenceKey<CurrencyCode>("USD")
 }
 
 @Singleton
@@ -74,6 +77,8 @@ class Preferences @Inject constructor(val context: Context) {
                 intPreferencesKey("round_crypto_fiat")
 
             PreferenceKey.CrashReport -> booleanPreferencesKey("crash_report")
+
+            PreferenceKey.BaseCurrencyCode -> stringPreferencesKey("baseCurrencyCode")
 
         }
 

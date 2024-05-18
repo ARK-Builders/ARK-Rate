@@ -1,7 +1,6 @@
 package dev.arkbuilders.rate.presentation.utils
 
 import android.Manifest
-import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -14,24 +13,23 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.model.PairAlertCondition
+import dev.arkbuilders.rate.data.model.PairAlert
 import dev.arkbuilders.rate.presentation.MainActivity
 
 object NotificationUtils {
     fun showPairAlert(
-        pairAlertCondition: PairAlertCondition,
-        curRatio: Float,
+        pairAlert: PairAlert,
+        curRatio: Double,
         ctx: Context
     ) {
-        val pair = pairAlertCondition
+        val pair = pairAlert
 
-        val title = "❗ ${pair.numeratorCode}/${pair.denominatorCode}" +
-                " ${if (pair.moreNotLess) ">" else "<"} ${pair.ratio}"
+        val title = "ARK Rate Price Alert"
         val builder = NotificationCompat.Builder(ctx, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notifications)
             .setContentTitle(title)
             .setContentText(
-                "Current price of ${pair.numeratorCode} is $curRatio ${pair.denominatorCode}"
+                "${pair.targetCode} is now ${if (pair.above()) "above" else "below"} ${pair.targetPrice} ${pair.baseCode}"
             )
             .setContentIntent(appIntent(ctx))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -40,11 +38,13 @@ object NotificationUtils {
 
         with(NotificationManagerCompat.from(ctx)) {
 
-            if (ActivityCompat.checkSelfPermission(ctx,
-                                                   Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            if (ActivityCompat.checkSelfPermission(
+                    ctx,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
             ) {
 
-                notify(pairAlertCondition.id.toInt(), builder.build())
+                notify(pairAlert.id.toInt(), builder.build())
             }
 
         }

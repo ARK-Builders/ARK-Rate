@@ -17,13 +17,17 @@ data class RoomCurrencyAmount(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val code: CurrencyCode,
-    val amount: Double
+    val amount: Double,
+    val group: String?
 )
 
 @Dao
 interface AssetsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(currencyAmount: RoomCurrencyAmount)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertList(list: List<RoomCurrencyAmount>)
 
     @Query("SELECT * FROM RoomCurrencyAmount")
     suspend fun getAll(): List<RoomCurrencyAmount>
@@ -47,11 +51,16 @@ class AssetsLocalDataSource @Inject constructor(val dao: AssetsDao) {
     suspend fun getByCode(code: CurrencyCode) =
         dao.getByCode(code)?.toCurrencyAmount()
 
+    suspend fun insertList(list: List<CurrencyAmount>) =
+        dao.insertList(list.map { it.toRoom() })
+
     fun allFlow() =
         dao.allFlow().map { list -> list.map { it.toCurrencyAmount() } }
 
     suspend fun delete(code: String) = dao.delete(code)
 }
 
-private fun RoomCurrencyAmount.toCurrencyAmount() = CurrencyAmount(id, code, amount)
-private fun CurrencyAmount.toRoom() = RoomCurrencyAmount(id, code, amount)
+private fun RoomCurrencyAmount.toCurrencyAmount() =
+    CurrencyAmount(id, code, amount, group)
+
+private fun CurrencyAmount.toRoom() = RoomCurrencyAmount(id, code, amount, group)

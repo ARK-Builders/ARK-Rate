@@ -18,6 +18,9 @@ class GeneralCurrencyRepo @Inject constructor(
         cryptoRepo
     )
 
+    suspend fun getCodeToCurrencyRate(): Map<CurrencyCode, CurrencyRate> =
+        getCurrencyRate().map { it.code to it }.toMap()
+
     suspend fun getCurrencyRate(): List<CurrencyRate> =
         currencyRepos.fold(emptyList()) { codeToRate, repo ->
             codeToRate + repo.getCurrencyRate()

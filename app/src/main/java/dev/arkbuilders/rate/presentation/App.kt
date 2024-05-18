@@ -1,6 +1,7 @@
 package dev.arkbuilders.rate.presentation
 
 import android.app.Application
+import androidx.work.Configuration
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType

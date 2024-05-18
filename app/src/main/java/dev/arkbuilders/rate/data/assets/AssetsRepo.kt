@@ -22,6 +22,9 @@ class AssetsRepo @Inject constructor(
     suspend fun setCurrencyAmount(amount: CurrencyAmount) =
         withContext(Dispatchers.IO) { local.insert(amount) }
 
+    suspend fun setCurrencyAmountList(list: List<CurrencyAmount>) =
+        local.insertList(list)
+
     suspend fun removeCurrency(code: String) = withContext(Dispatchers.IO) {
         local.delete(code)
     }

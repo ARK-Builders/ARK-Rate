@@ -33,7 +33,4 @@ class DBModule {
 
     @Provides
     fun fetchTimestampDao(db: Database) = db.fetchTimestampDao()
-
-    @Provides
-    fun quickBaseDao(db: Database) = db.quickBaseCurrencyDao()
 }
