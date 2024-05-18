@@ -51,12 +51,10 @@ import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
-import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
-import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -64,7 +62,6 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun AddPairAlertScreen(
     navigator: DestinationsNavigator,
-    sharedViewModel: SharedViewModel = activityViewModel()
 ) {
     val viewModel: AddPairAlertViewModel =
         viewModel(
