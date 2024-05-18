@@ -12,20 +12,18 @@ import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.utils.NotificationUtils
 import javax.inject.Inject
 
-class CurrencyMonitorWorker(val context: Context, params: WorkerParameters) :
-    CoroutineWorker(context, params) {
-
-    @Inject
-    lateinit var currencyRepo: GeneralCurrencyRepo
-
-    @Inject
-    lateinit var pairAlertRepo: PairAlertRepo
+class CurrencyMonitorWorker(
+    private val context: Context,
+    params: WorkerParameters,
+    private val currencyRepo: GeneralCurrencyRepo,
+    private val pairAlertRepo: PairAlertRepo
+) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
         DIManager.component.inject(this)
         val rates = currencyRepo.getCodeToCurrencyRate()
         pairAlertRepo.getAll().forEach { pairAlert ->
-           val (met, currentRate) = isConditionMet(rates, pairAlert)
+            val (met, currentRate) = isConditionMet(rates, pairAlert)
             if (met) notifyPair(pairAlert, currentRate)
 
         }
