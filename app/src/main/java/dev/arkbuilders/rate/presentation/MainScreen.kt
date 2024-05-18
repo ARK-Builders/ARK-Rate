@@ -19,10 +19,8 @@ import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDe
 import dev.arkbuilders.rate.presentation.destinations.PortfolioScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.SettingsScreenDestination
-import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.ui.AnimatedRateBottomNavigation
 import dev.arkbuilders.rate.presentation.ui.RateScaffold
-import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import dev.arkbuilders.rate.presentation.utils.keyboardAsState
 
 

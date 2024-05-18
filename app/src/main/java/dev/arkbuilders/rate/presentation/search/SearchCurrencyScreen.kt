@@ -40,10 +40,8 @@ import dev.arkbuilders.rate.data.model.CurrencyName
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
-import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 

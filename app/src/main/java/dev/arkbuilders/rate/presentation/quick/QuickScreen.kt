@@ -75,13 +75,11 @@ import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
-import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.theme.ArkTypography
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
-import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecycle
 import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 import eu.wewox.tagcloud.TagCloud
@@ -96,10 +94,9 @@ import kotlin.math.exp
 @Composable
 fun QuickScreen(
     navigator: DestinationsNavigator,
-    sharedViewModel: SharedViewModel = activityViewModel(),
 ) {
     val viewModel: QuickViewModel = viewModel(
-        factory = DIManager.component.quickVMFactory().create(sharedViewModel)
+        factory = DIManager.component.quickVMFactory().create()
     )
 
     val state by viewModel.collectAsState()

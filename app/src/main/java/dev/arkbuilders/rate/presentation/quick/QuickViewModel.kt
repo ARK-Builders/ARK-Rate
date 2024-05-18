@@ -12,7 +12,6 @@ import dev.arkbuilders.rate.data.db.QuickRepo
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.model.QuickPair
 import dev.arkbuilders.rate.data.preferences.Preferences
-import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
@@ -35,7 +34,6 @@ sealed class QuickScreenEffect {
 }
 
 class QuickViewModel(
-    val sharedViewModel: SharedViewModel,
     val currencyRepo: GeneralCurrencyRepo,
     val assetsRepo: AssetsRepo,
     val quickRepo: QuickRepo,
@@ -64,7 +62,6 @@ class QuickViewModel(
 }
 
 class QuickViewModelFactory @AssistedInject constructor(
-    @Assisted private val sharedViewModel: SharedViewModel,
     private val assetsRepo: AssetsRepo,
     private val quickRepo: QuickRepo,
     private val currencyRepo: GeneralCurrencyRepo,
@@ -72,7 +69,6 @@ class QuickViewModelFactory @AssistedInject constructor(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return QuickViewModel(
-            sharedViewModel,
             currencyRepo,
             assetsRepo,
             quickRepo,
@@ -82,8 +78,6 @@ class QuickViewModelFactory @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(
-            @Assisted sharedViewModel: SharedViewModel,
-        ): QuickViewModelFactory
+        fun create(): QuickViewModelFactory
     }
 }

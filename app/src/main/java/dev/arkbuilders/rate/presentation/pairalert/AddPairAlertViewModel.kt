@@ -15,7 +15,6 @@ import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.model.PairAlert
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
-import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

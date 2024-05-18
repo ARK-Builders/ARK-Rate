@@ -64,12 +64,10 @@ import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.data.model.PairAlert
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddPairAlertScreenDestination
-import dev.arkbuilders.rate.presentation.shared.SharedViewModel
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.theme.ArkTypography
 import dev.arkbuilders.rate.presentation.ui.AppTopBarCenterTitle
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
-import dev.arkbuilders.rate.presentation.utils.activityViewModel
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -77,7 +75,6 @@ import org.orbitmvi.orbit.compose.collectAsState
 @Composable
 fun PairAlertConditionScreen(
     navigator: DestinationsNavigator,
-    sharedVM: SharedViewModel = activityViewModel()
 ) {
     val viewModel: PairAlertViewModel =
         viewModel(factory = DIManager.component.pairAlertVMFactory())
