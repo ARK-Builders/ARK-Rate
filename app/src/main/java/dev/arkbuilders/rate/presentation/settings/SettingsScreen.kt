@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterialApi::class)
-
 package dev.arkbuilders.rate.presentation.settings
 
 import android.content.Intent
@@ -24,16 +22,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -94,9 +92,9 @@ private fun PrivacyPolicy() {
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(id = R.string.privacy_policy),
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyMedium,
             )
-            Divider()
+            HorizontalDivider()
         }
 
     }
@@ -173,7 +171,7 @@ fun SettingsGroup(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(stringResource(id = name), style = MaterialTheme.typography.h5)
+        Text(stringResource(id = name), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(8.dp))
         Surface(
             modifier = Modifier.fillMaxWidth(),
@@ -224,7 +222,7 @@ private fun SettingsSwitchComp(
                     Text(
                         text = stringResource(id = name),
                         modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Start,
                     )
                 }
@@ -286,13 +284,13 @@ fun SettingsNumberComp(
                 Column(modifier = Modifier.padding(8.dp)) {
                     Text(
                         text = stringResource(id = name),
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Start,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = state.value,
-                        style = MaterialTheme.typography.body2,
+                        style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Start,
                     )
                 }

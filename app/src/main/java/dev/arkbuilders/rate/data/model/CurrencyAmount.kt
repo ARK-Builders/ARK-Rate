@@ -7,5 +7,6 @@ import kotlinx.parcelize.Parcelize
 data class CurrencyAmount(
     val id: Long = 0,
     val code: CurrencyCode,
-    var amount: Double
+    var amount: Double,
+    val group: String? = null
 ): Parcelable
