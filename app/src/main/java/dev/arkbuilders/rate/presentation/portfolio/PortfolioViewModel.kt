@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
+import dev.arkbuilders.rate.data.db.AssetsRepo
 import kotlinx.coroutines.launch
 import dev.arkbuilders.rate.data.model.CurrencyAmount
-import dev.arkbuilders.rate.data.assets.AssetsRepo
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.data.preferences.Preferences
@@ -58,6 +58,10 @@ class PortfolioViewModel(
                 }
             }
         }
+    }
+
+    fun onAssetRemove(amount: CurrencyAmount) = intent {
+        assetsRepo.removeCurrency(amount.id)
     }
 
     private suspend fun assetToPortfolioDisplayAmount(
