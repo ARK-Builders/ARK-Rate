@@ -4,18 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import arrow.core.Either
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.assets.AssetsRepo
 import dev.arkbuilders.rate.data.db.PairAlertRepo
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.model.PairAlert
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
-import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
@@ -45,7 +39,6 @@ sealed class AddPairAlertScreenEffect {
 }
 
 class AddPairAlertViewModel(
-    private val assetsRepo: AssetsRepo,
     private val currencyRepo: GeneralCurrencyRepo,
     private val pairAlertRepo: PairAlertRepo
 ) : ViewModel(), ContainerHost<AddPairAlertScreenState, AddPairAlertScreenEffect> {
@@ -168,13 +161,11 @@ class AddPairAlertViewModel(
 }
 @Singleton
 class AddPairAlertViewModelFactory @Inject constructor(
-    private val assetsRepo: AssetsRepo,
     private val currencyRepo: GeneralCurrencyRepo,
     private val pairAlertRepo: PairAlertRepo
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddPairAlertViewModel(
-            assetsRepo,
             currencyRepo,
             pairAlertRepo
         ) as T

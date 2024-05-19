@@ -3,6 +3,7 @@
 package dev.arkbuilders.rate.presentation.portfolio
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,6 +43,8 @@ import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.theme.ArkTypography
+import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
+import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
 import org.orbitmvi.orbit.compose.collectAsState
@@ -81,7 +84,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
             if (isEmpty)
                 PortfolioEmpty(navigator)
             else
-                Content(state)
+                Content(state, onDelete = viewModel::onAssetRemove)
         }
     }
 }
@@ -101,7 +104,10 @@ private val previewState = PortfolioScreenState(
 
 @Preview(showBackground = true)
 @Composable
-private fun Content(state: PortfolioScreenState = previewState) {
+private fun Content(
+    state: PortfolioScreenState = previewState,
+    onDelete: (CurrencyAmount) -> Unit = {}
+) {
     val groupToAmounts = state.groupToPortfolioAmount.toList()
     val groups = groupToAmounts.map { it.first }
     Column {
@@ -109,14 +115,19 @@ private fun Content(state: PortfolioScreenState = previewState) {
         GroupViewPager(modifier = Modifier.padding(top = 16.dp), groups = groups) {
             GroupPage(
                 baseCode = state.baseCode,
-                amounts = groupToAmounts.map { it.second }[it]
+                amounts = groupToAmounts.map { it.second }[it],
+                onDelete = onDelete
             )
         }
     }
 }
 
 @Composable
-private fun GroupPage(baseCode: CurrencyCode, amounts: List<PortfolioDisplayAmount>) {
+private fun GroupPage(
+    baseCode: CurrencyCode,
+    amounts: List<PortfolioDisplayAmount>,
+    onDelete: (CurrencyAmount) -> Unit
+) {
     val total = amounts.fold(0.0) { acc, amount ->
         acc + amount.baseAmount.amount
     }
@@ -137,13 +148,13 @@ private fun GroupPage(baseCode: CurrencyCode, amounts: List<PortfolioDisplayAmou
             fontWeight = FontWeight.SemiBold,
             fontSize = 36.sp
         )
-        HorizontalDivider(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 32.dp),
-            thickness = 1.dp,
-            color = ArkColor.BorderSecondary
-        )
+        AppHorDiv16(Modifier.padding(top = 32.dp))
         amounts.forEach {
-            CurrencyItem(it)
+            AppSwipeToDismiss(
+                content = { CurrencyItem(it) },
+                onDelete = { onDelete(it.amount) }
+            )
+            AppHorDiv16()
         }
     }
 }
@@ -154,60 +165,54 @@ private fun CurrencyItem(
     amount: PortfolioDisplayAmount = previewPortfolioAmount,
     onClick: (PortfolioDisplayAmount) -> Unit = {},
 ) {
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp)
-                .clickable {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .clickable {
 
-                },
-            verticalAlignment = Alignment.CenterVertically
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_earth),
+            contentDescription = "",
+            tint = Color.Unspecified
+        )
+        Column(
+            modifier = Modifier.padding(start = 12.dp),
+            verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_earth),
-                contentDescription = "",
-                tint = Color.Unspecified
-            )
-            Column(
-                modifier = Modifier.padding(start = 12.dp),
-                verticalArrangement = Arrangement.Center
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = amount.amount.code,
-                        fontWeight = FontWeight.Medium,
-                        color = ArkColor.TextPrimary
-                    )
-                    Text(
-                        text = "${CurrUtils.prepareToDisplay(amount.baseAmount.amount)} ${amount.baseAmount.code}",
-                        fontWeight = FontWeight.Medium,
-                        color = ArkColor.TextPrimary
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = CurrUtils.prepareToDisplay(amount.ratioToBase),
-                        color = ArkColor.TextTertiary
-                    )
-                    Text(
-                        text = "${CurrUtils.prepareToDisplay(amount.amount.amount)} ${amount.amount.code}",
-                        color = ArkColor.TextTertiary
-                    )
-                }
+                Text(
+                    text = amount.amount.code,
+                    fontWeight = FontWeight.Medium,
+                    color = ArkColor.TextPrimary
+                )
+                Text(
+                    text = "${CurrUtils.prepareToDisplay(amount.baseAmount.amount)} ${amount.baseAmount.code}",
+                    fontWeight = FontWeight.Medium,
+                    color = ArkColor.TextPrimary
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = CurrUtils.prepareToDisplay(amount.ratioToBase),
+                    color = ArkColor.TextTertiary
+                )
+                Text(
+                    text = "${CurrUtils.prepareToDisplay(amount.amount.amount)} ${amount.amount.code}",
+                    color = ArkColor.TextTertiary
+                )
             }
         }
-        HorizontalDivider(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            thickness = 1.dp,
-            color = ArkColor.BorderSecondary
-        )
     }
 }
 

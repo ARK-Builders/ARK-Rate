@@ -78,6 +78,7 @@ import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.theme.ArkTypography
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
+import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
 import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecycle
@@ -123,24 +124,30 @@ fun QuickScreen(
             if (isEmpty)
                 QuickEmpty(navigator = navigator)
             else
-                Content(state = state)
+                Content(state = state, onDelete = viewModel::onDelete)
         }
     }
 }
 
 @Composable
-private fun Content(state: QuickScreenState) {
+private fun Content(state: QuickScreenState, onDelete: (QuickPair) -> Unit = {}) {
     val groups = state.groupToQuickPairs.map { it.first }
     Column {
         SearchTextFieldWithSort(modifier = Modifier.padding(top = 16.dp))
         GroupViewPager(modifier = Modifier.padding(top = 20.dp), groups = groups) {
-            GroupPage(quickPairs = state.groupToQuickPairs[it].second)
+            GroupPage(
+                quickPairs = state.groupToQuickPairs[it].second,
+                onDelete = onDelete
+            )
         }
     }
 }
 
 @Composable
-private fun GroupPage(quickPairs: List<DisplayQuickPair>) {
+private fun GroupPage(
+    quickPairs: List<DisplayQuickPair>,
+    onDelete: (QuickPair) -> Unit
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 24.dp),
@@ -150,7 +157,10 @@ private fun GroupPage(quickPairs: List<DisplayQuickPair>) {
         )
         quickPairs.forEach {
             AppHorDiv16()
-            QuickItem(it)
+            AppSwipeToDismiss(
+                content = { QuickItem(it) },
+                onDelete = { onDelete(it.pair) }
+            )
             AppHorDiv16()
         }
     }
@@ -176,8 +186,9 @@ private fun QuickItem(
 
     Row(
         modifier = Modifier
-            .padding(16.dp)
             .fillMaxWidth()
+            .background(Color.White)
+            .padding(16.dp)
             .clickable { expanded = !expanded },
         verticalAlignment = Alignment.CenterVertically
     ) {

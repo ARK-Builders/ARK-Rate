@@ -5,7 +5,7 @@ import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.assets.AssetsRepo
+import dev.arkbuilders.rate.data.db.AssetsRepo
 import dev.arkbuilders.rate.data.preferences.Preferences
 import dev.arkbuilders.rate.data.worker.AppWorkerFactory
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker

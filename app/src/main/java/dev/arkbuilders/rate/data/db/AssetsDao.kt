@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.model.CurrencyCode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @Entity
 data class RoomCurrencyAmount(
@@ -38,26 +41,28 @@ interface AssetsDao {
     @Query("SELECT * FROM RoomCurrencyAmount")
     fun allFlow(): Flow<List<RoomCurrencyAmount>>
 
-    @Query("DELETE FROM RoomCurrencyAmount where code = :code")
-    suspend fun delete(code: CurrencyCode)
+    @Query("DELETE FROM RoomCurrencyAmount where id = :id")
+    suspend fun delete(id: Long)
 }
 
-class AssetsLocalDataSource @Inject constructor(val dao: AssetsDao) {
-    suspend fun insert(currencyAmount: CurrencyAmount) =
-        dao.insert(currencyAmount.toRoom())
+@Singleton
+class AssetsRepo @Inject constructor(
+    private val dao: AssetsDao
+) {
+    suspend fun allCurrencyAmount(): List<CurrencyAmount> = dao.getAll()
+        .map { it.toCurrencyAmount() }
 
-    suspend fun getAll() = dao.getAll().map { it.toCurrencyAmount() }
+    fun allCurrencyAmountFlow(): Flow<List<CurrencyAmount>> = dao.allFlow()
+        .map { list -> list.map { it.toCurrencyAmount() } }
 
-    suspend fun getByCode(code: CurrencyCode) =
-        dao.getByCode(code)?.toCurrencyAmount()
+    suspend fun setCurrencyAmount(amount: CurrencyAmount) =
+        dao.insert(amount.toRoom())
 
-    suspend fun insertList(list: List<CurrencyAmount>) =
+    suspend fun setCurrencyAmountList(list: List<CurrencyAmount>) =
         dao.insertList(list.map { it.toRoom() })
 
-    fun allFlow() =
-        dao.allFlow().map { list -> list.map { it.toCurrencyAmount() } }
-
-    suspend fun delete(code: String) = dao.delete(code)
+    suspend fun removeCurrency(id: Long) =
+        dao.delete(id)
 }
 
 private fun RoomCurrencyAmount.toCurrencyAmount() =

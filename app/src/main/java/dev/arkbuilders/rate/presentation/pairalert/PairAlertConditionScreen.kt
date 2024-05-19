@@ -2,50 +2,35 @@
 
 package dev.arkbuilders.rate.presentation.pairalert
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,7 +40,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -66,9 +50,9 @@ import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddPairAlertScreenDestination
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.theme.ArkTypography
+import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.AppTopBarCenterTitle
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
-import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Destination
@@ -140,7 +124,10 @@ private fun GroupPage(
             color = ArkColor.BorderSecondary
         )
         page.created.forEach {
-            PairAlert(it, onDelete = { onDelete(it) })
+            AppSwipeToDismiss(
+                content = { PairAlertItem(pairAlert = it) },
+                onDelete = { onDelete(it) }
+            )
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 thickness = 1.dp,
@@ -159,7 +146,10 @@ private fun GroupPage(
             color = ArkColor.BorderSecondary
         )
         page.oneTimeTriggered.forEach {
-            PairAlert(it, onDelete = { onDelete(it) })
+            AppSwipeToDismiss(
+                content = { PairAlertItem(pairAlert = it) },
+                onDelete = { onDelete(it) }
+            )
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 thickness = 1.dp,
@@ -170,28 +160,7 @@ private fun GroupPage(
 }
 
 @Composable
-private fun PairAlert(pairAlert: PairAlert, onDelete: (PairAlert) -> Unit) {
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = {
-            if (it == SwipeToDismissBoxValue.EndToStart) {
-                //
-                onDelete(pairAlert)
-                true
-            } else false
-        }
-    )
-
-    SwipeToDismissBox(
-        state = dismissState,
-        backgroundContent = { DismissBackground(state = dismissState) },
-        content = { PairAlertContent(pairAlert = pairAlert) },
-        enableDismissFromStartToEnd = false
-    )
-}
-
-
-@Composable
-private fun PairAlertContent(pairAlert: PairAlert) {
+private fun PairAlertItem(pairAlert: PairAlert) {
     var checkBoxActive by remember {
         mutableStateOf(true)
     }
@@ -249,30 +218,6 @@ private fun PairAlertContent(pairAlert: PairAlert) {
         )
     }
 
-}
-
-@Composable
-private fun DismissBackground(state: SwipeToDismissBoxState) {
-    val color = when (state.dismissDirection) {
-        SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError
-        else -> Color.Transparent
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Spacer(modifier = Modifier)
-        Icon(
-            modifier = Modifier.padding(end = 27.dp),
-            painter = painterResource(id = R.drawable.ic_delete),
-            contentDescription = "",
-            tint = ArkColor.FGErrorPrimary
-        )
-    }
 }
 
 

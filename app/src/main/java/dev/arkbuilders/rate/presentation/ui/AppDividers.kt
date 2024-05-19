@@ -8,9 +8,9 @@ import androidx.compose.ui.unit.dp
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 @Composable
-fun AppHorDiv16() {
+fun AppHorDiv16(modifier: Modifier = Modifier) {
     HorizontalDivider(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = modifier.padding(horizontal = 16.dp),
         thickness = 1.dp,
         color = ArkColor.BorderSecondary
     )

@@ -3,11 +3,10 @@ package dev.arkbuilders.rate.presentation.quick
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.assets.AssetsRepo
+import dev.arkbuilders.rate.data.db.AssetsRepo
 import dev.arkbuilders.rate.data.db.QuickRepo
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.model.QuickPair
@@ -58,6 +57,10 @@ class QuickViewModel(
                 reduce { state.copy(groupToQuickPairs = byGroup) }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun onDelete(pair: QuickPair) = intent {
+        quickRepo.delete(pair.id)
     }
 }
 

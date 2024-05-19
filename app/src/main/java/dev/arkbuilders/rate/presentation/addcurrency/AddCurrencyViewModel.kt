@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.assets.AssetsRepo
+import dev.arkbuilders.rate.data.db.AssetsRepo
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.utils.replace
