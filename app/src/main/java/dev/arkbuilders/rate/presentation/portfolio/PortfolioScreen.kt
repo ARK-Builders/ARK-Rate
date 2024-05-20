@@ -112,12 +112,20 @@ private fun Content(
     val groups = groupToAmounts.map { it.first }
     Column {
         SearchTextFieldWithSort(modifier = Modifier.padding(top = 16.dp))
-        GroupViewPager(modifier = Modifier.padding(top = 16.dp), groups = groups) {
+        if (groupToAmounts.size == 1) {
             GroupPage(
                 baseCode = state.baseCode,
-                amounts = groupToAmounts.map { it.second }[it],
+                amounts = groupToAmounts.map { it.second }.first(),
                 onDelete = onDelete
             )
+        } else {
+            GroupViewPager(modifier = Modifier.padding(top = 16.dp), groups = groups) {
+                GroupPage(
+                    baseCode = state.baseCode,
+                    amounts = groupToAmounts.map { it.second }[it],
+                    onDelete = onDelete
+                )
+            }
         }
     }
 }
