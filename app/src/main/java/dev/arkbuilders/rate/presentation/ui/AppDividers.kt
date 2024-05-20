@@ -15,3 +15,12 @@ fun AppHorDiv16(modifier: Modifier = Modifier) {
         color = ArkColor.BorderSecondary
     )
 }
+
+@Composable
+fun AppHorDiv(modifier: Modifier = Modifier) {
+    HorizontalDivider(
+        modifier = modifier,
+        thickness = 1.dp,
+        color = ArkColor.BorderSecondary
+    )
+}

@@ -50,6 +50,8 @@ import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddPairAlertScreenDestination
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.theme.ArkTypography
+import dev.arkbuilders.rate.presentation.ui.AppHorDiv
+import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.AppTopBarCenterTitle
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
@@ -84,19 +86,41 @@ fun PairAlertConditionScreen(
         },
         topBar = {
             if (isEmpty) return@Scaffold
-            AppTopBarCenterTitle(title = "Alerts")
+            Column {
+                AppTopBarCenterTitle(title = "Alerts")
+                AppHorDiv()
+            }
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
             if (isEmpty)
                 Empty(navigator)
             else {
-                GroupViewPager(groups = state.pages.map { it.group }) { index ->
-                    GroupPage(
-                        page = state.pages[index],
-                        onDelete = { viewModel.onDelete(it) },
-                    )
-                }
+                Content(
+                    state,
+                    onDelete = viewModel::onDelete
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun Content(state: PairAlertScreenState, onDelete: (PairAlert) -> Unit) {
+    Column {
+        if (state.pages.size == 1) {
+            GroupPage(
+                page = state.pages.first()
+            )
+        } else {
+            GroupViewPager(
+                modifier = Modifier.padding(top = 16.dp),
+                groups = state.pages.map { it.group }
+            ) { index ->
+                GroupPage(
+                    page = state.pages[index],
+                    onDelete = { onDelete(it) },
+                )
             }
         }
     }

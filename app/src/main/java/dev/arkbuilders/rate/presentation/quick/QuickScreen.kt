@@ -134,11 +134,21 @@ private fun Content(state: QuickScreenState, onDelete: (QuickPair) -> Unit = {})
     val groups = state.groupToQuickPairs.map { it.first }
     Column {
         SearchTextFieldWithSort(modifier = Modifier.padding(top = 16.dp))
-        GroupViewPager(modifier = Modifier.padding(top = 20.dp), groups = groups) {
+        if (state.groupToQuickPairs.size == 1) {
             GroupPage(
-                quickPairs = state.groupToQuickPairs[it].second,
+                quickPairs = state.groupToQuickPairs.first().second,
                 onDelete = onDelete
             )
+        } else {
+            GroupViewPager(
+                modifier = Modifier.padding(top = 20.dp),
+                groups = groups
+            ) {
+                GroupPage(
+                    quickPairs = state.groupToQuickPairs[it].second,
+                    onDelete = onDelete
+                )
+            }
         }
     }
 }
