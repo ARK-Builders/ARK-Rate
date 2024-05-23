@@ -9,6 +9,7 @@ import dev.arkbuilders.rate.data.GeneralCurrencyRepo
 import dev.arkbuilders.rate.data.db.PairAlertRepo
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.model.PairAlert
+import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -23,13 +24,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 data class AddPairAlertScreenState(
-    val targetCode: CurrencyCode,
-    val baseCode: CurrencyCode,
-    val priceOrPercent: Either<Double, Double>,
-    val currentPrice: Double,
-    val oneTime: Boolean,
-    val aboveNotBelow: Boolean,
+    val targetCode: CurrencyCode = "BTC",
+    val baseCode: CurrencyCode  = "USD",
+    val priceOrPercent: Either<String, String> = Either.Left(""),
+    val currentPrice: Double = 0.0,
+    val aboveNotBelow: Boolean = true,
     val group: String? = null,
+    val oneTimeNotRecurrent: Boolean = true,
     val availableGroups: List<String> = emptyList()
 )
 
@@ -43,16 +44,7 @@ class AddPairAlertViewModel(
     private val pairAlertRepo: PairAlertRepo
 ) : ViewModel(), ContainerHost<AddPairAlertScreenState, AddPairAlertScreenEffect> {
     override val container: Container<AddPairAlertScreenState, AddPairAlertScreenEffect> =
-        container(
-            AddPairAlertScreenState(
-                targetCode = "BTC",
-                baseCode = "USD",
-                priceOrPercent = Either.Left(0.0),
-                currentPrice = 0.0,
-                oneTime = true,
-                aboveNotBelow = true
-            )
-        )
+        container(AddPairAlertScreenState())
 
     init {
         AppSharedFlow.AddPairAlertTarget.flow.onEach {
@@ -86,10 +78,15 @@ class AddPairAlertViewModel(
             val targetRate =
                 currencyRepo.getCurrencyRate().find { it.code == target }
 
+            val currentPrice =
+                CurrUtils.roundOff(targetRate!!.rate / baseRate!!.rate)
+
             reduce {
                 state.copy(
-                    currentPrice = CurrUtils.roundOff(targetRate!!.rate / baseRate!!.rate),
-                    priceOrPercent = Either.Left(CurrUtils.roundOff(targetRate.rate * 1.1)),
+                    currentPrice = currentPrice,
+                    priceOrPercent = Either.Left(
+                        CurrUtils.roundOff(currentPrice * 1.1).toString()
+                    ),
                     targetCode = target,
                     baseCode = base
                 )
@@ -97,17 +94,32 @@ class AddPairAlertViewModel(
         }
     }
 
-    fun onPriceOrPercentChanged(input: String) = blockingIntent {
+    fun onPriceOrPercentInputChanged(input: String) = blockingIntent {
         state.priceOrPercent.fold(
             ifLeft = { handlePriceChanged(input) },
             ifRight = { handlePercentChanged(input) }
         )
     }
 
+    fun onPriceOrPercentChanged(priceNotPercent: Boolean) = intent {
+        reduce {
+            val priceOrPercent = if (priceNotPercent)
+                Either.Left(CurrUtils.roundOff(state.currentPrice * 1.1).toString())
+            else
+                Either.Right("5")
+
+            state.copy(priceOrPercent = priceOrPercent)
+        }
+    }
+
+    fun onOneTimeChanged(oneTimeNotRecurrent: Boolean) = intent {
+        reduce { state.copy(oneTimeNotRecurrent = oneTimeNotRecurrent) }
+    }
+
     fun onSaveClick() = intent {
         val (price, percent) = state.priceOrPercent.fold(
-            ifLeft = { price -> price to (state.currentPrice / price) - 1.0 },
-            ifRight = { percent -> state.currentPrice * (1.0 + percent) to percent },
+            ifLeft = { price -> price.toDouble() to null },
+            ifRight = { percent -> (state.currentPrice * (1.0 + percent.toDouble()/100)) to percent.toDouble() },
         )
 
         val pairAlert = PairAlert(
@@ -118,7 +130,9 @@ class AddPairAlertViewModel(
             startPrice = state.currentPrice,
             alertPercent = percent,
             oneTimeNotRecurrent = true,
+            enabled = true,
             priceNotPercent = true,
+            lastDateTriggered = null,
             triggered = false,
             group = state.group
         )
@@ -132,33 +146,37 @@ class AddPairAlertViewModel(
 
     private fun handlePriceChanged(input: String) = blockingIntent {
         val newPrice = state.priceOrPercent
-            .mapLeft { left ->
+            .mapLeft { oldPrice ->
                 CurrUtils.validateInput(
-                    left.toString(),
+                    oldPrice,
                     input
-                ).toDouble()
+                )
             }
         reduce {
             state.copy(
                 priceOrPercent = newPrice,
-                aboveNotBelow = newPrice.leftOrNull()!! > state.currentPrice
+                aboveNotBelow = newPrice.leftOrNull()!!.toDoubleSafe() > state.currentPrice
             )
         }
     }
 
     private fun handlePercentChanged(input: String) = blockingIntent {
         val newPercent = state.priceOrPercent
-            .map { right ->
-                right
+            .map { oldPercent ->
+                CurrUtils.validateInputWithMinusChar(
+                    oldPercent,
+                    input
+                )
             }
         reduce {
             state.copy(
                 priceOrPercent = newPercent,
-                aboveNotBelow = newPercent.getOrNull()!! > 0
+                aboveNotBelow = newPercent.getOrNull()!!.toDoubleSafe() > 0
             )
         }
     }
 }
+
 @Singleton
 class AddPairAlertViewModelFactory @Inject constructor(
     private val currencyRepo: GeneralCurrencyRepo,

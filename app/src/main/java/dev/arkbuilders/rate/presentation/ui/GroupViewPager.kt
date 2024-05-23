@@ -17,6 +17,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -33,37 +34,40 @@ fun GroupViewPager(
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState { groups.size }
     Column(modifier = modifier) {
-        ScrollableTabRow(
-            modifier = Modifier
-                .fillMaxWidth(),
-            containerColor = Color.Transparent,
-            selectedTabIndex = pagerState.currentPage,
-            divider = { },
-            indicator = { tabPositions ->
-                TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier
-                        .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                    color = ArkColor.Teal500
-                )
-            }
-        ) {
-            groups.forEachIndexed { index, group ->
-                val selected = index == pagerState.currentPage
-                Tab(
-                    selected = selected,
-                    onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(index)
-                        }
-                    },
-                    selectedContentColor = Color.Transparent
-                ) {
-                    Text(
-                        text = group ?: "Default",
-                        color = if (selected) ArkColor.Teal700 else ArkColor.TextQuarterary,
-                        fontWeight = FontWeight.SemiBold,
+        Box {
+            AppHorDiv(modifier = Modifier.align(Alignment.BottomCenter))
+            ScrollableTabRow(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                containerColor = Color.Transparent,
+                selectedTabIndex = pagerState.currentPage,
+                divider = { },
+                indicator = { tabPositions ->
+                    TabRowDefaults.SecondaryIndicator(
+                        modifier = Modifier
+                            .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                        color = ArkColor.Teal500
                     )
-                    Box(modifier = Modifier.height(8.dp))
+                }
+            ) {
+                groups.forEachIndexed { index, group ->
+                    val selected = index == pagerState.currentPage
+                    Tab(
+                        selected = selected,
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(index)
+                            }
+                        },
+                        selectedContentColor = Color.Transparent
+                    ) {
+                        Text(
+                            text = group ?: "Default",
+                            color = if (selected) ArkColor.Teal700 else ArkColor.TextQuarterary,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Box(modifier = Modifier.height(8.dp))
+                    }
                 }
             }
         }

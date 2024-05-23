@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase
         RoomPairAlert::class,
         RoomQuickPair::class,
     ],
-    version = 2,
+    version = 4,
     exportSchema = true,
 )
 abstract class Database : RoomDatabase() {

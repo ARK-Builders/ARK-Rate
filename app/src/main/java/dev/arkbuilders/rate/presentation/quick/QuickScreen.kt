@@ -82,7 +82,6 @@ import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
 import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecycle
-import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 import eu.wewox.tagcloud.TagCloud
 import eu.wewox.tagcloud.TagCloudItemScope
 import eu.wewox.tagcloud.rememberTagCloudState
@@ -273,6 +272,7 @@ private fun QuickItem(
                                 tint = Color.Unspecified
                             )
                             Text(
+                                modifier = Modifier.padding(start = 8.dp),
                                 text = "${it.second} ${it.first}",
                                 color = ArkColor.TextTertiary
                             )
