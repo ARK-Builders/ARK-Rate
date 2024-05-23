@@ -72,7 +72,7 @@ private fun RoomPairAlert.toCondition() = PairAlert(
     enabled,
     priceNotPercent,
     triggered,
-    OffsetDateTime.parse(lastDateTriggered),
+    lastDateTriggered?.let { OffsetDateTime.parse(lastDateTriggered) },
     group
 )
 

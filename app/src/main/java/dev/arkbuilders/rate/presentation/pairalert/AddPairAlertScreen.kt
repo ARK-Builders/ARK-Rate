@@ -356,7 +356,7 @@ private fun EditCondition(
             if (state.priceOrPercent.isRight() && !state.oneTimeNotRecurrent) {
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "every",
+                    text = "every ",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextPrimary

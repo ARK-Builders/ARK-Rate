@@ -157,14 +157,16 @@ private fun GroupPage(
     quickPairs: List<DisplayQuickPair>,
     onDelete: (QuickPair) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            modifier = Modifier.padding(start = 16.dp, top = 24.dp),
-            text = "Pairs",
-            color = ArkColor.TextTertiary,
-            fontWeight = FontWeight.Medium
-        )
-        quickPairs.forEach {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            Text(
+                modifier = Modifier.padding(start = 16.dp, top = 24.dp),
+                text = "Pairs",
+                color = ArkColor.TextTertiary,
+                fontWeight = FontWeight.Medium
+            )
+        }
+        items(quickPairs) {
             AppHorDiv16()
             AppSwipeToDismiss(
                 content = { QuickItem(it) },
