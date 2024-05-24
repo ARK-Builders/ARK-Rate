@@ -34,10 +34,21 @@ object CurrUtils {
     }
 
     fun prepareToDisplay(value: Double): String {
+        var fractionSize = if (value > 10) 2 else 8
+
+        val fractionalPart = value.toLong() - value
+        if (fractionalPart == 0.0) {
+            fractionSize = 0
+        }
+        val fractionPattern = if (fractionSize == 0)
+            ""
+        else
+            "." + "#".repeat(fractionSize)
+
         val formatSymbols = DecimalFormatSymbols(Locale.ENGLISH)
         formatSymbols.decimalSeparator = '.'
         formatSymbols.groupingSeparator = ','
-        val numberFormatter = DecimalFormat("###,###.##", formatSymbols)
+        val numberFormatter = DecimalFormat("###,###$fractionPattern", formatSymbols)
         return numberFormatter.format(value)
     }
 
@@ -59,16 +70,3 @@ fun String.toDoubleSafe() = when {
     this == "-" -> 0.0
     else -> this.toDouble()
 }
-
-
-fun Double.removeFractionalPartIfEmpty(): String {
-    val integerPart = this.toInt()
-    val fractionalPart = integerPart - this
-    return if (fractionalPart == 0.0)
-        integerPart.toString()
-    else
-        this.toString()
-}
-
-fun String.removeFractionalPartIfEmpty() =
-    toDoubleSafe().removeFractionalPartIfEmpty()
