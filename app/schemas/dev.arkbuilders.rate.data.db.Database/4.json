@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "8d453c8a7668458d4c2ef645d290b752",
+    "identityHash": "b0784f913c00e352f2543a385990263e",
     "entities": [
       {
         "tableName": "RoomCurrencyAmount",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `code` TEXT NOT NULL, `amount` REAL NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `code` TEXT NOT NULL, `amount` REAL NOT NULL, `group` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -25,6 +25,12 @@
             "columnName": "amount",
             "affinity": "REAL",
             "notNull": true
+          },
+          {
+            "fieldPath": "group",
+            "columnName": "group",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -95,8 +101,8 @@
         "foreignKeys": []
       },
       {
-        "tableName": "RoomPairAlertCondition",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `numeratorCode` TEXT NOT NULL, `denominatorCode` TEXT NOT NULL, `ratio` REAL NOT NULL, `moreNotLess` INTEGER NOT NULL)",
+        "tableName": "RoomPairAlert",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `targetCode` TEXT NOT NULL, `baseCode` TEXT NOT NULL, `targetPrice` REAL NOT NULL, `startPrice` REAL NOT NULL, `alertPercent` REAL, `oneTimeNotRecurrent` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `priceNotPercent` INTEGER NOT NULL, `triggered` INTEGER NOT NULL, `lastDateTriggered` TEXT, `group` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -105,28 +111,70 @@
             "notNull": true
           },
           {
-            "fieldPath": "numeratorCode",
-            "columnName": "numeratorCode",
+            "fieldPath": "targetCode",
+            "columnName": "targetCode",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "denominatorCode",
-            "columnName": "denominatorCode",
+            "fieldPath": "baseCode",
+            "columnName": "baseCode",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "ratio",
-            "columnName": "ratio",
+            "fieldPath": "targetPrice",
+            "columnName": "targetPrice",
             "affinity": "REAL",
             "notNull": true
           },
           {
-            "fieldPath": "moreNotLess",
-            "columnName": "moreNotLess",
+            "fieldPath": "startPrice",
+            "columnName": "startPrice",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "alertPercent",
+            "columnName": "alertPercent",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "oneTimeNotRecurrent",
+            "columnName": "oneTimeNotRecurrent",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "priceNotPercent",
+            "columnName": "priceNotPercent",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "triggered",
+            "columnName": "triggered",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastDateTriggered",
+            "columnName": "lastDateTriggered",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "group",
+            "columnName": "group",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -139,26 +187,44 @@
         "foreignKeys": []
       },
       {
-        "tableName": "RoomQuickCurrency",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `usedCount` INTEGER NOT NULL, PRIMARY KEY(`code`))",
+        "tableName": "RoomQuickPair",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `from` TEXT NOT NULL, `amount` REAL NOT NULL, `to` TEXT NOT NULL, `group` TEXT)",
         "fields": [
           {
-            "fieldPath": "code",
-            "columnName": "code",
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "from",
+            "columnName": "from",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "usedCount",
-            "columnName": "usedCount",
-            "affinity": "INTEGER",
+            "fieldPath": "amount",
+            "columnName": "amount",
+            "affinity": "REAL",
             "notNull": true
+          },
+          {
+            "fieldPath": "to",
+            "columnName": "to",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "group",
+            "columnName": "group",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
-            "code"
+            "id"
           ]
         },
         "indices": [],
@@ -168,7 +234,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8d453c8a7668458d4c2ef645d290b752')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b0784f913c00e352f2543a385990263e')"
     ]
   }
 }

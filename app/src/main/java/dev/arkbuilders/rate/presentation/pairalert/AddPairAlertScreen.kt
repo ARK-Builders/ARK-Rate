@@ -26,7 +26,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -94,9 +93,9 @@ fun AddPairAlertScreen(
         Column(modifier = Modifier.weight(1f)) {
             AppTopBarBack(title = "Add new alert", navigator = navigator)
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
-            PriceOrPercent()
+            PriceOrPercent(state, viewModel::onPriceOrPercentChanged)
             EditCondition(state, viewModel, navigator)
-            OneTimeOrRecurrent()
+            OneTimeOrRecurrent(state.oneTimeNotRecurrent, viewModel::onOneTimeChanged)
             DropDownWithIcon(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,7 +103,7 @@ fun AddPairAlertScreen(
                     .onPlaced {
                         addGroupBtnWidth = it.size.width
                     },
-                onClick = { showGroupsPopup = true },
+                onClick = { showGroupsPopup = !showGroupsPopup },
                 title = state.group?.let { state.group } ?: "Add group",
                 icon = painterResource(id = R.drawable.ic_group)
             )
@@ -146,7 +145,10 @@ fun AddPairAlertScreen(
 }
 
 @Composable
-private fun PriceOrPercent() {
+private fun PriceOrPercent(
+    state: AddPairAlertScreenState,
+    onPriceOrPercentChanged: (Boolean) -> Unit
+) {
     SegmentBtnBg(
         modifier = Modifier.padding(
             start = 16.dp,
@@ -159,18 +161,18 @@ private fun PriceOrPercent() {
                 .padding(6.dp)
                 .weight(1f),
             title = "By price",
-            enabled = true
+            enabled = state.priceOrPercent.isLeft()
         ) {
-
+            onPriceOrPercentChanged(true)
         }
         SegmentBtn(
             modifier = Modifier
                 .padding(6.dp)
                 .weight(1f),
             title = "By percent",
-            enabled = false
+            enabled = state.priceOrPercent.isRight()
         ) {
-
+            onPriceOrPercentChanged(false)
         }
     }
 }
@@ -342,22 +344,33 @@ private fun EditCondition(
                 .padding(top = 24.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(
-                modifier = Modifier.align(Alignment.Top),
-                text = state.baseCode,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                color = ArkColor.TextPrimary
-            )
+            if (state.priceOrPercent.isLeft()) {
+                Text(
+                    modifier = Modifier.align(Alignment.Top),
+                    text = state.baseCode,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ArkColor.TextPrimary
+                )
+            }
+            if (state.priceOrPercent.isRight() && !state.oneTimeNotRecurrent) {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = "every ",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ArkColor.TextPrimary
+                )
+            }
             BasicTextField(
                 modifier = Modifier
                     .width(IntrinsicSize.Min)
                     .align(Alignment.CenterVertically),
                 value = state.priceOrPercent.fold(
-                    ifLeft = { it.toString() },
-                    ifRight = { it.toString() }
+                    ifLeft = { it },
+                    ifRight = { it }
                 ),
-                onValueChange = { viewModel.onPriceOrPercentChanged(it) },
+                onValueChange = { viewModel.onPriceOrPercentInputChanged(it) },
                 textStyle = LocalTextStyle.current.copy(
                     fontSize = 48.sp,
                     color = ArkColor.TextPrimary,
@@ -366,6 +379,15 @@ private fun EditCondition(
                 keyboardOptions = KeyboardOptions.Default
                     .copy(keyboardType = KeyboardType.Number)
             )
+            if (state.priceOrPercent.isRight()) {
+                Text(
+                    modifier = Modifier.align(Alignment.Top),
+                    text = "%",
+                    fontSize = 48.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = ArkColor.TextPrimary
+                )
+            }
         }
         Row(
             modifier = Modifier.padding(top = 24.dp),
@@ -386,7 +408,10 @@ private fun EditCondition(
 }
 
 @Composable
-private fun OneTimeOrRecurrent() {
+private fun OneTimeOrRecurrent(
+    oneTimeNotRecurrent: Boolean,
+    onOneTimeChanged: (Boolean) -> Unit
+) {
     SegmentBtnBg(
         modifier = Modifier.padding(
             top = 32.dp,
@@ -399,18 +424,18 @@ private fun OneTimeOrRecurrent() {
                 .padding(6.dp)
                 .weight(1f),
             title = "One-Time",
-            enabled = true
+            enabled = oneTimeNotRecurrent
         ) {
-
+            onOneTimeChanged(true)
         }
         SegmentBtn(
             modifier = Modifier
                 .padding(6.dp)
                 .weight(1f),
             title = "Recurrent",
-            enabled = false
+            enabled = !oneTimeNotRecurrent
         ) {
-
+            onOneTimeChanged(false)
         }
     }
 }

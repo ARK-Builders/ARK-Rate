@@ -28,10 +28,10 @@ fun AppSwipeToDismiss(content: @Composable () -> Unit, onDelete: () -> Unit) {
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
             if (it == SwipeToDismissBoxValue.EndToStart) {
-                //
                 onDelete()
                 true
-            } else false
+            } else
+                false
         }
     )
 

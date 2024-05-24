@@ -10,6 +10,7 @@ import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.model.PairAlert
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,8 +24,10 @@ data class RoomPairAlert(
     val startPrice: Double,
     val alertPercent: Double?,
     val oneTimeNotRecurrent: Boolean,
+    val enabled: Boolean,
     val priceNotPercent: Boolean,
     val triggered: Boolean,
+    val lastDateTriggered: String?,
     val group: String?
 )
 
@@ -51,8 +54,10 @@ private fun PairAlert.toRoom() = RoomPairAlert(
     startPrice,
     alertPercent,
     oneTimeNotRecurrent,
+    enabled,
     priceNotPercent,
     triggered,
+    lastDateTriggered?.toString(),
     group
 )
 
@@ -64,8 +69,10 @@ private fun RoomPairAlert.toCondition() = PairAlert(
     startPrice,
     alertPercent,
     oneTimeNotRecurrent,
+    enabled,
     priceNotPercent,
     triggered,
+    lastDateTriggered?.let { OffsetDateTime.parse(lastDateTriggered) },
     group
 )
 

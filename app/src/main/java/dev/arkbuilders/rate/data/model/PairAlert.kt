@@ -1,5 +1,7 @@
 package dev.arkbuilders.rate.data.model
 
+import java.time.OffsetDateTime
+
 data class PairAlert(
     val id: Long,
     val targetCode: CurrencyCode,
@@ -8,8 +10,10 @@ data class PairAlert(
     val startPrice: Double,
     val alertPercent: Double?,
     val oneTimeNotRecurrent: Boolean,
+    val enabled: Boolean,
     val priceNotPercent: Boolean,
     val triggered: Boolean,
+    val lastDateTriggered: OffsetDateTime?,
     val group: String?
 ) {
     fun above() = targetPrice > startPrice
