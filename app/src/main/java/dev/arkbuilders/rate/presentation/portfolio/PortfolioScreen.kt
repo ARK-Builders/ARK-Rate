@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -139,25 +141,27 @@ private fun GroupPage(
     val total = amounts.fold(0.0) { acc, amount ->
         acc + amount.baseAmount.amount
     }
-    Column(
+    LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            modifier = Modifier.padding(top = 32.dp),
-            text = "Total Assets",
-            color = ArkColor.TextTertiary,
-            fontWeight = FontWeight.Medium
-        )
-        Text(
-            modifier = Modifier.padding(top = 8.dp),
-            text = "${CurrUtils.prepareToDisplay(total)} $baseCode",
-            color = ArkColor.TextPrimary,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 36.sp
-        )
-        AppHorDiv16(Modifier.padding(top = 32.dp))
-        amounts.forEach {
+        item {
+            Text(
+                modifier = Modifier.padding(top = 32.dp),
+                text = "Total Assets",
+                color = ArkColor.TextTertiary,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                modifier = Modifier.padding(top = 8.dp),
+                text = "${CurrUtils.prepareToDisplay(total)} $baseCode",
+                color = ArkColor.TextPrimary,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 36.sp
+            )
+            AppHorDiv16(Modifier.padding(top = 32.dp))
+        }
+        items(amounts, key = { it.amount.id }) {
             AppSwipeToDismiss(
                 content = { CurrencyItem(it) },
                 onDelete = { onDelete(it.amount) }

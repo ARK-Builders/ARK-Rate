@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -56,6 +58,10 @@ import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.AppTopBarCenterTitle
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import org.orbitmvi.orbit.compose.collectAsState
+import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Destination
 @Composable
@@ -110,7 +116,8 @@ private fun Content(state: PairAlertScreenState, onDelete: (PairAlert) -> Unit) 
     Column {
         if (state.pages.size == 1) {
             GroupPage(
-                page = state.pages.first()
+                page = state.pages.first(),
+                onDelete = { onDelete(it) },
             )
         } else {
             GroupViewPager(
@@ -135,50 +142,40 @@ private fun GroupPage(
         oneTimeTriggered = listOf(previewPairAlert)
     ), onDelete: (PairAlert) -> Unit = {}
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            modifier = Modifier.padding(start = 16.dp, top = 24.dp),
-            text = "Created",
-            color = ArkColor.TextTertiary
-        )
-        HorizontalDivider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 12.dp, end = 16.dp),
-            color = ArkColor.BorderSecondary
-        )
-        page.created.forEach {
-            AppSwipeToDismiss(
-                content = { PairAlertItem(pairAlert = it) },
-                onDelete = { onDelete(it) }
-            )
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                thickness = 1.dp,
-                color = ArkColor.BorderSecondary
-            )
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        if (page.created.isNotEmpty()) {
+            item {
+                Text(
+                    modifier = Modifier.padding(start = 16.dp, top = 24.dp),
+                    text = "Created",
+                    color = ArkColor.TextTertiary
+                )
+                AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
+            }
+            items(page.created, key = { it.id }) {
+                AppSwipeToDismiss(
+                    content = { PairAlertItem(pairAlert = it) },
+                    onDelete = { onDelete(it) }
+                )
+                AppHorDiv16()
+            }
         }
-        Text(
-            modifier = Modifier.padding(start = 16.dp, top = 25.dp),
-            text = "One-time triggered",
-            color = ArkColor.TextTertiary
-        )
-        HorizontalDivider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 12.dp, end = 16.dp),
-            color = ArkColor.BorderSecondary
-        )
-        page.oneTimeTriggered.forEach {
-            AppSwipeToDismiss(
-                content = { PairAlertItem(pairAlert = it) },
-                onDelete = { onDelete(it) }
-            )
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                thickness = 1.dp,
-                color = ArkColor.BorderSecondary
-            )
+        if (page.oneTimeTriggered.isNotEmpty()) {
+            item {
+                Text(
+                    modifier = Modifier.padding(start = 16.dp, top = 25.dp),
+                    text = "One-time triggered",
+                    color = ArkColor.TextTertiary
+                )
+                AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
+            }
+            items(page.oneTimeTriggered, key = { it.id }) {
+                AppSwipeToDismiss(
+                    content = { PairAlertItem(pairAlert = it) },
+                    onDelete = { onDelete(it) }
+                )
+                AppHorDiv16()
+            }
         }
     }
 }
@@ -186,7 +183,7 @@ private fun GroupPage(
 @Composable
 private fun PairAlertItem(pairAlert: PairAlert) {
     var checkBoxActive by remember {
-        mutableStateOf(true)
+        mutableStateOf(pairAlert.enabled)
     }
     var currencyName by remember {
         mutableStateOf("")
@@ -227,6 +224,21 @@ private fun PairAlertItem(pairAlert: PairAlert) {
                         "${pairAlert.baseCode}",
                 color = ArkColor.TextTertiary
             )
+            if (pairAlert.oneTimeNotRecurrent && pairAlert.triggered) {
+                val date = pairAlert.lastDateTriggered
+                date
+                    ?: Timber.e("Pair alert marked as triggered but lastDateTriggered is null")
+                if (date != null) {
+                    val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
+                    val monthStr = monthFormat.format(date)
+                    val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+                    val timeStr = timeFormat.format(date)
+                    Text(
+                        text = "Notified on $monthStr ${date.dayOfMonth} - $timeStr",
+                        color = ArkColor.TextTertiary
+                    )
+                }
+            }
         }
         Switch(
             checked = checkBoxActive,
@@ -292,7 +304,9 @@ private val previewPairAlert = PairAlert(
     startPrice = 1.0,
     alertPercent = null,
     oneTimeNotRecurrent = true,
+    enabled = true,
     triggered = false,
     group = "Group 1",
-    priceNotPercent = true
+    priceNotPercent = true,
+    lastDateTriggered = null
 )

@@ -82,7 +82,6 @@ import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
 import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecycle
-import dev.arkbuilders.rate.utils.removeFractionalPartIfEmpty
 import eu.wewox.tagcloud.TagCloud
 import eu.wewox.tagcloud.TagCloudItemScope
 import eu.wewox.tagcloud.rememberTagCloudState
@@ -158,14 +157,16 @@ private fun GroupPage(
     quickPairs: List<DisplayQuickPair>,
     onDelete: (QuickPair) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            modifier = Modifier.padding(start = 16.dp, top = 24.dp),
-            text = "Pairs",
-            color = ArkColor.TextTertiary,
-            fontWeight = FontWeight.Medium
-        )
-        quickPairs.forEach {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            Text(
+                modifier = Modifier.padding(start = 16.dp, top = 24.dp),
+                text = "Pairs",
+                color = ArkColor.TextTertiary,
+                fontWeight = FontWeight.Medium
+            )
+        }
+        items(quickPairs, key = { it.pair.id }) {
             AppHorDiv16()
             AppSwipeToDismiss(
                 content = { QuickItem(it) },
@@ -273,6 +274,7 @@ private fun QuickItem(
                                 tint = Color.Unspecified
                             )
                             Text(
+                                modifier = Modifier.padding(start = 8.dp),
                                 text = "${it.second} ${it.first}",
                                 color = ArkColor.TextTertiary
                             )

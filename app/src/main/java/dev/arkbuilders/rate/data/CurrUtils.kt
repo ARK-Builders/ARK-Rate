@@ -9,16 +9,24 @@ import java.util.Locale
 object CurrUtils {
     fun validateInput(
         oldInput: String,
-        newInput: String
+        newInput: String,
     ): String {
         val containsDigitsAndDot = Regex("[0-9]*\\.?[0-9]*")
         if (!containsDigitsAndDot.matches(newInput))
             return oldInput
 
-        val containsDigit = Regex(".*[0-9].*")
-        if (!containsDigit.matches(newInput)) {
-            return newInput
-        }
+        val leadingZeros = "^0+(?=\\d)".toRegex()
+
+        return newInput.replace(leadingZeros, "")
+    }
+
+    fun validateInputWithMinusChar(
+        oldInput: String,
+        newInput: String,
+    ): String {
+        val containsDigitsAndDot = Regex("-?[0-9]*\\.?[0-9]*")
+        if (!containsDigitsAndDot.matches(newInput))
+            return oldInput
 
         val leadingZeros = "^0+(?=\\d)".toRegex()
 
@@ -45,3 +53,22 @@ object CurrUtils {
         return df.format(number).toDouble()
     }
 }
+
+fun String.toDoubleSafe() = when {
+    this == "" -> 0.0
+    this == "-" -> 0.0
+    else -> this.toDouble()
+}
+
+
+fun Double.removeFractionalPartIfEmpty(): String {
+    val integerPart = this.toInt()
+    val fractionalPart = integerPart - this
+    return if (fractionalPart == 0.0)
+        integerPart.toString()
+    else
+        this.toString()
+}
+
+fun String.removeFractionalPartIfEmpty() =
+    toDoubleSafe().removeFractionalPartIfEmpty()

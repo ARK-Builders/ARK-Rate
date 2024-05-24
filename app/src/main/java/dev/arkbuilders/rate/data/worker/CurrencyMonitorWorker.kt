@@ -8,9 +8,8 @@ import dev.arkbuilders.rate.data.db.PairAlertRepo
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.model.CurrencyRate
 import dev.arkbuilders.rate.data.model.PairAlert
-import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.utils.NotificationUtils
-import javax.inject.Inject
+import java.time.OffsetDateTime
 
 class CurrencyMonitorWorker(
     private val context: Context,
@@ -20,15 +19,42 @@ class CurrencyMonitorWorker(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        DIManager.component.inject(this)
         val rates = currencyRepo.getCodeToCurrencyRate()
         pairAlertRepo.getAll().forEach { pairAlert ->
             val (met, currentRate) = isConditionMet(rates, pairAlert)
-            if (met) notifyPair(pairAlert, currentRate)
+            if (met) {
+                if (!pairAlert.oneTimeNotRecurrent) {
+                    pairAlertRepo.insert(
+                        pairAlert.copy(
+                            triggered = true,
+                            enabled = false,
+                            lastDateTriggered = OffsetDateTime.now()
+                        )
+                    )
+                } else {
+                    updatePairAndSave(pairAlert)
+                }
+                notifyPair(pairAlert, currentRate)
+            }
 
         }
 
         return Result.success()
+    }
+
+    private suspend fun updatePairAndSave(pairAlert: PairAlert) {
+        val updatedTargetPrice = pairAlert.alertPercent?.let { percent ->
+            pairAlert.targetPrice + (pairAlert.targetPrice * percent)
+        } ?: let {
+            pairAlert.targetPrice + (pairAlert.targetPrice - pairAlert.startPrice)
+        }
+        val updatedPair = pairAlert.copy(
+            triggered = true,
+            startPrice = pairAlert.targetPrice,
+            targetPrice = updatedTargetPrice,
+            lastDateTriggered = OffsetDateTime.now()
+        )
+        pairAlertRepo.insert(updatedPair)
     }
 
     // current BTC = 46000 USD
