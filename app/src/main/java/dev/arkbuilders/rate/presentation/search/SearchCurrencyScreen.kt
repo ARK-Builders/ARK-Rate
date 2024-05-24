@@ -49,7 +49,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchCurrencyScreen(
     appSharedFlowKeyString: String,
-    amount: CurrencyAmount? = null,
     pos: Int? = null,
     navigator: DestinationsNavigator,
 ) {
@@ -59,7 +58,7 @@ fun SearchCurrencyScreen(
         AppTopBarBack(title = "Search a currency", navigator = navigator)
         HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
         Input(input)
-        Results(input.value, appSharedFlowKey, amount, pos, navigator)
+        Results(input.value, appSharedFlowKey, pos, navigator)
     }
 }
 
@@ -93,7 +92,6 @@ private fun Input(inputState: MutableState<String>) {
 private fun Results(
     input: String,
     appSharedFlowKey: AppSharedFlowKey,
-    amount: CurrencyAmount?,
     pos: Int?,
     navigator: DestinationsNavigator
 ) {
@@ -129,7 +127,7 @@ private fun Results(
     )
     LazyColumn {
         items(filtered) {
-            CurItem(it, appSharedFlowKey, amount, pos, navigator)
+            CurItem(it, appSharedFlowKey, pos, navigator)
         }
     }
 }
@@ -139,7 +137,6 @@ private fun Results(
 private fun CurItem(
     name: CurrencyName,
     appSharedFlowKey: AppSharedFlowKey,
-    amount: CurrencyAmount?,
     pos: Int?,
     navigator: DestinationsNavigator
 ) {
@@ -149,7 +146,7 @@ private fun CurItem(
         val appFlow = AppSharedFlow.fromKey(appSharedFlowKey)
         when (appFlow) {
             AppSharedFlow.AddCurrencyAmount ->
-                AppSharedFlow.AddCurrencyAmount.flow.emit(name.code to amount!!)
+                AppSharedFlow.AddCurrencyAmount.flow.emit(pos!! to name.code)
 
             AppSharedFlow.AddPairAlertBase ->
                 AppSharedFlow.AddPairAlertBase.flow.emit(name.code)

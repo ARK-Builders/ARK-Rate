@@ -10,7 +10,7 @@ sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {
     data object AddPairAlertTarget : AppSharedFlow<CurrencyCode>(MutableSharedFlow())
     data object AddPairAlertBase : AppSharedFlow<CurrencyCode>(MutableSharedFlow())
     data object AddCurrencyAmount :
-        AppSharedFlow<Pair<CurrencyCode, CurrencyAmount>>(MutableSharedFlow())
+        AppSharedFlow<Pair<Int, CurrencyCode>>(MutableSharedFlow())
     data object AddQuick : AppSharedFlow<Pair<Int, CurrencyCode>>(MutableSharedFlow())
 
     object ShowAddedSnackbarQuick {

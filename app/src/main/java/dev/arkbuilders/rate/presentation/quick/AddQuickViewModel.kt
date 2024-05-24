@@ -21,7 +21,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 data class AddQuickScreenState(
-    val currencies: List<CurrencyCode> = listOf(),
+    val currencies: List<CurrencyCode> = listOf("USD"),
     val amount: String = "",
     val group: String? = null,
     val availableGroups: List<String> = emptyList()
