@@ -66,6 +66,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.model.QuickPair
 import dev.arkbuilders.rate.data.preferences.PreferenceKey
@@ -275,14 +276,15 @@ private fun QuickItem(
                             )
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
-                                text = "${it.second} ${it.first}",
+                                text = "${CurrUtils.prepareToDisplay(it.second)} ${it.first}",
                                 color = ArkColor.TextTertiary
                             )
                         }
                     }
                 } else {
                     Text(
-                        text = "${quick.pair.amount} ${quick.pair.from} = ${quick.to.first().second} ${quick.to.first().first}",
+                        text = "${CurrUtils.prepareToDisplay(quick.pair.amount)} ${quick.pair.from} = " +
+                                "${CurrUtils.prepareToDisplay(quick.to.first().second)} ${quick.to.first().first}",
                         color = ArkColor.TextTertiary
                     )
                 }
