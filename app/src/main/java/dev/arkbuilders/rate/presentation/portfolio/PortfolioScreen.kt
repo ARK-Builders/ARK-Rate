@@ -161,7 +161,7 @@ private fun GroupPage(
             )
             AppHorDiv16(Modifier.padding(top = 32.dp))
         }
-        items(amounts) {
+        items(amounts, key = { it.amount.id }) {
             AppSwipeToDismiss(
                 content = { CurrencyItem(it) },
                 onDelete = { onDelete(it.amount) }

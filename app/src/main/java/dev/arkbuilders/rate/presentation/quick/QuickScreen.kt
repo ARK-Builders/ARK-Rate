@@ -166,7 +166,7 @@ private fun GroupPage(
                 fontWeight = FontWeight.Medium
             )
         }
-        items(quickPairs) {
+        items(quickPairs, key = { it.pair.id }) {
             AppHorDiv16()
             AppSwipeToDismiss(
                 content = { QuickItem(it) },

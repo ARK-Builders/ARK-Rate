@@ -57,7 +57,7 @@ private fun PairAlert.toRoom() = RoomPairAlert(
     enabled,
     priceNotPercent,
     triggered,
-    lastDateTriggered.toString(),
+    lastDateTriggered?.toString(),
     group
 )
 

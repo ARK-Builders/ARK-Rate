@@ -116,7 +116,8 @@ private fun Content(state: PairAlertScreenState, onDelete: (PairAlert) -> Unit) 
     Column {
         if (state.pages.size == 1) {
             GroupPage(
-                page = state.pages.first()
+                page = state.pages.first(),
+                onDelete = { onDelete(it) },
             )
         } else {
             GroupViewPager(
@@ -225,7 +226,8 @@ private fun PairAlertItem(pairAlert: PairAlert) {
             )
             if (pairAlert.oneTimeNotRecurrent && pairAlert.triggered) {
                 val date = pairAlert.lastDateTriggered
-                date ?: Timber.e("Pair alert marked as triggered but lastDateTriggered is null")
+                date
+                    ?: Timber.e("Pair alert marked as triggered but lastDateTriggered is null")
                 if (date != null) {
                     val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
                     val monthStr = monthFormat.format(date)
