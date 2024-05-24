@@ -18,13 +18,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,12 +46,17 @@ import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
+import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.theme.ArkTypography
+import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
+import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -59,9 +67,19 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
         viewModel(factory = DIManager.component.assetsVMFactory())
 
     val state by viewModel.collectAsState()
+    val snackState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     viewModel.collectSideEffect {
 
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        AppSharedFlow.ShowAddedSnackbarPortfolio.flow.onEach { visuals ->
+            visuals ?: return@onEach
+            snackState.showSnackbar(visuals)
+            AppSharedFlow.ShowAddedSnackbarPortfolio.flow.emit(null)
+        }.launchIn(scope)
     }
 
     val isEmpty = state.groupToPortfolioAmount.isEmpty()
@@ -80,6 +98,9 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
             }
+        },
+        snackbarHost = {
+            NotifyAddedSnackbar(snackState = snackState)
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
@@ -237,9 +258,9 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_quick_empty),
+                painter = painterResource(id = R.drawable.ic_empty_portfolio),
                 contentDescription = "",
-                tint = ArkColor.Secondary,
+                tint = Color.Unspecified,
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),

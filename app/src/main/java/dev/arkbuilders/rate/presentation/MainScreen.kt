@@ -1,20 +1,18 @@
 package dev.arkbuilders.rate.presentation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.utils.startDestination
-import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PortfolioScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
@@ -31,7 +29,7 @@ fun MainScreen() {
 
     val isKeyboardOpen by keyboardAsState()
     val bottomBarVisible = rememberSaveable { mutableStateOf(false) }
-
+    val scope = rememberCoroutineScope()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 

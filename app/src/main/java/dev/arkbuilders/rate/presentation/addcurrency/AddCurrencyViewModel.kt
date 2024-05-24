@@ -32,7 +32,7 @@ data class AddCurrencyState(
 )
 
 sealed class AddCurrencySideEffect {
-    class NotifyCurrencyAdded(val code: CurrencyCode) : AddCurrencySideEffect()
+    class NotifyAssetAdded(val amounts: List<CurrencyAmount>) : AddCurrencySideEffect()
     data object NavigateBack : AddCurrencySideEffect()
 }
 
@@ -102,6 +102,7 @@ class AddCurrencyViewModel(
     fun onAddAsset() = intent {
         val currencies = state.currencies.map { it.copy(group = state.group) }
         assetsRepo.setCurrencyAmountList(currencies)
+        postSideEffect(AddCurrencySideEffect.NotifyAssetAdded(currencies))
         postSideEffect(AddCurrencySideEffect.NavigateBack)
     }
 }

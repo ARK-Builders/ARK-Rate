@@ -40,11 +40,14 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -76,16 +79,20 @@ import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
+import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.theme.ArkTypography
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
+import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
 import dev.arkbuilders.rate.presentation.utils.collectInLaunchedEffectWithLifecycle
 import eu.wewox.tagcloud.TagCloud
 import eu.wewox.tagcloud.TagCloudItemScope
 import eu.wewox.tagcloud.rememberTagCloudState
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import kotlin.math.exp
@@ -101,6 +108,16 @@ fun QuickScreen(
     )
 
     val state by viewModel.collectAsState()
+    val snackState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = Unit) {
+        AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+            visuals ?: return@onEach
+            snackState.showSnackbar(visuals)
+            AppSharedFlow.ShowAddedSnackbarQuick.flow.emit(null)
+        }.launchIn(scope)
+    }
 
     val isEmpty = state.groupToQuickPairs.isEmpty()
 
@@ -119,6 +136,9 @@ fun QuickScreen(
                 Icon(Icons.Default.Add, contentDescription = "")
             }
         },
+        snackbarHost = {
+            NotifyAddedSnackbar(snackState = snackState)
+        }
     ) {
         Box(modifier = Modifier.padding(it)) {
             if (isEmpty)
@@ -307,9 +327,9 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_quick_empty),
+                painter = painterResource(id = R.drawable.ic_empty_quick),
                 contentDescription = "",
-                tint = ArkColor.Secondary,
+                tint = Color.Unspecified,
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),

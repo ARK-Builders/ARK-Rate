@@ -28,6 +28,7 @@ data class AddQuickScreenState(
 )
 
 sealed class AddQuickScreenEffect {
+    data class NotifyPairAdded(val pair: QuickPair) : AddQuickScreenEffect()
     data object NavigateBack : AddQuickScreenEffect()
 }
 
@@ -94,6 +95,7 @@ class AddQuickViewModel(
             group = state.group
         )
         quickRepo.insert(quick)
+        postSideEffect(AddQuickScreenEffect.NotifyPairAdded(quick))
         postSideEffect(AddQuickScreenEffect.NavigateBack)
     }
 

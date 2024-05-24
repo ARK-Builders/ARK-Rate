@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,13 +50,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
+import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
+import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -71,13 +76,22 @@ fun AddPairAlertScreen(
 
     val state by viewModel.collectAsState()
 
-    viewModel.collectSideEffect(
-        sideEffect = { effect ->
-            when (effect) {
-                AddPairAlertScreenEffect.NavigateBack -> navigator.popBackStack()
+    viewModel.collectSideEffect { effect ->
+        when (effect) {
+            AddPairAlertScreenEffect.NavigateBack -> navigator.popBackStack()
+            is AddPairAlertScreenEffect.NotifyPairAdded -> {
+                val pair = effect.pair
+                val aboveOrBelow = if (pair.above()) "above" else "below"
+                val visuals = NotifyAddedSnackbarVisuals(
+                    title = "Alert for ${pair.targetCode} has been created",
+                    description = "You’ll get notified when ${pair.targetCode} " +
+                            "price is $aboveOrBelow ${CurrUtils.prepareToDisplay(pair.targetPrice)} ${pair.baseCode}"
+                )
+                AppSharedFlow.ShowAddedSnackbarPairAlert.flow.emit(visuals)
             }
         }
-    )
+    }
+
 
     var showNewGroupDialog by remember { mutableStateOf(false) }
     var showGroupsPopup by remember { mutableStateOf(false) }
@@ -95,7 +109,10 @@ fun AddPairAlertScreen(
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
             PriceOrPercent(state, viewModel::onPriceOrPercentChanged)
             EditCondition(state, viewModel, navigator)
-            OneTimeOrRecurrent(state.oneTimeNotRecurrent, viewModel::onOneTimeChanged)
+            OneTimeOrRecurrent(
+                state.oneTimeNotRecurrent,
+                viewModel::onOneTimeChanged
+            )
             DropDownWithIcon(
                 modifier = Modifier
                     .fillMaxWidth()

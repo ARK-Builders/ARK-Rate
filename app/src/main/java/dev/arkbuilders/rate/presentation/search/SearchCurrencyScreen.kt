@@ -158,6 +158,8 @@ private fun CurItem(
                 AppSharedFlow.AddPairAlertTarget.flow.emit(name.code)
 
             AppSharedFlow.AddQuick -> AppSharedFlow.AddQuick.flow.emit(pos!! to name.code)
+
+            else -> {}
         }
     }
 
