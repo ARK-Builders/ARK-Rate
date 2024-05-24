@@ -9,8 +9,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onPlaced
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,15 +34,19 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
+import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
+import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -62,7 +63,18 @@ fun AddCurrencyScreen(
     viewModel.collectSideEffect { effect ->
         when (effect) {
             AddCurrencySideEffect.NavigateBack -> navigator.popBackStack()
-            is AddCurrencySideEffect.NotifyCurrencyAdded -> {}
+            is AddCurrencySideEffect.NotifyAssetAdded -> {
+                val added = effect.amounts
+                    .joinToString {
+                        "${CurrUtils.prepareToDisplay(it.amount)} ${it.code}"
+                    }
+                AppSharedFlow.ShowAddedSnackbarPortfolio.flow.emit(
+                    NotifyAddedSnackbarVisuals(
+                        "New Asset has been added",
+                        "You added $added to your asset"
+                    )
+                )
+            }
         }
     }
 
