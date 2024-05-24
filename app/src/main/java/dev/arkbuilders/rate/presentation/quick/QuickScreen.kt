@@ -327,9 +327,9 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_quick_empty),
+                painter = painterResource(id = R.drawable.ic_empty_quick),
                 contentDescription = "",
-                tint = ArkColor.Secondary,
+                tint = Color.Unspecified,
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),

@@ -284,9 +284,9 @@ private fun Empty(navigator: DestinationsNavigator) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_quick_empty),
+                painter = painterResource(id = R.drawable.ic_empty_pair),
                 contentDescription = "",
-                tint = ArkColor.Secondary,
+                tint = Color.Unspecified,
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),
