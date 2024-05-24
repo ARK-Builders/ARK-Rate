@@ -7,9 +7,11 @@ import arrow.core.Either
 import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
 import dev.arkbuilders.rate.data.db.PairAlertRepo
+import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.model.PairAlert
 import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencySideEffect
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -37,6 +39,7 @@ data class AddPairAlertScreenState(
 
 sealed class AddPairAlertScreenEffect {
     data object NavigateBack : AddPairAlertScreenEffect()
+    class NotifyPairAdded(val pair: PairAlert) : AddPairAlertScreenEffect()
 }
 
 class AddPairAlertViewModel(
@@ -137,6 +140,7 @@ class AddPairAlertViewModel(
             group = state.group
         )
         pairAlertRepo.insert(pairAlert)
+        postSideEffect(AddPairAlertScreenEffect.NotifyPairAdded(pairAlert))
         postSideEffect(AddPairAlertScreenEffect.NavigateBack)
     }
 

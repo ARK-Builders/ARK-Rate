@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,11 +54,14 @@ import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyState
 import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyViewModel
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
+import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
+import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -72,6 +76,16 @@ fun AddQuickScreen(navigator: DestinationsNavigator) {
     viewModel.collectSideEffect { effect ->
         when (effect) {
             AddQuickScreenEffect.NavigateBack -> navigator.popBackStack()
+            is AddQuickScreenEffect.NotifyPairAdded -> {
+                val added =
+                    "${effect.pair.from} to ${effect.pair.to.joinToString { it }}"
+                AppSharedFlow.ShowAddedSnackbarQuick.flow.emit(
+                    NotifyAddedSnackbarVisuals(
+                        title = "New pair has been created",
+                        description = "You added $added pair "
+                    )
+                )
+            }
         }
     }
 
@@ -198,7 +212,14 @@ private fun Currencies(
     onCodeChange: (Int) -> Unit,
 ) {
     state.currencies.forEachIndexed { index, code ->
-        InputCurrency(index, code, state.amount, onAmountChanged, onCurrencyRemove, onCodeChange)
+        InputCurrency(
+            index,
+            code,
+            state.amount,
+            onAmountChanged,
+            onCurrencyRemove,
+            onCodeChange
+        )
     }
 }
 
