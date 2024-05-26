@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,13 +18,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SwipeToDismissBoxState
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -65,7 +61,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.compose.collectAsState
 import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -248,9 +243,9 @@ private fun PairAlertItem(pairAlert: PairAlert) {
                 date
                     ?: Timber.e("Pair alert marked as triggered but lastDateTriggered is null")
                 if (date != null) {
-                    val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
+                    val monthFormat = DateTimeFormatter.ofPattern("MMM", Locale.getDefault())
                     val monthStr = monthFormat.format(date)
-                    val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+                    val timeFormat = DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
                     val timeStr = timeFormat.format(date)
                     Text(
                         text = "Notified on $monthStr ${date.dayOfMonth} - $timeStr",

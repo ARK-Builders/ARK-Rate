@@ -44,9 +44,10 @@ class CurrencyMonitorWorker(
 
     private suspend fun updatePairAndSave(pairAlert: PairAlert) {
         val updatedTargetPrice = pairAlert.alertPercent?.let { percent ->
-            pairAlert.targetPrice + (pairAlert.targetPrice * percent)
+            (1 + percent/100) * pairAlert.targetPrice
         } ?: let {
-            pairAlert.targetPrice + (pairAlert.targetPrice - pairAlert.startPrice)
+            val diff = (pairAlert.targetPrice - pairAlert.startPrice)
+            pairAlert.targetPrice + diff
         }
         val updatedPair = pairAlert.copy(
             triggered = true,
