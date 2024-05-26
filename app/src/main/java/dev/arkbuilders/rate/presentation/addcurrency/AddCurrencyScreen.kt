@@ -36,6 +36,7 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.data.model.CurrencyAmount
+import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
@@ -102,11 +103,11 @@ fun AddCurrencyScreen(
 private fun Content(
     state: AddCurrencyState = AddCurrencyState(emptyList(), group = "Hello"),
     navigator: DestinationsNavigator = EmptyDestinationsNavigator,
-    onAmountChanged: (CurrencyAmount, String) -> Unit = { _, _ -> },
+    onAmountChanged: (Int, String) -> Unit = { _, _ -> },
     onNewCurrencyClick: () -> Unit = {},
-    onAssetRemove: (CurrencyAmount) -> Unit = {},
+    onAssetRemove: (Int) -> Unit = {},
     onGroupSelect: (String) -> Unit = {},
-    onCodeChange: (CurrencyAmount) -> Unit = {},
+    onCodeChange: (Int) -> Unit = {},
     onAddAsset: () -> Unit = {}
 ) {
     var showNewGroupDialog by remember { mutableStateOf(false) }
@@ -196,21 +197,22 @@ private fun Content(
 @Composable
 private fun Currencies(
     state: AddCurrencyState,
-    onAmountChanged: (CurrencyAmount, String) -> Unit,
-    onAssetRemove: (CurrencyAmount) -> Unit,
-    onCodeChange: (CurrencyAmount) -> Unit,
+    onAmountChanged: (Int, String) -> Unit,
+    onAssetRemove: (Int) -> Unit,
+    onCodeChange: (Int) -> Unit,
 ) {
-    state.currencies.forEach {
-        InputCurrency(it, onAmountChanged, onAssetRemove, onCodeChange)
+    state.currencies.forEachIndexed { index, amount ->
+        InputCurrency(index, amount, onAmountChanged, onAssetRemove, onCodeChange)
     }
 }
 
 @Composable
 fun InputCurrency(
-    amount: CurrencyAmount,
-    onAmountChanged: (CurrencyAmount, String) -> Unit,
-    onAssetRemove: (CurrencyAmount) -> Unit,
-    onCodeChange: (CurrencyAmount) -> Unit
+    pos: Int,
+    amount: Pair<CurrencyCode, String>,
+    onAmountChanged: (Int, String) -> Unit,
+    onAssetRemove: (Int) -> Unit,
+    onCodeChange: (Int) -> Unit
 ) {
     Row(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
         Row(
@@ -226,12 +228,12 @@ fun InputCurrency(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                modifier = Modifier.clickable { onCodeChange(amount) },
+                modifier = Modifier.clickable { onCodeChange(pos) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     modifier = Modifier.padding(start = 14.dp),
-                    text = amount.code,
+                    text = amount.first,
                     fontSize = 16.sp,
                     color = ArkColor.TextSecondary
                 )
@@ -244,8 +246,8 @@ fun InputCurrency(
             }
             BasicTextField(
                 modifier = Modifier.padding(start = 12.dp),
-                value = amount.amount.toString(),
-                onValueChange = { onAmountChanged(amount, it) },
+                value = amount.second,
+                onValueChange = { onAmountChanged(pos, it) },
                 textStyle = TextStyle.Default.copy(
                     color = ArkColor.TextPrimary,
                     fontSize = 16.sp
@@ -264,7 +266,7 @@ fun InputCurrency(
                 RoundedCornerShape(8.dp)
             )
             .clip(RoundedCornerShape(8.dp)),
-            onClick = { onAssetRemove(amount) }
+            onClick = { onAssetRemove(pos) }
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_delete),
