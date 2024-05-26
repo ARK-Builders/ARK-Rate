@@ -9,6 +9,7 @@ import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.GeneralCurrencyRepo
 import dev.arkbuilders.rate.data.db.AssetsRepo
 import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.utils.replace
 import kotlinx.coroutines.flow.launchIn
@@ -23,16 +24,18 @@ import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private val stubCurrency = CurrencyAmount(0, "USD", 0.0)
+private val stubCurrency = "USD" to ""
 
 data class AddCurrencyState(
-    val currencies: List<CurrencyAmount> = listOf(stubCurrency),
+    val currencies: List<Pair<CurrencyCode, String>> = listOf(stubCurrency),
     val group: String? = null,
     val availableGroups: List<String> = emptyList()
 )
 
 sealed class AddCurrencySideEffect {
-    class NotifyAssetAdded(val amounts: List<CurrencyAmount>) : AddCurrencySideEffect()
+    class NotifyAssetAdded(val amounts: List<CurrencyAmount>) :
+        AddCurrencySideEffect()
+
     data object NavigateBack : AddCurrencySideEffect()
 }
 
@@ -45,13 +48,12 @@ class AddCurrencyViewModel(
         container(AddCurrencyState())
 
     init {
-        AppSharedFlow.AddCurrencyAmount.flow.onEach { (selectedCode, selectedAmount) ->
+        AppSharedFlow.AddCurrencyAmount.flow.onEach { (pos, selectedCode) ->
             intent {
                 reduce {
-                    val newCurrencies = state.currencies.toMutableList().replace(
-                        selectedAmount,
-                        selectedAmount.copy(code = selectedCode)
-                    )
+                    val newCurrencies = state.currencies.toMutableList()
+                    newCurrencies[pos] =
+                        newCurrencies[pos].copy(first = selectedCode)
                     state.copy(currencies = newCurrencies)
                 }
             }
@@ -72,9 +74,12 @@ class AddCurrencyViewModel(
         }
     }
 
-    fun onAssetRemove(amount: CurrencyAmount) = intent {
+    fun onAssetRemove(removeIndex: Int) = intent {
         reduce {
-            state.copy(currencies = state.currencies.filter { it != amount })
+            state.copy(
+                currencies = state.currencies
+                    .filterIndexed { index, _ -> index != removeIndex }
+            )
         }
     }
 
@@ -82,25 +87,20 @@ class AddCurrencyViewModel(
         reduce { state.copy(group = group) }
     }
 
-    fun onAssetAmountChange(amount: CurrencyAmount, input: String) = blockingIntent {
+    fun onAssetAmountChange(pos: Int, input: String) = blockingIntent {
         reduce {
-            state.copy(
-                currencies = state.currencies.fastMap { listAmount ->
-                    if (listAmount == amount) {
-                        listAmount.copy(
-                            amount = CurrUtils.validateInput(
-                                amount.amount.toString(),
-                                input
-                            ).toDouble()
-                        )
-                    } else listAmount
-                }
-            )
+            val newCurrencies = state.currencies.toMutableList()
+            val old = newCurrencies[pos]
+            val validatedAmount = CurrUtils.validateInput(old.second, input)
+            newCurrencies[pos] = newCurrencies[pos].copy(second = validatedAmount)
+            state.copy(currencies = newCurrencies)
         }
     }
 
     fun onAddAsset() = intent {
-        val currencies = state.currencies.map { it.copy(group = state.group) }
+        val currencies = state.currencies.map {
+            CurrencyAmount(code = it.first, amount = it.second.toDoubleSafe(), group = state.group)
+        }
         assetsRepo.setCurrencyAmountList(currencies)
         postSideEffect(AddCurrencySideEffect.NotifyAssetAdded(currencies))
         postSideEffect(AddCurrencySideEffect.NavigateBack)
