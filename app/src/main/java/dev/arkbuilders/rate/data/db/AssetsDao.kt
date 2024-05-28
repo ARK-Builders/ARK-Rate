@@ -35,8 +35,8 @@ interface AssetsDao {
     @Query("SELECT * FROM RoomCurrencyAmount")
     suspend fun getAll(): List<RoomCurrencyAmount>
 
-    @Query("SELECT * FROM RoomCurrencyAmount WHERE code = :code")
-    suspend fun getByCode(code: CurrencyCode): RoomCurrencyAmount?
+    @Query("SELECT * FROM RoomCurrencyAmount WHERE id = :id")
+    suspend fun getById(id: Long): RoomCurrencyAmount?
 
     @Query("SELECT * FROM RoomCurrencyAmount")
     fun allFlow(): Flow<List<RoomCurrencyAmount>>
@@ -54,6 +54,8 @@ class AssetsRepo @Inject constructor(
 
     fun allCurrencyAmountFlow(): Flow<List<CurrencyAmount>> = dao.allFlow()
         .map { list -> list.map { it.toCurrencyAmount() } }
+
+    suspend fun getById(id: Long) = dao.getById(id)?.toCurrencyAmount()
 
     suspend fun setCurrencyAmount(amount: CurrencyAmount) =
         dao.insert(amount.toRoom())

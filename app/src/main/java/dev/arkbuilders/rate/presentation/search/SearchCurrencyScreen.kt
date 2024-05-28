@@ -156,6 +156,10 @@ private fun CurItem(
 
             AppSharedFlow.AddQuick -> AppSharedFlow.AddQuick.flow.emit(pos!! to name.code)
 
+            AppSharedFlow.PickBaseCurrency -> AppSharedFlow.PickBaseCurrency.flow.emit(
+                name.code
+            )
+
             else -> {}
         }
     }

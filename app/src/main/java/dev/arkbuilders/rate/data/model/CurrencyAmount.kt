@@ -9,4 +9,8 @@ data class CurrencyAmount(
     val code: CurrencyCode,
     var amount: Double,
     val group: String? = null
-): Parcelable
+): Parcelable {
+    companion object {
+        val EMPTY = CurrencyAmount(0, "", 0.0)
+    }
+}

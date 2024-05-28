@@ -15,6 +15,7 @@ import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyViewModelFactory
 import dev.arkbuilders.rate.presentation.portfolio.PortfolioViewModelFactory
 import dev.arkbuilders.rate.presentation.pairalert.AddPairAlertViewModelFactory
 import dev.arkbuilders.rate.presentation.pairalert.PairAlertViewModelFactory
+import dev.arkbuilders.rate.presentation.portfolio.EditAssetViewModelFactory
 import dev.arkbuilders.rate.presentation.quick.AddQuickViewModelFactory
 import dev.arkbuilders.rate.presentation.quick.QuickViewModelFactory
 import dev.arkbuilders.rate.presentation.settings.SettingsViewModelFactory
@@ -34,6 +35,7 @@ interface AppComponent {
     fun pairAlertVMFactory(): PairAlertViewModelFactory
     fun addPairAlertVMFactory(): AddPairAlertViewModelFactory
     fun quickVMFactory(): QuickViewModelFactory.Factory
+    fun editAssetVMFactory(): EditAssetViewModelFactory.Factory
     fun settingsVMFactory(): SettingsViewModelFactory
     fun appWorkerFactory(): AppWorkerFactory
 
