@@ -1,6 +1,5 @@
 package dev.arkbuilders.rate.presentation.addcurrency
 
-import androidx.compose.ui.util.fastMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,7 +10,6 @@ import dev.arkbuilders.rate.data.db.AssetsRepo
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
-import dev.arkbuilders.rate.utils.replace
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
@@ -48,7 +46,7 @@ class AddCurrencyViewModel(
         container(AddCurrencyState())
 
     init {
-        AppSharedFlow.AddCurrencyAmount.flow.onEach { (pos, selectedCode) ->
+        AppSharedFlow.SetCurrencyAmount.flow.onEach { (pos, selectedCode) ->
             intent {
                 reduce {
                     val newCurrencies = state.currencies.toMutableList()
@@ -59,18 +57,18 @@ class AddCurrencyViewModel(
             }
         }.launchIn(viewModelScope)
 
+        AppSharedFlow.AddAsset.flow.onEach { code ->
+            intent {
+                reduce { state.copy(currencies = state.currencies + (code to "")) }
+            }
+        }.launchIn(viewModelScope)
+
         intent {
             val groups =
                 assetsRepo.allCurrencyAmount().mapNotNull { it.group }.distinct()
             reduce {
                 state.copy(availableGroups = groups)
             }
-        }
-    }
-
-    fun onNewCurrencyClick() = intent {
-        reduce {
-            state.copy(currencies = state.currencies + stubCurrency)
         }
     }
 

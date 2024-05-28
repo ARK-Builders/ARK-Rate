@@ -1,6 +1,5 @@
 package dev.arkbuilders.rate.presentation.shared
 
-import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -9,8 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {
     data object AddPairAlertTarget : AppSharedFlow<CurrencyCode>(MutableSharedFlow())
     data object AddPairAlertBase : AppSharedFlow<CurrencyCode>(MutableSharedFlow())
-    data object AddCurrencyAmount :
+    data object SetCurrencyAmount :
         AppSharedFlow<Pair<Int, CurrencyCode>>(MutableSharedFlow())
+    data object AddAsset: AppSharedFlow<CurrencyCode>(MutableSharedFlow())
     data object AddQuick : AppSharedFlow<Pair<Int, CurrencyCode>>(MutableSharedFlow())
     data object PickBaseCurrency: AppSharedFlow<CurrencyCode>(MutableSharedFlow())
 
@@ -28,14 +28,15 @@ sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {
         fun fromKey(key: AppSharedFlowKey): AppSharedFlow<*> = when (key) {
             AppSharedFlowKey.AddPairAlertTarget -> AddPairAlertTarget
             AppSharedFlowKey.AddPairAlertBase -> AddPairAlertBase
-            AppSharedFlowKey.AddCurrencyAmount -> AddCurrencyAmount
+            AppSharedFlowKey.SetCurrencyAmount -> SetCurrencyAmount
             AppSharedFlowKey.AddQuick -> AddQuick
             AppSharedFlowKey.PickBaseCurrency -> PickBaseCurrency
+            AppSharedFlowKey.AddAsset -> AddAsset
         }
     }
 
 }
 
 enum class AppSharedFlowKey {
-    AddPairAlertTarget, AddPairAlertBase, AddCurrencyAmount, AddQuick, PickBaseCurrency
+    AddPairAlertTarget, AddPairAlertBase, SetCurrencyAmount, AddAsset, AddQuick, PickBaseCurrency
 }

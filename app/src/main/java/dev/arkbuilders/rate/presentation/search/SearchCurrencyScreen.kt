@@ -16,7 +16,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -30,19 +29,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.model.CurrencyAmount
-import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.model.CurrencyName
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 @Destination
@@ -145,8 +140,10 @@ private fun CurItem(
     suspend fun emitResult() {
         val appFlow = AppSharedFlow.fromKey(appSharedFlowKey)
         when (appFlow) {
-            AppSharedFlow.AddCurrencyAmount ->
-                AppSharedFlow.AddCurrencyAmount.flow.emit(pos!! to name.code)
+            AppSharedFlow.SetCurrencyAmount ->
+                AppSharedFlow.SetCurrencyAmount.flow.emit(pos!! to name.code)
+
+            AppSharedFlow.AddAsset -> AppSharedFlow.AddAsset.flow.emit(name.code)
 
             AppSharedFlow.AddPairAlertBase ->
                 AppSharedFlow.AddPairAlertBase.flow.emit(name.code)
