@@ -35,7 +35,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
@@ -47,7 +46,6 @@ import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -83,13 +81,15 @@ fun AddCurrencyScreen(
         state = state,
         navigator = navigator,
         onAmountChanged = viewModel::onAssetAmountChange,
-        onNewCurrencyClick = viewModel::onNewCurrencyClick,
+        onNewCurrencyClick = {
+          navigator.navigate(SearchCurrencyScreenDestination(AppSharedFlowKey.AddAsset.toString()))
+        },
         onAssetRemove = viewModel::onAssetRemove,
         onGroupSelect = viewModel::onGroupSelect,
         onCodeChange = {
             navigator.navigate(
                 SearchCurrencyScreenDestination(
-                    AppSharedFlowKey.AddCurrencyAmount.name,
+                    AppSharedFlowKey.SetCurrencyAmount.name,
                     it
                 )
             )
