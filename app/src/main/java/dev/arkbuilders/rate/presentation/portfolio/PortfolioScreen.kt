@@ -46,6 +46,7 @@ import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.EditAssetScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.theme.ArkTypography
@@ -107,7 +108,13 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
             if (isEmpty)
                 PortfolioEmpty(navigator)
             else
-                Content(state, onDelete = viewModel::onAssetRemove)
+                Content(
+                    state,
+                    onClick = { display ->
+                        navigator.navigate(EditAssetScreenDestination(display.amount.id))
+                    },
+                    onDelete = viewModel::onAssetRemove
+                )
         }
     }
 }
@@ -129,6 +136,7 @@ private val previewState = PortfolioScreenState(
 @Composable
 private fun Content(
     state: PortfolioScreenState = previewState,
+    onClick: (PortfolioDisplayAmount) -> Unit = {},
     onDelete: (CurrencyAmount) -> Unit = {}
 ) {
     val groupToAmounts = state.groupToPortfolioAmount.toList()
@@ -139,13 +147,18 @@ private fun Content(
             GroupPage(
                 baseCode = state.baseCode,
                 amounts = groupToAmounts.map { it.second }.first(),
+                onClick = onClick,
                 onDelete = onDelete
             )
         } else {
-            GroupViewPager(modifier = Modifier.padding(top = 16.dp), groups = groups) {
+            GroupViewPager(
+                modifier = Modifier.padding(top = 16.dp),
+                groups = groups
+            ) {
                 GroupPage(
                     baseCode = state.baseCode,
                     amounts = groupToAmounts.map { it.second }[it],
+                    onClick = onClick,
                     onDelete = onDelete
                 )
             }
@@ -157,6 +170,7 @@ private fun Content(
 private fun GroupPage(
     baseCode: CurrencyCode,
     amounts: List<PortfolioDisplayAmount>,
+    onClick: (PortfolioDisplayAmount) -> Unit = {},
     onDelete: (CurrencyAmount) -> Unit
 ) {
     val total = amounts.fold(0.0) { acc, amount ->
@@ -184,7 +198,7 @@ private fun GroupPage(
         }
         items(amounts, key = { it.amount.id }) {
             AppSwipeToDismiss(
-                content = { CurrencyItem(it) },
+                content = { CurrencyItem(it, onClick = onClick) },
                 onDelete = { onDelete(it.amount) }
             )
             AppHorDiv16()
@@ -204,7 +218,7 @@ private fun CurrencyItem(
             .background(Color.White)
             .padding(horizontal = 24.dp, vertical = 16.dp)
             .clickable {
-
+                onClick(amount)
             },
         verticalAlignment = Alignment.CenterVertically
     ) {

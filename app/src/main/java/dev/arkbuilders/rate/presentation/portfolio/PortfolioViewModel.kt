@@ -10,6 +10,9 @@ import dev.arkbuilders.rate.data.model.CurrencyAmount
 import dev.arkbuilders.rate.data.model.CurrencyCode
 import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.data.preferences.Preferences
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -41,27 +44,34 @@ class PortfolioViewModel(
         container(PortfolioScreenState())
 
     init {
-        viewModelScope.launch {
-            val baseCode = preferences.get(PreferenceKey.BaseCurrencyCode)
-            intent { reduce { state.copy(baseCode = baseCode) } }
+        init()
 
-            assetsRepo.allCurrencyAmountFlow().collect { list ->
-                val groups = list.groupBy(keySelector = { it.group })
-                val groupToPortfolioAmount = groups.mapValues {
-                    assetToPortfolioDisplayAmount(
-                        baseCode,
-                        it.value
-                    )
-                }
-                intent {
-                    reduce { state.copy(groupToPortfolioAmount = groupToPortfolioAmount) }
-                }
-            }
-        }
+        preferences.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
+            init()
+        }.launchIn(viewModelScope)
+
+        assetsRepo.allCurrencyAmountFlow().drop(1).onEach {
+            init()
+        }.launchIn(viewModelScope)
     }
 
     fun onAssetRemove(amount: CurrencyAmount) = intent {
         assetsRepo.removeCurrency(amount.id)
+    }
+
+    private fun init() = intent {
+        val baseCode = preferences.get(PreferenceKey.BaseCurrencyCode)
+        val list = assetsRepo.allCurrencyAmount()
+        val groups = list.groupBy(keySelector = { it.group })
+        val groupToPortfolioAmount = groups.mapValues {
+            assetToPortfolioDisplayAmount(
+                baseCode,
+                it.value
+            )
+        }
+        reduce {
+            state.copy(baseCode, groupToPortfolioAmount)
+        }
     }
 
     private suspend fun assetToPortfolioDisplayAmount(
