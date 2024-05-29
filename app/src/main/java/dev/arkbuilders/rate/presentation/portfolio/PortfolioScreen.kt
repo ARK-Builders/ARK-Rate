@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -54,6 +55,7 @@ import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
+import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
 import kotlinx.coroutines.flow.launchIn
@@ -222,11 +224,7 @@ private fun CurrencyItem(
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_earth),
-            contentDescription = "",
-            tint = Color.Unspecified
-        )
+        CurrIcon(modifier = Modifier.size(40.dp), code = amount.amount.code)
         Column(
             modifier = Modifier.padding(start = 12.dp),
             verticalArrangement = Arrangement.Center

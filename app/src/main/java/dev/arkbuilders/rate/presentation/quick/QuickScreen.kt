@@ -84,6 +84,7 @@ import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.theme.ArkTypography
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
+import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
@@ -233,12 +234,7 @@ private fun QuickItem(
                     modifier = Modifier
                         .size(40.dp)
                 ) {
-                    Icon(
-                        modifier = Modifier.size(40.dp),
-                        painter = painterResource(R.drawable.ic_earth),
-                        contentDescription = "",
-                        tint = Color.Unspecified
-                    )
+                    CurrIcon(modifier = Modifier.size(40.dp), code = quick.pair.from)
                 }
                 if (!expanded) {
                     Box(
@@ -248,12 +244,7 @@ private fun QuickItem(
                             .border(2.dp, Color.White, CircleShape)
                     ) {
                         if (quick.to.size == 1) {
-                            Icon(
-                                modifier = Modifier.size(40.dp),
-                                painter = painterResource(R.drawable.ic_earth),
-                                contentDescription = "",
-                                tint = Color.Unspecified
-                            )
+                            CurrIcon(modifier = Modifier.size(39.dp), code = quick.pair.to.first())
                         } else {
                             Box(
                                 modifier = Modifier
@@ -288,12 +279,7 @@ private fun QuickItem(
                             modifier = Modifier.padding(top = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                modifier = Modifier.size(20.dp),
-                                painter = painterResource(R.drawable.ic_earth),
-                                contentDescription = "",
-                                tint = Color.Unspecified
-                            )
+                            CurrIcon(modifier = Modifier.size(20.dp), code = it.first)
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
                                 text = "${CurrUtils.prepareToDisplay(it.second)} ${it.first}",
