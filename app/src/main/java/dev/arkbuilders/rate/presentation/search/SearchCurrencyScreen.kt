@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +39,7 @@ import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
+import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import kotlinx.coroutines.launch
 
 @Destination
@@ -174,11 +176,7 @@ private fun CurItem(
                 },
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_earth),
-                contentDescription = "",
-                tint = Color.Unspecified
-            )
+            CurrIcon(modifier = Modifier.size(40.dp), code = name.code)
             Column(
                 modifier = Modifier.padding(start = 12.dp),
                 verticalArrangement = Arrangement.Center
