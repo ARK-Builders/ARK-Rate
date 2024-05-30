@@ -7,9 +7,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
-import dev.arkbuilders.rate.data.db.PortfolioRepoImpl
-import dev.arkbuilders.rate.domain.model.CurrencyAmount
+import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
@@ -29,7 +27,7 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
 data class EditAssetScreenState(
-    val amount: CurrencyAmount = CurrencyAmount.EMPTY,
+    val asset: Asset = Asset.EMPTY,
     val name: CurrencyName = CurrencyName.EMPTY,
     val value: String = "",
     val initialized: Boolean = false
@@ -40,7 +38,7 @@ sealed class EditAssetScreenEffect
 private val PERSIST_AMOUNT_DEBOUNCE = 300L
 
 class EditAssetViewModel(
-    private val amountId: Long,
+    private val assetId: Long,
     private val currencyRepo: CurrencyRepo,
     private val assetsRepo: PortfolioRepo,
     private val prefs: Prefs
@@ -53,15 +51,15 @@ class EditAssetViewModel(
 
     init {
         intent {
-            val amount = assetsRepo.getById(amountId)
-            val name = currencyRepo.currencyNameByCode(amount!!.code)
+            val asset = assetsRepo.getById(assetId)
+            val name = currencyRepo.currencyNameByCode(asset!!.code)
 
             inputFlow.debounce(PERSIST_AMOUNT_DEBOUNCE).onEach {
-                assetsRepo.setCurrencyAmount(amount.copy(amount = it.toDoubleSafe()))
+                assetsRepo.setAsset(asset.copy(value = it.toDoubleSafe()))
             }.launchIn(viewModelScope)
 
             reduce {
-                state.copy(amount, name, amount.amount.toString(), initialized = true)
+                state.copy(asset, name, asset.value.toString(), initialized = true)
             }
         }
 

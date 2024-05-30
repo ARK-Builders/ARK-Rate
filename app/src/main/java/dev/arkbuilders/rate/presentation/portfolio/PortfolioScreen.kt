@@ -43,7 +43,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.domain.model.CurrencyAmount
+import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
@@ -112,7 +112,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                 Content(
                     state,
                     onClick = { display ->
-                        navigator.navigate(EditAssetScreenDestination(display.amount.id))
+                        navigator.navigate(EditAssetScreenDestination(display.asset.id))
                     },
                     onDelete = viewModel::onAssetRemove
                 )
@@ -120,9 +120,9 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
     }
 }
 
-private val previewPortfolioAmount = PortfolioDisplayAmount(
-    CurrencyAmount(code = "EUR", amount = 1100.2),
-    CurrencyAmount(code = "USD", amount = 1200.0),
+private val previewPortfolioAmount = PortfolioDisplayAsset(
+    Asset(code = "EUR", value = 1100.2),
+    Asset(code = "USD", value = 1200.0),
     ratioToBase = 1.1
 )
 
@@ -137,8 +137,8 @@ private val previewState = PortfolioScreenState(
 @Composable
 private fun Content(
     state: PortfolioScreenState = previewState,
-    onClick: (PortfolioDisplayAmount) -> Unit = {},
-    onDelete: (CurrencyAmount) -> Unit = {}
+    onClick: (PortfolioDisplayAsset) -> Unit = {},
+    onDelete: (Asset) -> Unit = {}
 ) {
     val groupToAmounts = state.groupToPortfolioAmount.toList()
     val groups = groupToAmounts.map { it.first }
@@ -170,12 +170,12 @@ private fun Content(
 @Composable
 private fun GroupPage(
     baseCode: CurrencyCode,
-    amounts: List<PortfolioDisplayAmount>,
-    onClick: (PortfolioDisplayAmount) -> Unit = {},
-    onDelete: (CurrencyAmount) -> Unit
+    amounts: List<PortfolioDisplayAsset>,
+    onClick: (PortfolioDisplayAsset) -> Unit = {},
+    onDelete: (Asset) -> Unit
 ) {
     val total = amounts.fold(0.0) { acc, amount ->
-        acc + amount.baseAmount.amount
+        acc + amount.baseAsset.value
     }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -197,10 +197,10 @@ private fun GroupPage(
             )
             AppHorDiv16(Modifier.padding(top = 32.dp))
         }
-        items(amounts, key = { it.amount.id }) {
+        items(amounts, key = { it.asset.id }) {
             AppSwipeToDismiss(
                 content = { CurrencyItem(it, onClick = onClick) },
-                onDelete = { onDelete(it.amount) }
+                onDelete = { onDelete(it.asset) }
             )
             AppHorDiv16()
         }
@@ -210,8 +210,8 @@ private fun GroupPage(
 @Preview(showBackground = true)
 @Composable
 private fun CurrencyItem(
-    amount: PortfolioDisplayAmount = previewPortfolioAmount,
-    onClick: (PortfolioDisplayAmount) -> Unit = {},
+    amount: PortfolioDisplayAsset = previewPortfolioAmount,
+    onClick: (PortfolioDisplayAsset) -> Unit = {},
 ) {
     Row(
         modifier = Modifier
@@ -223,7 +223,7 @@ private fun CurrencyItem(
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CurrIcon(modifier = Modifier.size(40.dp), code = amount.amount.code)
+        CurrIcon(modifier = Modifier.size(40.dp), code = amount.asset.code)
         Column(
             modifier = Modifier.padding(start = 12.dp),
             verticalArrangement = Arrangement.Center
@@ -233,12 +233,12 @@ private fun CurrencyItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = amount.amount.code,
+                    text = amount.asset.code,
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextPrimary
                 )
                 Text(
-                    text = "${CurrUtils.prepareToDisplay(amount.baseAmount.amount)} ${amount.baseAmount.code}",
+                    text = "${CurrUtils.prepareToDisplay(amount.baseAsset.value)} ${amount.baseAsset.code}",
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextPrimary
                 )
@@ -252,7 +252,7 @@ private fun CurrencyItem(
                     color = ArkColor.TextTertiary
                 )
                 Text(
-                    text = "${CurrUtils.prepareToDisplay(amount.amount.amount)} ${amount.amount.code}",
+                    text = "${CurrUtils.prepareToDisplay(amount.asset.value)} ${amount.asset.code}",
                     color = ArkColor.TextTertiary
                 )
             }

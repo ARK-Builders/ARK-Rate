@@ -52,7 +52,7 @@ object CurrUtils {
         return numberFormatter.format(value)
     }
 
-    fun roundOff(number: Double): Double {
+    fun roundOff(number: Double): String {
         val fractionSize =
             if (number > 10) 2 else 8
 
@@ -61,7 +61,7 @@ object CurrUtils {
             DecimalFormatSymbols(Locale.ENGLISH)
         )
         df.roundingMode = RoundingMode.CEILING
-        return df.format(number).toDouble()
+        return df.format(number)
     }
 }
 
