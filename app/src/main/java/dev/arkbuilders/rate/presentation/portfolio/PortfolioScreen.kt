@@ -46,7 +46,7 @@ import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
+import dev.arkbuilders.rate.presentation.destinations.AddAssetScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.EditAssetScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
@@ -95,7 +95,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                 contentColor = Color.White,
                 containerColor = ArkColor.Secondary,
                 onClick = {
-                    navigator.navigate(AddCurrencyScreenDestination)
+                    navigator.navigate(AddAssetScreenDestination)
                 }
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
@@ -287,7 +287,7 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
             Button(
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {
-                    navigator.navigate(AddCurrencyScreenDestination)
+                    navigator.navigate(AddAssetScreenDestination)
                 }
             ) {
                 Icon(

@@ -6,14 +6,13 @@ import dagger.BindsInstance
 import dagger.Component
 import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
 import dev.arkbuilders.rate.data.db.PortfolioRepoImpl
-import dev.arkbuilders.rate.data.preferences.PrefsImpl
 import dev.arkbuilders.rate.data.worker.AppWorkerFactory
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.module.ApiModule
 import dev.arkbuilders.rate.di.module.DBModule
 import dev.arkbuilders.rate.di.module.RepoModule
 import dev.arkbuilders.rate.domain.repo.Prefs
-import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyViewModelFactory
+import dev.arkbuilders.rate.presentation.portfolio.AddAssetViewModelFactory
 import dev.arkbuilders.rate.presentation.portfolio.PortfolioViewModelFactory
 import dev.arkbuilders.rate.presentation.pairalert.AddPairAlertViewModelFactory
 import dev.arkbuilders.rate.presentation.pairalert.PairAlertViewModelFactory
@@ -33,7 +32,7 @@ import javax.inject.Singleton
 )
 interface AppComponent {
     fun assetsVMFactory(): PortfolioViewModelFactory
-    fun addCurrencyVMFactory(): AddCurrencyViewModelFactory
+    fun addCurrencyVMFactory(): AddAssetViewModelFactory
     fun addQuickVMFactory(): AddQuickViewModelFactory
     fun pairAlertVMFactory(): PairAlertViewModelFactory
     fun addPairAlertVMFactory(): AddPairAlertViewModelFactory
