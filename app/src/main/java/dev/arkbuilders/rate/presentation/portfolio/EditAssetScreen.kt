@@ -47,9 +47,9 @@ import org.orbitmvi.orbit.compose.collectAsState
 
 @Destination
 @Composable
-fun EditAssetScreen(amountId: Long, navigator: DestinationsNavigator) {
+fun EditAssetScreen(assetId: Long, navigator: DestinationsNavigator) {
     val viewModel: EditAssetViewModel = viewModel(
-        factory = DIManager.component.editAssetVMFactory().create(amountId)
+        factory = DIManager.component.editAssetVMFactory().create(assetId)
     )
     val state by viewModel.collectAsState()
 

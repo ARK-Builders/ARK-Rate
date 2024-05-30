@@ -81,14 +81,13 @@ class AddPairAlertViewModel(
             val targetRate =
                 currencyRepo.getCurrencyRate().find { it.code == target }
 
-            val currentPrice =
-                CurrUtils.roundOff(targetRate!!.rate / baseRate!!.rate)
+            val currentPrice = targetRate!!.rate / baseRate!!.rate
 
             reduce {
                 state.copy(
                     currentPrice = currentPrice,
                     priceOrPercent = Either.Left(
-                        CurrUtils.roundOff(currentPrice * 1.1).toString()
+                        CurrUtils.roundOff(currentPrice * 1.1)
                     ),
                     targetCode = target,
                     baseCode = base
@@ -107,7 +106,7 @@ class AddPairAlertViewModel(
     fun onPriceOrPercentChanged(priceNotPercent: Boolean) = intent {
         reduce {
             val priceOrPercent = if (priceNotPercent)
-                Either.Left(CurrUtils.roundOff(state.currentPrice * 1.1).toString())
+                Either.Left(CurrUtils.roundOff(state.currentPrice * 1.1))
             else
                 Either.Right("5")
 

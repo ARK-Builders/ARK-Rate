@@ -411,7 +411,7 @@ private fun EditCondition(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Current price = ${state.currentPrice}",
+                text = "Current price = ${CurrUtils.prepareToDisplay(state.currentPrice)}",
                 color = ArkColor.TextTertiary
             )
             DropDownBtn(

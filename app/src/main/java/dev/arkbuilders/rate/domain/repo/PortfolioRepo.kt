@@ -1,18 +1,18 @@
 package dev.arkbuilders.rate.domain.repo
 
-import dev.arkbuilders.rate.domain.model.CurrencyAmount
+import dev.arkbuilders.rate.domain.model.Asset
 import kotlinx.coroutines.flow.Flow
 
 interface PortfolioRepo {
-    suspend fun allCurrencyAmount(): List<CurrencyAmount>
+    suspend fun allAssets(): List<Asset>
 
-    fun allCurrencyAmountFlow(): Flow<List<CurrencyAmount>>
+    fun allAssetsFlow(): Flow<List<Asset>>
 
-    suspend fun getById(id: Long): CurrencyAmount?
+    suspend fun getById(id: Long): Asset?
 
-    suspend fun setCurrencyAmount(amount: CurrencyAmount)
+    suspend fun setAsset(asset: Asset)
 
-    suspend fun setCurrencyAmountList(list: List<CurrencyAmount>)
+    suspend fun setAssetsList(list: List<Asset>)
 
-    suspend fun removeCurrency(id: Long)
+    suspend fun removeAsset(id: Long)
 }

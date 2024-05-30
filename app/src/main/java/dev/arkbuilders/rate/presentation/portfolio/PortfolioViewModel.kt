@@ -3,11 +3,8 @@ package dev.arkbuilders.rate.presentation.portfolio
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
-import dev.arkbuilders.rate.data.db.PortfolioRepoImpl
-import dev.arkbuilders.rate.domain.model.CurrencyAmount
+import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
-import dev.arkbuilders.rate.data.preferences.PrefsImpl
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
@@ -25,12 +22,12 @@ import javax.inject.Singleton
 
 data class PortfolioScreenState(
     val baseCode: CurrencyCode = "USD",
-    val groupToPortfolioAmount: Map<String?, List<PortfolioDisplayAmount>> = emptyMap(),
+    val groupToPortfolioAmount: Map<String?, List<PortfolioDisplayAsset>> = emptyMap(),
 )
 
-class PortfolioDisplayAmount(
-    val amount: CurrencyAmount,
-    val baseAmount: CurrencyAmount,
+class PortfolioDisplayAsset(
+    val asset: Asset,
+    val baseAsset: Asset,
     val ratioToBase: Double
 )
 
@@ -52,18 +49,18 @@ class PortfolioViewModel(
             init()
         }.launchIn(viewModelScope)
 
-        assetsRepo.allCurrencyAmountFlow().drop(1).onEach {
+        assetsRepo.allAssetsFlow().drop(1).onEach {
             init()
         }.launchIn(viewModelScope)
     }
 
-    fun onAssetRemove(amount: CurrencyAmount) = intent {
-        assetsRepo.removeCurrency(amount.id)
+    fun onAssetRemove(amount: Asset) = intent {
+        assetsRepo.removeAsset(amount.id)
     }
 
     private fun init() = intent {
         val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
-        val list = assetsRepo.allCurrencyAmount()
+        val list = assetsRepo.allAssets()
         val groups = list.groupBy(keySelector = { it.group })
         val groupToPortfolioAmount = groups.mapValues {
             assetToPortfolioDisplayAmount(
@@ -78,14 +75,14 @@ class PortfolioViewModel(
 
     private suspend fun assetToPortfolioDisplayAmount(
         baseCode: CurrencyCode,
-        list: List<CurrencyAmount>
-    ): List<PortfolioDisplayAmount> {
+        list: List<Asset>
+    ): List<PortfolioDisplayAsset> {
         val rates = currencyRepo.getCodeToCurrencyRate()
         return list.map { amount ->
             val baseRate = rates[amount.code]!!.rate / rates[baseCode]!!.rate
             val baseAmount =
-                CurrencyAmount(code = baseCode, amount = amount.amount * baseRate)
-            PortfolioDisplayAmount(amount, baseAmount, baseRate)
+                Asset(code = baseCode, value = amount.value * baseRate)
+            PortfolioDisplayAsset(amount, baseAmount, baseRate)
         }
     }
 }

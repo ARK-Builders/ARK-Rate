@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {
     data object AddPairAlertTarget : AppSharedFlow<CurrencyCode>(MutableSharedFlow())
     data object AddPairAlertBase : AppSharedFlow<CurrencyCode>(MutableSharedFlow())
-    data object SetCurrencyAmount :
+    data object SetAssetCode :
         AppSharedFlow<Pair<Int, CurrencyCode>>(MutableSharedFlow())
     data object AddAsset: AppSharedFlow<CurrencyCode>(MutableSharedFlow())
     data object AddQuick : AppSharedFlow<Pair<Int, CurrencyCode>>(MutableSharedFlow())
@@ -28,7 +28,7 @@ sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {
         fun fromKey(key: AppSharedFlowKey): AppSharedFlow<*> = when (key) {
             AppSharedFlowKey.AddPairAlertTarget -> AddPairAlertTarget
             AppSharedFlowKey.AddPairAlertBase -> AddPairAlertBase
-            AppSharedFlowKey.SetCurrencyAmount -> SetCurrencyAmount
+            AppSharedFlowKey.SetCurrencyAmount -> SetAssetCode
             AppSharedFlowKey.AddQuick -> AddQuick
             AppSharedFlowKey.PickBaseCurrency -> PickBaseCurrency
             AppSharedFlowKey.AddAsset -> AddAsset

@@ -4,13 +4,13 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CurrencyAmount(
+data class Asset(
     val id: Long = 0,
     val code: CurrencyCode,
-    var amount: Double,
+    var value: Double,
     val group: String? = null
 ): Parcelable {
     companion object {
-        val EMPTY = CurrencyAmount(0, "", 0.0)
+        val EMPTY = Asset(0, "", 0.0)
     }
 }

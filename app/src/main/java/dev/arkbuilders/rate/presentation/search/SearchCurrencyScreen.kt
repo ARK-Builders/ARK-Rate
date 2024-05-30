@@ -141,8 +141,8 @@ private fun CurItem(
     suspend fun emitResult() {
         val appFlow = AppSharedFlow.fromKey(appSharedFlowKey)
         when (appFlow) {
-            AppSharedFlow.SetCurrencyAmount ->
-                AppSharedFlow.SetCurrencyAmount.flow.emit(pos!! to name.code)
+            AppSharedFlow.SetAssetCode ->
+                AppSharedFlow.SetAssetCode.flow.emit(pos!! to name.code)
 
             AppSharedFlow.AddAsset -> AppSharedFlow.AddAsset.flow.emit(name.code)
 

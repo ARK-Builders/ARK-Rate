@@ -65,7 +65,7 @@ fun AddCurrencyScreen(
             is AddCurrencySideEffect.NotifyAssetAdded -> {
                 val added = effect.amounts
                     .joinToString {
-                        "${CurrUtils.prepareToDisplay(it.amount)} ${it.code}"
+                        "${CurrUtils.prepareToDisplay(it.value)} ${it.code}"
                     }
                 AppSharedFlow.ShowAddedSnackbarPortfolio.flow.emit(
                     NotifyAddedSnackbarVisuals(
@@ -80,7 +80,7 @@ fun AddCurrencyScreen(
     Content(
         state = state,
         navigator = navigator,
-        onAmountChanged = viewModel::onAssetAmountChange,
+        onAmountChanged = viewModel::onAssetValueChange,
         onNewCurrencyClick = {
           navigator.navigate(SearchCurrencyScreenDestination(AppSharedFlowKey.AddAsset.toString()))
         },
@@ -197,20 +197,20 @@ private fun Content(
 @Composable
 private fun Currencies(
     state: AddCurrencyState,
-    onAmountChanged: (Int, String) -> Unit,
+    onAssetValueChanged: (Int, String) -> Unit,
     onAssetRemove: (Int) -> Unit,
     onCodeChange: (Int) -> Unit,
 ) {
     state.currencies.forEachIndexed { index, amount ->
-        InputCurrency(index, amount, onAmountChanged, onAssetRemove, onCodeChange)
+        InputCurrency(index, amount, onAssetValueChanged, onAssetRemove, onCodeChange)
     }
 }
 
 @Composable
 fun InputCurrency(
     pos: Int,
-    amount: Pair<CurrencyCode, String>,
-    onAmountChanged: (Int, String) -> Unit,
+    codeToValue: Pair<CurrencyCode, String>,
+    onAssetValueChanged: (Int, String) -> Unit,
     onAssetRemove: (Int) -> Unit,
     onCodeChange: (Int) -> Unit
 ) {
@@ -233,7 +233,7 @@ fun InputCurrency(
             ) {
                 Text(
                     modifier = Modifier.padding(start = 14.dp),
-                    text = amount.first,
+                    text = codeToValue.first,
                     fontSize = 16.sp,
                     color = ArkColor.TextSecondary
                 )
@@ -246,8 +246,8 @@ fun InputCurrency(
             }
             BasicTextField(
                 modifier = Modifier.padding(start = 12.dp),
-                value = amount.second,
-                onValueChange = { onAmountChanged(pos, it) },
+                value = codeToValue.second,
+                onValueChange = { onAssetValueChanged(pos, it) },
                 textStyle = TextStyle.Default.copy(
                     color = ArkColor.TextPrimary,
                     fontSize = 16.sp

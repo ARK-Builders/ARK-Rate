@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.domain.model.CurrencyAmount
-import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
-import dev.arkbuilders.rate.data.db.PortfolioRepoImpl
+import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
@@ -33,7 +31,7 @@ data class AddCurrencyState(
 )
 
 sealed class AddCurrencySideEffect {
-    class NotifyAssetAdded(val amounts: List<CurrencyAmount>) :
+    class NotifyAssetAdded(val amounts: List<Asset>) :
         AddCurrencySideEffect()
 
     data object NavigateBack : AddCurrencySideEffect()
@@ -48,7 +46,7 @@ class AddCurrencyViewModel(
         container(AddCurrencyState())
 
     init {
-        AppSharedFlow.SetCurrencyAmount.flow.onEach { (pos, selectedCode) ->
+        AppSharedFlow.SetAssetCode.flow.onEach { (pos, selectedCode) ->
             intent {
                 reduce {
                     val newCurrencies = state.currencies.toMutableList()
@@ -67,7 +65,7 @@ class AddCurrencyViewModel(
 
         intent {
             val groups =
-                assetsRepo.allCurrencyAmount().mapNotNull { it.group }.distinct()
+                assetsRepo.allAssets().mapNotNull { it.group }.distinct()
             reduce {
                 state.copy(availableGroups = groups)
             }
@@ -87,7 +85,7 @@ class AddCurrencyViewModel(
         reduce { state.copy(group = group) }
     }
 
-    fun onAssetAmountChange(pos: Int, input: String) = blockingIntent {
+    fun onAssetValueChange(pos: Int, input: String) = blockingIntent {
         reduce {
             val newCurrencies = state.currencies.toMutableList()
             val old = newCurrencies[pos]
@@ -99,9 +97,9 @@ class AddCurrencyViewModel(
 
     fun onAddAsset() = intent {
         val currencies = state.currencies.map {
-            CurrencyAmount(code = it.first, amount = it.second.toDoubleSafe(), group = state.group)
+            Asset(code = it.first, value = it.second.toDoubleSafe(), group = state.group)
         }
-        assetsRepo.setCurrencyAmountList(currencies)
+        assetsRepo.setAssetsList(currencies)
         postSideEffect(AddCurrencySideEffect.NotifyAssetAdded(currencies))
         postSideEffect(AddCurrencySideEffect.NavigateBack)
     }
