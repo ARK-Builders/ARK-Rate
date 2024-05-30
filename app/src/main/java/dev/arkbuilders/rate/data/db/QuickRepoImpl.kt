@@ -6,8 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import dev.arkbuilders.rate.data.model.CurrencyCode
-import dev.arkbuilders.rate.data.model.QuickPair
+import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.QuickPair
+import dev.arkbuilders.rate.domain.repo.QuickRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -39,17 +40,17 @@ interface QuickPairDao {
 }
 
 @Singleton
-class QuickRepo @Inject constructor(val dao: QuickPairDao) {
+class QuickRepoImpl @Inject constructor(val dao: QuickPairDao): QuickRepo {
 
-    suspend fun insert(quickCurrency: QuickPair) =
-        dao.insert(quickCurrency.toRoom())
+    override suspend fun insert(quick: QuickPair) =
+        dao.insert(quick.toRoom())
 
-    suspend fun getAll() = dao.getAll().map { it.toQuickPair() }
+    override suspend fun getAll() = dao.getAll().map { it.toQuickPair() }
 
-    fun allFlow() =
+    override fun allFlow() =
         dao.allFlow().map { list -> list.map { it.toQuickPair() } }
 
-    suspend fun delete(id: Long) = dao.delete(id)
+    override suspend fun delete(id: Long) = dao.delete(id)
 }
 
 private fun QuickPair.toRoom() = RoomQuickPair(id, from, amount, to.joinToString(separator = ","), group)

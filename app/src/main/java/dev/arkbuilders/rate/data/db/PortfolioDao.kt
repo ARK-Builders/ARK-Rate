@@ -8,10 +8,9 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import dev.arkbuilders.rate.data.model.CurrencyAmount
-import dev.arkbuilders.rate.data.model.CurrencyCode
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import dev.arkbuilders.rate.domain.model.CurrencyAmount
+import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,7 +24,7 @@ data class RoomCurrencyAmount(
 )
 
 @Dao
-interface AssetsDao {
+interface PortfolioDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(currencyAmount: RoomCurrencyAmount)
 
@@ -46,24 +45,24 @@ interface AssetsDao {
 }
 
 @Singleton
-class AssetsRepo @Inject constructor(
-    private val dao: AssetsDao
-) {
-    suspend fun allCurrencyAmount(): List<CurrencyAmount> = dao.getAll()
+class PortfolioRepoImpl @Inject constructor(
+    private val dao: PortfolioDao
+): PortfolioRepo {
+    override suspend fun allCurrencyAmount(): List<CurrencyAmount> = dao.getAll()
         .map { it.toCurrencyAmount() }
 
-    fun allCurrencyAmountFlow(): Flow<List<CurrencyAmount>> = dao.allFlow()
+    override fun allCurrencyAmountFlow(): Flow<List<CurrencyAmount>> = dao.allFlow()
         .map { list -> list.map { it.toCurrencyAmount() } }
 
-    suspend fun getById(id: Long) = dao.getById(id)?.toCurrencyAmount()
+    override suspend fun getById(id: Long) = dao.getById(id)?.toCurrencyAmount()
 
-    suspend fun setCurrencyAmount(amount: CurrencyAmount) =
+    override suspend fun setCurrencyAmount(amount: CurrencyAmount) =
         dao.insert(amount.toRoom())
 
-    suspend fun setCurrencyAmountList(list: List<CurrencyAmount>) =
+    override suspend fun setCurrencyAmountList(list: List<CurrencyAmount>) =
         dao.insertList(list.map { it.toRoom() })
 
-    suspend fun removeCurrency(id: Long) =
+    override suspend fun removeCurrency(id: Long) =
         dao.delete(id)
 }
 

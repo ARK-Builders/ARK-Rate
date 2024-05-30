@@ -7,14 +7,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dev.arkbuilders.rate.data.preferences.PreferenceKey
-import dev.arkbuilders.rate.data.preferences.Preferences
+import dev.arkbuilders.rate.data.preferences.PrefsImpl
+import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
 class SettingsViewModel(
-    private val prefs: Preferences
+    private val prefs: PrefsImpl
 ) : ViewModel() {
 
     val currencyRoundPrefs = mutableMapOf<PreferenceKey<Int>, MutableState<String>>()
@@ -63,7 +63,7 @@ class SettingsViewModel(
 
 @Singleton
 class SettingsViewModelFactory @Inject constructor(
-    private val prefs: Preferences
+    private val prefs: PrefsImpl
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SettingsViewModel(prefs) as T

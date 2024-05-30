@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.data.model
+package dev.arkbuilders.rate.domain.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

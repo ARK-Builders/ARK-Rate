@@ -6,9 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import dev.arkbuilders.rate.data.model.CurrencyRate
-import dev.arkbuilders.rate.data.model.CurrencyType
-import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.CurrencyRate
+import dev.arkbuilders.rate.domain.model.CurrencyType
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import javax.inject.Inject
 
 @Entity

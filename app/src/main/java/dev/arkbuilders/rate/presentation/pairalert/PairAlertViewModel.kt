@@ -3,11 +3,10 @@ package dev.arkbuilders.rate.presentation.pairalert
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import arrow.core.split
-import dev.arkbuilders.rate.data.db.PairAlertRepo
-import dev.arkbuilders.rate.data.model.PairAlert
+import dev.arkbuilders.rate.data.db.PairAlertRepoImpl
+import dev.arkbuilders.rate.domain.model.PairAlert
+import dev.arkbuilders.rate.domain.repo.PairAlertRepo
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost

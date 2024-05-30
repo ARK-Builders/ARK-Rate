@@ -46,7 +46,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.model.PairAlert
+import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddPairAlertScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow

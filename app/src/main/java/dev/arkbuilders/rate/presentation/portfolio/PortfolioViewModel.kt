@@ -3,13 +3,15 @@ package dev.arkbuilders.rate.presentation.portfolio
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.db.AssetsRepo
-import kotlinx.coroutines.launch
-import dev.arkbuilders.rate.data.model.CurrencyAmount
-import dev.arkbuilders.rate.data.model.CurrencyCode
-import dev.arkbuilders.rate.data.preferences.PreferenceKey
-import dev.arkbuilders.rate.data.preferences.Preferences
+import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
+import dev.arkbuilders.rate.data.db.PortfolioRepoImpl
+import dev.arkbuilders.rate.domain.model.CurrencyAmount
+import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.data.preferences.PrefsImpl
+import dev.arkbuilders.rate.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.domain.repo.PortfolioRepo
+import dev.arkbuilders.rate.domain.repo.PreferenceKey
+import dev.arkbuilders.rate.domain.repo.Prefs
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -35,9 +37,9 @@ class PortfolioDisplayAmount(
 sealed class PortfolioScreenEffect
 
 class PortfolioViewModel(
-    private val assetsRepo: AssetsRepo,
-    private val currencyRepo: GeneralCurrencyRepo,
-    private val preferences: Preferences
+    private val assetsRepo: PortfolioRepo,
+    private val currencyRepo: CurrencyRepo,
+    private val prefs: Prefs
 ) : ViewModel(), ContainerHost<PortfolioScreenState, PortfolioScreenEffect> {
 
     override val container: Container<PortfolioScreenState, PortfolioScreenEffect> =
@@ -46,7 +48,7 @@ class PortfolioViewModel(
     init {
         init()
 
-        preferences.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
+        prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
             init()
         }.launchIn(viewModelScope)
 
@@ -60,7 +62,7 @@ class PortfolioViewModel(
     }
 
     private fun init() = intent {
-        val baseCode = preferences.get(PreferenceKey.BaseCurrencyCode)
+        val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
         val list = assetsRepo.allCurrencyAmount()
         val groups = list.groupBy(keySelector = { it.group })
         val groupToPortfolioAmount = groups.mapValues {
@@ -90,11 +92,11 @@ class PortfolioViewModel(
 
 @Singleton
 class PortfolioViewModelFactory @Inject constructor(
-    private val assetsRepo: AssetsRepo,
-    private val currencyRepo: GeneralCurrencyRepo,
-    private val preferences: Preferences
+    private val assetsRepo: PortfolioRepo,
+    private val currencyRepo: CurrencyRepo,
+    private val prefs: Prefs
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return PortfolioViewModel(assetsRepo, currencyRepo, preferences) as T
+        return PortfolioViewModel(assetsRepo, currencyRepo, prefs) as T
     }
 }
