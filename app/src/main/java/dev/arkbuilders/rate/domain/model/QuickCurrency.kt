@@ -1,4 +1,6 @@
-package dev.arkbuilders.rate.data.model
+package dev.arkbuilders.rate.domain.model
+
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 
 data class QuickPair(
     val id: Long,

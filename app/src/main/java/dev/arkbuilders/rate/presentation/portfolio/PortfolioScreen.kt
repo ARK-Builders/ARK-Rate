@@ -43,8 +43,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.model.CurrencyAmount
-import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.CurrencyAmount
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.EditAssetScreenDestination
@@ -52,7 +52,6 @@ import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.theme.ArkTypography
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
-import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon

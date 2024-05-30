@@ -7,32 +7,15 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.domain.repo.PreferenceKey
+import dev.arkbuilders.rate.domain.repo.Prefs
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-enum class QuickScreenShowAs {
-    TAG_CLOUD, LIST, GRID
-}
-
-enum class QuickScreenSortedBy {
-    USED_COUNT, USED_TIME
-}
-
-sealed class PreferenceKey<out T>(val defaultValue: T) {
-    data object QuickScreenShowAsKey : PreferenceKey<Int>(0)
-    data object QuickScreenSortedByKey : PreferenceKey<Int>(0)
-    data object FiatFiatRateRound : PreferenceKey<Int>(2)
-    data object CryptoCryptoRateRound : PreferenceKey<Int>(2)
-    data object FiatCryptoRateRound : PreferenceKey<Int>(2)
-    data object CrashReport : PreferenceKey<Boolean>(true)
-    data object BaseCurrencyCode: PreferenceKey<CurrencyCode>("USD")
-}
-
 @Singleton
-class Preferences @Inject constructor(val context: Context) {
+class PrefsImpl @Inject constructor(val context: Context): Prefs {
     private val SHARED_PREFERENCES_KEY = "user_preferences"
 
     private val Context.preferencesDatastore by preferencesDataStore(
@@ -41,19 +24,19 @@ class Preferences @Inject constructor(val context: Context) {
 
     private val dataStore = context.preferencesDatastore
 
-    suspend fun <T> get(key: PreferenceKey<T>): T {
+    override suspend fun <T> get(key: PreferenceKey<T>): T {
         val prefKey = resolveKey(key)
         return dataStore.data.first()[prefKey] ?: key.defaultValue
     }
 
-    suspend fun <T> set(key: PreferenceKey<T>, value: T) {
+    override suspend fun <T> set(key: PreferenceKey<T>, value: T) {
         dataStore.edit { pref ->
             val prefKey = resolveKey(key)
             pref[prefKey] = value
         }
     }
 
-    fun <T> flow(key: PreferenceKey<T>) =
+    override fun <T> flow(key: PreferenceKey<T>) =
         dataStore.data.map { pref ->
             val prefKey = resolveKey(key)
             pref[prefKey] ?: key.defaultValue

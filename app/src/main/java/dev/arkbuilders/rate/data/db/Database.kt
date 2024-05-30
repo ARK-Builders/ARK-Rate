@@ -14,7 +14,7 @@ import androidx.room.RoomDatabase
     exportSchema = true,
 )
 abstract class Database : RoomDatabase() {
-    abstract fun assetsDao(): AssetsDao
+    abstract fun assetsDao(): PortfolioDao
     abstract fun rateDao(): CurrencyRateDao
     abstract fun fetchTimestampDao(): FetchTimestampDao
     abstract fun pairAlertDao(): PairAlertDao

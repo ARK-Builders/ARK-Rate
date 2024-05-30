@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,12 +45,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.model.CurrencyAmount
-import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencySideEffect
-import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyState
-import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyViewModel
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
@@ -61,7 +56,6 @@ import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 

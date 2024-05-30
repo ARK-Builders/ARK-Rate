@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.db.QuickRepo
-import dev.arkbuilders.rate.data.model.CurrencyCode
-import dev.arkbuilders.rate.data.model.QuickPair
+import dev.arkbuilders.rate.data.db.QuickRepoImpl
+import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.QuickPair
+import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

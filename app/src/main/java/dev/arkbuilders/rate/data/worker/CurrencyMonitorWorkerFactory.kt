@@ -1,16 +1,15 @@
 package dev.arkbuilders.rate.data.worker
 
 import android.content.Context
-import androidx.work.DelegatingWorkerFactory
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.db.PairAlertRepo
+import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
+import dev.arkbuilders.rate.data.db.PairAlertRepoImpl
 
 class CurrencyMonitorWorkerFactory(
-    private val currencyRepo: GeneralCurrencyRepo,
-    private val pairAlertRepo: PairAlertRepo
+    private val currencyRepo: CurrencyRepoImpl,
+    private val pairAlertRepo: PairAlertRepoImpl
 ) : WorkerFactory() {
     override fun createWorker(
         appContext: Context,

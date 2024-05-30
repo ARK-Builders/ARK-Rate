@@ -5,12 +5,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.db.AssetsRepo
-import dev.arkbuilders.rate.data.db.QuickRepo
-import dev.arkbuilders.rate.data.model.CurrencyCode
-import dev.arkbuilders.rate.data.model.QuickPair
-import dev.arkbuilders.rate.data.preferences.Preferences
+import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
+import dev.arkbuilders.rate.data.db.PortfolioRepoImpl
+import dev.arkbuilders.rate.data.db.QuickRepoImpl
+import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.QuickPair
+import dev.arkbuilders.rate.data.preferences.PrefsImpl
+import dev.arkbuilders.rate.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.domain.repo.PortfolioRepo
+import dev.arkbuilders.rate.domain.repo.Prefs
+import dev.arkbuilders.rate.domain.repo.QuickRepo
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
@@ -33,10 +37,10 @@ sealed class QuickScreenEffect {
 }
 
 class QuickViewModel(
-    val currencyRepo: GeneralCurrencyRepo,
-    val assetsRepo: AssetsRepo,
+    val currencyRepo: CurrencyRepo,
+    val assetsRepo: PortfolioRepo,
     val quickRepo: QuickRepo,
-    val prefs: Preferences
+    val prefs: Prefs
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
     override val container: Container<QuickScreenState, QuickScreenEffect> =
         container(QuickScreenState())
@@ -65,10 +69,10 @@ class QuickViewModel(
 }
 
 class QuickViewModelFactory @AssistedInject constructor(
-    private val assetsRepo: AssetsRepo,
+    private val assetsRepo: PortfolioRepo,
     private val quickRepo: QuickRepo,
-    private val currencyRepo: GeneralCurrencyRepo,
-    private val prefs: Preferences,
+    private val currencyRepo: CurrencyRepo,
+    private val prefs: Prefs,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return QuickViewModel(

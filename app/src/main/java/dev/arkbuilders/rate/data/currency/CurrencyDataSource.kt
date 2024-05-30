@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.data.model
+package dev.arkbuilders.rate.data.currency
 
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
@@ -7,10 +7,14 @@ import kotlinx.coroutines.sync.Mutex
 import dev.arkbuilders.rate.data.db.CurrencyRateLocalDataSource
 import dev.arkbuilders.rate.data.db.FetchTimestampDataSource
 import dev.arkbuilders.rate.data.network.NetworkStatus
+import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.CurrencyName
+import dev.arkbuilders.rate.domain.model.CurrencyRate
+import dev.arkbuilders.rate.domain.model.CurrencyType
 import dev.arkbuilders.rate.utils.withContextAndLock
 import java.util.concurrent.TimeUnit
 
-abstract class CurrencyRepo(
+abstract class CurrencyDataSource(
     private val local: CurrencyRateLocalDataSource,
     private val networkStatus: NetworkStatus,
     private val fetchTimestampDataSource: FetchTimestampDataSource
