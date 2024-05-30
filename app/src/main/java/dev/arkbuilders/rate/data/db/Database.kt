@@ -4,13 +4,13 @@ import androidx.room.RoomDatabase
 
 @androidx.room.Database(
     entities = [
-        RoomCurrencyAmount::class,
+        RoomAsset::class,
         RoomCurrencyRate::class,
         RoomFetchTimestamp::class,
         RoomPairAlert::class,
         RoomQuickPair::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 abstract class Database : RoomDatabase() {
