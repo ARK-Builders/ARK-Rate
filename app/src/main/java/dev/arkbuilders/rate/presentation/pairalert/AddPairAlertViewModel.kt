@@ -5,13 +5,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import arrow.core.Either
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.db.PairAlertRepo
-import dev.arkbuilders.rate.data.model.CurrencyAmount
-import dev.arkbuilders.rate.data.model.CurrencyCode
-import dev.arkbuilders.rate.data.model.PairAlert
+import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
+import dev.arkbuilders.rate.data.db.PairAlertRepoImpl
+import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.data.toDoubleSafe
-import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencySideEffect
+import dev.arkbuilders.rate.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.domain.repo.PairAlertRepo
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,7 +27,7 @@ import javax.inject.Singleton
 
 data class AddPairAlertScreenState(
     val targetCode: CurrencyCode = "BTC",
-    val baseCode: CurrencyCode  = "USD",
+    val baseCode: CurrencyCode = "USD",
     val priceOrPercent: Either<String, String> = Either.Left(""),
     val currentPrice: Double = 0.0,
     val aboveNotBelow: Boolean = true,
@@ -43,7 +43,7 @@ sealed class AddPairAlertScreenEffect {
 }
 
 class AddPairAlertViewModel(
-    private val currencyRepo: GeneralCurrencyRepo,
+    private val currencyRepo: CurrencyRepo,
     private val pairAlertRepo: PairAlertRepo
 ) : ViewModel(), ContainerHost<AddPairAlertScreenState, AddPairAlertScreenEffect> {
     override val container: Container<AddPairAlertScreenState, AddPairAlertScreenEffect> =
@@ -183,7 +183,7 @@ class AddPairAlertViewModel(
 
 @Singleton
 class AddPairAlertViewModelFactory @Inject constructor(
-    private val currencyRepo: GeneralCurrencyRepo,
+    private val currencyRepo: CurrencyRepo,
     private val pairAlertRepo: PairAlertRepo
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

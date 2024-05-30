@@ -1,5 +1,6 @@
-package dev.arkbuilders.rate.data.model
+package dev.arkbuilders.rate.domain.model
 
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import java.time.OffsetDateTime
 
 data class PairAlert(

@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.model.CurrencyAmount
-import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.db.AssetsRepo
-import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.CurrencyAmount
+import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
+import dev.arkbuilders.rate.data.db.PortfolioRepoImpl
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -38,8 +40,8 @@ sealed class AddCurrencySideEffect {
 }
 
 class AddCurrencyViewModel(
-    private val assetsRepo: AssetsRepo,
-    private val currencyRepo: GeneralCurrencyRepo
+    private val assetsRepo: PortfolioRepo,
+    private val currencyRepo: CurrencyRepo
 ) : ViewModel(), ContainerHost<AddCurrencyState, AddCurrencySideEffect> {
 
     override val container: Container<AddCurrencyState, AddCurrencySideEffect> =
@@ -107,8 +109,8 @@ class AddCurrencyViewModel(
 
 @Singleton
 class AddCurrencyViewModelFactory @Inject constructor(
-    private val assetsRepo: AssetsRepo,
-    private val currencyRepo: GeneralCurrencyRepo
+    private val assetsRepo: PortfolioRepo,
+    private val currencyRepo: CurrencyRepo
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddCurrencyViewModel(assetsRepo, currencyRepo) as T

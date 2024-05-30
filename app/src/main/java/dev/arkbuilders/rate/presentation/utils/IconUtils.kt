@@ -2,7 +2,7 @@ package dev.arkbuilders.rate.presentation.utils
 
 import android.content.Context
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 
 object IconUtils {
     fun iconForCurrCode(ctx: Context, code: CurrencyCode): Int {

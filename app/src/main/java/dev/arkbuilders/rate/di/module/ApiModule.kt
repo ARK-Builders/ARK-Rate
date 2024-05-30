@@ -6,8 +6,8 @@ import dagger.Provides
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import dev.arkbuilders.rate.data.crypto.CryptoAPI
-import dev.arkbuilders.rate.data.fiat.FiatAPI
+import dev.arkbuilders.rate.data.currency.crypto.CryptoAPI
+import dev.arkbuilders.rate.data.currency.fiat.FiatAPI
 import dev.arkbuilders.rate.data.network.OkHttpClientBuilder
 import javax.inject.Named
 import javax.inject.Singleton

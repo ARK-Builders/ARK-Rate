@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.data.crypto
+package dev.arkbuilders.rate.data.currency.crypto
 
 import retrofit2.http.GET
 

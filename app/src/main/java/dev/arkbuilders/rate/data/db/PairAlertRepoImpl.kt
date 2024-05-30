@@ -6,8 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import dev.arkbuilders.rate.data.model.CurrencyCode
-import dev.arkbuilders.rate.data.model.PairAlert
+import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.PairAlert
+import dev.arkbuilders.rate.domain.repo.PairAlertRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.OffsetDateTime
@@ -77,15 +78,15 @@ private fun RoomPairAlert.toCondition() = PairAlert(
 )
 
 @Singleton
-class PairAlertRepo @Inject constructor(
+class PairAlertRepoImpl @Inject constructor(
     private val dao: PairAlertDao
-) {
-    suspend fun insert(pairAlert: PairAlert) =
+): PairAlertRepo {
+    override suspend fun insert(pairAlert: PairAlert) =
         dao.insert(pairAlert.toRoom())
 
-    suspend fun getAll() = dao.getAll().map { it.toCondition() }
+    override suspend fun getAll() = dao.getAll().map { it.toCondition() }
 
-    fun getAllFlow() = dao.getAllFlow().map { it.map { it.toCondition() } }
+    override fun getAllFlow() = dao.getAllFlow().map { it.map { it.toCondition() } }
 
-    suspend fun delete(id: Long) = dao.delete(id)
+    override suspend fun delete(id: Long) = dao.delete(id)
 }

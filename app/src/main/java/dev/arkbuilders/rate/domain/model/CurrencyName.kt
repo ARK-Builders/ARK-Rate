@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.data.model
+package dev.arkbuilders.rate.domain.model
 
 data class CurrencyName(
     val code: CurrencyCode,

@@ -4,13 +4,15 @@ import android.app.Application
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.db.AssetsRepo
-import dev.arkbuilders.rate.data.preferences.Preferences
+import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
+import dev.arkbuilders.rate.data.db.PortfolioRepoImpl
+import dev.arkbuilders.rate.data.preferences.PrefsImpl
 import dev.arkbuilders.rate.data.worker.AppWorkerFactory
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.module.ApiModule
 import dev.arkbuilders.rate.di.module.DBModule
+import dev.arkbuilders.rate.di.module.RepoModule
+import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.presentation.addcurrency.AddCurrencyViewModelFactory
 import dev.arkbuilders.rate.presentation.portfolio.PortfolioViewModelFactory
 import dev.arkbuilders.rate.presentation.pairalert.AddPairAlertViewModelFactory
@@ -25,7 +27,8 @@ import javax.inject.Singleton
 @Component(
     modules = [
         ApiModule::class,
-        DBModule::class
+        DBModule::class,
+        RepoModule::class
     ]
 )
 interface AppComponent {
@@ -39,10 +42,10 @@ interface AppComponent {
     fun settingsVMFactory(): SettingsViewModelFactory
     fun appWorkerFactory(): AppWorkerFactory
 
-    fun prefs(): Preferences
+    fun prefs(): Prefs
 
-    fun generalCurrencyRepo(): GeneralCurrencyRepo
-    fun assetsRepo(): AssetsRepo
+    fun generalCurrencyRepo(): CurrencyRepoImpl
+    fun assetsRepo(): PortfolioRepoImpl
     fun inject(currencyMonitorWorker: CurrencyMonitorWorker)
 
     @Component.Factory

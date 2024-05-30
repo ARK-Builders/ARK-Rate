@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.data.fiat
+package dev.arkbuilders.rate.data.currency.fiat
 
 import retrofit2.http.GET
 

@@ -55,8 +55,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.domain.repo.PreferenceKey
 
 @Destination
 @Composable

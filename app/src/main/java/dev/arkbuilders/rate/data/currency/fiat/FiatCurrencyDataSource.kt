@@ -1,11 +1,11 @@
-package dev.arkbuilders.rate.data.fiat
+package dev.arkbuilders.rate.data.currency.fiat
 
 import android.content.Context
-import dev.arkbuilders.rate.data.model.CurrencyCode
-import dev.arkbuilders.rate.data.model.CurrencyName
-import dev.arkbuilders.rate.data.model.CurrencyRate
-import dev.arkbuilders.rate.data.model.CurrencyRepo
-import dev.arkbuilders.rate.data.model.CurrencyType
+import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.CurrencyName
+import dev.arkbuilders.rate.domain.model.CurrencyRate
+import dev.arkbuilders.rate.data.currency.CurrencyDataSource
+import dev.arkbuilders.rate.domain.model.CurrencyType
 import dev.arkbuilders.rate.data.network.NetworkStatus
 import dev.arkbuilders.rate.data.db.CurrencyRateLocalDataSource
 import dev.arkbuilders.rate.data.db.FetchTimestampDataSource
@@ -13,13 +13,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FiatCurrencyRepo @Inject constructor(
+class FiatCurrencyDataSource @Inject constructor(
     private val ctx: Context,
     private val fiatAPI: FiatAPI,
     private val local: CurrencyRateLocalDataSource,
     private val networkStatus: NetworkStatus,
     private val fetchTimestampDataSource: FetchTimestampDataSource
-) : CurrencyRepo(local, networkStatus, fetchTimestampDataSource) {
+) : CurrencyDataSource(local, networkStatus, fetchTimestampDataSource) {
     override val type = CurrencyType.FIAT
 
     override suspend fun fetchRemote(): List<CurrencyRate> =

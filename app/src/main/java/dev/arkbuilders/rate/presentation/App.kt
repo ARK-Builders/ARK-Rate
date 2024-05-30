@@ -19,12 +19,11 @@ import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
 import org.acra.sender.HttpSender
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import java.util.prefs.Preferences
 
 class App : Application(), Configuration.Provider {
 
