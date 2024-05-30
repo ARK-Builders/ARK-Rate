@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.presentation.addcurrency
+package dev.arkbuilders.rate.presentation.portfolio
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -51,18 +51,18 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Destination
 @Composable
-fun AddCurrencyScreen(
+fun AddAssetScreen(
     navigator: DestinationsNavigator,
 ) {
-    val viewModel: AddCurrencyViewModel =
+    val viewModel: AddAssetViewModel =
         viewModel(factory = DIManager.component.addCurrencyVMFactory())
 
     val state by viewModel.collectAsState()
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            AddCurrencySideEffect.NavigateBack -> navigator.popBackStack()
-            is AddCurrencySideEffect.NotifyAssetAdded -> {
+            AddAssetSideEffect.NavigateBack -> navigator.popBackStack()
+            is AddAssetSideEffect.NotifyAssetAdded -> {
                 val added = effect.amounts
                     .joinToString {
                         "${CurrUtils.prepareToDisplay(it.value)} ${it.code}"
@@ -80,7 +80,7 @@ fun AddCurrencyScreen(
     Content(
         state = state,
         navigator = navigator,
-        onAmountChanged = viewModel::onAssetValueChange,
+        onAssetValueChanged = viewModel::onAssetValueChange,
         onNewCurrencyClick = {
           navigator.navigate(SearchCurrencyScreenDestination(AppSharedFlowKey.AddAsset.toString()))
         },
@@ -101,9 +101,9 @@ fun AddCurrencyScreen(
 @Preview(showBackground = true, widthDp = 400)
 @Composable
 private fun Content(
-    state: AddCurrencyState = AddCurrencyState(emptyList(), group = "Hello"),
+    state: AddAssetState = AddAssetState(emptyList(), group = "Hello"),
     navigator: DestinationsNavigator = EmptyDestinationsNavigator,
-    onAmountChanged: (Int, String) -> Unit = { _, _ -> },
+    onAssetValueChanged: (Int, String) -> Unit = { _, _ -> },
     onNewCurrencyClick: () -> Unit = {},
     onAssetRemove: (Int) -> Unit = {},
     onGroupSelect: (String) -> Unit = {},
@@ -124,7 +124,7 @@ private fun Content(
         Column(modifier = Modifier.weight(1f)) {
             AppTopBarBack(title = "Add new asset", navigator = navigator)
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
-            Currencies(state, onAmountChanged, onAssetRemove, onCodeChange)
+            Currencies(state, onAssetValueChanged, onAssetRemove, onCodeChange)
             Button(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                 shape = RoundedCornerShape(8.dp),
@@ -196,7 +196,7 @@ private fun Content(
 
 @Composable
 private fun Currencies(
-    state: AddCurrencyState,
+    state: AddAssetState,
     onAssetValueChanged: (Int, String) -> Unit,
     onAssetRemove: (Int) -> Unit,
     onCodeChange: (Int) -> Unit,

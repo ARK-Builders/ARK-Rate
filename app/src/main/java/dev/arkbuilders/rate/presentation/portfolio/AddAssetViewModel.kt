@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.presentation.addcurrency
+package dev.arkbuilders.rate.presentation.portfolio
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -24,26 +24,26 @@ import javax.inject.Singleton
 
 private val stubCurrency = "USD" to ""
 
-data class AddCurrencyState(
+data class AddAssetState(
     val currencies: List<Pair<CurrencyCode, String>> = listOf(stubCurrency),
     val group: String? = null,
     val availableGroups: List<String> = emptyList()
 )
 
-sealed class AddCurrencySideEffect {
+sealed class AddAssetSideEffect {
     class NotifyAssetAdded(val amounts: List<Asset>) :
-        AddCurrencySideEffect()
+        AddAssetSideEffect()
 
-    data object NavigateBack : AddCurrencySideEffect()
+    data object NavigateBack : AddAssetSideEffect()
 }
 
-class AddCurrencyViewModel(
+class AddAssetViewModel(
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo
-) : ViewModel(), ContainerHost<AddCurrencyState, AddCurrencySideEffect> {
+) : ViewModel(), ContainerHost<AddAssetState, AddAssetSideEffect> {
 
-    override val container: Container<AddCurrencyState, AddCurrencySideEffect> =
-        container(AddCurrencyState())
+    override val container: Container<AddAssetState, AddAssetSideEffect> =
+        container(AddAssetState())
 
     init {
         AppSharedFlow.SetAssetCode.flow.onEach { (pos, selectedCode) ->
@@ -100,17 +100,17 @@ class AddCurrencyViewModel(
             Asset(code = it.first, value = it.second.toDoubleSafe(), group = state.group)
         }
         assetsRepo.setAssetsList(currencies)
-        postSideEffect(AddCurrencySideEffect.NotifyAssetAdded(currencies))
-        postSideEffect(AddCurrencySideEffect.NavigateBack)
+        postSideEffect(AddAssetSideEffect.NotifyAssetAdded(currencies))
+        postSideEffect(AddAssetSideEffect.NavigateBack)
     }
 }
 
 @Singleton
-class AddCurrencyViewModelFactory @Inject constructor(
+class AddAssetViewModelFactory @Inject constructor(
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AddCurrencyViewModel(assetsRepo, currencyRepo) as T
+        return AddAssetViewModel(assetsRepo, currencyRepo) as T
     }
 }
