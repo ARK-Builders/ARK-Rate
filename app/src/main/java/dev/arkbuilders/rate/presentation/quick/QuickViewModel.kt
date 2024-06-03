@@ -5,16 +5,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
-import dev.arkbuilders.rate.data.db.PortfolioRepoImpl
-import dev.arkbuilders.rate.data.db.QuickRepoImpl
-import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.QuickPair
-import dev.arkbuilders.rate.data.preferences.PrefsImpl
+import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.repo.QuickRepo
+import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
@@ -25,7 +22,7 @@ import org.orbitmvi.orbit.viewmodel.container
 
 data class DisplayQuickPair(
     val pair: QuickPair,
-    val to: List<Pair<CurrencyCode, Double>>
+    val to: List<Amount>
 )
 
 data class QuickScreenState(
@@ -37,10 +34,11 @@ sealed class QuickScreenEffect {
 }
 
 class QuickViewModel(
-    val currencyRepo: CurrencyRepo,
-    val assetsRepo: PortfolioRepo,
-    val quickRepo: QuickRepo,
-    val prefs: Prefs
+    private val currencyRepo: CurrencyRepo,
+    private val assetsRepo: PortfolioRepo,
+    private val quickRepo: QuickRepo,
+    private val prefs: Prefs,
+    private val convertUseCase: ConvertWithRateUseCase
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
     override val container: Container<QuickScreenState, QuickScreenEffect> =
         container(QuickScreenState())
@@ -50,9 +48,12 @@ class QuickViewModel(
             val codeToRate = currencyRepo.getCodeToCurrencyRate()
             val displayList = all.map { pair ->
                 val toDisplay = pair.to.map { code ->
-                    val rate = codeToRate[pair.from]!!.rate / codeToRate[code]!!.rate
-                    val amount = pair.amount * rate
-                    code to amount
+                    val (amount, _) = convertUseCase(
+                        Amount(pair.from, pair.amount),
+                        toCode = code,
+                        codeToRate
+                    )
+                    amount
                 }
                 DisplayQuickPair(pair, toDisplay)
             }
@@ -73,13 +74,15 @@ class QuickViewModelFactory @AssistedInject constructor(
     private val quickRepo: QuickRepo,
     private val currencyRepo: CurrencyRepo,
     private val prefs: Prefs,
+    private val convertUseCase: ConvertWithRateUseCase
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return QuickViewModel(
             currencyRepo,
             assetsRepo,
             quickRepo,
-            prefs
+            prefs,
+            convertUseCase
         ) as T
     }
 

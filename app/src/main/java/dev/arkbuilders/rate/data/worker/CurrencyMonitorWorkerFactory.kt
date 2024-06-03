@@ -4,12 +4,10 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
-import dev.arkbuilders.rate.data.db.PairAlertRepoImpl
+import dev.arkbuilders.rate.domain.usecase.HandlePairAlertCheckUseCase
 
 class CurrencyMonitorWorkerFactory(
-    private val currencyRepo: CurrencyRepoImpl,
-    private val pairAlertRepo: PairAlertRepoImpl
+    private val handlePairAlertCheckUseCase: HandlePairAlertCheckUseCase
 ) : WorkerFactory() {
     override fun createWorker(
         appContext: Context,
@@ -20,8 +18,7 @@ class CurrencyMonitorWorkerFactory(
             CurrencyMonitorWorker::class.java.name -> CurrencyMonitorWorker(
                 appContext,
                 workerParameters,
-                currencyRepo,
-                pairAlertRepo
+                handlePairAlertCheckUseCase
             )
 
             else -> null

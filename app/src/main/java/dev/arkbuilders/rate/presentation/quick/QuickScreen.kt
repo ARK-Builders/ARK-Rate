@@ -251,10 +251,10 @@ private fun QuickItem(
                             modifier = Modifier.padding(top = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            CurrIcon(modifier = Modifier.size(20.dp), code = it.first)
+                            CurrIcon(modifier = Modifier.size(20.dp), code = it.code)
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
-                                text = "${CurrUtils.prepareToDisplay(it.second)} ${it.first}",
+                                text = "${CurrUtils.prepareToDisplay(it.value)} ${it.code}",
                                 color = ArkColor.TextTertiary
                             )
                         }
@@ -262,7 +262,7 @@ private fun QuickItem(
                 } else {
                     Text(
                         text = "${CurrUtils.prepareToDisplay(quick.pair.amount)} ${quick.pair.from} = " +
-                                "${CurrUtils.prepareToDisplay(quick.to.first().second)} ${quick.to.first().first}",
+                                "${CurrUtils.prepareToDisplay(quick.to.first().value)} ${quick.to.first().code}",
                         color = ArkColor.TextTertiary
                     )
                 }

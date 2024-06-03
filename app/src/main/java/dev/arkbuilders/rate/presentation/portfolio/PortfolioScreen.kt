@@ -46,6 +46,7 @@ import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.presentation.destinations.AddAssetScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.EditAssetScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
@@ -122,7 +123,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
 
 private val previewPortfolioAmount = PortfolioDisplayAsset(
     Asset(code = "EUR", value = 1100.2),
-    Asset(code = "USD", value = 1200.0),
+    Amount(code = "USD", value = 1200.0),
     ratioToBase = 1.1
 )
 
@@ -175,7 +176,7 @@ private fun GroupPage(
     onDelete: (Asset) -> Unit
 ) {
     val total = amounts.fold(0.0) { acc, amount ->
-        acc + amount.baseAsset.value
+        acc + amount.baseAmount.value
     }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -238,7 +239,7 @@ private fun CurrencyItem(
                     color = ArkColor.TextPrimary
                 )
                 Text(
-                    text = "${CurrUtils.prepareToDisplay(amount.baseAsset.value)} ${amount.baseAsset.code}",
+                    text = "${CurrUtils.prepareToDisplay(amount.baseAmount.value)} ${amount.baseAmount.code}",
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextPrimary
                 )
