@@ -3,12 +3,14 @@ package dev.arkbuilders.rate.presentation.portfolio
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.domain.repo.Prefs
+import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,7 +29,7 @@ data class PortfolioScreenState(
 
 class PortfolioDisplayAsset(
     val asset: Asset,
-    val baseAsset: Asset,
+    val baseAmount: Amount,
     val ratioToBase: Double
 )
 
@@ -36,7 +38,8 @@ sealed class PortfolioScreenEffect
 class PortfolioViewModel(
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
-    private val prefs: Prefs
+    private val prefs: Prefs,
+    private val convertUseCase: ConvertWithRateUseCase
 ) : ViewModel(), ContainerHost<PortfolioScreenState, PortfolioScreenEffect> {
 
     override val container: Container<PortfolioScreenState, PortfolioScreenEffect> =
@@ -78,11 +81,14 @@ class PortfolioViewModel(
         list: List<Asset>
     ): List<PortfolioDisplayAsset> {
         val rates = currencyRepo.getCodeToCurrencyRate()
-        return list.map { amount ->
-            val baseRate = rates[amount.code]!!.rate / rates[baseCode]!!.rate
-            val baseAmount =
-                Asset(code = baseCode, value = amount.value * baseRate)
-            PortfolioDisplayAsset(amount, baseAmount, baseRate)
+        return list.map { asset ->
+            val (baseAmount, rate) = convertUseCase(
+                asset.code,
+                asset.value,
+                toCode = baseCode,
+                rates
+            )
+            PortfolioDisplayAsset(asset, baseAmount, rate)
         }
     }
 }
@@ -91,9 +97,10 @@ class PortfolioViewModel(
 class PortfolioViewModelFactory @Inject constructor(
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
-    private val prefs: Prefs
+    private val prefs: Prefs,
+    private val convertUseCase: ConvertWithRateUseCase
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return PortfolioViewModel(assetsRepo, currencyRepo, prefs) as T
+        return PortfolioViewModel(assetsRepo, currencyRepo, prefs, convertUseCase) as T
     }
 }
