@@ -5,13 +5,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import arrow.core.Either
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
-import dev.arkbuilders.rate.data.db.PairAlertRepoImpl
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PairAlertRepo
+import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -44,7 +43,8 @@ sealed class AddPairAlertScreenEffect {
 
 class AddPairAlertViewModel(
     private val currencyRepo: CurrencyRepo,
-    private val pairAlertRepo: PairAlertRepo
+    private val pairAlertRepo: PairAlertRepo,
+    private val convertUseCase: ConvertWithRateUseCase
 ) : ViewModel(), ContainerHost<AddPairAlertScreenState, AddPairAlertScreenEffect> {
     override val container: Container<AddPairAlertScreenState, AddPairAlertScreenEffect> =
         container(AddPairAlertScreenState())
@@ -76,12 +76,11 @@ class AddPairAlertViewModel(
         intent {
             val target = newTarget ?: state.targetCode
             val base = newBase ?: state.baseCode
-            val baseRate =
-                currencyRepo.getCurrencyRate().find { it.code == base }
-            val targetRate =
-                currencyRepo.getCurrencyRate().find { it.code == target }
-
-            val currentPrice = targetRate!!.rate / baseRate!!.rate
+            val (_, currentPrice) = convertUseCase(
+                fromCode = target,
+                fromValue = 1.0,
+                toCode = base
+            )
 
             reduce {
                 state.copy(
@@ -121,7 +120,7 @@ class AddPairAlertViewModel(
     fun onSaveClick() = intent {
         val (price, percent) = state.priceOrPercent.fold(
             ifLeft = { price -> price.toDouble() to null },
-            ifRight = { percent -> (state.currentPrice * (1.0 + percent.toDouble()/100)) to percent.toDouble() },
+            ifRight = { percent -> (state.currentPrice * (1.0 + percent.toDouble() / 100)) to percent.toDouble() },
         )
 
         val pairAlert = PairAlert(
@@ -158,7 +157,8 @@ class AddPairAlertViewModel(
         reduce {
             state.copy(
                 priceOrPercent = newPrice,
-                aboveNotBelow = newPrice.leftOrNull()!!.toDoubleSafe() > state.currentPrice
+                aboveNotBelow = newPrice.leftOrNull()!!
+                    .toDoubleSafe() > state.currentPrice
             )
         }
     }
@@ -183,12 +183,14 @@ class AddPairAlertViewModel(
 @Singleton
 class AddPairAlertViewModelFactory @Inject constructor(
     private val currencyRepo: CurrencyRepo,
-    private val pairAlertRepo: PairAlertRepo
+    private val pairAlertRepo: PairAlertRepo,
+    private val convertUseCase: ConvertWithRateUseCase
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddPairAlertViewModel(
             currencyRepo,
-            pairAlertRepo
+            pairAlertRepo,
+            convertUseCase
         ) as T
     }
 }
