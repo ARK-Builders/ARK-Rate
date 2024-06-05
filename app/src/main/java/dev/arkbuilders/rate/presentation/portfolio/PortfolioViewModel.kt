@@ -81,7 +81,7 @@ class PortfolioViewModel(
             )
         }
         reduce {
-            state.copy(baseCode, groupToPortfolioAmount)
+            state.copy(baseCode, groupToPortfolioAmount, initialized = true)
         }
     }
 

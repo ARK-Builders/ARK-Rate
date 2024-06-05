@@ -65,11 +65,9 @@ class QuickViewModel(
                 }
                 val byGroup = displayList.groupBy { it.pair.group }.toList()
                 intent {
-                    reduce { state.copy(groupToQuickPairs = byGroup) }
+                    reduce { state.copy(groupToQuickPairs = byGroup, initialized = true) }
                 }
             }.launchIn(viewModelScope)
-
-            reduce { state.copy(initialized = true) }
         }
     }
 

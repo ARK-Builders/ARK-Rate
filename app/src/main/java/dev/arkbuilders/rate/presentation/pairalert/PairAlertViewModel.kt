@@ -61,12 +61,10 @@ class PairAlertViewModel(
                 }
                 intent {
                     reduce {
-                        state.copy(pages = pages)
+                        state.copy(pages = pages, initialized = true)
                     }
                 }
             }.launchIn(viewModelScope)
-
-            reduce { state.copy(initialized = true) }
         }
     }
 
