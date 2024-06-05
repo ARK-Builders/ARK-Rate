@@ -389,7 +389,7 @@ private fun EditCondition(
                 ),
                 onValueChange = { viewModel.onPriceOrPercentInputChanged(it) },
                 textStyle = LocalTextStyle.current.copy(
-                    fontSize = 48.sp,
+                    fontSize = 36.sp,
                     color = ArkColor.TextPrimary,
                     fontWeight = FontWeight.SemiBold
                 ),
@@ -400,7 +400,7 @@ private fun EditCondition(
                 Text(
                     modifier = Modifier.align(Alignment.Top),
                     text = "%",
-                    fontSize = 48.sp,
+                    fontSize = 36.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = ArkColor.TextPrimary
                 )

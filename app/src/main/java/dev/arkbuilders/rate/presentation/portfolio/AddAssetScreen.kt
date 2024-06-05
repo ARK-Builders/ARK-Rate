@@ -82,7 +82,7 @@ fun AddAssetScreen(
         navigator = navigator,
         onAssetValueChanged = viewModel::onAssetValueChange,
         onNewCurrencyClick = {
-          navigator.navigate(SearchCurrencyScreenDestination(AppSharedFlowKey.AddAsset.toString()))
+            navigator.navigate(SearchCurrencyScreenDestination(AppSharedFlowKey.AddAsset.toString()))
         },
         onAssetRemove = viewModel::onAssetRemove,
         onGroupSelect = viewModel::onGroupSelect,
@@ -202,7 +202,13 @@ private fun Currencies(
     onCodeChange: (Int) -> Unit,
 ) {
     state.currencies.forEachIndexed { index, amount ->
-        InputCurrency(index, amount, onAssetValueChanged, onAssetRemove, onCodeChange)
+        InputCurrency(
+            index,
+            amount,
+            onAssetValueChanged,
+            onAssetRemove,
+            onCodeChange
+        )
     }
 }
 
@@ -228,7 +234,10 @@ fun InputCurrency(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                modifier = Modifier.clickable { onCodeChange(pos) },
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onCodeChange(pos) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -238,7 +247,7 @@ fun InputCurrency(
                     color = ArkColor.TextSecondary
                 )
                 Icon(
-                    modifier = Modifier.padding(start = 9.dp),
+                    modifier = Modifier.padding(start = 9.dp, end = 5.dp),
                     painter = painterResource(R.drawable.ic_chevron),
                     contentDescription = "",
                     tint = ArkColor.FGQuinary

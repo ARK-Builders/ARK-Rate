@@ -58,6 +58,7 @@ import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.AppTopBarCenterTitle
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
+import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -90,6 +91,9 @@ fun PairAlertConditionScreen(
 
     Scaffold(
         floatingActionButton = {
+            if (state.initialized.not())
+                return@Scaffold
+
             if (isEmpty)
                 return@Scaffold
 
@@ -115,10 +119,10 @@ fun PairAlertConditionScreen(
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
-            if (isEmpty)
-                Empty(navigator)
-            else {
-                Content(
+            when {
+                state.initialized.not() -> LoadingScreen()
+                isEmpty -> Empty(navigator)
+                else -> Content(
                     state,
                     onDelete = viewModel::onDelete
                 )
@@ -206,16 +210,16 @@ private fun PairAlertItem(pairAlert: PairAlert) {
     }
     val currencyRepo = DIManager.component.generalCurrencyRepo()
     LaunchedEffect(Unit) {
-        currencyName = currencyRepo.currencyNameByCode(pairAlert.targetCode).name
+        currencyName = currencyRepo.nameByCodeUnsafe(pairAlert.targetCode).name
     }
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(horizontal = 24.dp, vertical = 16.dp)
             .clickable {
 
-            },
+            }
+            .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         CurrIcon(modifier = Modifier.size(40.dp), code = pairAlert.targetCode)
@@ -241,9 +245,11 @@ private fun PairAlertItem(pairAlert: PairAlert) {
                 date
                     ?: Timber.e("Pair alert marked as triggered but lastDateTriggered is null")
                 if (date != null) {
-                    val monthFormat = DateTimeFormatter.ofPattern("MMM", Locale.getDefault())
+                    val monthFormat =
+                        DateTimeFormatter.ofPattern("MMM", Locale.getDefault())
                     val monthStr = monthFormat.format(date)
-                    val timeFormat = DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
+                    val timeFormat =
+                        DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
                     val timeStr = timeFormat.format(date)
                     Text(
                         text = "Notified on $monthStr ${date.dayOfMonth} - $timeStr",

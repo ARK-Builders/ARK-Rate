@@ -1,5 +1,8 @@
 package dev.arkbuilders.rate.data.currency.crypto
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.CurrencyRate
@@ -20,15 +23,20 @@ class CryptoCurrencyDataSource @Inject constructor(
 ) : CurrencyDataSource(local, networkStatus, fetchTimestampDataSource) {
     override val type = CurrencyType.CRYPTO
 
-    override suspend fun fetchRemote(): List<CurrencyRate> =
-        cryptoAPI.getCryptoRates()
-            .map { CurrencyRate(type, it.symbol.uppercase(), it.current_price) }
-
-    override suspend fun getCurrencyName(): List<CurrencyName> =
-        getCurrencyRate().map {
-            CurrencyName(it.code, name = "")
+    override suspend fun fetchRemote(): Either<Throwable, List<CurrencyRate>> {
+        return try {
+            cryptoAPI.getCryptoRates()
+                .map { CurrencyRate(type, it.symbol.uppercase(), it.current_price) }
+                .right()
+        } catch (e: Exception) {
+            e.left()
         }
+    }
 
-    override suspend fun currencyNameByCode(code: CurrencyCode) =
-        CurrencyName(code, name = "")
+    override suspend fun getCurrencyName(): Either<Throwable, List<CurrencyName>> =
+        getCurrencyRate().map { rates ->
+            rates.map {
+                CurrencyName(it.code, name = "")
+            }
+        }
 }

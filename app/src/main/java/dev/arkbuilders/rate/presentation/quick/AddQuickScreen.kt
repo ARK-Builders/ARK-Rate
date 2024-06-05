@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -240,7 +241,10 @@ fun InputCurrency(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                modifier = Modifier.clickable { onCodeChange(index) },
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onCodeChange(index) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -250,7 +254,7 @@ fun InputCurrency(
                     color = ArkColor.TextSecondary
                 )
                 Icon(
-                    modifier = Modifier.padding(start = 9.dp),
+                    modifier = Modifier.padding(start = 9.dp, end = 5.dp),
                     painter = painterResource(R.drawable.ic_chevron),
                     contentDescription = "",
                     tint = ArkColor.FGQuinary

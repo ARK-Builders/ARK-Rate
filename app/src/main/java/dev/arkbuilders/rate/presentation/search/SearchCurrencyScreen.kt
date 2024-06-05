@@ -96,7 +96,7 @@ private fun Results(
     }
     LaunchedEffect(key1 = Unit) {
         allCurrencies.addAll(
-            DIManager.component.generalCurrencyRepo().getCurrencyName()
+            DIManager.component.generalCurrencyRepo().getCurrencyNameUnsafe()
         )
     }
     val filtered = allCurrencies

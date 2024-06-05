@@ -17,7 +17,7 @@ class HandlePairAlertCheckUseCase @Inject constructor(
     private val convertUseCase: ConvertWithRateUseCase
 ) {
     suspend operator fun invoke(): List<Pair<PairAlert, Double>> {
-        val rates = currencyRepo.getCodeToCurrencyRate()
+        val rates = currencyRepo.getCodeToCurrencyRate().getOrNull()!!
         val pairsToNotify = pairAlertRepo.getAll().mapNotNull { pairAlert ->
             val (met, currentRate) = isConditionMet(rates, pairAlert)
             if (met) {

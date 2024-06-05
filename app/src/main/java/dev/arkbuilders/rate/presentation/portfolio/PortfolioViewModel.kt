@@ -14,6 +14,7 @@ import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -25,6 +26,7 @@ import javax.inject.Singleton
 data class PortfolioScreenState(
     val baseCode: CurrencyCode = "USD",
     val groupToPortfolioAmount: Map<String?, List<PortfolioDisplayAsset>> = emptyMap(),
+    val initialized: Boolean = false
 )
 
 class PortfolioDisplayAsset(
@@ -46,15 +48,20 @@ class PortfolioViewModel(
         container(PortfolioScreenState())
 
     init {
-        init()
+        intent {
+            if (isRatesAvailable().not())
+                return@intent
 
-        prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
             init()
-        }.launchIn(viewModelScope)
 
-        assetsRepo.allAssetsFlow().drop(1).onEach {
-            init()
-        }.launchIn(viewModelScope)
+            prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
+                init()
+            }.launchIn(viewModelScope)
+
+            assetsRepo.allAssetsFlow().drop(1).onEach {
+                init()
+            }.launchIn(viewModelScope)
+        }
     }
 
     fun onAssetRemove(amount: Asset) = intent {
@@ -72,7 +79,7 @@ class PortfolioViewModel(
             )
         }
         reduce {
-            state.copy(baseCode, groupToPortfolioAmount)
+            state.copy(baseCode, groupToPortfolioAmount, initialized = true)
         }
     }
 
@@ -80,7 +87,7 @@ class PortfolioViewModel(
         baseCode: CurrencyCode,
         list: List<Asset>
     ): List<PortfolioDisplayAsset> {
-        val rates = currencyRepo.getCodeToCurrencyRate()
+        val rates = currencyRepo.getCodeToCurrencyRate().getOrNull()!!
         return list.map { asset ->
             val (baseAmount, rate) = convertUseCase(
                 asset.code,
@@ -91,6 +98,8 @@ class PortfolioViewModel(
             PortfolioDisplayAsset(asset, baseAmount, rate)
         }
     }
+
+    private suspend fun isRatesAvailable() = currencyRepo.getCurrencyRate().isRight()
 }
 
 @Singleton

@@ -1,5 +1,9 @@
 package dev.arkbuilders.rate.data.currency
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.leftWiden
+import arrow.core.right
 import dev.arkbuilders.rate.data.currency.crypto.CryptoCurrencyDataSource
 import dev.arkbuilders.rate.data.currency.fiat.FiatCurrencyDataSource
 import dev.arkbuilders.rate.domain.model.CurrencyCode
@@ -13,33 +17,43 @@ import javax.inject.Singleton
 class CurrencyRepoImpl @Inject constructor(
     val fiatDataSource: FiatCurrencyDataSource,
     val cryptoDataSource: CryptoCurrencyDataSource
-): CurrencyRepo {
-    private val currencyRepos = listOf(
-        fiatDataSource,
-        cryptoDataSource
-    )
+) : CurrencyRepo {
 
-    override suspend fun currencyNameByCode(code: CurrencyCode): CurrencyName {
-        return fiatDataSource.getCurrencyRate().find { it.code == code }?.let {
-            fiatDataSource.currencyNameByCode(code)
-        } ?: let {
-            cryptoDataSource.currencyNameByCode(code)
+    override suspend fun getCurrencyRate(): Either<Throwable, List<CurrencyRate>> {
+        val crypto = cryptoDataSource.getCurrencyRate()
+        val fiat = fiatDataSource.getCurrencyRate()
+        if (crypto.isLeft() || fiat.isLeft()) {
+            return crypto
         }
+
+        return (fiat.getOrNull()!! + crypto.getOrNull()!!).right()
     }
 
-    override suspend fun rateByCode(code: CurrencyCode): CurrencyRate =
-        getCodeToCurrencyRate()[code]!!
-
-    override suspend fun getCodeToCurrencyRate(): Map<CurrencyCode, CurrencyRate> =
-        getCurrencyRate().map { it.code to it }.toMap()
-
-    override suspend fun getCurrencyRate(): List<CurrencyRate> =
-        currencyRepos.fold(emptyList()) { codeToRate, repo ->
-            codeToRate + repo.getCurrencyRate()
+    override suspend fun getCurrencyName(): Either<Throwable, List<CurrencyName>> {
+        val crypto = cryptoDataSource.getCurrencyName()
+        val fiat = fiatDataSource.getCurrencyName()
+        if (crypto.isLeft() || fiat.isLeft()) {
+            return crypto
         }
 
-    override suspend fun getCurrencyName(): List<CurrencyName> =
-        currencyRepos.fold(emptyList()) { currencyName, repo ->
-            currencyName + repo.getCurrencyName()
+        return (fiat.getOrNull()!! + crypto.getOrNull()!!).right()
+    }
+
+    override suspend fun nameByCode(
+        code: CurrencyCode
+    ): Either<Throwable, CurrencyName> = getCurrencyName().fold(
+        ifLeft = {
+            it.left()
+        },
+        ifRight = { names ->
+            val name = names.find { name -> name.code == code }
+            return name?.right() ?: IllegalStateException().left()
         }
+    )
+
+    override suspend fun rateByCode(code: CurrencyCode): Either<Throwable, CurrencyRate> =
+        getCodeToCurrencyRate().map { codeToRate -> codeToRate[code]!! }
+
+    override suspend fun getCodeToCurrencyRate(): Either<Throwable, Map<CurrencyCode, CurrencyRate>> =
+        getCurrencyRate().map { rates -> rates.associateBy { it.code } }
 }
