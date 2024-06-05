@@ -223,10 +223,10 @@ private fun CurrencyItem(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(horizontal = 24.dp, vertical = 16.dp)
             .clickable {
                 onClick(amount)
-            },
+            }
+            .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         CurrIcon(modifier = Modifier.size(40.dp), code = amount.asset.code)

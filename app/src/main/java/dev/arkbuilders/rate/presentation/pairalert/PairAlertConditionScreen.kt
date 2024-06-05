@@ -216,10 +216,10 @@ private fun PairAlertItem(pairAlert: PairAlert) {
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(horizontal = 24.dp, vertical = 16.dp)
             .clickable {
 
-            },
+            }
+            .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         CurrIcon(modifier = Modifier.size(40.dp), code = pairAlert.targetCode)

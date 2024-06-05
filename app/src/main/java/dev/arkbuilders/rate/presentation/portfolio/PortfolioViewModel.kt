@@ -61,8 +61,6 @@ class PortfolioViewModel(
             assetsRepo.allAssetsFlow().drop(1).onEach {
                 init()
             }.launchIn(viewModelScope)
-
-            reduce { state.copy(initialized = true) }
         }
     }
 

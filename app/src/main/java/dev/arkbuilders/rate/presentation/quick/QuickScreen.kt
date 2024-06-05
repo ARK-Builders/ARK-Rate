@@ -198,12 +198,12 @@ private fun QuickItem(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(16.dp)
             .run {
                 if (quick.to.size > 1)
                     clickable { expanded = !expanded }
                 else this
-            },
+            }
+            .padding(16.dp),
     ) {
         Row(modifier = Modifier.weight(1f)) {
             Row(
