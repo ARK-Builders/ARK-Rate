@@ -23,7 +23,7 @@ class ConvertWithRateUseCase @Inject constructor(
         toCode: CurrencyCode,
         _rates: Map<CurrencyCode, CurrencyRate>? = null
     ): Pair<Amount, Double> {
-        val rates = _rates ?: currencyRepo.getCodeToCurrencyRate()
+        val rates = _rates ?: currencyRepo.getCodeToCurrencyRate().getOrNull()!!
         val toRate =
             rates[fromCode]!!.rate / rates[toCode]!!.rate
 

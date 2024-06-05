@@ -52,7 +52,7 @@ class EditAssetViewModel(
     init {
         intent {
             val asset = assetsRepo.getById(assetId)
-            val name = currencyRepo.currencyNameByCode(asset!!.code)
+            val name = currencyRepo.nameByCodeUnsafe(asset!!.code)
 
             inputFlow.debounce(PERSIST_AMOUNT_DEBOUNCE).onEach {
                 assetsRepo.setAsset(asset.copy(value = it.toDoubleSafe()))

@@ -64,6 +64,7 @@ import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
+import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
 import kotlinx.coroutines.flow.launchIn
@@ -96,6 +97,9 @@ fun QuickScreen(
 
     Scaffold(
         floatingActionButton = {
+            if (state.initialized.not())
+                return@Scaffold
+
             if (isEmpty)
                 return@Scaffold
 
@@ -114,10 +118,11 @@ fun QuickScreen(
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
-            if (isEmpty)
-                QuickEmpty(navigator = navigator)
-            else
-                Content(state = state, onDelete = viewModel::onDelete)
+            when {
+                state.initialized.not() -> LoadingScreen()
+                isEmpty -> QuickEmpty(navigator = navigator)
+                else -> Content(state = state, onDelete = viewModel::onDelete)
+            }
         }
     }
 }
@@ -159,9 +164,9 @@ private fun GroupPage(
                 color = ArkColor.TextTertiary,
                 fontWeight = FontWeight.Medium
             )
+            AppHorDiv16()
         }
         items(quickPairs, key = { it.pair.id }) {
-            AppHorDiv16()
             AppSwipeToDismiss(
                 content = { QuickItem(it) },
                 onDelete = { onDelete(it.pair) }
@@ -193,9 +198,12 @@ private fun QuickItem(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(16.dp)
-            .clickable { expanded = !expanded },
-        verticalAlignment = Alignment.CenterVertically
+            .run {
+                if (quick.to.size > 1)
+                    clickable { expanded = !expanded }
+                else this
+            }
+            .padding(16.dp),
     ) {
         Row(modifier = Modifier.weight(1f)) {
             Row(
@@ -216,7 +224,10 @@ private fun QuickItem(
                             .border(2.dp, Color.White, CircleShape)
                     ) {
                         if (quick.to.size == 1) {
-                            CurrIcon(modifier = Modifier.size(39.dp), code = quick.pair.to.first())
+                            CurrIcon(
+                                modifier = Modifier.size(39.dp),
+                                code = quick.pair.to.first()
+                            )
                         } else {
                             Box(
                                 modifier = Modifier
@@ -245,10 +256,13 @@ private fun QuickItem(
                     color = ArkColor.TextPrimary
                 )
                 if (expanded) {
-                    Box(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "${CurrUtils.prepareToDisplay(quick.pair.amount)} ${quick.pair.from} =",
+                        color = ArkColor.TextTertiary
+                    )
                     quick.to.forEach {
                         Row(
-                            modifier = Modifier.padding(top = 4.dp),
+                            modifier = Modifier.padding(top = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             CurrIcon(modifier = Modifier.size(20.dp), code = it.code)
@@ -268,11 +282,23 @@ private fun QuickItem(
                 }
             }
         }
-        Icon(
-            painter = painterResource(R.drawable.ic_chevron),
-            contentDescription = "",
-            tint = ArkColor.FGSecondary
-        )
+        if (quick.to.size > 1) {
+            if (expanded) {
+                Icon(
+                    modifier = Modifier.padding(top = 18.dp, end = 13.dp),
+                    painter = painterResource(R.drawable.ic_chevron_up),
+                    contentDescription = "",
+                    tint = ArkColor.FGSecondary
+                )
+            } else {
+                Icon(
+                    modifier = Modifier.padding(top = 18.dp, end = 13.dp),
+                    painter = painterResource(R.drawable.ic_chevron),
+                    contentDescription = "",
+                    tint = ArkColor.FGSecondary
+                )
+            }
+        }
     }
 
 }

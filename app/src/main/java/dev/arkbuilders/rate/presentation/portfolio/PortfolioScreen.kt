@@ -57,6 +57,7 @@ import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
+import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -89,6 +90,9 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
 
     Scaffold(
         floatingActionButton = {
+            if (state.initialized.not())
+                return@Scaffold
+
             if (isEmpty)
                 return@Scaffold
 
@@ -107,16 +111,17 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
-            if (isEmpty)
-                PortfolioEmpty(navigator)
-            else
-                Content(
+            when {
+                state.initialized.not() -> LoadingScreen()
+                isEmpty -> PortfolioEmpty(navigator)
+                else -> Content(
                     state,
                     onClick = { display ->
                         navigator.navigate(EditAssetScreenDestination(display.asset.id))
                     },
                     onDelete = viewModel::onAssetRemove
                 )
+            }
         }
     }
 }
@@ -218,10 +223,10 @@ private fun CurrencyItem(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(horizontal = 24.dp, vertical = 16.dp)
             .clickable {
                 onClick(amount)
-            },
+            }
+            .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         CurrIcon(modifier = Modifier.size(40.dp), code = amount.asset.code)

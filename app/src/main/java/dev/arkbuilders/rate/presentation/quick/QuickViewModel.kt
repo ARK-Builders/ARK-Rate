@@ -14,6 +14,7 @@ import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -26,7 +27,8 @@ data class DisplayQuickPair(
 )
 
 data class QuickScreenState(
-    val groupToQuickPairs: List<Pair<String?, List<DisplayQuickPair>>> = emptyList()
+    val groupToQuickPairs: List<Pair<String?, List<DisplayQuickPair>>> = emptyList(),
+    val initialized: Boolean = false
 )
 
 sealed class QuickScreenEffect {
@@ -44,29 +46,36 @@ class QuickViewModel(
         container(QuickScreenState())
 
     init {
-        quickRepo.allFlow().onEach { all ->
-            val codeToRate = currencyRepo.getCodeToCurrencyRate()
-            val displayList = all.map { pair ->
-                val toDisplay = pair.to.map { code ->
-                    val (amount, _) = convertUseCase(
-                        Amount(pair.from, pair.amount),
-                        toCode = code,
-                        codeToRate
-                    )
-                    amount
+        intent {
+            if (isRatesAvailable().not())
+                return@intent
+
+            quickRepo.allFlow().onEach { all ->
+                val codeToRate = currencyRepo.getCodeToCurrencyRate().getOrNull()!!
+                val displayList = all.map { pair ->
+                    val toDisplay = pair.to.map { code ->
+                        val (amount, _) = convertUseCase(
+                            Amount(pair.from, pair.amount),
+                            toCode = code,
+                            codeToRate
+                        )
+                        amount
+                    }
+                    DisplayQuickPair(pair, toDisplay)
                 }
-                DisplayQuickPair(pair, toDisplay)
-            }
-            val byGroup = displayList.groupBy { it.pair.group }.toList()
-            intent {
-                reduce { state.copy(groupToQuickPairs = byGroup) }
-            }
-        }.launchIn(viewModelScope)
+                val byGroup = displayList.groupBy { it.pair.group }.toList()
+                intent {
+                    reduce { state.copy(groupToQuickPairs = byGroup, initialized = true) }
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 
     fun onDelete(pair: QuickPair) = intent {
         quickRepo.delete(pair.id)
     }
+
+    private suspend fun isRatesAvailable() = currencyRepo.getCurrencyRate().isRight()
 }
 
 class QuickViewModelFactory @AssistedInject constructor(
