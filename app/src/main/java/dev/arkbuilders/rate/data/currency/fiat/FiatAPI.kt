@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.data.currency.fiat
 
+import retrofit2.Response
 import retrofit2.http.GET
 
 interface FiatAPI {

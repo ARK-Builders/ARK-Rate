@@ -64,6 +64,7 @@ import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
+import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
 import kotlinx.coroutines.flow.launchIn
@@ -96,6 +97,9 @@ fun QuickScreen(
 
     Scaffold(
         floatingActionButton = {
+            if (state.initialized.not())
+                return@Scaffold
+
             if (isEmpty)
                 return@Scaffold
 
@@ -114,10 +118,11 @@ fun QuickScreen(
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
-            if (isEmpty)
-                QuickEmpty(navigator = navigator)
-            else
-                Content(state = state, onDelete = viewModel::onDelete)
+            when {
+                state.initialized.not() -> LoadingScreen()
+                isEmpty -> QuickEmpty(navigator = navigator)
+                else -> Content(state = state, onDelete = viewModel::onDelete)
+            }
         }
     }
 }

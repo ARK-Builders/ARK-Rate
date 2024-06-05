@@ -1,6 +1,9 @@
 package dev.arkbuilders.rate.data.currency.fiat
 
 import android.content.Context
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.CurrencyRate
@@ -22,18 +25,26 @@ class FiatCurrencyDataSource @Inject constructor(
 ) : CurrencyDataSource(local, networkStatus, fetchTimestampDataSource) {
     override val type = CurrencyType.FIAT
 
-    override suspend fun fetchRemote(): List<CurrencyRate> =
-        fiatAPI.get().rates.map { (code, rate) ->
-            CurrencyRate(type, code, 1.0 / rate)
+    override suspend fun fetchRemote(): Either<Throwable, List<CurrencyRate>> {
+         return try {
+            fiatAPI.get().rates.map { (code, rate) ->
+                CurrencyRate(
+                    type,
+                    code,
+                    1.0 / rate
+                )
+            }.right()
+        } catch (e: Throwable) {
+            e.left()
         }
+    }
 
-    override suspend fun getCurrencyName(): List<CurrencyName> =
-        getCurrencyRate().map {
-            CurrencyName(it.code, fiatCodeToCurrency[it.code]!!)
+    override suspend fun getCurrencyName(): Either<Throwable, List<CurrencyName>> =
+        getCurrencyRate().map { rates ->
+            rates.map {
+                CurrencyName(it.code, fiatCodeToCurrency[it.code]!!)
+            }
         }
-
-    override suspend fun currencyNameByCode(code: CurrencyCode) =
-        CurrencyName(code, fiatCodeToCurrency[code]!!)
 }
 
 private val fiatCodeToCurrency = mutableMapOf(
