@@ -25,11 +25,16 @@ import javax.inject.Singleton
 
 data class PortfolioScreenState(
     val baseCode: CurrencyCode = "USD",
-    val groupToPortfolioAmount: Map<String?, List<PortfolioDisplayAsset>> = emptyMap(),
+    val pages: List<PortfolioScreenPage> = emptyList(),
     val initialized: Boolean = false
 )
 
-class PortfolioDisplayAsset(
+data class PortfolioScreenPage(
+    val group: String?,
+    val assets: List<PortfolioDisplayAsset>
+)
+
+data class PortfolioDisplayAsset(
     val asset: Asset,
     val baseAmount: Amount,
     val ratioToBase: Double
@@ -72,14 +77,15 @@ class PortfolioViewModel(
         val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
         val list = assetsRepo.allAssets()
         val groups = list.groupBy(keySelector = { it.group })
-        val groupToPortfolioAmount = groups.mapValues {
-            assetToPortfolioDisplayAmount(
+        val pages = groups.map { (group, assets) ->
+            val displayAssets = assetToPortfolioDisplayAmount(
                 baseCode,
-                it.value
+                assets
             )
+            PortfolioScreenPage(group, displayAssets)
         }
         reduce {
-            state.copy(baseCode, groupToPortfolioAmount, initialized = true)
+            state.copy(baseCode, pages, initialized = true)
         }
     }
 

@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -93,7 +92,7 @@ fun QuickScreen(
         }.launchIn(scope)
     }
 
-    val isEmpty = state.groupToQuickPairs.isEmpty()
+    val isEmpty = state.pages.isEmpty()
 
     Scaffold(
         floatingActionButton = {
@@ -129,21 +128,21 @@ fun QuickScreen(
 
 @Composable
 private fun Content(state: QuickScreenState, onDelete: (QuickPair) -> Unit = {}) {
-    val groups = state.groupToQuickPairs.map { it.first }
+    val groups = state.pages.map { it.group }
     Column {
         SearchTextFieldWithSort(modifier = Modifier.padding(top = 16.dp))
-        if (state.groupToQuickPairs.size == 1) {
+        if (state.pages.size == 1) {
             GroupPage(
-                quickPairs = state.groupToQuickPairs.first().second,
+                quickPairs = state.pages.first().pairs,
                 onDelete = onDelete
             )
         } else {
             GroupViewPager(
                 modifier = Modifier.padding(top = 20.dp),
                 groups = groups
-            ) {
+            ) { index ->
                 GroupPage(
-                    quickPairs = state.groupToQuickPairs[it].second,
+                    quickPairs = state.pages[index].pairs,
                     onDelete = onDelete
                 )
             }
@@ -153,7 +152,7 @@ private fun Content(state: QuickScreenState, onDelete: (QuickPair) -> Unit = {})
 
 @Composable
 private fun GroupPage(
-    quickPairs: List<DisplayQuickPair>,
+    quickPairs: List<QuickDisplayPair>,
     onDelete: (QuickPair) -> Unit
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -179,7 +178,7 @@ private fun GroupPage(
 @Preview(showBackground = true)
 @Composable
 private fun QuickItem(
-    quick: DisplayQuickPair = DisplayQuickPair(
+    quick: QuickDisplayPair = QuickDisplayPair(
         pair = QuickPair(
             0,
             "BTC",
