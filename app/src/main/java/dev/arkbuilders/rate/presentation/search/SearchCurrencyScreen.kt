@@ -4,8 +4,10 @@ package dev.arkbuilders.rate.presentation.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,10 +18,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,17 +33,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.presentation.portfolio.EditAssetViewModel
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
+import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Destination
 @Composable
@@ -48,24 +58,55 @@ fun SearchCurrencyScreen(
     pos: Int? = null,
     navigator: DestinationsNavigator,
 ) {
-    val appSharedFlowKey = AppSharedFlowKey.valueOf(appSharedFlowKeyString)
-    val input = remember { mutableStateOf("") }
-    Column {
-        AppTopBarBack(title = "Search a currency", navigator = navigator)
-        HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
-        Input(input)
-        Results(input.value, appSharedFlowKey, pos, navigator)
+    val viewModel: SearchViewModel = viewModel(
+        factory = DIManager.component.searchVMFactory()
+            .create(appSharedFlowKeyString, pos)
+    )
+    val state by viewModel.collectAsState()
+
+    viewModel.collectSideEffect { effect ->
+        when (effect) {
+            SearchScreenEffect.NavigateBack -> navigator.popBackStack()
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            Column {
+                AppTopBarBack(title = "Search a currency", navigator = navigator)
+                HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
+            }
+        }
+    ) {
+        Column(modifier = Modifier.padding(it)) {
+            when {
+                state.initialized.not() -> {
+                    LoadingScreen()
+                }
+
+                else -> {
+                    Input(state.filter, viewModel::onInputChange)
+                    Results(
+                        filter = state.filter,
+                        frequent = state.frequent,
+                        all = state.all,
+                        topResultsFiltered = state.topResultsFiltered,
+                        onClick = viewModel::onClick
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
-private fun Input(inputState: MutableState<String>) {
+private fun Input(input: String, onInputChange: (String) -> Unit) {
     OutlinedTextField(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth(),
-        value = inputState.value,
-        onValueChange = { inputState.value = it },
+        value = input,
+        onValueChange = { onInputChange(it) },
         leadingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_search),
@@ -86,25 +127,45 @@ private fun Input(inputState: MutableState<String>) {
 
 @Composable
 private fun Results(
-    input: String,
-    appSharedFlowKey: AppSharedFlowKey,
-    pos: Int?,
-    navigator: DestinationsNavigator
+    filter: String,
+    frequent: List<CurrencyName>,
+    all: List<CurrencyName>,
+    topResultsFiltered: List<CurrencyName>,
+    onClick: (CurrencyName) -> Unit
 ) {
-    val allCurrencies = remember {
-        mutableStateListOf<CurrencyName>()
-    }
-    LaunchedEffect(key1 = Unit) {
-        allCurrencies.addAll(
-            DIManager.component.generalCurrencyRepo().getCurrencyNameUnsafe()
-        )
-    }
-    val filtered = allCurrencies
-        .filter {
-            it.name.contains(input, ignoreCase = true)
-                    || it.code.contains(input, ignoreCase = true)
+    when {
+        filter.isNotEmpty() -> {
+            if (topResultsFiltered.isNotEmpty()) {
+                LazyColumn {
+                    item { Header(header = "Top results") }
+                    items(topResultsFiltered) { name ->
+                        CurItem(name) { onClick(it) }
+                    }
+                }
+            } else {
+                NotFound()
+            }
         }
 
+        else -> {
+            LazyColumn {
+                if (frequent.isNotEmpty()) {
+                    item { Header(header = "Frequent currencies") }
+                    items(frequent) { name ->
+                        CurItem(name) { onClick(it) }
+                    }
+                }
+                item { Header(header = "All currencies") }
+                items(all) { name ->
+                    CurItem(name) { onClick(it) }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Header(header: String) {
     Text(
         modifier = Modifier.padding(
             start = 16.dp,
@@ -112,67 +173,24 @@ private fun Results(
             end = 16.dp,
             bottom = 13.dp
         ),
-        text = "Top results",
+        text = header,
         fontWeight = FontWeight.Medium,
         color = ArkColor.TextTertiary
     )
-    HorizontalDivider(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        thickness = 1.dp,
-        color = ArkColor.BorderSecondary
-    )
-    LazyColumn {
-        items(filtered) {
-            CurItem(it, appSharedFlowKey, pos, navigator)
-        }
-    }
 }
 
 
 @Composable
 private fun CurItem(
     name: CurrencyName,
-    appSharedFlowKey: AppSharedFlowKey,
-    pos: Int?,
-    navigator: DestinationsNavigator
+    onClick: (CurrencyName) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-
-    suspend fun emitResult() {
-        val appFlow = AppSharedFlow.fromKey(appSharedFlowKey)
-        when (appFlow) {
-            AppSharedFlow.SetAssetCode ->
-                AppSharedFlow.SetAssetCode.flow.emit(pos!! to name.code)
-
-            AppSharedFlow.AddAsset -> AppSharedFlow.AddAsset.flow.emit(name.code)
-
-            AppSharedFlow.AddPairAlertBase ->
-                AppSharedFlow.AddPairAlertBase.flow.emit(name.code)
-
-            AppSharedFlow.AddPairAlertTarget ->
-                AppSharedFlow.AddPairAlertTarget.flow.emit(name.code)
-
-            AppSharedFlow.AddQuick -> AppSharedFlow.AddQuick.flow.emit(pos!! to name.code)
-
-            AppSharedFlow.PickBaseCurrency -> AppSharedFlow.PickBaseCurrency.flow.emit(
-                name.code
-            )
-
-            else -> {}
-        }
-    }
-
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 16.dp)
-                .clickable {
-                    scope.launch {
-                        emitResult()
-                        navigator.popBackStack()
-                    }
-                },
+                .clickable { onClick(name) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             CurrIcon(modifier = Modifier.size(40.dp), code = name.code)
@@ -193,6 +211,26 @@ private fun CurItem(
             thickness = 1.dp,
             color = ArkColor.BorderSecondary
         )
+    }
+}
+
+@Composable
+private fun NotFound() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                modifier = Modifier.size(72.dp),
+                painter = painterResource(R.drawable.ic_search_refraction),
+                contentDescription = "",
+                tint = ArkColor.Secondary
+            )
+            Text(
+                text = "No result",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = ArkColor.TextPrimary
+            )
+        }
     }
 }
 

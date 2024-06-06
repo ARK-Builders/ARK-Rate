@@ -8,6 +8,7 @@ import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PairAlertRepo
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
@@ -44,6 +45,7 @@ sealed class AddPairAlertScreenEffect {
 class AddPairAlertViewModel(
     private val currencyRepo: CurrencyRepo,
     private val pairAlertRepo: PairAlertRepo,
+    private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase
 ) : ViewModel(), ContainerHost<AddPairAlertScreenState, AddPairAlertScreenEffect> {
     override val container: Container<AddPairAlertScreenState, AddPairAlertScreenEffect> =
@@ -138,6 +140,7 @@ class AddPairAlertViewModel(
             group = state.group
         )
         pairAlertRepo.insert(pairAlert)
+        codeUseStatRepo.codesUsed(pairAlert.baseCode, pairAlert.targetCode)
         postSideEffect(AddPairAlertScreenEffect.NotifyPairAdded(pairAlert))
         postSideEffect(AddPairAlertScreenEffect.NavigateBack)
     }
@@ -184,12 +187,14 @@ class AddPairAlertViewModel(
 class AddPairAlertViewModelFactory @Inject constructor(
     private val currencyRepo: CurrencyRepo,
     private val pairAlertRepo: PairAlertRepo,
-    private val convertUseCase: ConvertWithRateUseCase
+    private val codeUseStatRepo: CodeUseStatRepo,
+    private val convertUseCase: ConvertWithRateUseCase,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddPairAlertViewModel(
             currencyRepo,
             pairAlertRepo,
+            codeUseStatRepo,
             convertUseCase
         ) as T
     }

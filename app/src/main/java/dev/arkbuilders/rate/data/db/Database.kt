@@ -9,8 +9,9 @@ import androidx.room.RoomDatabase
         RoomFetchTimestamp::class,
         RoomPairAlert::class,
         RoomQuickPair::class,
+        RoomCodeUseStat::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = true,
 )
 abstract class Database : RoomDatabase() {
@@ -19,6 +20,7 @@ abstract class Database : RoomDatabase() {
     abstract fun fetchTimestampDao(): FetchTimestampDao
     abstract fun pairAlertDao(): PairAlertDao
     abstract fun quickDao(): QuickPairDao
+    abstract fun codeUseStatDao(): CodeUseStatDao
 
     companion object {
         const val DB_NAME = "arkrate.db"

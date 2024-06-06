@@ -7,6 +7,7 @@ import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
@@ -39,7 +40,8 @@ sealed class AddAssetSideEffect {
 
 class AddAssetViewModel(
     private val assetsRepo: PortfolioRepo,
-    private val currencyRepo: CurrencyRepo
+    private val currencyRepo: CurrencyRepo,
+    private val codeUseStatRepo: CodeUseStatRepo
 ) : ViewModel(), ContainerHost<AddAssetState, AddAssetSideEffect> {
 
     override val container: Container<AddAssetState, AddAssetSideEffect> =
@@ -100,6 +102,7 @@ class AddAssetViewModel(
             Asset(code = it.first, value = it.second.toDoubleSafe(), group = state.group)
         }
         assetsRepo.setAssetsList(currencies)
+        codeUseStatRepo.codesUsed(*currencies.map { it.code }.toTypedArray())
         postSideEffect(AddAssetSideEffect.NotifyAssetAdded(currencies))
         postSideEffect(AddAssetSideEffect.NavigateBack)
     }
@@ -108,9 +111,10 @@ class AddAssetViewModel(
 @Singleton
 class AddAssetViewModelFactory @Inject constructor(
     private val assetsRepo: PortfolioRepo,
-    private val currencyRepo: CurrencyRepo
+    private val currencyRepo: CurrencyRepo,
+    private val codeUseStatRepo: CodeUseStatRepo
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AddAssetViewModel(assetsRepo, currencyRepo) as T
+        return AddAssetViewModel(assetsRepo, currencyRepo, codeUseStatRepo) as T
     }
 }
