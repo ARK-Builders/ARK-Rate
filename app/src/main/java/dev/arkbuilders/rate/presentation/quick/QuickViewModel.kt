@@ -14,20 +14,24 @@ import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
-data class DisplayQuickPair(
+data class QuickDisplayPair(
     val pair: QuickPair,
     val to: List<Amount>
 )
 
+data class QuickScreenPage(
+    val group: String?,
+    val pairs: List<QuickDisplayPair>
+)
+
 data class QuickScreenState(
-    val groupToQuickPairs: List<Pair<String?, List<DisplayQuickPair>>> = emptyList(),
+    val pages: List<QuickScreenPage> = emptyList(),
     val initialized: Boolean = false
 )
 
@@ -61,11 +65,17 @@ class QuickViewModel(
                         )
                         amount
                     }
-                    DisplayQuickPair(pair, toDisplay)
+                    QuickDisplayPair(pair, toDisplay)
                 }
-                val byGroup = displayList.groupBy { it.pair.group }.toList()
+                val pages = displayList.groupBy { it.pair.group }
+                    .map { (group, pairs) -> QuickScreenPage(group, pairs) }
                 intent {
-                    reduce { state.copy(groupToQuickPairs = byGroup, initialized = true) }
+                    reduce {
+                        state.copy(
+                            pages = pages,
+                            initialized = true
+                        )
+                    }
                 }
             }.launchIn(viewModelScope)
         }

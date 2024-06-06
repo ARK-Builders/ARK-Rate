@@ -86,7 +86,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
         }.launchIn(scope)
     }
 
-    val isEmpty = state.groupToPortfolioAmount.isEmpty()
+    val isEmpty = state.pages.isEmpty()
 
     Scaffold(
         floatingActionButton = {
@@ -133,9 +133,9 @@ private val previewPortfolioAmount = PortfolioDisplayAsset(
 )
 
 private val previewState = PortfolioScreenState(
-    groupToPortfolioAmount = mapOf(
-        "Group1" to listOf(previewPortfolioAmount, previewPortfolioAmount),
-        "Group2" to listOf(previewPortfolioAmount, previewPortfolioAmount),
+    pages = listOf(
+        PortfolioScreenPage("Group1", listOf(previewPortfolioAmount, previewPortfolioAmount)),
+        PortfolioScreenPage("Group2", listOf(previewPortfolioAmount, previewPortfolioAmount))
     )
 )
 
@@ -146,14 +146,13 @@ private fun Content(
     onClick: (PortfolioDisplayAsset) -> Unit = {},
     onDelete: (Asset) -> Unit = {}
 ) {
-    val groupToAmounts = state.groupToPortfolioAmount.toList()
-    val groups = groupToAmounts.map { it.first }
+    val groups = state.pages.map { it.group }
     Column {
         SearchTextFieldWithSort(modifier = Modifier.padding(top = 16.dp))
-        if (groupToAmounts.size == 1) {
+        if (state.pages.size == 1) {
             GroupPage(
                 baseCode = state.baseCode,
-                amounts = groupToAmounts.map { it.second }.first(),
+                amounts = state.pages.first().assets,
                 onClick = onClick,
                 onDelete = onDelete
             )
@@ -161,10 +160,10 @@ private fun Content(
             GroupViewPager(
                 modifier = Modifier.padding(top = 16.dp),
                 groups = groups
-            ) {
+            ) { index ->
                 GroupPage(
                     baseCode = state.baseCode,
-                    amounts = groupToAmounts.map { it.second }[it],
+                    amounts = state.pages[index].assets,
                     onClick = onClick,
                     onDelete = onDelete
                 )
