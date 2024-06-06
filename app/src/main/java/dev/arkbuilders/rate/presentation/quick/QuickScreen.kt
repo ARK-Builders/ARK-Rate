@@ -164,7 +164,7 @@ private fun GroupPage(
                 color = ArkColor.TextTertiary,
                 fontWeight = FontWeight.Medium
             )
-            AppHorDiv16()
+            AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
         }
         items(quickPairs, key = { it.pair.id }) {
             AppSwipeToDismiss(

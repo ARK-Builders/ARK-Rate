@@ -33,4 +33,7 @@ class DBModule {
 
     @Provides
     fun fetchTimestampDao(db: Database) = db.fetchTimestampDao()
+
+    @Provides
+    fun codeUseStatDao(db: Database) = db.codeUseStatDao()
 }
