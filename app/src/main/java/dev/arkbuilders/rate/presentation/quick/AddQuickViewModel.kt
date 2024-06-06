@@ -7,6 +7,7 @@ import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.data.db.QuickRepoImpl
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.QuickPair
+import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import kotlinx.coroutines.flow.launchIn
@@ -34,7 +35,8 @@ sealed class AddQuickScreenEffect {
 }
 
 class AddQuickViewModel(
-    private val quickRepo: QuickRepo
+    private val quickRepo: QuickRepo,
+    private val codeUseStatRepo: CodeUseStatRepo
 ) : ViewModel(), ContainerHost<AddQuickScreenState, AddQuickScreenEffect> {
 
     override val container: Container<AddQuickScreenState, AddQuickScreenEffect> =
@@ -96,6 +98,7 @@ class AddQuickViewModel(
             group = state.group
         )
         quickRepo.insert(quick)
+        codeUseStatRepo.codesUsed(quick.from, *quick.to.toTypedArray())
         postSideEffect(AddQuickScreenEffect.NotifyPairAdded(quick))
         postSideEffect(AddQuickScreenEffect.NavigateBack)
     }
@@ -104,9 +107,10 @@ class AddQuickViewModel(
 
 @Singleton
 class AddQuickViewModelFactory @Inject constructor(
-    private val quickRepo: QuickRepo
+    private val quickRepo: QuickRepo,
+    private val codeUseStatRepo: CodeUseStatRepo
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AddQuickViewModel(quickRepo) as T
+        return AddQuickViewModel(quickRepo, codeUseStatRepo) as T
     }
 }
