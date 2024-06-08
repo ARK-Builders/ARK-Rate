@@ -21,13 +21,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -40,14 +34,12 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.presentation.portfolio.EditAssetViewModel
-import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
-import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
+import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
-import kotlinx.coroutines.launch
+import dev.arkbuilders.rate.presentation.ui.NoResult
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -139,11 +131,11 @@ private fun Results(
                 LazyColumn {
                     item { Header(header = "Top results") }
                     items(topResultsFiltered) { name ->
-                        CurItem(name) { onClick(it) }
+                        CurrencyInfoItem(name) { onClick(it) }
                     }
                 }
             } else {
-                NotFound()
+                NoResult()
             }
         }
 
@@ -152,12 +144,12 @@ private fun Results(
                 if (frequent.isNotEmpty()) {
                     item { Header(header = "Frequent currencies") }
                     items(frequent) { name ->
-                        CurItem(name) { onClick(it) }
+                        CurrencyInfoItem(name) { onClick(it) }
                     }
                 }
                 item { Header(header = "All currencies") }
                 items(all) { name ->
-                    CurItem(name) { onClick(it) }
+                    CurrencyInfoItem(name) { onClick(it) }
                 }
             }
         }
@@ -177,61 +169,6 @@ private fun Header(header: String) {
         fontWeight = FontWeight.Medium,
         color = ArkColor.TextTertiary
     )
-}
-
-
-@Composable
-private fun CurItem(
-    name: CurrencyName,
-    onClick: (CurrencyName) -> Unit
-) {
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp)
-                .clickable { onClick(name) },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CurrIcon(modifier = Modifier.size(40.dp), code = name.code)
-            Column(
-                modifier = Modifier.padding(start = 12.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = name.code,
-                    fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary
-                )
-                Text(text = name.name, color = ArkColor.TextTertiary)
-            }
-        }
-        HorizontalDivider(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            thickness = 1.dp,
-            color = ArkColor.BorderSecondary
-        )
-    }
-}
-
-@Composable
-private fun NotFound() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(
-                modifier = Modifier.size(72.dp),
-                painter = painterResource(R.drawable.ic_search_refraction),
-                contentDescription = "",
-                tint = ArkColor.Secondary
-            )
-            Text(
-                text = "No result",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = ArkColor.TextPrimary
-            )
-        }
-    }
 }
 
 

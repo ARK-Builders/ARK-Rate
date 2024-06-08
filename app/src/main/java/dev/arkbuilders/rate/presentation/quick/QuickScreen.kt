@@ -8,7 +8,7 @@ package dev.arkbuilders.rate.presentation.quick
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,6 +55,8 @@ import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
@@ -62,8 +64,10 @@ import dev.arkbuilders.rate.presentation.theme.ArkTypography
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
+import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
+import dev.arkbuilders.rate.presentation.ui.NoResult
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
 import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
 import kotlinx.coroutines.flow.launchIn
@@ -106,7 +110,7 @@ fun QuickScreen(
                 contentColor = Color.White,
                 containerColor = ArkColor.Secondary,
                 onClick = {
-                    navigator.navigate(AddQuickScreenDestination)
+                    navigator.navigate(AddQuickScreenDestination())
                 }
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
@@ -120,21 +124,46 @@ fun QuickScreen(
             when {
                 state.initialized.not() -> LoadingScreen()
                 isEmpty -> QuickEmpty(navigator = navigator)
-                else -> Content(state = state, onDelete = viewModel::onDelete)
+                else -> Content(
+                    state = state,
+                    onFilterChanged = viewModel::onFilterChanged,
+                    onDelete = viewModel::onDelete,
+                    onLongClick = { quick ->
+                        navigator.navigate(AddQuickScreenDestination(quickPairId = quick.pair.id))
+                    },
+                    onNewCode = {
+                        navigator.navigate(AddQuickScreenDestination(newCode = it))
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun Content(state: QuickScreenState, onDelete: (QuickPair) -> Unit = {}) {
+private fun Content(
+    state: QuickScreenState,
+    onFilterChanged: (String) -> Unit,
+    onDelete: (QuickPair) -> Unit = {},
+    onLongClick: (QuickDisplayPair) -> Unit = {},
+    onNewCode: (CurrencyCode) -> Unit = {}
+) {
     val groups = state.pages.map { it.group }
     Column {
-        SearchTextFieldWithSort(modifier = Modifier.padding(top = 16.dp))
+        SearchTextFieldWithSort(
+            modifier = Modifier.padding(top = 16.dp),
+            text = state.filter
+        ) {
+            onFilterChanged(it)
+        }
         if (state.pages.size == 1) {
             GroupPage(
+                filter = state.filter,
+                currencies = state.currencies,
                 quickPairs = state.pages.first().pairs,
-                onDelete = onDelete
+                onDelete = onDelete,
+                onLongClick = onLongClick,
+                onNewCode = onNewCode
             )
         } else {
             GroupViewPager(
@@ -142,8 +171,12 @@ private fun Content(state: QuickScreenState, onDelete: (QuickPair) -> Unit = {})
                 groups = groups
             ) { index ->
                 GroupPage(
+                    filter = state.filter,
+                    currencies = state.currencies,
                     quickPairs = state.pages[index].pairs,
-                    onDelete = onDelete
+                    onDelete = onDelete,
+                    onLongClick = onLongClick,
+                    onNewCode = onNewCode
                 )
             }
         }
@@ -152,26 +185,66 @@ private fun Content(state: QuickScreenState, onDelete: (QuickPair) -> Unit = {})
 
 @Composable
 private fun GroupPage(
+    filter: String,
+    currencies: List<CurrencyName>,
     quickPairs: List<QuickDisplayPair>,
-    onDelete: (QuickPair) -> Unit
+    onDelete: (QuickPair) -> Unit,
+    onLongClick: (QuickDisplayPair) -> Unit = {},
+    onNewCode: (CurrencyCode) -> Unit = {}
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        item {
-            Text(
-                modifier = Modifier.padding(start = 16.dp, top = 24.dp),
-                text = "Pairs",
-                color = ArkColor.TextTertiary,
-                fontWeight = FontWeight.Medium
+    val filteredPairs = quickPairs.filter { displayPair ->
+        val containsFrom =
+            displayPair.pair.from.contains(filter, ignoreCase = true)
+        val containsTo = displayPair.pair.to.any { toCode ->
+            toCode.contains(
+                filter,
+                ignoreCase = true
             )
-            AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
         }
-        items(quickPairs, key = { it.pair.id }) {
-            AppSwipeToDismiss(
-                content = { QuickItem(it) },
-                onDelete = { onDelete(it.pair) }
-            )
-            AppHorDiv16()
+
+        containsFrom || containsTo
+    }
+    val filteredCurrencies = currencies.filter {
+        it.name.contains(filter, ignoreCase = true)
+                || it.code.contains(filter, ignoreCase = true)
+    }
+    if (filteredPairs.isNotEmpty() || filteredCurrencies.isNotEmpty()) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            if (filteredPairs.isNotEmpty()) {
+                item {
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp, top = 24.dp),
+                        text = "Pairs",
+                        color = ArkColor.TextTertiary,
+                        fontWeight = FontWeight.Medium
+                    )
+                    AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
+                }
+                items(filteredPairs, key = { it.pair.id }) {
+                    AppSwipeToDismiss(
+                        content = { QuickItem(it, onLongClick) },
+                        onDelete = { onDelete(it.pair) }
+                    )
+                    AppHorDiv16()
+                }
+            }
+            if (filteredCurrencies.isNotEmpty()) {
+                item {
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp, top = 24.dp),
+                        text = "Currencies",
+                        color = ArkColor.TextTertiary,
+                        fontWeight = FontWeight.Medium
+                    )
+                    AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
+                }
+                items(filteredCurrencies, key = { it.code }) { name ->
+                    CurrencyInfoItem(name) { onNewCode(it.code) }
+                }
+            }
         }
+    } else {
+        NoResult()
     }
 }
 
@@ -187,7 +260,8 @@ private fun QuickItem(
             null
         ),
         to = emptyList()
-    )
+    ),
+    onLongClick: (QuickDisplayPair) -> Unit = {},
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -197,11 +271,15 @@ private fun QuickItem(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .run {
-                if (quick.to.size > 1)
-                    clickable { expanded = !expanded }
-                else this
-            }
+            .combinedClickable(
+                onClick = {
+                    if (quick.to.size > 1)
+                        expanded = !expanded
+                },
+                onLongClick = {
+                    onLongClick(quick)
+                }
+            )
             .padding(16.dp),
     ) {
         Row(modifier = Modifier.weight(1f)) {
@@ -328,7 +406,7 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
             Button(
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {
-                    navigator.navigate(AddQuickScreenDestination)
+                    navigator.navigate(AddQuickScreenDestination())
                 }
             ) {
                 Icon(
