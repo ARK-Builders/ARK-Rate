@@ -58,7 +58,8 @@ import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
-import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
+import dev.arkbuilders.rate.presentation.ui.NoResult
+import dev.arkbuilders.rate.presentation.ui.SearchTextField
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.compose.collectAsState
@@ -119,6 +120,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                     onClick = { display ->
                         navigator.navigate(EditAssetScreenDestination(display.asset.id))
                     },
+                    onFilterChange = viewModel::onFilterChange,
                     onDelete = viewModel::onAssetRemove
                 )
             }
@@ -134,8 +136,14 @@ private val previewPortfolioAmount = PortfolioDisplayAsset(
 
 private val previewState = PortfolioScreenState(
     pages = listOf(
-        PortfolioScreenPage("Group1", listOf(previewPortfolioAmount, previewPortfolioAmount)),
-        PortfolioScreenPage("Group2", listOf(previewPortfolioAmount, previewPortfolioAmount))
+        PortfolioScreenPage(
+            "Group1",
+            listOf(previewPortfolioAmount, previewPortfolioAmount)
+        ),
+        PortfolioScreenPage(
+            "Group2",
+            listOf(previewPortfolioAmount, previewPortfolioAmount)
+        )
     )
 )
 
@@ -144,13 +152,24 @@ private val previewState = PortfolioScreenState(
 private fun Content(
     state: PortfolioScreenState = previewState,
     onClick: (PortfolioDisplayAsset) -> Unit = {},
+    onFilterChange: (String) -> Unit = {},
     onDelete: (Asset) -> Unit = {}
 ) {
     val groups = state.pages.map { it.group }
     Column {
-        SearchTextFieldWithSort(modifier = Modifier.padding(top = 16.dp))
+        SearchTextField(
+            modifier = Modifier.padding(
+                top = 16.dp,
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 16.dp
+            ),
+            text = state.filter,
+            onValueChange = onFilterChange
+        )
         if (state.pages.size == 1) {
             GroupPage(
+                filter = state.filter,
                 baseCode = state.baseCode,
                 amounts = state.pages.first().assets,
                 onClick = onClick,
@@ -162,6 +181,7 @@ private fun Content(
                 groups = groups
             ) { index ->
                 GroupPage(
+                    filter = state.filter,
                     baseCode = state.baseCode,
                     amounts = state.pages[index].assets,
                     onClick = onClick,
@@ -174,6 +194,7 @@ private fun Content(
 
 @Composable
 private fun GroupPage(
+    filter: String,
     baseCode: CurrencyCode,
     amounts: List<PortfolioDisplayAsset>,
     onClick: (PortfolioDisplayAsset) -> Unit = {},
@@ -182,33 +203,41 @@ private fun GroupPage(
     val total = amounts.fold(0.0) { acc, amount ->
         acc + amount.baseAmount.value
     }
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        item {
-            Text(
-                modifier = Modifier.padding(top = 32.dp),
-                text = "Total Assets",
-                color = ArkColor.TextTertiary,
-                fontWeight = FontWeight.Medium
-            )
-            Text(
-                modifier = Modifier.padding(top = 8.dp),
-                text = "${CurrUtils.prepareToDisplay(total)} $baseCode",
-                color = ArkColor.TextPrimary,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 36.sp
-            )
-            AppHorDiv16(Modifier.padding(top = 32.dp))
+    val filtered =
+        amounts.filter { it.asset.code.contains(filter, ignoreCase = true) }
+    if (filtered.isNotEmpty()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (filter.isEmpty()) {
+                item {
+                    Text(
+                        modifier = Modifier.padding(top = 32.dp),
+                        text = "Total Assets",
+                        color = ArkColor.TextTertiary,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        modifier = Modifier.padding(top = 8.dp),
+                        text = "${CurrUtils.prepareToDisplay(total)} $baseCode",
+                        color = ArkColor.TextPrimary,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 36.sp
+                    )
+                    AppHorDiv16(Modifier.padding(top = 32.dp))
+                }
+            }
+            items(filtered, key = { it.asset.id }) {
+                AppSwipeToDismiss(
+                    content = { CurrencyItem(it, onClick = onClick) },
+                    onDelete = { onDelete(it.asset) }
+                )
+                AppHorDiv16()
+            }
         }
-        items(amounts, key = { it.asset.id }) {
-            AppSwipeToDismiss(
-                content = { CurrencyItem(it, onClick = onClick) },
-                onDelete = { onDelete(it.asset) }
-            )
-            AppHorDiv16()
-        }
+    } else {
+        NoResult()
     }
 }
 

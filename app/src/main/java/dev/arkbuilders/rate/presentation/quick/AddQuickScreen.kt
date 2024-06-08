@@ -64,6 +64,7 @@ import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
+import dev.arkbuilders.rate.presentation.ui.BasicTextFieldPlaceholder
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
@@ -307,43 +308,14 @@ private fun FromInput(
                     tint = ArkColor.FGQuinary
                 )
             }
-            val interactionSource = remember { MutableInteractionSource() }
-            BasicTextField(
+            BasicTextFieldPlaceholder(
                 modifier = Modifier.padding(start = 12.dp),
                 value = amount,
                 onValueChange = { onAmountChanged(it) },
-                textStyle = TextStyle.Default.copy(
-                    color = ArkColor.TextPrimary,
-                    fontSize = 16.sp
-                ),
+                placeholder = "Input value",
                 keyboardOptions = KeyboardOptions.Default
-                    .copy(keyboardType = KeyboardType.Number),
-                interactionSource = interactionSource,
-                singleLine = true
-            ) { innerTextField ->
-                TextFieldDefaults.DecorationBox(
-                    value = amount,
-                    innerTextField = innerTextField,
-                    placeholder = {
-                        Text(
-                            text = "Input the value",
-                            color = ArkColor.TextPlaceHolder,
-                            fontSize = 16.sp
-                        )
-                    },
-                    contentPadding = PaddingValues(0.dp),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    enabled = true,
-                    singleLine = true,
-                    visualTransformation = VisualTransformation.None,
-                    interactionSource = interactionSource
-                )
-            }
+                    .copy(keyboardType = KeyboardType.Number)
+            )
         }
     }
 }

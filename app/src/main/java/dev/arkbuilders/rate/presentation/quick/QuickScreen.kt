@@ -69,7 +69,7 @@ import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
-import dev.arkbuilders.rate.presentation.ui.SearchTextFieldWithSort
+import dev.arkbuilders.rate.presentation.ui.SearchTextField
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.compose.collectAsState
@@ -150,8 +150,13 @@ private fun Content(
 ) {
     val groups = state.pages.map { it.group }
     Column {
-        SearchTextFieldWithSort(
-            modifier = Modifier.padding(top = 16.dp),
+        SearchTextField(
+            modifier = Modifier.padding(
+                top = 16.dp,
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 16.dp
+            ),
             text = state.filter
         ) {
             onFilterChanged(it)

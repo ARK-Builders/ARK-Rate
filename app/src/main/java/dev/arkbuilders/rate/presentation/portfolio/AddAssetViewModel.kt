@@ -7,6 +7,7 @@ import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.domain.model.AmountStr
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
@@ -23,10 +24,8 @@ import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private val stubCurrency = "USD" to ""
-
 data class AddAssetState(
-    val currencies: List<Pair<CurrencyCode, String>> = listOf(stubCurrency),
+    val currencies: List<AmountStr> = listOf(AmountStr("USD", "")),
     val group: String? = null,
     val availableGroups: List<String> = emptyList()
 )
@@ -53,7 +52,7 @@ class AddAssetViewModel(
                 reduce {
                     val newCurrencies = state.currencies.toMutableList()
                     newCurrencies[pos] =
-                        newCurrencies[pos].copy(first = selectedCode)
+                        newCurrencies[pos].copy(code = selectedCode)
                     state.copy(currencies = newCurrencies)
                 }
             }
@@ -61,7 +60,7 @@ class AddAssetViewModel(
 
         AppSharedFlow.AddAsset.flow.onEach { code ->
             intent {
-                reduce { state.copy(currencies = state.currencies + (code to "")) }
+                reduce { state.copy(currencies = state.currencies + AmountStr(code, "")) }
             }
         }.launchIn(viewModelScope)
 
@@ -91,15 +90,15 @@ class AddAssetViewModel(
         reduce {
             val newCurrencies = state.currencies.toMutableList()
             val old = newCurrencies[pos]
-            val validatedAmount = CurrUtils.validateInput(old.second, input)
-            newCurrencies[pos] = newCurrencies[pos].copy(second = validatedAmount)
+            val validatedAmount = CurrUtils.validateInput(old.value, input)
+            newCurrencies[pos] = newCurrencies[pos].copy(value = validatedAmount)
             state.copy(currencies = newCurrencies)
         }
     }
 
     fun onAddAsset() = intent {
         val currencies = state.currencies.map {
-            Asset(code = it.first, value = it.second.toDoubleSafe(), group = state.group)
+            Asset(code = it.code, value = it.value.toDoubleSafe(), group = state.group)
         }
         assetsRepo.setAssetsList(currencies)
         codeUseStatRepo.codesUsed(*currencies.map { it.code }.toTypedArray())

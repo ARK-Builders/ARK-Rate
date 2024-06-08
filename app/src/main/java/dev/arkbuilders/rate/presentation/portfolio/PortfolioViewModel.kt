@@ -14,9 +14,9 @@ import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
@@ -24,6 +24,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 data class PortfolioScreenState(
+    val filter: String = "",
     val baseCode: CurrencyCode = "USD",
     val pages: List<PortfolioScreenPage> = emptyList(),
     val initialized: Boolean = false
@@ -73,10 +74,14 @@ class PortfolioViewModel(
         assetsRepo.removeAsset(amount.id)
     }
 
+    fun onFilterChange(filter: String) = blockingIntent {
+        reduce { state.copy(filter = filter) }
+    }
+
     private fun init() = intent {
         val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
-        val list = assetsRepo.allAssets()
-        val groups = list.groupBy(keySelector = { it.group })
+        val assets = assetsRepo.allAssets().reversed()
+        val groups = assets.groupBy(keySelector = { it.group })
         val pages = groups.map { (group, assets) ->
             val displayAssets = assetToPortfolioDisplayAmount(
                 baseCode,
@@ -85,7 +90,7 @@ class PortfolioViewModel(
             PortfolioScreenPage(group, displayAssets)
         }
         reduce {
-            state.copy(baseCode, pages, initialized = true)
+            state.copy(baseCode = baseCode, pages = pages, initialized = true)
         }
     }
 
