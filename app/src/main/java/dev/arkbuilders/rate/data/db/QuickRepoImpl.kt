@@ -29,6 +29,9 @@ interface QuickPairDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(quickCurrency: RoomQuickPair)
 
+    @Query("SELECT * FROM RoomQuickPair WHERE id = :id")
+    suspend fun getById(id: Long): RoomQuickPair?
+
     @Query("SELECT * FROM RoomQuickPair")
     suspend fun getAll(): List<RoomQuickPair>
 
@@ -44,6 +47,8 @@ class QuickRepoImpl @Inject constructor(val dao: QuickPairDao): QuickRepo {
 
     override suspend fun insert(quick: QuickPair) =
         dao.insert(quick.toRoom())
+
+    override suspend fun getById(id: Long): QuickPair? = dao.getById(id)?.toQuickPair()
 
     override suspend fun getAll() = dao.getAll().map { it.toQuickPair() }
 

@@ -36,7 +36,7 @@ import javax.inject.Singleton
 interface AppComponent {
     fun assetsVMFactory(): PortfolioViewModelFactory
     fun addCurrencyVMFactory(): AddAssetViewModelFactory
-    fun addQuickVMFactory(): AddQuickViewModelFactory
+    fun addQuickVMFactory(): AddQuickViewModelFactory.Factory
     fun pairAlertVMFactory(): PairAlertViewModelFactory
     fun addPairAlertVMFactory(): AddPairAlertViewModelFactory
     fun quickVMFactory(): QuickViewModelFactory.Factory

@@ -89,7 +89,7 @@ fun AddAssetScreen(
         onCodeChange = {
             navigator.navigate(
                 SearchCurrencyScreenDestination(
-                    AppSharedFlowKey.SetCurrencyAmount.name,
+                    AppSharedFlowKey.SetAssetCode.name,
                     it
                 )
             )

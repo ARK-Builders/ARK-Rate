@@ -76,8 +76,8 @@ fun SearchTextFieldWithSort(
     ) {
         OutlinedTextField(
             modifier = Modifier
-                .padding(start = 16.dp)
-                .weight(1f),
+                .padding(start = 16.dp, end = 16.dp)
+                .fillMaxWidth(),
             value = text,
             onValueChange = { onValueChange(it) },
             leadingIcon = {
@@ -102,23 +102,5 @@ fun SearchTextFieldWithSort(
                     unfocusedBorderColor = ArkColor.Border
                 ),
         )
-        IconButton(
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp)
-                .border(
-                    width = 1.dp,
-                    ArkColor.Border,
-                    RoundedCornerShape(8.dp)
-                ),
-            onClick = {
-
-            }
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_sort),
-                contentDescription = "",
-                tint = ArkColor.FGSecondary
-            )
-        }
     }
 }

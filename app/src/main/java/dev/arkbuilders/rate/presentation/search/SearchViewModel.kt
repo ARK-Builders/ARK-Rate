@@ -5,12 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
-import dev.arkbuilders.rate.presentation.portfolio.EditAssetViewModel
-import dev.arkbuilders.rate.presentation.portfolio.EditAssetViewModelFactory
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import org.orbitmvi.orbit.Container
@@ -77,27 +74,27 @@ class SearchViewModel(
     }
 
     private suspend fun emitResult(name: CurrencyName) {
-        val appFlow =
-            AppSharedFlow.fromKey(AppSharedFlowKey.valueOf(appSharedFlowKeyString))
-        when (appFlow) {
-            AppSharedFlow.SetAssetCode ->
+        val appFlowKey = AppSharedFlowKey.valueOf(appSharedFlowKeyString)
+        when (appFlowKey) {
+            AppSharedFlowKey.SetAssetCode ->
                 AppSharedFlow.SetAssetCode.flow.emit(pos!! to name.code)
 
-            AppSharedFlow.AddAsset -> AppSharedFlow.AddAsset.flow.emit(name.code)
+            AppSharedFlowKey.AddAsset -> AppSharedFlow.AddAsset.flow.emit(name.code)
 
-            AppSharedFlow.AddPairAlertBase ->
+            AppSharedFlowKey.AddPairAlertBase ->
                 AppSharedFlow.AddPairAlertBase.flow.emit(name.code)
 
-            AppSharedFlow.AddPairAlertTarget ->
+            AppSharedFlowKey.AddPairAlertTarget ->
                 AppSharedFlow.AddPairAlertTarget.flow.emit(name.code)
 
-            AppSharedFlow.AddQuick -> AppSharedFlow.AddQuick.flow.emit(pos!! to name.code)
+            AppSharedFlowKey.SetQuickCode ->
+                AppSharedFlow.SetQuickCode.flow.emit(pos!! to name.code)
 
-            AppSharedFlow.PickBaseCurrency -> AppSharedFlow.PickBaseCurrency.flow.emit(
-                name.code
-            )
+            AppSharedFlowKey.PickBaseCurrency ->
+                AppSharedFlow.PickBaseCurrency.flow.emit(name.code)
 
-            else -> {}
+            AppSharedFlowKey.AddQuickCode ->
+                AppSharedFlow.AddQuickCode.flow.emit(name.code)
         }
     }
 }

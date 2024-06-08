@@ -3,12 +3,20 @@ package dev.arkbuilders.rate.presentation.quick
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.db.QuickRepoImpl
+import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.domain.model.AmountStr
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.QuickPair
+import dev.arkbuilders.rate.domain.model.toDAmount
+import dev.arkbuilders.rate.domain.model.toStrAmount
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.QuickRepo
+import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
+import dev.arkbuilders.rate.presentation.search.SearchViewModelFactory
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -23,10 +31,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 data class AddQuickScreenState(
-    val currencies: List<CurrencyCode> = listOf("USD"),
-    val amount: String = "",
+    val quickPairId: Long? = null,
+    val currencies: List<AmountStr> = listOf(AmountStr("USD", "")),
     val group: String? = null,
-    val availableGroups: List<String> = emptyList()
+    val availableGroups: List<String> = emptyList(),
+    val finishEnabled: Boolean = false
 )
 
 sealed class AddQuickScreenEffect {
@@ -35,7 +44,10 @@ sealed class AddQuickScreenEffect {
 }
 
 class AddQuickViewModel(
+    private val quickPairId: Long?,
+    private val newCode: CurrencyCode?,
     private val quickRepo: QuickRepo,
+    private val convertUseCase: ConvertWithRateUseCase,
     private val codeUseStatRepo: CodeUseStatRepo
 ) : ViewModel(), ContainerHost<AddQuickScreenState, AddQuickScreenEffect> {
 
@@ -43,28 +55,53 @@ class AddQuickViewModel(
         container(AddQuickScreenState())
 
     init {
-        AppSharedFlow.AddQuick.flow.onEach { (index, code) ->
+        AppSharedFlow.SetQuickCode.flow.onEach { (index, code) ->
             intent {
-                reduce {
-                    val newCurrencies = state.currencies.toMutableList()
-                    newCurrencies[index] = code
-                    state.copy(currencies = newCurrencies)
-                }
+                val mutable = state.currencies.toMutableList()
+                val new = mutable[index].copy(code = code)
+                mutable[index] = new
+                val calc = calcToResult(mutable)
+                reduce { state.copy(currencies = calc) }
+            }
+        }.launchIn(viewModelScope)
+
+        AppSharedFlow.AddQuickCode.flow.onEach { code ->
+            intent {
+                val newAmounts = state.currencies + AmountStr(code, "")
+                val calc = calcToResult(newAmounts)
+                reduce {  state.copy(currencies = calc) }
+                checkFinishEnabled()
             }
         }.launchIn(viewModelScope)
 
         intent {
             val groups =
                 quickRepo.getAll().mapNotNull { it.group }.distinct()
-            reduce {
-                state.copy(availableGroups = groups)
-            }
-        }
-    }
+            val quickPair = quickPairId?.let { quickRepo.getById(it) }
+            quickPair?.let {
+                val currencies = listOf(
+                    AmountStr(
+                        quickPair.from,
+                        quickPair.amount.toString()
+                    )
+                ) + quickPair.to.map { AmountStr(it, "") }
+                val calc = calcToResult(currencies)
 
-    fun onNewCurrencyClick() = intent {
-        reduce {
-            state.copy(currencies = state.currencies + "USD")
+                reduce {
+                    state.copy(
+                        quickPairId = quickPairId,
+                        currencies = calc,
+                        group = quickPair.group,
+                        availableGroups = groups
+                    )
+                }
+                checkFinishEnabled()
+            } ?: reduce {
+                val currencies = newCode?.let {
+                    listOf(AmountStr(newCode, ""))
+                } ?: state.currencies
+                state.copy(currencies = currencies, availableGroups = groups)
+            }
         }
     }
 
@@ -75,6 +112,7 @@ class AddQuickViewModel(
                     .filterIndexed { index, _ -> index != removeIndex }
             )
         }
+        checkFinishEnabled()
     }
 
     fun onGroupSelect(group: String?) = intent {
@@ -82,19 +120,20 @@ class AddQuickViewModel(
     }
 
     fun onAssetAmountChange(input: String) = blockingIntent {
-        reduce {
-            state.copy(
-                amount = CurrUtils.validateInput(state.amount, input)
-            )
-        }
+        val from = state.currencies.first()
+        val new = from.copy(value = CurrUtils.validateInput(from.value, input))
+        val calc = calcToResult(listOf(new) + state.currencies.drop(1))
+        reduce { state.copy(currencies = calc) }
+        checkFinishEnabled()
     }
 
     fun onAddQuickPair() = intent {
+        val from = state.currencies.first()
         val quick = QuickPair(
             id = 0,
-            from = state.currencies.first(),
-            amount = state.amount.toDouble(),
-            to = state.currencies - state.currencies.first(),
+            from = from.code,
+            amount = from.value.toDouble(),
+            to = state.currencies.drop(1).map { it.code },
             group = state.group
         )
         quickRepo.insert(quick)
@@ -103,14 +142,61 @@ class AddQuickViewModel(
         postSideEffect(AddQuickScreenEffect.NavigateBack)
     }
 
+    private suspend fun calcToResult(old: List<AmountStr>): List<AmountStr> {
+        val from = old.first()
+        val to = old.drop(1)
+        val new = to.map {
+            if (from.value == "") {
+                it.copy(value = "")
+            } else {
+                val (amount, _) = convertUseCase.invoke(from.toDAmount(), it.code)
+                amount.toStrAmount()
+            }
+        }
+        return listOf(from) + new
+    }
+
+    private fun checkFinishEnabled() = intent {
+        val from = state.currencies.first()
+        val to = state.currencies.drop(1)
+
+        var finishEnabled = true
+
+        if (from.value.toDoubleSafe() == 0.0)
+            finishEnabled = false
+
+        if (to.isEmpty())
+            finishEnabled = false
+
+        reduce {
+            state.copy(finishEnabled = finishEnabled)
+        }
+    }
+
 }
 
-@Singleton
-class AddQuickViewModelFactory @Inject constructor(
+class AddQuickViewModelFactory @AssistedInject constructor(
+    @Assisted private val quickPairId: Long?,
+    @Assisted private val newCode: CurrencyCode?,
     private val quickRepo: QuickRepo,
-    private val codeUseStatRepo: CodeUseStatRepo
+    private val codeUseStatRepo: CodeUseStatRepo,
+    private val convertUseCase: ConvertWithRateUseCase,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AddQuickViewModel(quickRepo, codeUseStatRepo) as T
+        return AddQuickViewModel(
+            quickPairId,
+            newCode,
+            quickRepo,
+            convertUseCase,
+            codeUseStatRepo
+        ) as T
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            quickPairId: Long?,
+            newCode: CurrencyCode?
+        ): AddQuickViewModelFactory
     }
 }
