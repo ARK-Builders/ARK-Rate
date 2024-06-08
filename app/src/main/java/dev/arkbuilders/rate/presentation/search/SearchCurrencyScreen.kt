@@ -2,15 +2,9 @@
 
 package dev.arkbuilders.rate.presentation.search
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,12 +16,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -35,11 +27,13 @@ import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.theme.ArkColor
+import dev.arkbuilders.rate.presentation.ui.AppHorDiv
+import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
+import dev.arkbuilders.rate.presentation.ui.SearchTextField
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -93,28 +87,14 @@ fun SearchCurrencyScreen(
 
 @Composable
 private fun Input(input: String, onInputChange: (String) -> Unit) {
-    OutlinedTextField(
+    SearchTextField(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth(),
-        value = input,
+        text = input,
         onValueChange = { onInputChange(it) },
-        leadingIcon = {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_search),
-                contentDescription = "",
-                tint = ArkColor.FGQuarterary
-            )
-        },
-        shape = RoundedCornerShape(8.dp),
-        placeholder = {
-            Text(
-                text = "Search",
-                color = ArkColor.TextPlaceHolder,
-            )
-        }
     )
-    HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
+    AppHorDiv()
 }
 
 @Composable
@@ -163,12 +143,12 @@ private fun Header(header: String) {
             start = 16.dp,
             top = 24.dp,
             end = 16.dp,
-            bottom = 13.dp
         ),
         text = header,
         fontWeight = FontWeight.Medium,
         color = ArkColor.TextTertiary
     )
+    AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
 }
 
 

@@ -37,12 +37,14 @@ import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.domain.model.AmountStr
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
+import dev.arkbuilders.rate.presentation.ui.BasicTextFieldPlaceholder
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
@@ -215,7 +217,7 @@ private fun Currencies(
 @Composable
 fun InputCurrency(
     pos: Int,
-    codeToValue: Pair<CurrencyCode, String>,
+    amount: AmountStr,
     onAssetValueChanged: (Int, String) -> Unit,
     onAssetRemove: (Int) -> Unit,
     onCodeChange: (Int) -> Unit
@@ -242,7 +244,7 @@ fun InputCurrency(
             ) {
                 Text(
                     modifier = Modifier.padding(start = 14.dp),
-                    text = codeToValue.first,
+                    text = amount.code,
                     fontSize = 16.sp,
                     color = ArkColor.TextSecondary
                 )
@@ -253,29 +255,28 @@ fun InputCurrency(
                     tint = ArkColor.FGQuinary
                 )
             }
-            BasicTextField(
+            BasicTextFieldPlaceholder(
                 modifier = Modifier.padding(start = 12.dp),
-                value = codeToValue.second,
+                value = amount.value,
                 onValueChange = { onAssetValueChanged(pos, it) },
-                textStyle = TextStyle.Default.copy(
-                    color = ArkColor.TextPrimary,
-                    fontSize = 16.sp
-                ),
+                placeholder = "Input value",
                 keyboardOptions = KeyboardOptions.Default
                     .copy(keyboardType = KeyboardType.Number)
             )
         }
 
-        IconButton(modifier = Modifier
-            .padding(start = 16.dp)
-            .size(44.dp)
-            .border(
-                1.dp,
-                ArkColor.Border,
-                RoundedCornerShape(8.dp)
-            )
-            .clip(RoundedCornerShape(8.dp)),
-            onClick = { onAssetRemove(pos) }
+        Box(
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .size(44.dp)
+                .border(
+                    1.dp,
+                    ArkColor.Border,
+                    RoundedCornerShape(8.dp)
+                )
+                .clip(RoundedCornerShape(8.dp))
+                .clickable { onAssetRemove(pos) },
+            contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_delete),
