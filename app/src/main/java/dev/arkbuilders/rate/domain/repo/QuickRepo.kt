@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 interface QuickRepo {
     suspend fun insert(quick: QuickPair)
 
+    suspend fun getById(id: Long): QuickPair?
+
     suspend fun getAll(): List<QuickPair>
 
     fun allFlow(): Flow<List<QuickPair>>

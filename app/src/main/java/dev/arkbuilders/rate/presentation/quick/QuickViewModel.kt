@@ -7,6 +7,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.model.Amount
+import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.Prefs
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
@@ -31,6 +33,8 @@ data class QuickScreenPage(
 )
 
 data class QuickScreenState(
+    val filter: String = "",
+    val currencies: List<CurrencyName> = emptyList(),
     val pages: List<QuickScreenPage> = emptyList(),
     val initialized: Boolean = false
 )
@@ -56,7 +60,7 @@ class QuickViewModel(
 
             quickRepo.allFlow().onEach { all ->
                 val codeToRate = currencyRepo.getCodeToCurrencyRate().getOrNull()!!
-                val displayList = all.map { pair ->
+                val displayList = all.reversed().map { pair ->
                     val toDisplay = pair.to.map { code ->
                         val (amount, _) = convertUseCase(
                             Amount(pair.from, pair.amount),
@@ -78,7 +82,16 @@ class QuickViewModel(
                     }
                 }
             }.launchIn(viewModelScope)
+
+            val names = currencyRepo.getCurrencyName().getOrNull()!!
+            reduce {
+                state.copy(currencies = names)
+            }
         }
+    }
+
+    fun onFilterChanged(filter: String) = blockingIntent {
+        reduce { state.copy(filter = filter) }
     }
 
     fun onDelete(pair: QuickPair) = intent {
