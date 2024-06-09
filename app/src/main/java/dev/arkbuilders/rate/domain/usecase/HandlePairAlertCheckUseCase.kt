@@ -18,43 +18,43 @@ class HandlePairAlertCheckUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(): List<Pair<PairAlert, Double>> {
         val rates = currencyRepo.getCodeToCurrencyRate().getOrNull()!!
-        val pairsToNotify = pairAlertRepo.getAll().mapNotNull { pairAlert ->
-            val (met, currentRate) = isConditionMet(rates, pairAlert)
-            if (met) {
-                if (!pairAlert.oneTimeNotRecurrent) {
-                    handleOneTimePair(pairAlert)
-                } else {
-                    handleRecurrentPair(pairAlert)
+        val pairsToNotify = pairAlertRepo.getAll()
+            .filter { it.enabled }
+            .mapNotNull { pairAlert ->
+                val (met, currentRate) = isConditionMet(rates, pairAlert)
+                if (met) {
+                    if (!pairAlert.oneTimeNotRecurrent) {
+                        handleOneTimePair(pairAlert)
+                    } else {
+                        handleRecurrentPair(pairAlert)
+                    }
+
+                    return@mapNotNull pairAlert to currentRate
                 }
 
-                return@mapNotNull pairAlert to currentRate
+                return@mapNotNull null
             }
-
-            return@mapNotNull null
-        }
 
         return pairsToNotify
     }
 
-    private suspend fun handleOneTimePair(pairAlert: PairAlert) {
+    suspend fun handleOneTimePair(pairAlert: PairAlert) {
         pairAlertRepo.insert(
             pairAlert.copy(
-                triggered = true,
                 enabled = false,
                 lastDateTriggered = OffsetDateTime.now()
             )
         )
     }
 
-    private suspend fun handleRecurrentPair(pairAlert: PairAlert) {
-        val updatedTargetPrice = pairAlert.alertPercent?.let { percent ->
-            (1 + percent/100) * pairAlert.targetPrice
+    suspend fun handleRecurrentPair(pairAlert: PairAlert) {
+        val updatedTargetPrice = pairAlert.percent?.let { percent ->
+            (1 + percent / 100) * pairAlert.targetPrice
         } ?: let {
             val diff = (pairAlert.targetPrice - pairAlert.startPrice)
             pairAlert.targetPrice + diff
         }
         val updatedPair = pairAlert.copy(
-            triggered = true,
             startPrice = pairAlert.targetPrice,
             targetPrice = updatedTargetPrice,
             lastDateTriggered = OffsetDateTime.now()

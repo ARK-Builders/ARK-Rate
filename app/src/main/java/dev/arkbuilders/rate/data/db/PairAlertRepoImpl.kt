@@ -26,8 +26,6 @@ data class RoomPairAlert(
     val alertPercent: Double?,
     val oneTimeNotRecurrent: Boolean,
     val enabled: Boolean,
-    val priceNotPercent: Boolean,
-    val triggered: Boolean,
     val lastDateTriggered: String?,
     val group: String?
 )
@@ -36,6 +34,9 @@ data class RoomPairAlert(
 interface PairAlertDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(pairAlert: RoomPairAlert): Long
+
+    @Query("SELECT * FROM RoomPairAlert where id = :id")
+    suspend fun getById(id: Long): RoomPairAlert?
 
     @Query("SELECT * FROM RoomPairAlert")
     suspend fun getAll(): List<RoomPairAlert>
@@ -53,11 +54,9 @@ private fun PairAlert.toRoom() = RoomPairAlert(
     baseCode,
     targetPrice,
     startPrice,
-    alertPercent,
+    percent,
     oneTimeNotRecurrent,
     enabled,
-    priceNotPercent,
-    triggered,
     lastDateTriggered?.toString(),
     group
 )
@@ -71,8 +70,6 @@ private fun RoomPairAlert.toCondition() = PairAlert(
     alertPercent,
     oneTimeNotRecurrent,
     enabled,
-    priceNotPercent,
-    triggered,
     lastDateTriggered?.let { OffsetDateTime.parse(lastDateTriggered) },
     group
 )
@@ -80,9 +77,12 @@ private fun RoomPairAlert.toCondition() = PairAlert(
 @Singleton
 class PairAlertRepoImpl @Inject constructor(
     private val dao: PairAlertDao
-): PairAlertRepo {
+) : PairAlertRepo {
     override suspend fun insert(pairAlert: PairAlert) =
         dao.insert(pairAlert.toRoom())
+
+    override suspend fun getById(id: Long): PairAlert? =
+        dao.getById(id)?.toCondition()
 
     override suspend fun getAll() = dao.getAll().map { it.toCondition() }
 

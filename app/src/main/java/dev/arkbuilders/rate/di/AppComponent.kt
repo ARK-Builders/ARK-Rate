@@ -38,7 +38,7 @@ interface AppComponent {
     fun addCurrencyVMFactory(): AddAssetViewModelFactory
     fun addQuickVMFactory(): AddQuickViewModelFactory.Factory
     fun pairAlertVMFactory(): PairAlertViewModelFactory
-    fun addPairAlertVMFactory(): AddPairAlertViewModelFactory
+    fun addPairAlertVMFactory(): AddPairAlertViewModelFactory.Factory
     fun quickVMFactory(): QuickViewModelFactory.Factory
     fun editAssetVMFactory(): EditAssetViewModelFactory.Factory
     fun searchVMFactory(): SearchViewModelFactory.Factory
