@@ -101,7 +101,7 @@ fun PairAlertConditionScreen(
                 contentColor = Color.White,
                 containerColor = ArkColor.Secondary,
                 onClick = {
-                    navigator.navigate(AddPairAlertScreenDestination)
+                    navigator.navigate(AddPairAlertScreenDestination())
                 }
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
@@ -124,7 +124,11 @@ fun PairAlertConditionScreen(
                 isEmpty -> Empty(navigator)
                 else -> Content(
                     state,
-                    onDelete = viewModel::onDelete
+                    onDelete = viewModel::onDelete,
+                    onClick = { pair ->
+                        navigator.navigate(AddPairAlertScreenDestination(pair.id))
+                    },
+                    onEnableToggle = viewModel::onEnableToggle
                 )
             }
         }
@@ -132,12 +136,19 @@ fun PairAlertConditionScreen(
 }
 
 @Composable
-private fun Content(state: PairAlertScreenState, onDelete: (PairAlert) -> Unit) {
+private fun Content(
+    state: PairAlertScreenState,
+    onDelete: (PairAlert) -> Unit,
+    onClick: (PairAlert) -> Unit,
+    onEnableToggle: (PairAlert, Boolean) -> Unit
+) {
     Column {
         if (state.pages.size == 1) {
             GroupPage(
                 page = state.pages.first(),
                 onDelete = { onDelete(it) },
+                onClick = onClick,
+                onEnableToggle = onEnableToggle
             )
         } else {
             GroupViewPager(
@@ -147,6 +158,8 @@ private fun Content(state: PairAlertScreenState, onDelete: (PairAlert) -> Unit) 
                 GroupPage(
                     page = state.pages[index],
                     onDelete = { onDelete(it) },
+                    onClick = onClick,
+                    onEnableToggle = onEnableToggle
                 )
             }
         }
@@ -160,7 +173,10 @@ private fun GroupPage(
         group = "Group 1",
         created = listOf(previewPairAlert),
         oneTimeTriggered = listOf(previewPairAlert)
-    ), onDelete: (PairAlert) -> Unit = {}
+    ),
+    onDelete: (PairAlert) -> Unit = {},
+    onClick: (PairAlert) -> Unit = {},
+    onEnableToggle: (PairAlert, Boolean) -> Unit = { _, _ -> }
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         if (page.created.isNotEmpty()) {
@@ -174,7 +190,14 @@ private fun GroupPage(
             }
             items(page.created, key = { it.id }) {
                 AppSwipeToDismiss(
-                    content = { PairAlertItem(pairAlert = it) },
+                    content = {
+                        PairAlertItem(
+                            pairAlert = it,
+                            oneTimeTriggered = false,
+                            onClick = onClick,
+                            onEnableToggle = onEnableToggle
+                        )
+                    },
                     onDelete = { onDelete(it) }
                 )
                 AppHorDiv16()
@@ -191,7 +214,14 @@ private fun GroupPage(
             }
             items(page.oneTimeTriggered, key = { it.id }) {
                 AppSwipeToDismiss(
-                    content = { PairAlertItem(pairAlert = it) },
+                    content = {
+                        PairAlertItem(
+                            pairAlert = it,
+                            oneTimeTriggered = true,
+                            onClick = onClick,
+                            onEnableToggle = onEnableToggle
+                        )
+                    },
                     onDelete = { onDelete(it) }
                 )
                 AppHorDiv16()
@@ -201,10 +231,12 @@ private fun GroupPage(
 }
 
 @Composable
-private fun PairAlertItem(pairAlert: PairAlert) {
-    var checkBoxActive by remember {
-        mutableStateOf(pairAlert.enabled)
-    }
+private fun PairAlertItem(
+    pairAlert: PairAlert,
+    oneTimeTriggered: Boolean,
+    onClick: (PairAlert) -> Unit,
+    onEnableToggle: (PairAlert, Boolean) -> Unit
+) {
     var currencyName by remember {
         mutableStateOf("")
     }
@@ -217,7 +249,7 @@ private fun PairAlertItem(pairAlert: PairAlert) {
             .fillMaxWidth()
             .background(Color.White)
             .clickable {
-
+                onClick(pairAlert)
             }
             .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -240,7 +272,7 @@ private fun PairAlertItem(pairAlert: PairAlert) {
                         "${pairAlert.baseCode}",
                 color = ArkColor.TextTertiary
             )
-            if (pairAlert.oneTimeNotRecurrent && pairAlert.triggered) {
+            if (oneTimeTriggered) {
                 val date = pairAlert.lastDateTriggered
                 date
                     ?: Timber.e("Pair alert marked as triggered but lastDateTriggered is null")
@@ -259,8 +291,8 @@ private fun PairAlertItem(pairAlert: PairAlert) {
             }
         }
         Switch(
-            checked = checkBoxActive,
-            onCheckedChange = { checkBoxActive = it },
+            checked = pairAlert.enabled,
+            onCheckedChange = { onEnableToggle(pairAlert, it) },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
                 checkedBorderColor = ArkColor.Primary,
@@ -301,7 +333,7 @@ private fun Empty(navigator: DestinationsNavigator) {
             Button(
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {
-                    navigator.navigate(AddPairAlertScreenDestination)
+                    navigator.navigate(AddPairAlertScreenDestination())
                 }
             ) {
                 Icon(
@@ -320,11 +352,9 @@ private val previewPairAlert = PairAlert(
     baseCode = "EUR",
     targetPrice = 2.0,
     startPrice = 1.0,
-    alertPercent = null,
+    percent = null,
     oneTimeNotRecurrent = true,
     enabled = true,
-    triggered = false,
     group = "Group 1",
-    priceNotPercent = true,
     lastDateTriggered = null
 )

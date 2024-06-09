@@ -67,11 +67,12 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Destination
 @Composable
 fun AddPairAlertScreen(
+    pairAlertId: Long? = null,
     navigator: DestinationsNavigator,
 ) {
     val viewModel: AddPairAlertViewModel =
         viewModel(
-            factory = DIManager.component.addPairAlertVMFactory()
+            factory = DIManager.component.addPairAlertVMFactory().create(pairAlertId)
         )
 
     val state by viewModel.collectAsState()
@@ -110,6 +111,7 @@ fun AddPairAlertScreen(
             PriceOrPercent(state, viewModel::onPriceOrPercentChanged)
             EditCondition(state, viewModel, navigator)
             OneTimeOrRecurrent(
+                state.priceOrPercent.isLeft(),
                 state.oneTimeNotRecurrent,
                 viewModel::onOneTimeChanged
             )
@@ -153,7 +155,8 @@ fun AddPairAlertScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                onClick = { viewModel.onSaveClick() }
+                onClick = { viewModel.onSaveClick() },
+                enabled = state.finishEnabled
             ) {
                 Text(text = "Create Alert")
             }
@@ -342,17 +345,29 @@ private fun EditCondition(
                 text = "price is",
                 color = ArkColor.TextTertiary
             )
-            Icon(
-                modifier = Modifier.padding(start = 8.dp),
-                painter = painterResource(id = if (state.aboveNotBelow) R.drawable.ic_pair_alert_inc else R.drawable.ic_pair_alert_dec),
-                contentDescription = "",
-                tint = if (state.aboveNotBelow) ArkColor.PairAlertInc else ArkColor.PairAlertDec
-            )
-            Text(
-                modifier = Modifier.padding(start = 4.dp),
-                text = if (state.aboveNotBelow) "above" else "below",
-                color = if (state.aboveNotBelow) ArkColor.PairAlertInc else ArkColor.PairAlertDec
-            )
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .run {
+                        if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft())
+                            this
+                        else
+                            clickable { viewModel.onIncreaseToggle() }
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier.padding(start = 8.dp),
+                    painter = painterResource(id = if (state.aboveNotBelow) R.drawable.ic_pair_alert_inc else R.drawable.ic_pair_alert_dec),
+                    contentDescription = "",
+                    tint = if (state.aboveNotBelow) ArkColor.PairAlertInc else ArkColor.PairAlertDec
+                )
+                Text(
+                    modifier = Modifier.padding(start = 4.dp),
+                    text = if (state.aboveNotBelow) "above" else "below",
+                    color = if (state.aboveNotBelow) ArkColor.PairAlertInc else ArkColor.PairAlertDec
+                )
+            }
         }
 
         Row(
@@ -361,19 +376,19 @@ private fun EditCondition(
                 .padding(top = 24.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            if (state.priceOrPercent.isLeft()) {
+            if (!state.oneTimeNotRecurrent) {
                 Text(
-                    modifier = Modifier.align(Alignment.Top),
-                    text = state.baseCode,
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = "every ",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextPrimary
                 )
             }
-            if (state.priceOrPercent.isRight() && !state.oneTimeNotRecurrent) {
+            if (state.priceOrPercent.isLeft()) {
                 Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "every ",
+                    modifier = Modifier.align(Alignment.Top),
+                    text = state.baseCode,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextPrimary
@@ -426,6 +441,7 @@ private fun EditCondition(
 
 @Composable
 private fun OneTimeOrRecurrent(
+    byPrice: Boolean,
     oneTimeNotRecurrent: Boolean,
     onOneTimeChanged: (Boolean) -> Unit
 ) {
@@ -449,7 +465,7 @@ private fun OneTimeOrRecurrent(
             modifier = Modifier
                 .padding(6.dp)
                 .weight(1f),
-            title = "Recurrent",
+            title = if (byPrice) "Every" else "Recurrent",
             enabled = !oneTimeNotRecurrent
         ) {
             onOneTimeChanged(false)
