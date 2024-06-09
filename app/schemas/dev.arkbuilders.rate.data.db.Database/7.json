@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 7,
-    "identityHash": "389590c7e395a4c9f732029d3d7fad49",
+    "identityHash": "7da9626b330e7b6e11fc4fcdd1da15cf",
     "entities": [
       {
-        "tableName": "RoomCurrencyAmount",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `code` TEXT NOT NULL, `amount` REAL NOT NULL)",
+        "tableName": "RoomAsset",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `code` TEXT NOT NULL, `amount` REAL NOT NULL, `group` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -25,6 +25,12 @@
             "columnName": "amount",
             "affinity": "REAL",
             "notNull": true
+          },
+          {
+            "fieldPath": "group",
+            "columnName": "group",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -95,8 +101,8 @@
         "foreignKeys": []
       },
       {
-        "tableName": "RoomPairAlertCondition",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `numeratorCode` TEXT NOT NULL, `denominatorCode` TEXT NOT NULL, `ratio` REAL NOT NULL, `moreNotLess` INTEGER NOT NULL)",
+        "tableName": "RoomPairAlert",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `targetCode` TEXT NOT NULL, `baseCode` TEXT NOT NULL, `targetPrice` REAL NOT NULL, `startPrice` REAL NOT NULL, `alertPercent` REAL, `oneTimeNotRecurrent` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `priceNotPercent` INTEGER NOT NULL, `lastDateTriggered` TEXT, `group` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -105,28 +111,64 @@
             "notNull": true
           },
           {
-            "fieldPath": "numeratorCode",
-            "columnName": "numeratorCode",
+            "fieldPath": "targetCode",
+            "columnName": "targetCode",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "denominatorCode",
-            "columnName": "denominatorCode",
+            "fieldPath": "baseCode",
+            "columnName": "baseCode",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "ratio",
-            "columnName": "ratio",
+            "fieldPath": "targetPrice",
+            "columnName": "targetPrice",
             "affinity": "REAL",
             "notNull": true
           },
           {
-            "fieldPath": "moreNotLess",
-            "columnName": "moreNotLess",
+            "fieldPath": "startPrice",
+            "columnName": "startPrice",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "alertPercent",
+            "columnName": "alertPercent",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "oneTimeNotRecurrent",
+            "columnName": "oneTimeNotRecurrent",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "priceNotPercent",
+            "columnName": "priceNotPercent",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastDateTriggered",
+            "columnName": "lastDateTriggered",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "group",
+            "columnName": "group",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -139,8 +181,52 @@
         "foreignKeys": []
       },
       {
-        "tableName": "RoomQuickCurrency",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `usedCount` INTEGER NOT NULL, `usedTime` INTEGER NOT NULL, PRIMARY KEY(`code`))",
+        "tableName": "RoomQuickPair",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `from` TEXT NOT NULL, `amount` REAL NOT NULL, `to` TEXT NOT NULL, `group` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "from",
+            "columnName": "from",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "amount",
+            "columnName": "amount",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "to",
+            "columnName": "to",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "group",
+            "columnName": "group",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "RoomCodeUseStat",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `count` INTEGER NOT NULL, `lastUsedDate` TEXT NOT NULL, PRIMARY KEY(`code`))",
         "fields": [
           {
             "fieldPath": "code",
@@ -149,34 +235,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "usedCount",
-            "columnName": "usedCount",
+            "fieldPath": "count",
+            "columnName": "count",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "usedTime",
-            "columnName": "usedTime",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "code"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "RoomQuickConvertToCurrency",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, PRIMARY KEY(`code`))",
-        "fields": [
-          {
-            "fieldPath": "code",
-            "columnName": "code",
+            "fieldPath": "lastUsedDate",
+            "columnName": "lastUsedDate",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -194,7 +260,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '389590c7e395a4c9f732029d3d7fad49')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7da9626b330e7b6e11fc4fcdd1da15cf')"
     ]
   }
 }
