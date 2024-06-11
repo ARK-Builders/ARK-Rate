@@ -23,7 +23,7 @@ class HandlePairAlertCheckUseCase @Inject constructor(
             .mapNotNull { pairAlert ->
                 val (met, currentRate) = isConditionMet(rates, pairAlert)
                 if (met) {
-                    if (!pairAlert.oneTimeNotRecurrent) {
+                    if (pairAlert.oneTimeNotRecurrent) {
                         handleOneTimePair(pairAlert)
                     } else {
                         handleRecurrentPair(pairAlert)
@@ -38,7 +38,7 @@ class HandlePairAlertCheckUseCase @Inject constructor(
         return pairsToNotify
     }
 
-    suspend fun handleOneTimePair(pairAlert: PairAlert) {
+    private suspend fun handleOneTimePair(pairAlert: PairAlert) {
         pairAlertRepo.insert(
             pairAlert.copy(
                 enabled = false,
@@ -47,7 +47,7 @@ class HandlePairAlertCheckUseCase @Inject constructor(
         )
     }
 
-    suspend fun handleRecurrentPair(pairAlert: PairAlert) {
+    private suspend fun handleRecurrentPair(pairAlert: PairAlert) {
         val updatedTargetPrice = pairAlert.percent?.let { percent ->
             (1 + percent / 100) * pairAlert.targetPrice
         } ?: let {

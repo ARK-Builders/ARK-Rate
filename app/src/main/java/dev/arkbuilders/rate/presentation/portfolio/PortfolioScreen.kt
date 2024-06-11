@@ -218,13 +218,22 @@ private fun GroupPage(
                         color = ArkColor.TextTertiary,
                         fontWeight = FontWeight.Medium
                     )
-                    Text(
-                        modifier = Modifier.padding(top = 8.dp),
-                        text = "${CurrUtils.prepareToDisplay(total)} $baseCode",
-                        color = ArkColor.TextPrimary,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 36.sp
-                    )
+                    Row(modifier = Modifier.padding(top = 8.dp)) {
+                        Text(
+                            modifier = Modifier,
+                            text = CurrUtils.prepareToDisplay(total),
+                            color = ArkColor.TextPrimary,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 36.sp
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 2.dp, top = 2.dp),
+                            text = CurrUtils.getSymbolOrCode(baseCode),
+                            color = ArkColor.TextPrimary,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp
+                        )
+                    }
                     AppHorDiv16(Modifier.padding(top = 32.dp))
                 }
             }

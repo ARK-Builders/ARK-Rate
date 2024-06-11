@@ -1,9 +1,10 @@
 package dev.arkbuilders.rate.data
 
+import android.icu.util.Currency
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.text.NumberFormat
 import java.util.Locale
 
 object CurrUtils {
@@ -62,6 +63,14 @@ object CurrUtils {
         )
         df.roundingMode = RoundingMode.CEILING
         return df.format(number)
+    }
+
+    fun getSymbolOrCode(code: CurrencyCode): String {
+        return try {
+            Currency.getInstance(code).symbol
+        } catch (e: Throwable) {
+            code
+        }
     }
 }
 
