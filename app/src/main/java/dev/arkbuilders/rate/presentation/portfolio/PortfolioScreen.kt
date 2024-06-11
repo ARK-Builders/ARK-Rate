@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -51,7 +52,6 @@ import dev.arkbuilders.rate.presentation.destinations.AddAssetScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.EditAssetScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
-import dev.arkbuilders.rate.presentation.theme.ArkTypography
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
@@ -218,13 +218,22 @@ private fun GroupPage(
                         color = ArkColor.TextTertiary,
                         fontWeight = FontWeight.Medium
                     )
-                    Text(
-                        modifier = Modifier.padding(top = 8.dp),
-                        text = "${CurrUtils.prepareToDisplay(total)} $baseCode",
-                        color = ArkColor.TextPrimary,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 36.sp
-                    )
+                    Row(modifier = Modifier.padding(top = 8.dp)) {
+                        Text(
+                            modifier = Modifier,
+                            text = CurrUtils.prepareToDisplay(total),
+                            color = ArkColor.TextPrimary,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 36.sp
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 2.dp, top = 2.dp),
+                            text = CurrUtils.getSymbolOrCode(baseCode),
+                            color = ArkColor.TextPrimary,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp
+                        )
+                    }
                     AppHorDiv16(Modifier.padding(top = 32.dp))
                 }
             }
@@ -310,16 +319,21 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
             Text(
                 modifier = Modifier.padding(top = 16.dp),
                 text = "Your Portfolio is Empty",
-                style = MaterialTheme.typography.headlineSmall
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 20.sp,
+                color = ArkColor.TextPrimary
             )
             Text(
                 modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
                 text = "Add currencies manually to track and compare. Your portfolio helps you monitor and manage your favorite or frequently used currencies.",
-                style = ArkTypography.supporting,
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                color = ArkColor.TextTertiary,
                 textAlign = TextAlign.Center
             )
             Button(
                 modifier = Modifier.padding(top = 24.dp),
+                shape = RoundedCornerShape(8.dp),
                 onClick = {
                     navigator.navigate(AddAssetScreenDestination)
                 }

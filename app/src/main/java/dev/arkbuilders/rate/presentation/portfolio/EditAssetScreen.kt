@@ -34,6 +34,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
@@ -98,16 +99,8 @@ private fun Content(
                 Modifier.padding(top = 32.dp),
                 verticalAlignment = Alignment.Top
             ) {
-                Text(
-                    modifier = Modifier.align(Alignment.Top),
-                    text = name.code,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary
-                )
                 BasicTextField(
                     modifier = Modifier
-                        .padding(start = 2.dp)
                         .width(IntrinsicSize.Min)
                         .align(Alignment.CenterVertically),
                     value = value,
@@ -120,6 +113,15 @@ private fun Content(
                     keyboardOptions = KeyboardOptions.Default
                         .copy(keyboardType = KeyboardType.Number)
                 )
+                Text(
+                    modifier = Modifier
+                        .padding(start = 2.dp, top = 2.dp)
+                        .align(Alignment.Top),
+                    text = CurrUtils.getSymbolOrCode(name.code),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ArkColor.TextPrimary
+                )
             }
             TextButton(
                 modifier = Modifier
@@ -127,7 +129,11 @@ private fun Content(
                     .height(22.dp),
                 colors = ButtonDefaults.textButtonColors(contentColor = ArkColor.BrandUtility),
                 onClick = {
-                          navigator.navigate(SearchCurrencyScreenDestination(AppSharedFlowKey.PickBaseCurrency.toString()))
+                    navigator.navigate(
+                        SearchCurrencyScreenDestination(
+                            AppSharedFlowKey.PickBaseCurrency.toString()
+                        )
+                    )
                 },
                 contentPadding = PaddingValues(2.dp)
             ) {
