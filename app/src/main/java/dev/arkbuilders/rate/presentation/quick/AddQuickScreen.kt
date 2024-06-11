@@ -162,13 +162,21 @@ private fun Content(
                     containerColor = Color.Transparent,
                     contentColor = ArkColor.FGSecondary,
                 ),
-                onClick = { onNewCurrencyClick() }
+                onClick = { onNewCurrencyClick() },
+                contentPadding = PaddingValues(0.dp)
             ) {
                 Icon(
+                    modifier = Modifier.padding(start = 20.dp),
                     painter = painterResource(id = R.drawable.ic_add),
                     contentDescription = "",
                 )
                 Text(
+                    modifier = Modifier.padding(
+                        start = 8.dp,
+                        top = 10.dp,
+                        bottom = 10.dp,
+                        end = 18.dp
+                    ),
                     text = "New Currency",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
@@ -217,6 +225,7 @@ private fun Content(
                 onClick = {
                     onAddAsset()
                 },
+                shape = RoundedCornerShape(8.dp),
                 enabled = state.finishEnabled
             ) {
                 Text(text = "Add Pair")

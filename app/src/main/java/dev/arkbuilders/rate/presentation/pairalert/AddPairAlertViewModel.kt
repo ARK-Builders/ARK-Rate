@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.presentation.pairalert
 
+import android.icu.util.Currency
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope

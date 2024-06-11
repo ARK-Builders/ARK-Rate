@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,7 +59,6 @@ import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -156,6 +154,7 @@ fun AddPairAlertScreen(
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = { viewModel.onSaveClick() },
+                shape = RoundedCornerShape(8.dp),
                 enabled = state.finishEnabled
             ) {
                 Text(text = "Create Alert")
@@ -385,15 +384,6 @@ private fun EditCondition(
                     color = ArkColor.TextPrimary
                 )
             }
-            if (state.priceOrPercent.isLeft()) {
-                Text(
-                    modifier = Modifier.align(Alignment.Top),
-                    text = state.baseCode,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary
-                )
-            }
             BasicTextField(
                 modifier = Modifier
                     .width(IntrinsicSize.Min)
@@ -411,6 +401,15 @@ private fun EditCondition(
                 keyboardOptions = KeyboardOptions.Default
                     .copy(keyboardType = KeyboardType.Number)
             )
+            if (state.priceOrPercent.isLeft()) {
+                Text(
+                    modifier = Modifier.align(Alignment.Top),
+                    text = CurrUtils.getSymbolOrCode(state.baseCode),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = ArkColor.TextPrimary
+                )
+            }
             if (state.priceOrPercent.isRight()) {
                 Text(
                     modifier = Modifier.align(Alignment.Top),
