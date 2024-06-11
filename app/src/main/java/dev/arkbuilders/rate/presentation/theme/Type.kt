@@ -3,52 +3,43 @@ package dev.arkbuilders.rate.presentation.theme
 import androidx.compose.material3.Typography
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import dev.arkbuilders.rate.R
 
-object ArkTypography {
-    val supporting = TextStyle(
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
-        color = ArkColor.TextTertiary
-    )
-}
+private val interFontFamily = FontFamily(
+    Font(R.font.inter_thin, FontWeight.Thin),
+    Font(R.font.inter_extralight, FontWeight.ExtraLight),
+    Font(R.font.inter_light, FontWeight.Light),
+    Font(R.font.inter, FontWeight.Normal),
+    Font(R.font.inter_medium, FontWeight.Medium),
+    Font(R.font.inter_semibold, FontWeight.SemiBold),
+    Font(R.font.inter_bold, FontWeight.Bold),
+    Font(R.font.inter_extrabold, FontWeight.ExtraBold),
+    Font(R.font.inter_black, FontWeight.Black),
+)
 
+private val defaultTypography = Typography()
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    ),
-    headlineSmall = TextStyle(
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 20.sp,
-        lineHeight = 30.sp,
-        color = ArkColor.TextPrimary
-    ),
-    labelMedium = TextStyle(
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        color = Color.White
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
+    displayLarge = defaultTypography.displayLarge.copy(fontFamily = interFontFamily),
+    displayMedium = defaultTypography.displayMedium.copy(fontFamily = interFontFamily),
+    displaySmall = defaultTypography.displaySmall.copy(fontFamily = interFontFamily),
+
+    headlineLarge = defaultTypography.headlineLarge.copy(fontFamily = interFontFamily),
+    headlineMedium = defaultTypography.headlineMedium.copy(fontFamily = interFontFamily),
+    headlineSmall = defaultTypography.headlineSmall.copy(fontFamily = interFontFamily),
+
+    titleLarge = defaultTypography.titleLarge.copy(fontFamily = interFontFamily),
+    titleMedium = defaultTypography.titleMedium.copy(fontFamily = interFontFamily),
+    titleSmall = defaultTypography.titleSmall.copy(fontFamily = interFontFamily),
+
+    bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = interFontFamily),
+    bodyMedium = defaultTypography.bodyMedium.copy(fontFamily = interFontFamily),
+    bodySmall = defaultTypography.bodySmall.copy(fontFamily = interFontFamily),
+
+    labelLarge = defaultTypography.labelLarge.copy(fontFamily = interFontFamily),
+    labelMedium = defaultTypography.labelMedium.copy(fontFamily = interFontFamily),
+    labelSmall = defaultTypography.labelSmall.copy(fontFamily = interFontFamily)
 )

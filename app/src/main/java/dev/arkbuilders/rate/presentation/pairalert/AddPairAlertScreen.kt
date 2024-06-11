@@ -154,6 +154,7 @@ fun AddPairAlertScreen(
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = { viewModel.onSaveClick() },
+                shape = RoundedCornerShape(8.dp),
                 enabled = state.finishEnabled
             ) {
                 Text(text = "Create Alert")

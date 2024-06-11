@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -51,7 +53,6 @@ import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddPairAlertScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
-import dev.arkbuilders.rate.presentation.theme.ArkTypography
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
@@ -322,16 +323,21 @@ private fun Empty(navigator: DestinationsNavigator) {
             Text(
                 modifier = Modifier.padding(top = 16.dp),
                 text = "No Alerts at the Moment",
-                style = MaterialTheme.typography.headlineSmall
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 20.sp,
+                color = ArkColor.TextPrimary
             )
             Text(
                 modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
                 text = "Stay updated! We'll post any important notifications or changes in exchange rates here.",
-                style = ArkTypography.supporting,
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                color = ArkColor.TextTertiary,
                 textAlign = TextAlign.Center
             )
             Button(
                 modifier = Modifier.padding(top = 24.dp),
+                shape = RoundedCornerShape(8.dp),
                 onClick = {
                     navigator.navigate(AddPairAlertScreenDestination())
                 }

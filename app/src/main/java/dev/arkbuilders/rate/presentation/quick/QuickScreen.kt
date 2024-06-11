@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -60,7 +61,6 @@ import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
-import dev.arkbuilders.rate.presentation.theme.ArkTypography
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
@@ -400,16 +400,21 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
             Text(
                 modifier = Modifier.padding(top = 16.dp),
                 text = "Ready for calculation!",
-                style = MaterialTheme.typography.headlineSmall
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 20.sp,
+                color = ArkColor.TextPrimary
             )
             Text(
                 modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
                 text = "Select your currencies and enter an amount to start converting. Your exchange results will appear here.",
-                style = ArkTypography.supporting,
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                color = ArkColor.TextTertiary,
                 textAlign = TextAlign.Center
             )
             Button(
                 modifier = Modifier.padding(top = 24.dp),
+                shape = RoundedCornerShape(8.dp),
                 onClick = {
                     navigator.navigate(AddQuickScreenDestination())
                 }
