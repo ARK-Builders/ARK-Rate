@@ -52,6 +52,7 @@ import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddPairAlertScreenDestination
+import dev.arkbuilders.rate.presentation.portfolio.PortfolioScreenEffect
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv
@@ -65,6 +66,7 @@ import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -83,12 +85,11 @@ fun PairAlertConditionScreen(
 
     val isEmpty = state.pages.isEmpty()
 
-    LaunchedEffect(key1 = Unit) {
-        AppSharedFlow.ShowAddedSnackbarPairAlert.flow.onEach { visuals ->
-            visuals ?: return@onEach
-            snackState.showSnackbar(visuals)
-            AppSharedFlow.ShowAddedSnackbarPairAlert.flow.emit(null)
-        }.launchIn(scope)
+    viewModel.collectSideEffect { effect ->
+        when (effect) {
+            is PairAlertEffect.ShowSnackbarAdded ->
+                snackState.showSnackbar(effect.visuals)
+        }
     }
 
     Scaffold(
@@ -112,7 +113,7 @@ fun PairAlertConditionScreen(
         topBar = {
             if (isEmpty) return@Scaffold
             Column {
-                AppTopBarCenterTitle(title = "Alerts")
+                AppTopBarCenterTitle(title = stringResource(R.string.alerts))
                 AppHorDiv()
             }
         },

@@ -489,7 +489,7 @@ private fun OneTimeOrRecurrent(
             modifier = Modifier
                 .padding(6.dp)
                 .weight(1f),
-            title = if (byPrice) stringResource(R.string.every)
+            title = if (byPrice) stringResource(R.string.every_c)
             else stringResource(R.string.recurrent),
             enabled = !oneTimeNotRecurrent
         ) {

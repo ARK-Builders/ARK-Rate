@@ -11,6 +11,9 @@ import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
+import dev.arkbuilders.rate.presentation.quick.QuickScreenEffect
+import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
+import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -18,6 +21,7 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -41,7 +45,11 @@ data class PortfolioDisplayAsset(
     val ratioToBase: Double
 )
 
-sealed class PortfolioScreenEffect
+sealed class PortfolioScreenEffect {
+    class ShowSnackbarAdded(
+        val visuals: NotifyAddedSnackbarVisuals
+    ): PortfolioScreenEffect()
+}
 
 class PortfolioViewModel(
     private val assetsRepo: PortfolioRepo,
@@ -59,6 +67,10 @@ class PortfolioViewModel(
                 return@intent
 
             init()
+
+            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+                postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(visuals))
+            }.launchIn(viewModelScope)
 
             prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
                 init()
