@@ -1,71 +1,62 @@
 package dev.arkbuilders.rate.presentation.settings
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import dev.arkbuilders.rate.BuildConfig
+import dev.arkbuilders.rate.data.db.TimestampRepo
+import dev.arkbuilders.rate.data.db.TimestampType
 import dev.arkbuilders.rate.data.preferences.PrefsImpl
-import dev.arkbuilders.rate.domain.repo.PreferenceKey
-import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.viewmodel.container
+import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
+data class SettingsScreenState(
+    val latestFiatRefresh: OffsetDateTime? = null,
+    val latestCryptoRefresh: OffsetDateTime? = null,
+    val latestPairAlertCheck: OffsetDateTime? = null,
+    val showCrashReports: Boolean = BuildConfig.GOOGLE_PLAY_BUILD.not(),
+    val crashReportsEnabled: Boolean = false
+)
+
+sealed class SettingsScreenEffect()
+
 class SettingsViewModel(
-    private val prefs: PrefsImpl
-) : ViewModel() {
-
-    val currencyRoundPrefs = mutableMapOf<PreferenceKey<Int>, MutableState<String>>()
-    val boolPrefs = mutableMapOf<PreferenceKey<Boolean>, MutableState<Boolean>>()
-
-    var initialized by mutableStateOf(false)
+    private val prefs: PrefsImpl,
+    private val timestampRepo: TimestampRepo,
+) : ViewModel(), ContainerHost<SettingsScreenState, SettingsScreenEffect> {
+    override val container: Container<SettingsScreenState, SettingsScreenEffect> =
+        container(SettingsScreenState())
 
     init {
-        viewModelScope.launch {
-            listOf(
-                PreferenceKey.CrashReport
-            ).forEach {
-                boolPrefs[it] = mutableStateOf(prefs.get(it))
-            }
-            listOf(
-                PreferenceKey.FiatFiatRateRound,
-                PreferenceKey.CryptoCryptoRateRound,
-                PreferenceKey.FiatCryptoRateRound
-            ).forEach {
-                currencyRoundPrefs[it] = mutableStateOf(prefs.get(it).toString())
+        intent {
+            val fiat = timestampRepo.getTimestamp(TimestampType.FetchFiat)
+            val crypto = timestampRepo.getTimestamp(TimestampType.FetchCrypto)
+            val pairAlertCheck =
+                timestampRepo.getTimestamp(TimestampType.CheckPairAlerts)
+
+            reduce {
+                state.copy(
+                    latestFiatRefresh = fiat,
+                    latestCryptoRefresh = crypto,
+                    latestPairAlertCheck = pairAlertCheck
+                )
             }
         }
-
-        initialized = true
     }
 
-    fun onToggle(
-        key: PreferenceKey<Boolean>,
-        state: MutableState<Boolean>
-    ) = viewModelScope.launch {
-        val newValue = state.value.not()
-        state.value = newValue
-        prefs.set(key, newValue)
-    }
-
-    fun onRoundSave(
-        key: PreferenceKey<Int>,
-        state: MutableState<String>,
-        _value: String
-    ) = viewModelScope.launch {
-        val value = _value.ifEmpty { "0" }
-        state.value = value
-        prefs.set(key, value.toInt())
-    }
 }
 
 @Singleton
 class SettingsViewModelFactory @Inject constructor(
-    private val prefs: PrefsImpl
+    private val prefs: PrefsImpl,
+    private val timestampRepo: TimestampRepo,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SettingsViewModel(prefs) as T
+        return SettingsViewModel(prefs, timestampRepo) as T
     }
 }

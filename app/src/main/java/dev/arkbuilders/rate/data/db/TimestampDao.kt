@@ -7,17 +7,22 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import dev.arkbuilders.rate.domain.model.CurrencyType
+import java.time.OffsetDateTime
 import javax.inject.Inject
+
+enum class TimestampType {
+    FetchCrypto, FetchFiat, CheckPairAlerts
+}
 
 @Entity
 data class RoomFetchTimestamp(
     @PrimaryKey
     val currencyType: String,
-    val timestamp: Long
+    val timestamp: String
 )
 
 @Dao
-interface FetchTimestampDao {
+interface TimestampDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(fetchTimestamp: RoomFetchTimestamp)
 
@@ -25,11 +30,11 @@ interface FetchTimestampDao {
     suspend fun getTimestamp(currencyType: String): RoomFetchTimestamp?
 }
 
-class FetchTimestampDataSource @Inject constructor(private val dao: FetchTimestampDao) {
-    suspend fun rememberTimestamp(currencyType: CurrencyType) =
-        dao.insert(RoomFetchTimestamp(currencyType.name, System.currentTimeMillis()))
+class TimestampRepo @Inject constructor(private val dao: TimestampDao) {
+    suspend fun rememberTimestamp(type: TimestampType) =
+        dao.insert(RoomFetchTimestamp(type.name, OffsetDateTime.now().toString()))
 
-    suspend fun getTimestamp(currencyType: CurrencyType) =
-        dao.getTimestamp(currencyType.name)?.timestamp
+    suspend fun getTimestamp(type: TimestampType) =
+        dao.getTimestamp(type.name)?.timestamp?.let { OffsetDateTime.parse(it) }
 }
 

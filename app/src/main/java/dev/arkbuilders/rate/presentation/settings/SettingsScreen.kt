@@ -2,6 +2,7 @@ package dev.arkbuilders.rate.presentation.settings
 
 import android.content.Intent
 import android.net.Uri
+import android.text.format.DateUtils
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -45,309 +46,158 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
+import dev.arkbuilders.rate.presentation.destinations.AboutScreenDestination
+import dev.arkbuilders.rate.presentation.theme.ArkColor
+import dev.arkbuilders.rate.presentation.ui.AppHorDiv
+import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
+import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
+import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
+import org.orbitmvi.orbit.compose.collectAsState
+import java.time.Duration
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.util.Locale
+
 
 @Destination
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(navigator: DestinationsNavigator) {
     val vm: SettingsViewModel =
         viewModel(factory = DIManager.component.settingsVMFactory())
 
-    if (vm.initialized) {
-        Settings(vm)
-    } else {
-        Box(modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator()
-        }
-    }
-}
-
-@Composable
-private fun PrivacyPolicy() {
+    val state by vm.collectAsState()
     val ctx = LocalContext.current
-    val url = stringResource(id = R.string.privacy_policy_url)
-    Surface(
-        color = Color.Transparent,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        onClick = {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(url)
-            ctx.startActivity(intent)
-        },
-    ) {
-        Column {
+
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 32.dp)) {
+        Text(
+            text = "Quick/Portfolio/Alerts",
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            color = ArkColor.TextPrimary
+        )
+        val now = OffsetDateTime.now()
+
+        fun formatTime(date: OffsetDateTime): String {
+            val elapsed = DateFormatUtils.latestCheckElapsedTime(ctx, now, date)
+            val time = DateFormatUtils.latestCheckTime(date)
+            var final = ""
+            elapsed?.let {
+                final = "$elapsed ago · "
+            }
+            final += time
+            return final
+        }
+
+
+        val fiatDesc = state.latestFiatRefresh?.let {
+            formatTime(it)
+        } ?: "N/A"
+        val cryptoDesc = state.latestCryptoRefresh?.let {
+            formatTime(it)
+        } ?: "N/A"
+        val pairAlertDesc = state.latestPairAlertCheck?.let {
+            formatTime(it)
+        } ?: "N/A"
+        LatestRefresh(
+            title = "Latest fiat rates refresh",
+            description = fiatDesc
+        )
+        LatestRefresh(
+            title = "Latest crypto rates refresh",
+            description = cryptoDesc
+        )
+        LatestRefresh(
+            title = "Latest alerts check",
+            description = pairAlertDesc
+        )
+        AppHorDiv(modifier = Modifier.padding(top = 20.dp))
+        Row(
+            modifier = Modifier.padding(top = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                modifier = Modifier.padding(16.dp),
-                text = stringResource(id = R.string.privacy_policy),
-                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+                text = "Crash reports",
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                color = ArkColor.TextPrimary
             )
-            HorizontalDivider()
+            Switch(checked = true, onCheckedChange = {})
         }
-
-    }
-}
-
-@Composable
-private fun Settings(vm: SettingsViewModel) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
-        SettingsGroup(name = R.string.currencies) {
-            SettingsNumberComp(
-                name = R.string.fiat_fiat_rate_round,
-                state = vm.currencyRoundPrefs[PreferenceKey.FiatFiatRateRound]!!,
-                onSave = { state, value ->
-                    vm.onRoundSave(
-                        PreferenceKey.FiatFiatRateRound,
-                        state,
-                        value
-                    )
-                },
-                inputFilter = { input -> input.filter { it.isDigit() } },
-                onCheck = { true }
-            )
-            SettingsNumberComp(
-                name = R.string.crypto_crypto_rate_round,
-                state = vm.currencyRoundPrefs[PreferenceKey.CryptoCryptoRateRound]!!,
-                onSave = { state, value ->
-                    vm.onRoundSave(
-                        PreferenceKey.CryptoCryptoRateRound,
-                        state,
-                        value
-                    )
-                },
-                inputFilter = { input -> input.filter { it.isDigit() } },
-                onCheck = { true }
-            )
-            SettingsNumberComp(
-                name = R.string.fiat_crypto_rate_round,
-                state = vm.currencyRoundPrefs[PreferenceKey.FiatCryptoRateRound]!!,
-                onSave = { state, value ->
-                    vm.onRoundSave(
-                        PreferenceKey.FiatCryptoRateRound,
-                        state,
-                        value
-                    )
-                },
-                inputFilter = { input -> input.filter { it.isDigit() } },
-                onCheck = { true }
-            )
-        }
-        SettingsGroup(name = R.string.privacy) {
-            PrivacyPolicy()
-            if (!BuildConfig.GOOGLE_PLAY_BUILD) {
-                SettingsSwitchComp(
-                    name = R.string.crash_reports,
-                    state = vm.boolPrefs[PreferenceKey.CrashReport]!!
-                ) { state ->
-                    vm.onToggle(
-                        PreferenceKey.CrashReport,
-                        state
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun SettingsGroup(
-    @StringRes name: Int,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(stringResource(id = name), style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(4),
-        ) {
-            Column {
-                content()
-            }
-        }
-    }
-}
-
-@Composable
-private fun SettingsSwitchComp(
-    @DrawableRes icon: Int? = null,
-    @StringRes iconDesc: Int? = null,
-    @StringRes name: Int,
-    state: MutableState<Boolean>,
-    onClick: (state: MutableState<Boolean>) -> Unit
-) {
-    Surface(
-        color = Color.Transparent,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        onClick = {
-            onClick(state)
-        },
-    ) {
-        Column {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    icon?.let {
-                        Icon(
-                            painterResource(id = icon),
-                            contentDescription = iconDesc
-                                ?.let { stringResource(id = iconDesc) },
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                    Text(
-                        text = stringResource(id = name),
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Start,
-                    )
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Switch(
-                    checked = state.value,
-                    onCheckedChange = { onClick(state) }
-                )
-            }
-            Divider()
-        }
-    }
-}
-
-@Composable
-fun SettingsNumberComp(
-    @DrawableRes icon: Int? = null,
-    @StringRes iconDesc: Int? = null,
-    @StringRes name: Int,
-    state: MutableState<String>,
-    onSave: (MutableState<String>, String) -> Unit,
-    inputFilter: (String) -> String, // input filter for the preference
-    onCheck: (String) -> Boolean
-) {
-
-    var isDialogShown by remember {
-        mutableStateOf(false)
-    }
-
-    if (isDialogShown) {
-        Dialog(onDismissRequest = { isDialogShown = isDialogShown.not() }) {
-            TextEditNumberDialog(name, state, inputFilter, onSave, onCheck) {
-                isDialogShown = isDialogShown.not()
-            }
-        }
-    }
-
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        onClick = {
-            isDialogShown = isDialogShown.not()
-        },
-    ) {
-        Column {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                icon?.let {
-                    Icon(
-                        painterResource(id = icon),
-                        contentDescription = iconDesc?.let { stringResource(id = iconDesc) },
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Column(modifier = Modifier.padding(8.dp)) {
-                    Text(
-                        text = stringResource(id = name),
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Start,
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = state.value,
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.Start,
-                    )
-                }
-            }
-            Divider()
-        }
-    }
-}
-
-@Composable
-private fun TextEditNumberDialog(
-    @StringRes name: Int,
-    state: MutableState<String>,
-    inputFilter: (String) -> String, // filters out not needed letters 
-    onSave: (MutableState<String>, String) -> Unit,
-    onCheck: (String) -> Boolean,
-    onDismiss: () -> Unit
-) {
-
-    var currentInput by remember {
-        mutableStateOf(state.value)
-    }
-
-    var isValid by remember {
-        mutableStateOf(onCheck(state.value))
-    }
-
-    Surface(
-        shape = RoundedCornerShape(10.dp),
-        color = Color.White
-    ) {
-
-        Column(
+        AppHorDiv(modifier = Modifier.padding(top = 20.dp))
+        Row(
             modifier = Modifier
-                .wrapContentHeight()
                 .fillMaxWidth()
-                .padding(16.dp)
+                .clickable { navigator.navigate(AboutScreenDestination) }
+                .padding(vertical = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(stringResource(id = name))
-            Spacer(modifier = Modifier.height(8.dp))
-            TextField(currentInput,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                onValueChange = {
-                    // filters the input and removes redundant numbers
-                    val filteredText = inputFilter(it)
-                    isValid = onCheck(filteredText)
-                    currentInput = filteredText
-                })
-            Row {
-                Spacer(modifier = Modifier.weight(1f))
-                Button(onClick = {
-                    onSave(state, currentInput)
-                    onDismiss()
-                }, enabled = isValid) {
-                    Text("Save")
-                }
-            }
+            Icon(
+                painter = painterResource(R.drawable.ic_info),
+                contentDescription = "",
+                tint = ArkColor.TextTertiary
+            )
+            Text(
+                modifier = Modifier.padding(start = 6.dp),
+                text = "About",
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                color = ArkColor.TextTertiary
+            )
         }
+        AppHorDiv(modifier = Modifier)
     }
+}
+
+@Composable
+private fun LatestRefresh(title: String, description: String) {
+    Column(modifier = Modifier.padding(top = 20.dp)) {
+        Text(
+            modifier = Modifier,
+            text = title,
+            fontWeight = FontWeight.Medium,
+            color = ArkColor.TextSecondary
+        )
+        Text(
+            modifier = Modifier,
+            text = description,
+            color = ArkColor.TextTertiary
+        )
+    }
+}
+
+private fun mapElapsedTime(now: OffsetDateTime, date: OffsetDateTime): String? {
+    var dur = Duration.between(date, now)
+    val days = dur.toDays()
+    if (days > 0)
+        return null
+
+    val hours = dur.toHours()
+    if (hours > 0)
+        return "$hours hours"
+    dur = dur.minusHours(hours)
+
+    val minutes = dur.toMinutes()
+    if (minutes > 0)
+        return "$minutes minutes"
+    dur = dur.minusMinutes(hours)
+
+    val seconds = dur.seconds
+    return "$seconds seconds"
 }
