@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -90,20 +91,20 @@ fun GroupCreateDialogContent(
         ) {
             Text(
                 modifier = Modifier.padding(top = 28.dp),
-                text = "Create Group",
+                text = stringResource(R.string.group_create_group),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = ArkColor.TextPrimary
             )
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = "Please enter a name for this group.",
+                text = stringResource(R.string.group_please_enter_a_name_for_this_group),
                 color = ArkColor.TextTertiary
             )
 
             Text(
                 modifier = Modifier.padding(top = 20.dp),
-                text = "Group name",
+                text = stringResource(R.string.group_name),
                 fontWeight = FontWeight.Medium,
                 color = ArkColor.TextSecondary
             )
@@ -127,7 +128,7 @@ fun GroupCreateDialogContent(
                     ),
                 placeholder = {
                     Text(
-                        text = "e.g. Group 1",
+                        text = stringResource(R.string.e_g_group_1),
                         fontSize = 16.sp,
                         color = ArkColor.TextPlaceHolder
                     )
@@ -145,7 +146,7 @@ fun GroupCreateDialogContent(
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
-                    text = "Confirm",
+                    text = stringResource(R.string.confirm),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
@@ -164,7 +165,7 @@ fun GroupCreateDialogContent(
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
-                    text = "Cancel",
+                    text = stringResource(R.string.cancel),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = ArkColor.FGSecondary

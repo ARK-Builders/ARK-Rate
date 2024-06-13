@@ -1,7 +1,6 @@
 package dev.arkbuilders.rate.presentation.settings
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,8 +47,8 @@ fun AboutScreen(navigator: DestinationsNavigator) {
 
     QRCryptoDialog(
         visible = btcDialogVisible,
-        title = "Donate using Bitcoin",
-        wallet = "bc1qx8n9r4uwpgrhgnamt2uew53lmrxd8tuevp7lv5",
+        title = stringResource(R.string.about_donate_btc),
+        wallet = stringResource(R.string.about_btc_wallet),
         fileName = "ArkQrBtc.jpg",
         qrBitmap = R.drawable.qr_btc
     ) {
@@ -59,8 +57,8 @@ fun AboutScreen(navigator: DestinationsNavigator) {
 
     QRCryptoDialog(
         visible = ethDialogVisible,
-        title = "Donate using Ethereum",
-        wallet = "0x9765C5aC38175BFbd2dC7a840b63e50762B80a1b",
+        title = stringResource(R.string.about_donate_eth),
+        wallet = stringResource(R.string.about_eth_wallet),
         fileName = "ArkQrEth.jpg",
         qrBitmap = R.drawable.qr_eth
     ) {
@@ -71,7 +69,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ) {
-        AppTopBarBack(title = "About", navigator)
+        AppTopBarBack(title = stringResource(R.string.about), navigator)
         AppHorDiv()
         Column(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -108,13 +106,13 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                     painterResource(R.drawable.ic_about_site),
                     text = "Website"
                 ) {
-                    ctx.openLink("https://www.ark-builders.dev/")
+                    ctx.openLink(ctx.getString(R.string.ark_website_url))
                 }
                 SocialLink(
                     painterResource(R.drawable.ic_about_telegram),
                     text = "Telegram"
                 ) {
-                    ctx.openLink("https://t.me/ark_builders")
+                    ctx.openLink(ctx.getString(R.string.ark_tg_url))
                 }
                 SocialLink(
                     painterResource(R.drawable.ic_about_discord),
@@ -150,28 +148,28 @@ fun AboutScreen(navigator: DestinationsNavigator) {
             Column {
                 Text(
                     modifier = Modifier.padding(top = 20.dp),
-                    text = "Support us",
+                    text = stringResource(R.string.about_support_us),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = ArkColor.TextPrimary
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
-                    text = "We greatly appreciate every bit of support!",
+                    text = stringResource(R.string.about_we_greatly_appreciate_every_bit_of_support),
                     color = ArkColor.TextTertiary
                 )
                 Row(modifier = Modifier.padding(top = 12.dp)) {
                     DonateBtn(
                         modifier = Modifier,
                         icon = painterResource(dev.arkbuilders.rate.cryptoicons.R.drawable.btc),
-                        text = "Donate using BTC",
+                        text = stringResource(R.string.about_donate_using_btc),
                     ) {
                         btcDialogVisible = true
                     }
                     DonateBtn(
                         modifier = Modifier.padding(start = 12.dp),
                         icon = painterResource(dev.arkbuilders.rate.cryptoicons.R.drawable.eth),
-                        text = "Donate using ETH"
+                        text = stringResource(R.string.about_donate_using_eth)
                     ) {
                         ethDialogVisible = true
                     }
@@ -180,23 +178,23 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                     DonateBtn(
                         modifier = Modifier,
                         icon = painterResource(R.drawable.ic_about_patreon),
-                        text = "Donate on Patreon"
+                        text = stringResource(R.string.about_donate_on_patreon)
                     ) {
-                        ctx.openLink("https://www.patreon.com/ARKBuilders")
+                        ctx.openLink(ctx.getString(R.string.about_ark_patreon_url))
                     }
                     DonateBtn(
                         modifier = Modifier.padding(start = 12.dp),
                         icon = painterResource(R.drawable.ic_about_coffee),
-                        text = "Buy as a coffee"
+                        text = stringResource(R.string.about_buy_as_a_coffee)
                     ) {
-                        ctx.openLink("https://buymeacoffee.com/arkbuilders")
+                        ctx.openLink(ctx.getString(R.string.about_ark_buy_coffee_url))
                     }
                 }
                 AppHorDiv(modifier = Modifier.padding(top = 20.dp))
                 Row(modifier = Modifier.padding(top = 12.dp, bottom = 50.dp)) {
                     OutlinedButton(
                         modifier = Modifier,
-                        onClick = { ctx.openLink("https://www.ark-builders.dev/contribute/?tab=goodFirstIssue") },
+                        onClick = { ctx.openLink(ctx.getString(R.string.ark_contribute_url)) },
                         border = BorderStroke(
                             width = 1.dp,
                             color = ArkColor.BorderSecondary
@@ -206,7 +204,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                     ) {
                         Text(
                             modifier = Modifier.padding(8.dp),
-                            text = "Discover issues to work on",
+                            text = stringResource(R.string.about_discover_issues_to_work_on),
                             color = ArkColor.TextSecondary,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium
@@ -225,7 +223,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                     ) {
                         Text(
                             modifier = Modifier.padding(8.dp),
-                            text = "See open bounties",
+                            text = stringResource(R.string.about_see_open_bounties),
                             color = ArkColor.TextPlaceHolder,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium

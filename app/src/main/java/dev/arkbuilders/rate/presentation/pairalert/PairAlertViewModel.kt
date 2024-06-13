@@ -50,13 +50,14 @@ class PairAlertViewModel(
                 return@intent
 
             pairAlertRepo.getAllFlow().onEach { all ->
-                val pages = all.groupBy { it.group }.map { (group, pairAlertList) ->
-                    val oneTimeTriggered =
-                        pairAlertList.filter { it.triggered() && it.oneTimeNotRecurrent && !it.enabled }
-                    val created = pairAlertList - oneTimeTriggered
+                val pages = all.reversed().groupBy { it.group }
+                    .map { (group, pairAlertList) ->
+                        val oneTimeTriggered =
+                            pairAlertList.filter { it.triggered() && it.oneTimeNotRecurrent && !it.enabled }
+                        val created = pairAlertList - oneTimeTriggered
 
-                    PairAlertScreenPage(group, created, oneTimeTriggered)
-                }
+                        PairAlertScreenPage(group, created, oneTimeTriggered)
+                    }
                 intent {
                     reduce {
                         state.copy(pages = pages, initialized = true)

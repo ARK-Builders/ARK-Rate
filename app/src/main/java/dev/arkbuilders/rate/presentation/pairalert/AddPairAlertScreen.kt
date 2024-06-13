@@ -37,7 +37,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntOffset
@@ -68,6 +70,7 @@ fun AddPairAlertScreen(
     pairAlertId: Long? = null,
     navigator: DestinationsNavigator,
 ) {
+    val ctx = LocalContext.current
     val viewModel: AddPairAlertViewModel =
         viewModel(
             factory = DIManager.component.addPairAlertVMFactory().create(pairAlertId)
@@ -80,11 +83,21 @@ fun AddPairAlertScreen(
             AddPairAlertScreenEffect.NavigateBack -> navigator.popBackStack()
             is AddPairAlertScreenEffect.NotifyPairAdded -> {
                 val pair = effect.pair
-                val aboveOrBelow = if (pair.above()) "above" else "below"
+                val aboveOrBelow =
+                    if (pair.above()) ctx.getString(R.string.above)
+                    else ctx.getString(R.string.below)
                 val visuals = NotifyAddedSnackbarVisuals(
-                    title = "Alert for ${pair.targetCode} has been created",
-                    description = "You’ll get notified when ${pair.targetCode} " +
-                            "price is $aboveOrBelow ${CurrUtils.prepareToDisplay(pair.targetPrice)} ${pair.baseCode}"
+                    title = ctx.getString(
+                        R.string.alert_snackbar_new_title,
+                        pair.targetCode
+                    ),
+                    description = ctx.getString(
+                        R.string.alert_snackbar_new_desc,
+                        pair.targetCode,
+                        aboveOrBelow,
+                        CurrUtils.prepareToDisplay(pair.targetPrice),
+                        pair.baseCode
+                    )
                 )
                 AppSharedFlow.ShowAddedSnackbarPairAlert.flow.emit(visuals)
             }
@@ -104,7 +117,10 @@ fun AddPairAlertScreen(
 
     Column {
         Column(modifier = Modifier.weight(1f)) {
-            AppTopBarBack(title = "Add new alert", navigator = navigator)
+            AppTopBarBack(
+                title = stringResource(R.string.add_new_alert),
+                navigator = navigator
+            )
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
             PriceOrPercent(state, viewModel::onPriceOrPercentChanged)
             EditCondition(state, viewModel, navigator)
@@ -121,7 +137,8 @@ fun AddPairAlertScreen(
                         addGroupBtnWidth = it.size.width
                     },
                 onClick = { showGroupsPopup = !showGroupsPopup },
-                title = state.group?.let { state.group } ?: "Add group",
+                title = state.group?.let { state.group }
+                    ?: stringResource(R.string.add_group),
                 icon = painterResource(id = R.drawable.ic_group)
             )
             if (showGroupsPopup) {
@@ -157,7 +174,7 @@ fun AddPairAlertScreen(
                 shape = RoundedCornerShape(8.dp),
                 enabled = state.finishEnabled
             ) {
-                Text(text = "Create Alert")
+                Text(text = stringResource(R.string.create_alert))
             }
         }
     }
@@ -179,7 +196,7 @@ private fun PriceOrPercent(
             modifier = Modifier
                 .padding(6.dp)
                 .weight(1f),
-            title = "By price",
+            title = stringResource(R.string.by_price),
             enabled = state.priceOrPercent.isLeft()
         ) {
             onPriceOrPercentChanged(true)
@@ -188,7 +205,7 @@ private fun PriceOrPercent(
             modifier = Modifier
                 .padding(6.dp)
                 .weight(1f),
-            title = "By percent",
+            title = stringResource(R.string.by_percent),
             enabled = state.priceOrPercent.isRight()
         ) {
             onPriceOrPercentChanged(false)
@@ -323,6 +340,7 @@ private fun EditCondition(
     viewModel: AddPairAlertViewModel,
     navigator: DestinationsNavigator
 ) {
+    val ctx = LocalContext.current
     Column(
         modifier = Modifier.padding(top = 48.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -332,7 +350,10 @@ private fun EditCondition(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = "When", color = ArkColor.TextTertiary)
+            Text(
+                text = stringResource(R.string.when_),
+                color = ArkColor.TextTertiary
+            )
             DropDownBtn(
                 modifier = Modifier.padding(start = 8.dp),
                 title = state.targetCode
@@ -341,7 +362,7 @@ private fun EditCondition(
             }
             Text(
                 modifier = Modifier.padding(start = 8.dp),
-                text = "price is",
+                text = stringResource(R.string.price_is),
                 color = ArkColor.TextTertiary
             )
             Row(
@@ -363,7 +384,8 @@ private fun EditCondition(
                 )
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
-                    text = if (state.aboveNotBelow) "above" else "below",
+                    text = if (state.aboveNotBelow) ctx.getString(R.string.above)
+                    else ctx.getString(R.string.below),
                     color = if (state.aboveNotBelow) ArkColor.PairAlertInc else ArkColor.PairAlertDec
                 )
             }
@@ -378,7 +400,7 @@ private fun EditCondition(
             if (!state.oneTimeNotRecurrent) {
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "every ",
+                    text = stringResource(R.string.every),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextPrimary
@@ -425,7 +447,10 @@ private fun EditCondition(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Current price = ${CurrUtils.prepareToDisplay(state.currentPrice)}",
+                text = stringResource(
+                    R.string.alert_current_price,
+                    CurrUtils.prepareToDisplay(state.currentPrice)
+                ),
                 color = ArkColor.TextTertiary
             )
             DropDownBtn(
@@ -455,7 +480,7 @@ private fun OneTimeOrRecurrent(
             modifier = Modifier
                 .padding(6.dp)
                 .weight(1f),
-            title = "One-Time",
+            title = stringResource(R.string.one_time),
             enabled = oneTimeNotRecurrent
         ) {
             onOneTimeChanged(true)
@@ -464,7 +489,8 @@ private fun OneTimeOrRecurrent(
             modifier = Modifier
                 .padding(6.dp)
                 .weight(1f),
-            title = if (byPrice) "Every" else "Recurrent",
+            title = if (byPrice) stringResource(R.string.every)
+            else stringResource(R.string.recurrent),
             enabled = !oneTimeNotRecurrent
         ) {
             onOneTimeChanged(false)

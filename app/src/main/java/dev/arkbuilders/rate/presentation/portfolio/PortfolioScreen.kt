@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -214,7 +215,7 @@ private fun GroupPage(
                 item {
                     Text(
                         modifier = Modifier.padding(top = 32.dp),
-                        text = "Total Assets",
+                        text = stringResource(R.string.portfolio_total_assets),
                         color = ArkColor.TextTertiary,
                         fontWeight = FontWeight.Medium
                     )
@@ -318,14 +319,14 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),
-                text = "Your Portfolio is Empty",
+                text = stringResource(R.string.portfolio_empty_title),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
                 color = ArkColor.TextPrimary
             )
             Text(
                 modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
-                text = "Add currencies manually to track and compare. Your portfolio helps you monitor and manage your favorite or frequently used currencies.",
+                text = stringResource(R.string.portfolio_empty_desc),
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 color = ArkColor.TextTertiary,

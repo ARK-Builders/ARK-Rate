@@ -86,7 +86,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
 
     Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 32.dp)) {
         Text(
-            text = "Quick/Portfolio/Alerts",
+            text = stringResource(R.string.settings_quick_portfolio_alerts),
             fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp,
             color = ArkColor.TextPrimary
@@ -98,7 +98,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             val time = DateFormatUtils.latestCheckTime(date)
             var final = ""
             elapsed?.let {
-                final = "$elapsed ago · "
+                final = ctx.getString(R.string.settings_elapsed_ago, elapsed)
             }
             final += time
             return final
@@ -107,23 +107,23 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
 
         val fiatDesc = state.latestFiatRefresh?.let {
             formatTime(it)
-        } ?: "N/A"
+        } ?: stringResource(R.string.n_a)
         val cryptoDesc = state.latestCryptoRefresh?.let {
             formatTime(it)
-        } ?: "N/A"
+        } ?: stringResource(R.string.n_a)
         val pairAlertDesc = state.latestPairAlertCheck?.let {
             formatTime(it)
-        } ?: "N/A"
+        } ?: stringResource(R.string.n_a)
         LatestRefresh(
-            title = "Latest fiat rates refresh",
+            title = stringResource(R.string.settings_latest_fiat_rates_refresh),
             description = fiatDesc
         )
         LatestRefresh(
-            title = "Latest crypto rates refresh",
+            title = stringResource(R.string.settings_latest_crypto_rates_refresh),
             description = cryptoDesc
         )
         LatestRefresh(
-            title = "Latest alerts check",
+            title = stringResource(R.string.settings_latest_alerts_check),
             description = pairAlertDesc
         )
         AppHorDiv(modifier = Modifier.padding(top = 20.dp))
@@ -133,7 +133,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = "Crash reports",
+                text = stringResource(R.string.crash_reports),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.sp,
                 color = ArkColor.TextPrimary
@@ -155,7 +155,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             )
             Text(
                 modifier = Modifier.padding(start = 6.dp),
-                text = "About",
+                text = stringResource(R.string.about),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
                 color = ArkColor.TextTertiary

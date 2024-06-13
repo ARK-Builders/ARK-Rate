@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -268,9 +269,18 @@ private fun PairAlertItem(
                 color = ArkColor.TextPrimary
             )
             Text(
-                text = "${if (pairAlert.targetPrice > pairAlert.startPrice) "Above" else "Below"} " +
-                        "${CurrUtils.prepareToDisplay(pairAlert.targetPrice)} " +
-                        "${pairAlert.baseCode}",
+                text = buildString {
+                    append(
+                        "${
+                            if (pairAlert.above()) 
+                                stringResource(R.string.above_c) 
+                            else 
+                                stringResource(R.string.below_c)
+                        } "
+                    )
+                    append("${CurrUtils.prepareToDisplay(pairAlert.targetPrice)} ")
+                    append(pairAlert.baseCode)
+                },
                 color = ArkColor.TextTertiary
             )
             if (oneTimeTriggered) {
@@ -285,7 +295,12 @@ private fun PairAlertItem(
                         DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
                     val timeStr = timeFormat.format(date)
                     Text(
-                        text = "Notified on $monthStr ${date.dayOfMonth} - $timeStr",
+                        text = stringResource(
+                            R.string.alert_notified_on,
+                            monthStr,
+                            date.dayOfMonth,
+                            timeStr
+                        ),
                         color = ArkColor.TextTertiary
                     )
                 }
@@ -322,14 +337,14 @@ private fun Empty(navigator: DestinationsNavigator) {
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),
-                text = "No Alerts at the Moment",
+                text = stringResource(R.string.alert_empty_title),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
                 color = ArkColor.TextPrimary
             )
             Text(
                 modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
-                text = "Stay updated! We'll post any important notifications or changes in exchange rates here.",
+                text = stringResource(R.string.alert_empty_desc),
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 color = ArkColor.TextTertiary,
@@ -346,7 +361,7 @@ private fun Empty(navigator: DestinationsNavigator) {
                     painter = painterResource(id = R.drawable.ic_add),
                     contentDescription = ""
                 )
-                Text(text = "New Alert")
+                Text(text = stringResource(R.string.new_alert))
             }
         }
     }
