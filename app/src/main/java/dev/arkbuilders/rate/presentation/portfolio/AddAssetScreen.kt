@@ -19,7 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -56,6 +58,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun AddAssetScreen(
     navigator: DestinationsNavigator,
 ) {
+    val ctx = LocalContext.current
     val viewModel: AddAssetViewModel =
         viewModel(factory = DIManager.component.addCurrencyVMFactory())
 
@@ -71,8 +74,11 @@ fun AddAssetScreen(
                     }
                 AppSharedFlow.ShowAddedSnackbarPortfolio.flow.emit(
                     NotifyAddedSnackbarVisuals(
-                        "New Asset has been added",
-                        "You added $added to your asset"
+                        ctx.getString(R.string.portfolio_snackbar_new_title),
+                        ctx.getString(
+                            R.string.portfolio_snackbar_new_desc,
+                            added
+                        )
                     )
                 )
             }
@@ -124,7 +130,10 @@ private fun Content(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.weight(1f)) {
-            AppTopBarBack(title = "Add new asset", navigator = navigator)
+            AppTopBarBack(
+                title = stringResource(R.string.add_new_asset),
+                navigator = navigator
+            )
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
             Currencies(state, onAssetValueChanged, onAssetRemove, onCodeChange)
             Button(
@@ -150,7 +159,7 @@ private fun Content(
                         bottom = 10.dp,
                         end = 18.dp
                     ),
-                    text = "New Currency",
+                    text = stringResource(R.string.new_currency),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
                 )
@@ -163,7 +172,8 @@ private fun Content(
                         addGroupBtnWidth = it.size.width
                     },
                 onClick = { showGroupsPopup = true },
-                title = state.group?.let { state.group } ?: "Add group",
+                title = state.group?.let { state.group }
+                    ?: stringResource(R.string.add_group),
                 icon = painterResource(id = R.drawable.ic_group)
             )
             if (showGroupsPopup) {
@@ -191,15 +201,16 @@ private fun Content(
         }
         Column {
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
-            Button(modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 onClick = {
                     onAddAsset()
                 },
                 shape = RoundedCornerShape(8.dp),
             ) {
-                Text(text = "Add New Asset")
+                Text(text = stringResource(R.string.add_new_asset))
             }
         }
     }
@@ -268,7 +279,7 @@ fun InputCurrency(
                 modifier = Modifier.padding(start = 12.dp),
                 value = amount.value,
                 onValueChange = { onAssetValueChanged(pos, it) },
-                placeholder = "Input value",
+                placeholder = stringResource(R.string.input_value),
                 keyboardOptions = KeyboardOptions.Default
                     .copy(keyboardType = KeyboardType.Number)
             )

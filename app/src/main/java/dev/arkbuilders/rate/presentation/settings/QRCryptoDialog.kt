@@ -13,13 +13,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -34,8 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -127,16 +121,16 @@ private fun Content(
                 )
             }
             val emailText = buildAnnotatedString {
-                append("Send us the transaction id by email ")
+                append(stringResource(R.string.about_send_email_part_1))
                 pushStringAnnotation(
                     tag = "email",
-                    annotation = "support@ark-builders.dev"
+                    annotation = ctx.getString(R.string.ark_support_email)
                 )
                 withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
-                    append("support@ark-builders.dev")
+                    append(ctx.getString(R.string.ark_support_email))
                 }
                 pop()
-                append(" to receive premium support. We’ll make our best to help you with any issue you encounter while using our Software.")
+                append(stringResource(R.string.about_send_email_part_2))
             }
             ClickableText(
                 modifier = Modifier.padding(top = 4.dp),
@@ -147,7 +141,7 @@ private fun Content(
                     .getStringAnnotations(tag = "email", offset, offset)
                     .firstOrNull()
                     ?.let {
-                        ctx.openEmail("support@ark-builders.dev")
+                        ctx.openEmail(ctx.getString(R.string.ark_support_email))
                     }
             }
             Image(
@@ -186,7 +180,11 @@ private fun Content(
                         .clickable {
                             clipboardManager.setText(AnnotatedString(wallet))
                             Toast
-                                .makeText(ctx, "Wallet copied!", Toast.LENGTH_SHORT)
+                                .makeText(
+                                    ctx,
+                                    ctx.getString(R.string.about_wallet_copied),
+                                    Toast.LENGTH_SHORT
+                                )
                                 .show()
                         }
                         .padding(
@@ -202,7 +200,7 @@ private fun Content(
                     )
                     Text(
                         modifier = Modifier.padding(start = 6.dp),
-                        text = "Copy",
+                        text = stringResource(R.string.copy),
                         color = ArkColor.TextSecondary,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -226,7 +224,7 @@ private fun Content(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = "Download QR Image",
+                    text = stringResource(R.string.about_download_qr_image),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
                     color = ArkColor.TextSecondary

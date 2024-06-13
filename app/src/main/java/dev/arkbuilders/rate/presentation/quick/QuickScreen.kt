@@ -43,6 +43,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -219,7 +220,7 @@ private fun GroupPage(
                 item {
                     Text(
                         modifier = Modifier.padding(start = 16.dp, top = 24.dp),
-                        text = "Pairs",
+                        text = stringResource(R.string.pairs),
                         color = ArkColor.TextTertiary,
                         fontWeight = FontWeight.Medium
                     )
@@ -237,7 +238,7 @@ private fun GroupPage(
                 item {
                     Text(
                         modifier = Modifier.padding(start = 16.dp, top = 24.dp),
-                        text = "Currencies",
+                        text = stringResource(R.string.currencies),
                         color = ArkColor.TextTertiary,
                         fontWeight = FontWeight.Medium
                     )
@@ -399,14 +400,14 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),
-                text = "Ready for calculation!",
+                text = stringResource(R.string.quick_empty_title),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
                 color = ArkColor.TextPrimary
             )
             Text(
                 modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
-                text = "Select your currencies and enter an amount to start converting. Your exchange results will appear here.",
+                text = stringResource(R.string.quick_empty_desc),
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 color = ArkColor.TextTertiary,
@@ -423,7 +424,7 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
                     painter = painterResource(id = R.drawable.ic_add),
                     contentDescription = ""
                 )
-                Text(text = "New Pair")
+                Text(text = stringResource(R.string.new_pair))
             }
         }
     }
