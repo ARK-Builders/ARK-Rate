@@ -11,13 +11,13 @@ import androidx.room.RoomDatabase
         RoomQuickPair::class,
         RoomCodeUseStat::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = true,
 )
 abstract class Database : RoomDatabase() {
     abstract fun assetsDao(): PortfolioDao
     abstract fun rateDao(): CurrencyRateDao
-    abstract fun fetchTimestampDao(): FetchTimestampDao
+    abstract fun fetchTimestampDao(): TimestampDao
     abstract fun pairAlertDao(): PairAlertDao
     abstract fun quickDao(): QuickPairDao
     abstract fun codeUseStatDao(): CodeUseStatDao
