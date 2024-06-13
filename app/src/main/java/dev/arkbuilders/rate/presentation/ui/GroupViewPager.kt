@@ -20,8 +20,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import kotlinx.coroutines.launch
 
@@ -62,7 +64,7 @@ fun GroupViewPager(
                         selectedContentColor = Color.Transparent
                     ) {
                         Text(
-                            text = group ?: "Default",
+                            text = group ?: stringResource(R.string.group_default_name),
                             color = if (selected) ArkColor.Teal700 else ArkColor.TextQuarterary,
                             fontWeight = FontWeight.SemiBold,
                         )

@@ -44,21 +44,6 @@ class PrefsImpl @Inject constructor(val context: Context): Prefs {
 
     private fun <T> resolveKey(key: PreferenceKey<T>): Preferences.Key<T> {
         val result = when (key) {
-            PreferenceKey.QuickScreenSortedByKey ->
-                intPreferencesKey("quick_screen_sorted_by")
-
-            PreferenceKey.QuickScreenShowAsKey ->
-                intPreferencesKey("quick_screen_show_as")
-
-            PreferenceKey.FiatFiatRateRound ->
-                intPreferencesKey("round_fiat_fiat")
-
-            PreferenceKey.CryptoCryptoRateRound ->
-                intPreferencesKey("round_crypto_crypto")
-
-            PreferenceKey.FiatCryptoRateRound ->
-                intPreferencesKey("round_crypto_fiat")
-
             PreferenceKey.CrashReport -> booleanPreferencesKey("crash_report")
 
             PreferenceKey.BaseCurrencyCode -> stringPreferencesKey("baseCurrencyCode")

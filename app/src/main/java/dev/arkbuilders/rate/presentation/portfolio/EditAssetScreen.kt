@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -84,7 +85,10 @@ private fun Content(
     }
 
     Column {
-        AppTopBarBack(title = "Asset detail", navigator = navigator)
+        AppTopBarBack(
+            title = stringResource(R.string.asset_detail),
+            navigator = navigator
+        )
         AppHorDiv()
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             Text(
@@ -143,7 +147,7 @@ private fun Content(
                 )
                 Text(
                     modifier = Modifier.padding(start = 6.dp),
-                    text = "Change base currency",
+                    text = stringResource(R.string.change_base_currency),
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -154,7 +158,7 @@ private fun Content(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Market Capitalization",
+                    text = stringResource(R.string.market_capitalization),
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextTertiary
                 )
@@ -173,7 +177,7 @@ private fun Content(
             }
             Text(
                 modifier = Modifier.padding(top = 8.dp),
-                text = "N/A",
+                text = stringResource(R.string.n_a),
                 fontWeight = FontWeight.SemiBold,
                 color = ArkColor.TextPrimary
             )
@@ -183,7 +187,7 @@ private fun Content(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Value of Circulating Currency",
+                    text = stringResource(R.string.value_of_circulating_currency),
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextTertiary
                 )
@@ -202,7 +206,7 @@ private fun Content(
             }
             Text(
                 modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
-                text = "N/A",
+                text = stringResource(R.string.n_a),
                 fontWeight = FontWeight.SemiBold,
                 color = ArkColor.TextPrimary
             )

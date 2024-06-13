@@ -5,7 +5,6 @@ package dev.arkbuilders.rate.presentation.quick
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,16 +16,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,11 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -78,6 +74,7 @@ fun AddQuickScreen(
     newCode: CurrencyCode? = null,
     navigator: DestinationsNavigator
 ) {
+    val ctx = LocalContext.current
     val viewModel: AddQuickViewModel =
         viewModel(
             factory = DIManager.component.addQuickVMFactory()
@@ -91,11 +88,18 @@ fun AddQuickScreen(
             AddQuickScreenEffect.NavigateBack -> navigator.popBackStack()
             is AddQuickScreenEffect.NotifyPairAdded -> {
                 val added =
-                    "${effect.pair.from} to ${effect.pair.to.joinToString { it }}"
+                    ctx.getString(
+                        R.string.quick_snackbar_new_added_to,
+                        effect.pair.from,
+                        effect.pair.to.joinToString { it }
+                    )
                 AppSharedFlow.ShowAddedSnackbarQuick.flow.emit(
                     NotifyAddedSnackbarVisuals(
-                        title = "New pair has been created",
-                        description = "You added $added pair "
+                        title = ctx.getString(R.string.quick_snackbar_new_title),
+                        description = ctx.getString(
+                            R.string.quick_snackbar_new_desc,
+                            added
+                        )
                     )
                 )
             }
@@ -151,7 +155,10 @@ private fun Content(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.weight(1f)) {
-            AppTopBarBack(title = "Add new pair", navigator = navigator)
+            AppTopBarBack(
+                title = stringResource(R.string.add_new_pair),
+                navigator = navigator
+            )
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
             Currencies(state, onAmountChanged, onCurrencyRemove, onCodeChange)
             Button(
@@ -177,7 +184,7 @@ private fun Content(
                         bottom = 10.dp,
                         end = 18.dp
                     ),
-                    text = "New Currency",
+                    text = stringResource(R.string.new_currency),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
                 )
@@ -190,7 +197,8 @@ private fun Content(
                         addGroupBtnWidth = it.size.width
                     },
                 onClick = { showGroupsPopup = true },
-                title = state.group?.let { state.group } ?: "Add group",
+                title = state.group?.let { state.group }
+                    ?: stringResource(R.string.add_group),
                 icon = painterResource(id = R.drawable.ic_group)
             )
             if (showGroupsPopup) {
@@ -228,7 +236,7 @@ private fun Content(
                 shape = RoundedCornerShape(8.dp),
                 enabled = state.finishEnabled
             ) {
-                Text(text = "Add Pair")
+                Text(text = stringResource(R.string.save))
             }
         }
     }
@@ -321,7 +329,7 @@ private fun FromInput(
                 modifier = Modifier.padding(start = 12.dp),
                 value = amount,
                 onValueChange = { onAmountChanged(it) },
-                placeholder = "Input value",
+                placeholder = stringResource(R.string.input_value),
                 keyboardOptions = KeyboardOptions.Default
                     .copy(keyboardType = KeyboardType.Number)
             )
@@ -373,7 +381,7 @@ private fun ToResult(
             if (amount == "") {
                 Text(
                     modifier = Modifier.padding(start = 12.dp),
-                    text = "Result",
+                    text = stringResource(R.string.result),
                     color = ArkColor.TextPlaceHolder,
                     fontSize = 16.sp
                 )
