@@ -1,5 +1,10 @@
+@file:OptIn(ExperimentalMaterialNavigationApi::class,
+    ExperimentalAnimationApi::class
+)
+
 package dev.arkbuilders.rate.presentation
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -10,7 +15,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
+import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.utils.startDestination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
@@ -24,7 +32,9 @@ import dev.arkbuilders.rate.presentation.utils.keyboardAsState
 
 @Composable
 fun MainScreen() {
-    val engine = rememberNavHostEngine()
+    val engine = rememberAnimatedNavHostEngine(
+        rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING,
+    )
     val navController = engine.rememberNavController()
 
     val isKeyboardOpen by keyboardAsState()
