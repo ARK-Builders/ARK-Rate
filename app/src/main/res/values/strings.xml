@@ -27,4 +27,8 @@
     <string name="privacy_policy_url" translatable="false">https://www.ark-builders.dev/apps/rate/privacy-policy</string>
     <string name="privacy_policy">Privacy policy</string>
     <string name="oops_something_went_wrong">Oops! Something went wrong</string>
+    <string name="bottom_nav_portfolio">Portfolio</string>
+    <string name="bottom_nav_alerts">Alerts</string>
+    <string name="bottom_nav_quick">Quick</string>
+    <string name="bottom_nav_settings">Settings</string>
 </resources>

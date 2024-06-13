@@ -2,11 +2,10 @@
 
 package dev.arkbuilders.rate.presentation.ui
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.with
@@ -21,8 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,31 +34,36 @@ import dev.arkbuilders.rate.presentation.destinations.SettingsScreenDestination
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 sealed class BottomNavItem(
-    var title: String,
-    var icon: Int,
-    var route: String,
+    @StringRes val title: Int,
+    @DrawableRes val iconDisabled: Int,
+    @DrawableRes val iconEnabled: Int,
+    val route: String,
 ) {
-    object Assets : BottomNavItem(
-        "Portfolio",
-        R.drawable.ic_nav_portfolio,
+    data object Assets : BottomNavItem(
+        R.string.bottom_nav_portfolio,
+        R.drawable.ic_nav_portfolio_disabled,
+        R.drawable.ic_nav_portfolio_enabled,
         PortfolioScreenDestination.route
     )
 
-    object PairAlert : BottomNavItem(
-        "Alerts",
-        R.drawable.ic_nav_alerts,
+    data object PairAlert : BottomNavItem(
+        R.string.bottom_nav_alerts,
+        R.drawable.ic_nav_alerts_disabled,
+        R.drawable.ic_nav_alerts_enabled,
         PairAlertConditionScreenDestination.route
     )
 
-    object Quick : BottomNavItem(
-        "Quick",
-        R.drawable.ic_nav_quick,
+    data object Quick : BottomNavItem(
+        R.string.bottom_nav_quick,
+        R.drawable.ic_nav_quick_disabled,
+        R.drawable.ic_nav_quick_enabled,
         QuickScreenDestination.route
     )
 
-    object Settings : BottomNavItem(
-        "Settings",
-        R.drawable.ic_nav_settings,
+    data object Settings : BottomNavItem(
+        R.string.bottom_nav_settings,
+        R.drawable.ic_nav_settings_disabled,
+        R.drawable.ic_nav_settings_enabled,
         SettingsScreenDestination.route
     )
 
@@ -100,20 +104,26 @@ fun RateBottomNavigation(
             containerColor = Color.White,
         ) {
             items.forEach { item ->
+                val selected = item.route.contains(currentDestination.baseRoute)
                 NavigationBarItem(
-                    selected = item.route.contains(currentDestination.baseRoute),
+                    selected = selected,
                     onClick = { onBottomBarItemClick(item.route) },
                     icon = {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                painterResource(id = item.icon),
-                                contentDescription = item.title
-                            )
-                            Text(
-                                text = item.title,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                        AnimatedContent(targetState = selected) { innerSelected ->
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    painter = painterResource(
+                                        if (innerSelected) item.iconEnabled
+                                        else item.iconDisabled
+                                    ),
+                                    contentDescription = stringResource(item.title)
+                                )
+                                Text(
+                                    text = stringResource(item.title),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
                         }
                     },
                     colors = NavigationBarItemDefaults.colors(
