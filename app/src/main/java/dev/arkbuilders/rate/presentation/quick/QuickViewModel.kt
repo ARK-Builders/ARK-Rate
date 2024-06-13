@@ -13,12 +13,15 @@ import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
+import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
+import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
@@ -40,7 +43,9 @@ data class QuickScreenState(
 )
 
 sealed class QuickScreenEffect {
-
+    class ShowSnackbarAdded(
+        val visuals: NotifyAddedSnackbarVisuals
+    ): QuickScreenEffect()
 }
 
 class QuickViewModel(
@@ -57,6 +62,10 @@ class QuickViewModel(
         intent {
             if (isRatesAvailable().not())
                 return@intent
+
+            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+                postSideEffect(QuickScreenEffect.ShowSnackbarAdded(visuals))
+            }.launchIn(viewModelScope)
 
             quickRepo.allFlow().onEach { all ->
                 val codeToRate = currencyRepo.getCodeToCurrencyRate().getOrNull()!!

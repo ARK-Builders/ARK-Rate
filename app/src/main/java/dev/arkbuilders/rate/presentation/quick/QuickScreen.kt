@@ -74,6 +74,7 @@ import dev.arkbuilders.rate.presentation.ui.SearchTextField
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @RootNavGraph(start = true)
 @Destination
@@ -89,12 +90,12 @@ fun QuickScreen(
     val snackState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = Unit) {
-        AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
-            visuals ?: return@onEach
-            snackState.showSnackbar(visuals)
-            AppSharedFlow.ShowAddedSnackbarQuick.flow.emit(null)
-        }.launchIn(scope)
+    viewModel.collectSideEffect { effect ->
+        when (effect) {
+            is QuickScreenEffect.ShowSnackbarAdded ->
+                snackState.showSnackbar(effect.visuals)
+        }
+
     }
 
     val isEmpty = state.pages.isEmpty()

@@ -29,6 +29,7 @@
     <string name="portfolio_total_assets">Total Assets</string>
 
 
+    <string name="alerts">Alerts</string>
     <string name="alert_notified_on">Notified on %1$s %2$s - %3$s</string>
     <string name="alert_empty_title">No Alerts at the Moment</string>
     <string name="alert_empty_desc">Stay updated! We\'ll post any important notifications or changes in exchange rates here.</string>
@@ -84,6 +85,7 @@
     <string name="when_">When</string>
     <string name="price_is">price is</string>
     <string name="every">"every "</string>
+    <string name="every_c">Every</string>
     <string name="one_time">One-Time</string>
     <string name="recurrent">Recurrent</string>
     <string name="confirm">Confirm</string>

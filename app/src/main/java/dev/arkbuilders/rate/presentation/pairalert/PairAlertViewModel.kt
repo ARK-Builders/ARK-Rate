@@ -7,12 +7,16 @@ import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PairAlertRepo
 import dev.arkbuilders.rate.domain.usecase.HandlePairAlertCheckUseCase
+import dev.arkbuilders.rate.presentation.portfolio.PortfolioScreenEffect
+import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
+import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
@@ -31,7 +35,9 @@ data class PairAlertScreenState(
 )
 
 sealed class PairAlertEffect {
-
+    class ShowSnackbarAdded(
+        val visuals: NotifyAddedSnackbarVisuals
+    ): PairAlertEffect()
 }
 
 class PairAlertViewModel(
@@ -48,6 +54,10 @@ class PairAlertViewModel(
         intent {
             if (isRatesAvailable().not())
                 return@intent
+
+            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+                postSideEffect(PairAlertEffect.ShowSnackbarAdded(visuals))
+            }.launchIn(viewModelScope)
 
             pairAlertRepo.getAllFlow().onEach { all ->
                 val pages = all.reversed().groupBy { it.group }

@@ -76,16 +76,11 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
     val snackState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    viewModel.collectSideEffect {
-
-    }
-
-    LaunchedEffect(key1 = Unit) {
-        AppSharedFlow.ShowAddedSnackbarPortfolio.flow.onEach { visuals ->
-            visuals ?: return@onEach
-            snackState.showSnackbar(visuals)
-            AppSharedFlow.ShowAddedSnackbarPortfolio.flow.emit(null)
-        }.launchIn(scope)
+    viewModel.collectSideEffect { effect ->
+        when (effect) {
+            is PortfolioScreenEffect.ShowSnackbarAdded ->
+                snackState.showSnackbar(effect.visuals)
+        }
     }
 
     val isEmpty = state.pages.isEmpty()

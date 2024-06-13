@@ -11,29 +11,25 @@ sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {
 
     data object SetAssetCode :
         AppSharedFlow<Pair<Int, CurrencyCode>>(MutableSharedFlow())
+
     data object AddAsset : AppSharedFlow<CurrencyCode>(MutableSharedFlow())
 
     data object SetQuickCode :
         AppSharedFlow<Pair<Int, CurrencyCode>>(MutableSharedFlow())
+
     data object AddQuickCode :
         AppSharedFlow<CurrencyCode>(MutableSharedFlow())
 
     data object PickBaseCurrency : AppSharedFlow<CurrencyCode>(MutableSharedFlow())
 
-    object ShowAddedSnackbarQuick {
-        val flow: MutableStateFlow<NotifyAddedSnackbarVisuals?> =
-            MutableStateFlow(null)
-    }
+    data object ShowAddedSnackbarQuick :
+        AppSharedFlow<NotifyAddedSnackbarVisuals>(MutableSharedFlow())
 
-    object ShowAddedSnackbarPortfolio {
-        val flow: MutableStateFlow<NotifyAddedSnackbarVisuals?> =
-            MutableStateFlow(null)
-    }
+    data object ShowAddedSnackbarPortfolio :
+        AppSharedFlow<NotifyAddedSnackbarVisuals>(MutableSharedFlow())
 
-    object ShowAddedSnackbarPairAlert {
-        val flow: MutableStateFlow<NotifyAddedSnackbarVisuals?> =
-            MutableStateFlow(null)
-    }
+    data object ShowAddedSnackbarPairAlert :
+        AppSharedFlow<NotifyAddedSnackbarVisuals>(MutableSharedFlow())
 }
 
 enum class AppSharedFlowKey {
