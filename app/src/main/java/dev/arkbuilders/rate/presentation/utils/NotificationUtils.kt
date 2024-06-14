@@ -23,13 +23,21 @@ object NotificationUtils {
         ctx: Context
     ) {
         val pair = pairAlert
+        val aboveOrBelow = if (pair.above()) ctx.getString(R.string.above)
+        else ctx.getString(R.string.below)
 
-        val title = "ARK Rate Price Alert"
+        val title = ctx.getString(R.string.alert_notification_title)
         val builder = NotificationCompat.Builder(ctx, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notifications)
             .setContentTitle(title)
             .setContentText(
-                "${pair.targetCode} is now ${if (pair.above()) "above" else "below"} ${pair.targetPrice} ${pair.baseCode}"
+                ctx.getString(
+                    R.string.alert_notification_desc,
+                    pair.targetCode,
+                    aboveOrBelow,
+                    pair.targetPrice.toString(),
+                    pair.baseCode
+                )
             )
             .setContentIntent(appIntent(ctx))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -43,7 +51,6 @@ object NotificationUtils {
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-
                 notify(pairAlert.id.toInt(), builder.build())
             }
 
