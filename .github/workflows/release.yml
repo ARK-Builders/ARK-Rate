@@ -29,7 +29,12 @@ jobs:
     - name: Decrypt the keystore for signing
       run: |
         echo "${{ secrets.KEYSTORE_ENCRYPTED }}" > keystore.asc
-        gpg -d --passphrase "${{ secrets.KEYSTORE_PASSWORD   }}" --batch keystore.asc > keystore.jks
+        gpg -d --passphrase "${{ secrets.KEYSTORE_PASSWORD }}" --batch keystore.asc > keystore.jks
+
+    - name: Decrypt the config for Google Services
+      run: |
+        echo "${{ secrets.GOOGLE_ENCRYPTED }}" > google-services.asc
+        gpg -d --passphrase "${{ secrets.GOOGLE_PASSWORD }}" --batch google-services.asc > google-services.json
 
     - name: Build Release APK
       run: ./gradlew assembleRelease
