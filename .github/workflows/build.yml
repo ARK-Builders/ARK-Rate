@@ -59,7 +59,7 @@ jobs:
     - name: Decrypt the config for Google Services
       run: |
         echo "${{ secrets.GOOGLE_ENCRYPTED }}" > google-services.asc
-        gpg -d --passphrase "${{ secrets.GOOGLE_PASSWORD }}" --batch google-services.asc > google-services.json
+        gpg -d --passphrase "${{ secrets.GOOGLE_PASSWORD }}" --batch google-services.asc > app/google-services.json
 
     - name: Build release APK
       run: ./gradlew assembleRelease
