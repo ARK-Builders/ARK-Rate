@@ -51,6 +51,10 @@ jobs:
     - name: Validate Gradle wrapper
       uses: gradle/wrapper-validation-action@v1.0.5
 
+    - name: Check GnuGPG version
+      run: |
+        gpg --version
+
     - name: Decrypt the keystore for signing
       run: |
         echo "${{ secrets.KEYSTORE_ENCRYPTED }}" > keystore.asc
