@@ -29,6 +29,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -82,8 +83,27 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         viewModel(factory = DIManager.component.settingsVMFactory())
 
     val state by vm.collectAsState()
-    val ctx = LocalContext.current
 
+    Scaffold {
+        Box(modifier = Modifier.padding(it)) {
+            Content(
+                state = state,
+                navigator = navigator,
+                onCrashReportsToggle = vm::onCrashReportToggle,
+                onAnalyticsToggle = vm::onAnalyticsToggle
+            )
+        }
+    }
+}
+
+@Composable
+private fun Content(
+    state: SettingsScreenState,
+    navigator: DestinationsNavigator,
+    onCrashReportsToggle: (Boolean) -> Unit,
+    onAnalyticsToggle: (Boolean) -> Unit
+) {
+    val ctx = LocalContext.current
     Column(modifier = Modifier.padding(vertical = 32.dp)) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -142,7 +162,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
                 )
                 Switch(
                     checked = state.crashReportsEnabled,
-                    onCheckedChange = { vm.onCrashReportToggle(it) }
+                    onCheckedChange = { onCrashReportsToggle(it) }
                 )
             }
             AppHorDiv16(modifier = Modifier.padding(top = 20.dp))
@@ -160,7 +180,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             )
             Switch(
                 checked = state.analyticsEnabled,
-                onCheckedChange = { vm.onAnalyticsToggle(it) }
+                onCheckedChange = { onAnalyticsToggle(it) }
             )
         }
         AppHorDiv16(modifier = Modifier.padding(top = 20.dp))
