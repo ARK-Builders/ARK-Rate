@@ -2,12 +2,14 @@ package dev.arkbuilders.rate.di.module
 
 import dagger.Binds
 import dagger.Module
+import dev.arkbuilders.rate.data.AnalyticsManagerImpl
 import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
 import dev.arkbuilders.rate.data.db.CodeUseStatRepoImpl
 import dev.arkbuilders.rate.data.db.PairAlertRepoImpl
 import dev.arkbuilders.rate.data.db.PortfolioRepoImpl
 import dev.arkbuilders.rate.data.db.QuickRepoImpl
 import dev.arkbuilders.rate.data.preferences.PrefsImpl
+import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PairAlertRepo
@@ -36,4 +38,9 @@ abstract class RepoModule {
     abstract fun codeUseStatRepo(
         codeUseStatRepoImpl: CodeUseStatRepoImpl
     ): CodeUseStatRepo
+
+    @Binds
+    abstract fun analyticsManager(
+        analyticsManagerImpl: AnalyticsManagerImpl
+    ): AnalyticsManager
 }

@@ -4,7 +4,8 @@ import dev.arkbuilders.rate.domain.model.CurrencyCode
 import kotlinx.coroutines.flow.Flow
 
 sealed class PreferenceKey<out T>(val defaultValue: T) {
-    data object CrashReport : PreferenceKey<Boolean>(true)
+    data object CollectCrashReports: PreferenceKey<Boolean>(true)
+    data object CollectAnalytics : PreferenceKey<Boolean>(true)
     data object BaseCurrencyCode: PreferenceKey<CurrencyCode>("USD")
 }
 

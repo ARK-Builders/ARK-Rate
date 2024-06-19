@@ -12,6 +12,7 @@ import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PairAlertRepo
@@ -50,12 +51,15 @@ class AddPairAlertViewModel(
     private val currencyRepo: CurrencyRepo,
     private val pairAlertRepo: PairAlertRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
-    private val convertUseCase: ConvertWithRateUseCase
+    private val convertUseCase: ConvertWithRateUseCase,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModel(), ContainerHost<AddPairAlertScreenState, AddPairAlertScreenEffect> {
     override val container: Container<AddPairAlertScreenState, AddPairAlertScreenEffect> =
         container(AddPairAlertScreenState())
 
     init {
+        analyticsManager.trackScreen("AddPairAlertScreen")
+
         AppSharedFlow.AddPairAlertTarget.flow.onEach {
             initOnCodeChange(newTarget = it)
         }.launchIn(viewModelScope)
@@ -318,6 +322,7 @@ class AddPairAlertViewModelFactory @AssistedInject constructor(
     private val pairAlertRepo: PairAlertRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase,
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddPairAlertViewModel(
@@ -325,7 +330,8 @@ class AddPairAlertViewModelFactory @AssistedInject constructor(
             currencyRepo,
             pairAlertRepo,
             codeUseStatRepo,
-            convertUseCase
+            convertUseCase,
+            analyticsManager,
         ) as T
     }
 

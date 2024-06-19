@@ -9,7 +9,7 @@
     <string name="crash_dialog_title">Crash</string>
     <string name="crash_dialog_comment">You can add a comment here:</string>
 
-    <string name="bottom_nav_portfolio">Portfolio</string>
+    <string name="bottom_nav_portfolio">Portfolios</string>
     <string name="bottom_nav_alerts">Alerts</string>
     <string name="bottom_nav_quick">Quick</string>
     <string name="bottom_nav_settings">Settings</string>
@@ -63,7 +63,7 @@
     <string name="privacy_policy_url" translatable="false">https://www.ark-builders.dev/apps/rate/privacy-policy</string>
     <string name="privacy_policy">Privacy policy</string>
 
-    <string name="new_pair">New Pair</string>
+    <string name="calculate">Calculate</string>
     <string name="pairs">Pairs</string>
     <string name="add_new_pair">Add new pair</string>
     <string name="add_group">Add group</string>
@@ -118,5 +118,8 @@
     <string name="about_donate_using_btc">Donate using BTC</string>
     <string name="about_we_greatly_appreciate_every_bit_of_support">We greatly appreciate every bit of support!</string>
     <string name="about_support_us">Support us</string>
+    <string name="alert_notification_title">ARK Rate Price Alert</string>
+    <string name="alert_notification_desc">%1$s is now %2$s %3$s %4$s</string>
+    <string name="collect_analytics">Collect analytics</string>
 
 </resources>

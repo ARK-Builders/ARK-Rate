@@ -8,6 +8,7 @@ import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.model.CurrencyName
+import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.Prefs
@@ -53,12 +54,15 @@ class QuickViewModel(
     private val assetsRepo: PortfolioRepo,
     private val quickRepo: QuickRepo,
     private val prefs: Prefs,
-    private val convertUseCase: ConvertWithRateUseCase
+    private val convertUseCase: ConvertWithRateUseCase,
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
     override val container: Container<QuickScreenState, QuickScreenEffect> =
         container(QuickScreenState())
 
     init {
+        analyticsManager.trackScreen("QuickScreen")
+
         intent {
             if (isRatesAvailable().not())
                 return@intent
@@ -115,7 +119,8 @@ class QuickViewModelFactory @AssistedInject constructor(
     private val quickRepo: QuickRepo,
     private val currencyRepo: CurrencyRepo,
     private val prefs: Prefs,
-    private val convertUseCase: ConvertWithRateUseCase
+    private val convertUseCase: ConvertWithRateUseCase,
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return QuickViewModel(
@@ -123,7 +128,8 @@ class QuickViewModelFactory @AssistedInject constructor(
             assetsRepo,
             quickRepo,
             prefs,
-            convertUseCase
+            convertUseCase,
+            analyticsManager
         ) as T
     }
 
