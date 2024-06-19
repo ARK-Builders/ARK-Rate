@@ -10,6 +10,7 @@ import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
@@ -41,8 +42,9 @@ class EditAssetViewModel(
     private val assetId: Long,
     private val currencyRepo: CurrencyRepo,
     private val assetsRepo: PortfolioRepo,
-    private val prefs: Prefs
-): ViewModel(), ContainerHost<EditAssetScreenState, EditAssetScreenEffect> {
+    private val prefs: Prefs,
+    private val analyticsManager: AnalyticsManager
+) : ViewModel(), ContainerHost<EditAssetScreenState, EditAssetScreenEffect> {
 
     override val container: Container<EditAssetScreenState, EditAssetScreenEffect> =
         container(EditAssetScreenState())
@@ -50,6 +52,8 @@ class EditAssetViewModel(
     private val inputFlow = MutableSharedFlow<String>()
 
     init {
+        analyticsManager.trackScreen("EditAssetScreen")
+
         intent {
             val asset = assetsRepo.getById(assetId)
             val name = currencyRepo.nameByCodeUnsafe(asset!!.code)
@@ -81,10 +85,17 @@ class EditAssetViewModelFactory @AssistedInject constructor(
     @Assisted private val amountId: Long,
     private val currencyRepo: CurrencyRepo,
     private val assetsRepo: PortfolioRepo,
-    private val prefs: Prefs
-): ViewModelProvider.Factory {
+    private val prefs: Prefs,
+    private val analyticsManager: AnalyticsManager
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return EditAssetViewModel(amountId, currencyRepo, assetsRepo, prefs) as T
+        return EditAssetViewModel(
+            amountId,
+            currencyRepo,
+            assetsRepo,
+            prefs,
+            analyticsManager
+        ) as T
     }
 
     @AssistedFactory

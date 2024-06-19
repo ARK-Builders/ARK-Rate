@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
@@ -44,10 +43,10 @@ class PrefsImpl @Inject constructor(val context: Context): Prefs {
 
     private fun <T> resolveKey(key: PreferenceKey<T>): Preferences.Key<T> {
         val result = when (key) {
-            PreferenceKey.CrashReport -> booleanPreferencesKey("crash_report")
+            PreferenceKey.CollectAnalytics -> booleanPreferencesKey("analytics")
 
             PreferenceKey.BaseCurrencyCode -> stringPreferencesKey("baseCurrencyCode")
-
+            PreferenceKey.CollectCrashReports -> booleanPreferencesKey("crashReports")
         }
 
         return result as Preferences.Key<T>

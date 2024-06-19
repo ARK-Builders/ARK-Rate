@@ -84,8 +84,9 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
     val state by vm.collectAsState()
     val ctx = LocalContext.current
 
-    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 32.dp)) {
+    Column(modifier = Modifier.padding(vertical = 32.dp)) {
         Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
             text = stringResource(R.string.settings_quick_portfolio_alerts),
             fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp,
@@ -126,26 +127,48 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             title = stringResource(R.string.settings_latest_alerts_check),
             description = pairAlertDesc
         )
-        AppHorDiv(modifier = Modifier.padding(top = 20.dp))
+        AppHorDiv16(modifier = Modifier.padding(top = 20.dp))
+        if (state.showCrashReports) {
+            Row(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(R.string.crash_reports),
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp,
+                    color = ArkColor.TextPrimary
+                )
+                Switch(
+                    checked = state.crashReportsEnabled,
+                    onCheckedChange = { vm.onCrashReportToggle(it) }
+                )
+            }
+            AppHorDiv16(modifier = Modifier.padding(top = 20.dp))
+        }
         Row(
-            modifier = Modifier.padding(top = 20.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(R.string.crash_reports),
+                text = stringResource(R.string.collect_analytics),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.sp,
                 color = ArkColor.TextPrimary
             )
-            Switch(checked = true, onCheckedChange = {})
+            Switch(
+                checked = state.analyticsEnabled,
+                onCheckedChange = { vm.onAnalyticsToggle(it) }
+            )
         }
-        AppHorDiv(modifier = Modifier.padding(top = 20.dp))
+        AppHorDiv16(modifier = Modifier.padding(top = 20.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { navigator.navigate(AboutScreenDestination) }
-                .padding(vertical = 20.dp),
+                .padding(horizontal = 16.dp, vertical = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -161,13 +184,13 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
                 color = ArkColor.TextTertiary
             )
         }
-        AppHorDiv(modifier = Modifier)
+        AppHorDiv16(modifier = Modifier)
     }
 }
 
 @Composable
 private fun LatestRefresh(title: String, description: String) {
-    Column(modifier = Modifier.padding(top = 20.dp)) {
+    Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp)) {
         Text(
             modifier = Modifier,
             text = title,

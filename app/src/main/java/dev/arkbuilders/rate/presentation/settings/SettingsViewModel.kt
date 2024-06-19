@@ -2,10 +2,15 @@ package dev.arkbuilders.rate.presentation.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.data.db.TimestampRepo
 import dev.arkbuilders.rate.data.db.TimestampType
 import dev.arkbuilders.rate.data.preferences.PrefsImpl
+import dev.arkbuilders.rate.domain.repo.AnalyticsManager
+import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -20,7 +25,8 @@ data class SettingsScreenState(
     val latestCryptoRefresh: OffsetDateTime? = null,
     val latestPairAlertCheck: OffsetDateTime? = null,
     val showCrashReports: Boolean = BuildConfig.GOOGLE_PLAY_BUILD.not(),
-    val crashReportsEnabled: Boolean = false
+    val crashReportsEnabled: Boolean = false,
+    val analyticsEnabled: Boolean = false
 )
 
 sealed class SettingsScreenEffect()
@@ -28,24 +34,47 @@ sealed class SettingsScreenEffect()
 class SettingsViewModel(
     private val prefs: PrefsImpl,
     private val timestampRepo: TimestampRepo,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModel(), ContainerHost<SettingsScreenState, SettingsScreenEffect> {
     override val container: Container<SettingsScreenState, SettingsScreenEffect> =
         container(SettingsScreenState())
 
     init {
+        analyticsManager.trackScreen("SettingsScreen")
+
         intent {
             val fiat = timestampRepo.getTimestamp(TimestampType.FetchFiat)
             val crypto = timestampRepo.getTimestamp(TimestampType.FetchCrypto)
             val pairAlertCheck =
                 timestampRepo.getTimestamp(TimestampType.CheckPairAlerts)
+            val crashReports = prefs.get(PreferenceKey.CollectCrashReports)
+            val analytics = prefs.get(PreferenceKey.CollectAnalytics)
 
             reduce {
                 state.copy(
                     latestFiatRefresh = fiat,
                     latestCryptoRefresh = crypto,
-                    latestPairAlertCheck = pairAlertCheck
+                    latestPairAlertCheck = pairAlertCheck,
+                    crashReportsEnabled = crashReports,
+                    analyticsEnabled = analytics
                 )
             }
+        }
+    }
+
+    fun onCrashReportToggle(enabled: Boolean) = intent {
+        Firebase.crashlytics.setCrashlyticsCollectionEnabled(enabled)
+        prefs.set(PreferenceKey.CollectCrashReports, enabled)
+        reduce {
+            state.copy(crashReportsEnabled = enabled)
+        }
+    }
+
+    fun onAnalyticsToggle(enabled: Boolean) = intent {
+        Firebase.analytics.setAnalyticsCollectionEnabled(enabled)
+        prefs.set(PreferenceKey.CollectAnalytics, enabled)
+        reduce {
+            state.copy(analyticsEnabled = enabled)
         }
     }
 
@@ -55,8 +84,9 @@ class SettingsViewModel(
 class SettingsViewModelFactory @Inject constructor(
     private val prefs: PrefsImpl,
     private val timestampRepo: TimestampRepo,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SettingsViewModel(prefs, timestampRepo) as T
+        return SettingsViewModel(prefs, timestampRepo, analyticsManager) as T
     }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.domain.model.PairAlert
+import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PairAlertRepo
 import dev.arkbuilders.rate.domain.usecase.HandlePairAlertCheckUseCase
@@ -43,6 +44,7 @@ sealed class PairAlertEffect {
 class PairAlertViewModel(
     private val pairAlertRepo: PairAlertRepo,
     private val currencyRepo: CurrencyRepo,
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<PairAlertScreenState, PairAlertEffect> {
 
     override val container: Container<PairAlertScreenState, PairAlertEffect> =
@@ -51,6 +53,8 @@ class PairAlertViewModel(
         )
 
     init {
+        analyticsManager.trackScreen("PairAlertScreen")
+
         intent {
             if (isRatesAvailable().not())
                 return@intent
@@ -94,12 +98,13 @@ class PairAlertViewModel(
 class PairAlertViewModelFactory @Inject constructor(
     private val pairAlertRepo: PairAlertRepo,
     private val currencyRepo: CurrencyRepo,
-    private val handlePairAlertCheckUseCase: HandlePairAlertCheckUseCase
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return PairAlertViewModel(
             pairAlertRepo,
             currencyRepo,
+            analyticsManager
         ) as T
     }
 }
