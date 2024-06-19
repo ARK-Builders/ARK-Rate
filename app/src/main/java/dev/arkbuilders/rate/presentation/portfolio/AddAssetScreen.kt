@@ -46,6 +46,7 @@ import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
+import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.BasicTextFieldPlaceholder
@@ -213,14 +214,13 @@ private fun Content(
         }
         Column {
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
-            Button(
+            AppButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
                 onClick = {
                     onAddAsset()
                 },
-                shape = RoundedCornerShape(8.dp),
             ) {
                 Text(text = stringResource(R.string.add_new_asset))
             }
