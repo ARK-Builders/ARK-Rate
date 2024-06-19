@@ -1,11 +1,7 @@
-package dev.arkbuilders.rate.data.db
+package dev.arkbuilders.rate.data.repo
 
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Query
+import dev.arkbuilders.rate.data.db.dao.CodeUseStatDao
+import dev.arkbuilders.rate.data.db.entity.RoomCodeUseStat
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.stats.CodeUseStat
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
@@ -13,28 +9,9 @@ import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Entity
-data class RoomCodeUseStat(
-    @PrimaryKey
-    val code: CurrencyCode,
-    val count: Long,
-    val lastUsedDate: String
-)
-
-@Dao
-interface CodeUseStatDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(state: RoomCodeUseStat)
-
-    @Query("SELECT * FROM RoomCodeUseStat WHERE code = :code")
-    suspend fun getByCode(code: CurrencyCode): RoomCodeUseStat?
-
-    @Query("SELECT * FROM RoomCodeUseStat")
-    suspend fun getAll(): List<RoomCodeUseStat>
-}
-
 @Singleton
-class CodeUseStatRepoImpl @Inject constructor(private val dao: CodeUseStatDao) : CodeUseStatRepo {
+class CodeUseStatRepoImpl @Inject constructor(private val dao: CodeUseStatDao) :
+    CodeUseStatRepo {
 
     override suspend fun codesUsed(vararg codes: CurrencyCode) {
         codes.forEach { code ->

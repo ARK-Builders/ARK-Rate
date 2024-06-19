@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.data.currency.fiat
+package dev.arkbuilders.rate.data.repo.currency
 
 import android.content.Context
 import arrow.core.Either
@@ -6,11 +6,10 @@ import arrow.core.left
 import arrow.core.right
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.CurrencyRate
-import dev.arkbuilders.rate.data.currency.CurrencyDataSource
 import dev.arkbuilders.rate.domain.model.CurrencyType
 import dev.arkbuilders.rate.data.network.NetworkStatus
-import dev.arkbuilders.rate.data.db.CurrencyRateLocalDataSource
-import dev.arkbuilders.rate.data.db.TimestampRepo
+import dev.arkbuilders.rate.data.network.api.FiatAPI
+import dev.arkbuilders.rate.domain.repo.TimestampRepo
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,14 +17,14 @@ import javax.inject.Singleton
 class FiatCurrencyDataSource @Inject constructor(
     private val ctx: Context,
     private val fiatAPI: FiatAPI,
-    private val local: CurrencyRateLocalDataSource,
+    private val local: LocalCurrencyDataSource,
     private val networkStatus: NetworkStatus,
     private val timestampRepo: TimestampRepo
 ) : CurrencyDataSource(local, networkStatus, timestampRepo) {
     override val currencyType = CurrencyType.FIAT
 
     override suspend fun fetchRemote(): Either<Throwable, List<CurrencyRate>> {
-         return try {
+        return try {
             fiatAPI.get().rates.map { (code, rate) ->
                 CurrencyRate(
                     currencyType,

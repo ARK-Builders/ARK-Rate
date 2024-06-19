@@ -6,11 +6,11 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import dev.arkbuilders.rate.BuildConfig
-import dev.arkbuilders.rate.data.db.TimestampRepo
-import dev.arkbuilders.rate.data.db.TimestampType
+import dev.arkbuilders.rate.domain.model.TimestampType
 import dev.arkbuilders.rate.data.preferences.PrefsImpl
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
+import dev.arkbuilders.rate.domain.repo.TimestampRepo
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
