@@ -1,6 +1,18 @@
 package dev.arkbuilders.rate.data.db
 
 import androidx.room.RoomDatabase
+import dev.arkbuilders.rate.data.db.dao.CodeUseStatDao
+import dev.arkbuilders.rate.data.db.dao.CurrencyRateDao
+import dev.arkbuilders.rate.data.db.dao.PairAlertDao
+import dev.arkbuilders.rate.data.db.dao.PortfolioDao
+import dev.arkbuilders.rate.data.db.dao.QuickPairDao
+import dev.arkbuilders.rate.data.db.dao.TimestampDao
+import dev.arkbuilders.rate.data.db.entity.RoomAsset
+import dev.arkbuilders.rate.data.db.entity.RoomCodeUseStat
+import dev.arkbuilders.rate.data.db.entity.RoomCurrencyRate
+import dev.arkbuilders.rate.data.db.entity.RoomFetchTimestamp
+import dev.arkbuilders.rate.data.db.entity.RoomPairAlert
+import dev.arkbuilders.rate.data.db.entity.RoomQuickPair
 
 @androidx.room.Database(
     entities = [

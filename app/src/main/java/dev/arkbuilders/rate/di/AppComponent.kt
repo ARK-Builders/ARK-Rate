@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import dev.arkbuilders.rate.data.currency.CurrencyRepoImpl
-import dev.arkbuilders.rate.data.db.PortfolioRepoImpl
+import dev.arkbuilders.rate.data.repo.currency.CurrencyRepoImpl
+import dev.arkbuilders.rate.data.repo.PortfolioRepoImpl
 import dev.arkbuilders.rate.data.worker.AppWorkerFactory
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.module.ApiModule
@@ -20,7 +20,6 @@ import dev.arkbuilders.rate.presentation.pairalert.PairAlertViewModelFactory
 import dev.arkbuilders.rate.presentation.portfolio.EditAssetViewModelFactory
 import dev.arkbuilders.rate.presentation.quick.AddQuickViewModelFactory
 import dev.arkbuilders.rate.presentation.quick.QuickViewModelFactory
-import dev.arkbuilders.rate.presentation.search.SearchViewModel
 import dev.arkbuilders.rate.presentation.search.SearchViewModelFactory
 import dev.arkbuilders.rate.presentation.settings.SettingsViewModelFactory
 import javax.inject.Singleton

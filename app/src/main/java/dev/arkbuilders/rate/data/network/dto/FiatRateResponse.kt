@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.data.currency.fiat
+package dev.arkbuilders.rate.data.network.dto
 
 data class FiatRateResponse(
     val timestamp: Long,

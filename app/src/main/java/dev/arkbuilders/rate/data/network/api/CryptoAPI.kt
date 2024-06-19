@@ -1,6 +1,6 @@
-package dev.arkbuilders.rate.data.currency.crypto
+package dev.arkbuilders.rate.data.network.api
 
-import retrofit2.Response
+import dev.arkbuilders.rate.data.network.dto.CryptoRateResponse
 import retrofit2.http.GET
 
 interface CryptoAPI {
