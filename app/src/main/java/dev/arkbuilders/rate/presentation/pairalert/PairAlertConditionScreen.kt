@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -55,6 +56,7 @@ import dev.arkbuilders.rate.presentation.destinations.AddPairAlertScreenDestinat
 import dev.arkbuilders.rate.presentation.portfolio.PortfolioScreenEffect
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
+import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
@@ -103,6 +105,7 @@ fun PairAlertConditionScreen(
             FloatingActionButton(
                 contentColor = Color.White,
                 containerColor = ArkColor.Secondary,
+                shape = CircleShape,
                 onClick = {
                     navigator.navigate(AddPairAlertScreenDestination())
                 }
@@ -348,9 +351,8 @@ private fun Empty(navigator: DestinationsNavigator) {
                 color = ArkColor.TextTertiary,
                 textAlign = TextAlign.Center
             )
-            Button(
+            AppButton(
                 modifier = Modifier.padding(top = 24.dp),
-                shape = RoundedCornerShape(8.dp),
                 onClick = {
                     navigator.navigate(AddPairAlertScreenDestination())
                 }
