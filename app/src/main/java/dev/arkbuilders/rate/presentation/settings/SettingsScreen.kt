@@ -104,7 +104,11 @@ private fun Content(
     onAnalyticsToggle: (Boolean) -> Unit
 ) {
     val ctx = LocalContext.current
-    Column(modifier = Modifier.padding(vertical = 32.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 32.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = stringResource(R.string.settings_quick_portfolio_alerts),
