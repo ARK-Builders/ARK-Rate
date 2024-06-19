@@ -338,7 +338,10 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
                     painter = painterResource(id = R.drawable.ic_add),
                     contentDescription = ""
                 )
-                Text(text = "New Asset")
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(R.string.new_asset)
+                )
             }
         }
     }

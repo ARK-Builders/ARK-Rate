@@ -270,9 +270,9 @@ private fun PairAlertItem(
                 text = buildString {
                     append(
                         "${
-                            if (pairAlert.above()) 
-                                stringResource(R.string.above_c) 
-                            else 
+                            if (pairAlert.above())
+                                stringResource(R.string.above_c)
+                            else
                                 stringResource(R.string.below_c)
                         } "
                     )
@@ -359,7 +359,10 @@ private fun Empty(navigator: DestinationsNavigator) {
                     painter = painterResource(id = R.drawable.ic_add),
                     contentDescription = ""
                 )
-                Text(text = stringResource(R.string.new_alert))
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(R.string.new_alert)
+                )
             }
         }
     }
