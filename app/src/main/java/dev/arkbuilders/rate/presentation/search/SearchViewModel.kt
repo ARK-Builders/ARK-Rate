@@ -6,6 +6,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.domain.model.CurrencyName
+import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
@@ -35,13 +36,16 @@ class SearchViewModel(
     private val appSharedFlowKeyString: String,
     private val pos: Int?,
     private val currencyRepo: CurrencyRepo,
-    private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase
+    private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
+    private val analyticsManager: AnalyticsManager
 ) : ContainerHost<SearchScreenState, SearchScreenEffect>,
     ViewModel() {
     override val container: Container<SearchScreenState, SearchScreenEffect> =
         container(SearchScreenState())
 
     init {
+        analyticsManager.trackScreen("SearchScreen")
+
         intent {
             val all = currencyRepo.getCurrencyNameUnsafe()
             val frequent = calcFrequentCurrUseCase.invoke()
@@ -103,14 +107,16 @@ class SearchViewModelFactory @AssistedInject constructor(
     @Assisted private val appSharedFlowKeyString: String,
     @Assisted private val pos: Int?,
     private val currencyRepo: CurrencyRepo,
-    private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase
+    private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SearchViewModel(
             appSharedFlowKeyString,
             pos,
             currencyRepo,
-            calcFrequentCurrUseCase
+            calcFrequentCurrUseCase,
+            analyticsManager
         ) as T
     }
 

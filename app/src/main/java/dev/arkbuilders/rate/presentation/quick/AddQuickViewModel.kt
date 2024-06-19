@@ -13,6 +13,7 @@ import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.model.toDAmount
 import dev.arkbuilders.rate.domain.model.toStrAmount
+import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
@@ -48,13 +49,16 @@ class AddQuickViewModel(
     private val newCode: CurrencyCode?,
     private val quickRepo: QuickRepo,
     private val convertUseCase: ConvertWithRateUseCase,
-    private val codeUseStatRepo: CodeUseStatRepo
+    private val codeUseStatRepo: CodeUseStatRepo,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModel(), ContainerHost<AddQuickScreenState, AddQuickScreenEffect> {
 
     override val container: Container<AddQuickScreenState, AddQuickScreenEffect> =
         container(AddQuickScreenState())
 
     init {
+        analyticsManager.trackScreen("AddQuickScreen")
+
         AppSharedFlow.SetQuickCode.flow.onEach { (index, code) ->
             intent {
                 val mutable = state.currencies.toMutableList()
@@ -181,6 +185,7 @@ class AddQuickViewModelFactory @AssistedInject constructor(
     private val quickRepo: QuickRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddQuickViewModel(
@@ -188,7 +193,8 @@ class AddQuickViewModelFactory @AssistedInject constructor(
             newCode,
             quickRepo,
             convertUseCase,
-            codeUseStatRepo
+            codeUseStatRepo,
+            analyticsManager
         ) as T
     }
 

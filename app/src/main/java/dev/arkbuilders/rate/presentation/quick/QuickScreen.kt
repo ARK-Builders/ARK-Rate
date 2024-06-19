@@ -27,12 +27,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,7 +58,6 @@ import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
-import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
@@ -71,8 +68,6 @@ import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
 import dev.arkbuilders.rate.presentation.ui.SearchTextField
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -425,7 +420,7 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
                     painter = painterResource(id = R.drawable.ic_add),
                     contentDescription = ""
                 )
-                Text(text = stringResource(R.string.new_pair))
+                Text(text = stringResource(R.string.calculate))
             }
         }
     }

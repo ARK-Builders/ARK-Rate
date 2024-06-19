@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
@@ -239,8 +240,9 @@ fun AboutScreen(navigator: DestinationsNavigator) {
 private fun SocialLink(painter: Painter, text: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
-            .padding(start = 8.dp)
-            .clickable { onClick() },
+            .clip(RoundedCornerShape(4.dp))
+            .clickable { onClick() }
+            .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

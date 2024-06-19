@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
@@ -48,20 +49,23 @@ data class PortfolioDisplayAsset(
 sealed class PortfolioScreenEffect {
     class ShowSnackbarAdded(
         val visuals: NotifyAddedSnackbarVisuals
-    ): PortfolioScreenEffect()
+    ) : PortfolioScreenEffect()
 }
 
 class PortfolioViewModel(
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
     private val prefs: Prefs,
-    private val convertUseCase: ConvertWithRateUseCase
+    private val convertUseCase: ConvertWithRateUseCase,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModel(), ContainerHost<PortfolioScreenState, PortfolioScreenEffect> {
 
     override val container: Container<PortfolioScreenState, PortfolioScreenEffect> =
         container(PortfolioScreenState())
 
     init {
+        analyticsManager.trackScreen("PortfolioScreen")
+
         intent {
             if (isRatesAvailable().not())
                 return@intent
@@ -130,9 +134,16 @@ class PortfolioViewModelFactory @Inject constructor(
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
     private val prefs: Prefs,
-    private val convertUseCase: ConvertWithRateUseCase
+    private val convertUseCase: ConvertWithRateUseCase,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return PortfolioViewModel(assetsRepo, currencyRepo, prefs, convertUseCase) as T
+        return PortfolioViewModel(
+            assetsRepo,
+            currencyRepo,
+            prefs,
+            convertUseCase,
+            analyticsManager
+        ) as T
     }
 }

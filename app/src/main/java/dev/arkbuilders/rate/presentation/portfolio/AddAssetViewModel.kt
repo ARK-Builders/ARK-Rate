@@ -8,6 +8,7 @@ import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.domain.model.AmountStr
+import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
@@ -40,13 +41,16 @@ sealed class AddAssetSideEffect {
 class AddAssetViewModel(
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
-    private val codeUseStatRepo: CodeUseStatRepo
+    private val codeUseStatRepo: CodeUseStatRepo,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModel(), ContainerHost<AddAssetState, AddAssetSideEffect> {
 
     override val container: Container<AddAssetState, AddAssetSideEffect> =
         container(AddAssetState())
 
     init {
+        analyticsManager.trackScreen("AddAssetScreen")
+
         AppSharedFlow.SetAssetCode.flow.onEach { (pos, selectedCode) ->
             intent {
                 reduce {
@@ -60,7 +64,14 @@ class AddAssetViewModel(
 
         AppSharedFlow.AddAsset.flow.onEach { code ->
             intent {
-                reduce { state.copy(currencies = state.currencies + AmountStr(code, "")) }
+                reduce {
+                    state.copy(
+                        currencies = state.currencies + AmountStr(
+                            code,
+                            ""
+                        )
+                    )
+                }
             }
         }.launchIn(viewModelScope)
 
@@ -98,7 +109,11 @@ class AddAssetViewModel(
 
     fun onAddAsset() = intent {
         val currencies = state.currencies.map {
-            Asset(code = it.code, value = it.value.toDoubleSafe(), group = state.group)
+            Asset(
+                code = it.code,
+                value = it.value.toDoubleSafe(),
+                group = state.group
+            )
         }
         assetsRepo.setAssetsList(currencies)
         codeUseStatRepo.codesUsed(*currencies.map { it.code }.toTypedArray())
@@ -111,9 +126,15 @@ class AddAssetViewModel(
 class AddAssetViewModelFactory @Inject constructor(
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
-    private val codeUseStatRepo: CodeUseStatRepo
+    private val codeUseStatRepo: CodeUseStatRepo,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AddAssetViewModel(assetsRepo, currencyRepo, codeUseStatRepo) as T
+        return AddAssetViewModel(
+            assetsRepo,
+            currencyRepo,
+            codeUseStatRepo,
+            analyticsManager
+        ) as T
     }
 }
