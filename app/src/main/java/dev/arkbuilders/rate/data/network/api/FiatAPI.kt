@@ -1,6 +1,6 @@
-package dev.arkbuilders.rate.data.currency.fiat
+package dev.arkbuilders.rate.data.network.api
 
-import retrofit2.Response
+import dev.arkbuilders.rate.data.network.dto.FiatRateResponse
 import retrofit2.http.GET
 
 interface FiatAPI {
