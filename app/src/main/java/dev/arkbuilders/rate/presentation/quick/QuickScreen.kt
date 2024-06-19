@@ -59,6 +59,7 @@ import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.presentation.theme.ArkColor
+import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
@@ -106,6 +107,7 @@ fun QuickScreen(
             FloatingActionButton(
                 contentColor = Color.White,
                 containerColor = ArkColor.Secondary,
+                shape = CircleShape,
                 onClick = {
                     navigator.navigate(AddQuickScreenDestination())
                 }
@@ -409,9 +411,8 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
                 color = ArkColor.TextTertiary,
                 textAlign = TextAlign.Center
             )
-            Button(
+            AppButton(
                 modifier = Modifier.padding(top = 24.dp),
-                shape = RoundedCornerShape(8.dp),
                 onClick = {
                     navigator.navigate(AddQuickScreenDestination())
                 }
