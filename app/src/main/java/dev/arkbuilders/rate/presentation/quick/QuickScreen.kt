@@ -420,7 +420,10 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
                     painter = painterResource(id = R.drawable.ic_add),
                     contentDescription = ""
                 )
-                Text(text = stringResource(R.string.calculate))
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(R.string.calculate)
+                )
             }
         }
     }

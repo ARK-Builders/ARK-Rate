@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -426,6 +427,7 @@ private fun EditCondition(
             BasicTextField(
                 modifier = Modifier
                     .width(IntrinsicSize.Min)
+                    .defaultMinSize(minWidth = 20.dp)
                     .align(Alignment.CenterVertically),
                 value = state.priceOrPercent.fold(
                     ifLeft = { it },
