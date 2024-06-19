@@ -121,5 +121,6 @@
     <string name="alert_notification_title">ARK Rate Price Alert</string>
     <string name="alert_notification_desc">%1$s is now %2$s %3$s %4$s</string>
     <string name="collect_analytics">Collect analytics</string>
+    <string name="search_currency">Search a currency</string>
 
 </resources>

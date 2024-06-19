@@ -4,6 +4,7 @@ package dev.arkbuilders.rate.presentation.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,44 +39,51 @@ fun AppTopBarBack(
     title: String = "Title",
     navigator: DestinationsNavigator = EmptyDestinationsNavigator
 ) {
-    TopAppBar(
-        title = {
-            Text(
-                text = title,
-                fontWeight = FontWeight.SemiBold,
-                color = ArkColor.TextPrimary,
-                fontSize = 24.sp
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = { navigator.popBackStack() }) {
-                Icon(
-                    modifier = Modifier,
-                    painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = "",
-                    tint = ArkColor.FGSecondary
+    Column {
+        TopAppBar(
+            title = {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.SemiBold,
+                    color = ArkColor.TextPrimary,
+                    fontSize = 24.sp
                 )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
-    )
+            },
+            navigationIcon = {
+                IconButton(onClick = { navigator.popBackStack() }) {
+                    Icon(
+                        modifier = Modifier,
+                        painter = painterResource(id = R.drawable.ic_back),
+                        contentDescription = "",
+                        tint = ArkColor.FGSecondary
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
+        )
+        AppHorDiv()
+    }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun AppTopBarCenterTitle(title: String = "Title") {
-    TopAppBar(
-        title = {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = "Alerts",
-                    fontWeight = FontWeight.SemiBold,
-                    color = ArkColor.TextPrimary,
-                    fontSize = 24.sp
-                )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
-    )
+    Column {
+        TopAppBar(
+            title = {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = "Alerts",
+                        fontWeight = FontWeight.SemiBold,
+                        color = ArkColor.TextPrimary,
+                        fontSize = 24.sp
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+        )
+        AppHorDiv()
+    }
 }

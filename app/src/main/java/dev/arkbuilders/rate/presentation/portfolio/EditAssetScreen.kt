@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.presentation.portfolio
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,6 +15,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,6 +47,7 @@ import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.InfoMarketCapitalizationDialog
 import dev.arkbuilders.rate.presentation.ui.InfoValueOfCirculatingDialog
+import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Destination
@@ -55,13 +58,26 @@ fun EditAssetScreen(assetId: Long, navigator: DestinationsNavigator) {
     )
     val state by viewModel.collectAsState()
 
-    if (state.initialized) {
-        Content(
-            navigator = navigator,
-            name = state.name,
-            value = state.value,
-            onValueChange = viewModel::onValueChange
-        )
+    Scaffold(
+        topBar = {
+            AppTopBarBack(
+                title = stringResource(R.string.asset_detail),
+                navigator = navigator
+            )
+        }
+    ) {
+        Box(modifier = Modifier.padding(it)) {
+            if (state.initialized) {
+                Content(
+                    navigator = navigator,
+                    name = state.name,
+                    value = state.value,
+                    onValueChange = viewModel::onValueChange
+                )
+            } else {
+                LoadingScreen()
+            }
+        }
     }
 }
 
@@ -85,11 +101,6 @@ private fun Content(
     }
 
     Column {
-        AppTopBarBack(
-            title = stringResource(R.string.asset_detail),
-            navigator = navigator
-        )
-        AppHorDiv()
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             Text(
                 modifier = Modifier.padding(top = 32.dp),

@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.data
+package dev.arkbuilders.rate.data.repo
 
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics

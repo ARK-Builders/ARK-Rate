@@ -59,6 +59,7 @@ import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
+import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.BasicTextFieldPlaceholder
@@ -106,30 +107,40 @@ fun AddQuickScreen(
             }
         }
     }
-    
-    Content(
-        state = state,
-        navigator = navigator,
-        onAmountChanged = viewModel::onAssetAmountChange,
-        onNewCurrencyClick = {
-            navigator.navigate(
-                SearchCurrencyScreenDestination(
-                    AppSharedFlowKey.AddQuickCode.toString()
-                )
+    Scaffold(
+        topBar = {
+            AppTopBarBack(
+                title = stringResource(R.string.add_new_pair),
+                navigator = navigator
             )
-        },
-        onCurrencyRemove = viewModel::onCurrencyRemove,
-        onGroupSelect = viewModel::onGroupSelect,
-        onCodeChange = { index ->
-            navigator.navigate(
-                SearchCurrencyScreenDestination(
-                    AppSharedFlowKey.SetQuickCode.name,
-                    pos = index
-                )
+        }
+    ) {
+        Box(modifier = Modifier.padding(it)) {
+            Content(
+                state = state,
+                navigator = navigator,
+                onAmountChanged = viewModel::onAssetAmountChange,
+                onNewCurrencyClick = {
+                    navigator.navigate(
+                        SearchCurrencyScreenDestination(
+                            AppSharedFlowKey.AddQuickCode.toString()
+                        )
+                    )
+                },
+                onCurrencyRemove = viewModel::onCurrencyRemove,
+                onGroupSelect = viewModel::onGroupSelect,
+                onCodeChange = { index ->
+                    navigator.navigate(
+                        SearchCurrencyScreenDestination(
+                            AppSharedFlowKey.SetQuickCode.name,
+                            pos = index
+                        )
+                    )
+                },
+                onAddAsset = viewModel::onAddQuickPair
             )
-        },
-        onAddAsset = viewModel::onAddQuickPair
-    )
+        }
+    }
 }
 
 @Preview(showBackground = true, widthDp = 400)
@@ -156,11 +167,6 @@ private fun Content(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.weight(1f)) {
-            AppTopBarBack(
-                title = stringResource(R.string.add_new_pair),
-                navigator = navigator
-            )
-            HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
             Currencies(state, onAmountChanged, onCurrencyRemove, onCodeChange)
             Button(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp),

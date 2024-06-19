@@ -25,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -57,6 +58,7 @@ import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestin
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
+import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
@@ -104,7 +106,27 @@ fun AddPairAlertScreen(
         }
     }
 
+    Scaffold(
+        topBar = {
+            AppTopBarBack(
+                title = stringResource(R.string.add_new_alert),
+                navigator = navigator
+            )
+        }
+    ) {
+        Box(modifier = Modifier.padding(it)) {
+            Content(state, navigator, viewModel)
+        }
+    }
 
+}
+
+@Composable
+private fun Content(
+    state: AddPairAlertScreenState,
+    navigator: DestinationsNavigator,
+    viewModel: AddPairAlertViewModel
+) {
     var showNewGroupDialog by remember { mutableStateOf(false) }
     var showGroupsPopup by remember { mutableStateOf(false) }
     var addGroupBtnWidth by remember { mutableStateOf(0) }
@@ -117,11 +139,6 @@ fun AddPairAlertScreen(
 
     Column {
         Column(modifier = Modifier.weight(1f)) {
-            AppTopBarBack(
-                title = stringResource(R.string.add_new_alert),
-                navigator = navigator
-            )
-            HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
             PriceOrPercent(state, viewModel::onPriceOrPercentChanged)
             EditCondition(state, viewModel, navigator)
             OneTimeOrRecurrent(
