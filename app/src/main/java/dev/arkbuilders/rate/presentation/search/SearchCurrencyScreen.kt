@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -58,28 +59,24 @@ fun SearchCurrencyScreen(
 
     Scaffold(
         topBar = {
-            Column {
-                AppTopBarBack(title = "Search a currency", navigator = navigator)
-                HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
-            }
+            AppTopBarBack(
+                title = stringResource(R.string.search_currency),
+                navigator = navigator
+            )
         }
     ) {
         Column(modifier = Modifier.padding(it)) {
-            when {
-                state.initialized.not() -> {
-                    LoadingScreen()
-                }
-
-                else -> {
-                    Input(state.filter, viewModel::onInputChange)
-                    Results(
-                        filter = state.filter,
-                        frequent = state.frequent,
-                        all = state.all,
-                        topResultsFiltered = state.topResultsFiltered,
-                        onClick = viewModel::onClick
-                    )
-                }
+            if (state.initialized) {
+                Input(state.filter, viewModel::onInputChange)
+                Results(
+                    filter = state.filter,
+                    frequent = state.frequent,
+                    all = state.all,
+                    topResultsFiltered = state.topResultsFiltered,
+                    onClick = viewModel::onClick
+                )
+            } else {
+                LoadingScreen()
             }
         }
     }

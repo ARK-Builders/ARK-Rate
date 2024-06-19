@@ -2,6 +2,7 @@ package dev.arkbuilders.rate.presentation.settings
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,7 +44,21 @@ import dev.arkbuilders.rate.presentation.utils.openLink
 @Destination
 @Composable
 fun AboutScreen(navigator: DestinationsNavigator) {
+    Scaffold(
+        topBar = {
+            AppTopBarBack(title = stringResource(R.string.about), navigator)
+        }
+    ) {
+        Box(modifier = Modifier.padding(it)) {
+            Content(navigator)
+        }
+    }
+}
+
+@Composable
+private fun Content(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current
+
     var btcDialogVisible by remember { mutableStateOf(false) }
     var ethDialogVisible by remember { mutableStateOf(false) }
 
@@ -70,8 +86,6 @@ fun AboutScreen(navigator: DestinationsNavigator) {
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ) {
-        AppTopBarBack(title = stringResource(R.string.about), navigator)
-        AppHorDiv()
         Column(
             modifier = Modifier.padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

@@ -2,7 +2,7 @@ package dev.arkbuilders.rate.di.module
 
 import dagger.Binds
 import dagger.Module
-import dev.arkbuilders.rate.data.AnalyticsManagerImpl
+import dev.arkbuilders.rate.data.repo.AnalyticsManagerImpl
 import dev.arkbuilders.rate.data.repo.currency.CurrencyRepoImpl
 import dev.arkbuilders.rate.data.repo.CodeUseStatRepoImpl
 import dev.arkbuilders.rate.data.repo.PairAlertRepoImpl

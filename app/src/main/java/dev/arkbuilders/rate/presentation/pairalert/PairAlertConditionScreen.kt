@@ -112,10 +112,7 @@ fun PairAlertConditionScreen(
         },
         topBar = {
             if (isEmpty) return@Scaffold
-            Column {
-                AppTopBarCenterTitle(title = stringResource(R.string.alerts))
-                AppHorDiv()
-            }
+            AppTopBarCenterTitle(title = stringResource(R.string.alerts))
         },
         snackbarHost = {
             NotifyAddedSnackbar(snackState = snackState)

@@ -12,6 +12,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,6 +46,7 @@ import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
+import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.BasicTextFieldPlaceholder
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
@@ -85,25 +87,40 @@ fun AddAssetScreen(
         }
     }
 
-    Content(
-        state = state,
-        navigator = navigator,
-        onAssetValueChanged = viewModel::onAssetValueChange,
-        onNewCurrencyClick = {
-            navigator.navigate(SearchCurrencyScreenDestination(AppSharedFlowKey.AddAsset.toString()))
-        },
-        onAssetRemove = viewModel::onAssetRemove,
-        onGroupSelect = viewModel::onGroupSelect,
-        onCodeChange = {
-            navigator.navigate(
-                SearchCurrencyScreenDestination(
-                    AppSharedFlowKey.SetAssetCode.name,
-                    it
-                )
+    Scaffold(
+        topBar = {
+            AppTopBarBack(
+                title = stringResource(R.string.add_new_asset),
+                navigator = navigator
             )
-        },
-        onAddAsset = viewModel::onAddAsset
-    )
+        }
+    ) {
+        Box(modifier = Modifier.padding(it)) {
+            Content(
+                state = state,
+                navigator = navigator,
+                onAssetValueChanged = viewModel::onAssetValueChange,
+                onNewCurrencyClick = {
+                    navigator.navigate(
+                        SearchCurrencyScreenDestination(
+                            AppSharedFlowKey.AddAsset.toString()
+                        )
+                    )
+                },
+                onAssetRemove = viewModel::onAssetRemove,
+                onGroupSelect = viewModel::onGroupSelect,
+                onCodeChange = {
+                    navigator.navigate(
+                        SearchCurrencyScreenDestination(
+                            AppSharedFlowKey.SetAssetCode.name,
+                            it
+                        )
+                    )
+                },
+                onAddAsset = viewModel::onAddAsset
+            )
+        }
+    }
 }
 
 @Preview(showBackground = true, widthDp = 400)
@@ -130,11 +147,6 @@ private fun Content(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.weight(1f)) {
-            AppTopBarBack(
-                title = stringResource(R.string.add_new_asset),
-                navigator = navigator
-            )
-            HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
             Currencies(state, onAssetValueChanged, onAssetRemove, onCodeChange)
             Button(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp),
