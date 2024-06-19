@@ -26,7 +26,6 @@ class App : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        fixWebViewDataDirectorySuffix()
         Timber.plant(Timber.DebugTree())
         DIManager.init(this)
 
@@ -65,13 +64,6 @@ class App : Application(), Configuration.Provider {
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
-    }
-
-    private fun fixWebViewDataDirectorySuffix() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val process = getProcessName()
-            if (packageName != process) WebView.setDataDirectorySuffix(process)
-        }
     }
 
     override fun getWorkManagerConfiguration() = Configuration.Builder()
