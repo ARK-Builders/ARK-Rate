@@ -12,8 +12,8 @@ import javax.inject.Singleton
 
 @Singleton
 class CurrencyRepoImpl @Inject constructor(
-    val fiatDataSource: FiatCurrencyDataSource,
-    val cryptoDataSource: CryptoCurrencyDataSource
+    private val fiatDataSource: FiatCurrencyDataSource,
+    private val cryptoDataSource: CryptoCurrencyDataSource
 ) : CurrencyRepo {
 
     override suspend fun getCurrencyRate(): Either<Throwable, List<CurrencyRate>> {
