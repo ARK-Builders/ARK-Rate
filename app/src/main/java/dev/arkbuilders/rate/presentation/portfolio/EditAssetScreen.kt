@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -100,127 +102,130 @@ private fun Content(
         InfoValueOfCirculatingDialog { showValueOfCirculatingDialog = false }
     }
 
-    Column {
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            Text(
-                modifier = Modifier.padding(top = 32.dp),
-                text = "${name.name} (${name.code})",
-                color = ArkColor.TextPrimary,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 24.sp
-            )
-            AppHorDiv(modifier = Modifier.padding(top = 21.dp))
-            Row(
-                Modifier.padding(top = 32.dp),
-                verticalAlignment = Alignment.Top
-            ) {
-                BasicTextField(
-                    modifier = Modifier
-                        .width(IntrinsicSize.Min)
-                        .align(Alignment.CenterVertically),
-                    value = value,
-                    onValueChange = { onValueChange(it) },
-                    textStyle = LocalTextStyle.current.copy(
-                        fontSize = 36.sp,
-                        color = ArkColor.TextPrimary,
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    keyboardOptions = KeyboardOptions.Default
-                        .copy(keyboardType = KeyboardType.Number)
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(start = 2.dp, top = 2.dp)
-                        .align(Alignment.Top),
-                    text = CurrUtils.getSymbolOrCode(name.code),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary
-                )
-            }
-            TextButton(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .height(22.dp),
-                colors = ButtonDefaults.textButtonColors(contentColor = ArkColor.BrandUtility),
-                onClick = {
-                    navigator.navigate(
-                        SearchCurrencyScreenDestination(
-                            AppSharedFlowKey.PickBaseCurrency.toString()
-                        )
-                    )
-                },
-                contentPadding = PaddingValues(2.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_edit),
-                    contentDescription = ""
-                )
-                Text(
-                    modifier = Modifier.padding(start = 6.dp),
-                    text = stringResource(R.string.change_base_currency),
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
 
-            AppHorDiv(modifier = Modifier.padding(top = 32.dp))
-            Row(
-                modifier = Modifier.padding(top = 24.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.market_capitalization),
-                    fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextTertiary
-                )
-                IconButton(
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .size(20.dp),
-                    onClick = { showMarketCapitalizationDialog = true }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_info),
-                        contentDescription = "",
-                        tint = ArkColor.Primary
-                    )
-                }
-            }
-            Text(
-                modifier = Modifier.padding(top = 8.dp),
-                text = stringResource(R.string.n_a),
-                fontWeight = FontWeight.SemiBold,
-                color = ArkColor.TextPrimary
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Text(
+            modifier = Modifier.padding(top = 32.dp),
+            text = "${name.name} (${name.code})",
+            color = ArkColor.TextPrimary,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 24.sp
+        )
+        AppHorDiv(modifier = Modifier.padding(top = 21.dp))
+        Row(
+            Modifier.padding(top = 32.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            BasicTextField(
+                modifier = Modifier
+                    .width(IntrinsicSize.Min)
+                    .align(Alignment.CenterVertically),
+                value = value,
+                onValueChange = { onValueChange(it) },
+                textStyle = LocalTextStyle.current.copy(
+                    fontSize = 36.sp,
+                    color = ArkColor.TextPrimary,
+                    fontWeight = FontWeight.SemiBold
+                ),
+                keyboardOptions = KeyboardOptions.Default
+                    .copy(keyboardType = KeyboardType.Number)
             )
-            AppHorDiv(modifier = Modifier.padding(top = 24.dp))
-            Row(
-                modifier = Modifier.padding(top = 24.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.value_of_circulating_currency),
-                    fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextTertiary
-                )
-                IconButton(
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .size(20.dp),
-                    onClick = { showValueOfCirculatingDialog = true }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_info),
-                        contentDescription = "",
-                        tint = ArkColor.Primary
-                    )
-                }
-            }
             Text(
-                modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
-                text = stringResource(R.string.n_a),
-                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .padding(start = 2.dp, top = 2.dp)
+                    .align(Alignment.Top),
+                text = CurrUtils.getSymbolOrCode(name.code),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
                 color = ArkColor.TextPrimary
             )
         }
+        TextButton(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .height(22.dp),
+            colors = ButtonDefaults.textButtonColors(contentColor = ArkColor.BrandUtility),
+            onClick = {
+                navigator.navigate(
+                    SearchCurrencyScreenDestination(
+                        AppSharedFlowKey.PickBaseCurrency.toString()
+                    )
+                )
+            },
+            contentPadding = PaddingValues(2.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_edit),
+                contentDescription = ""
+            )
+            Text(
+                modifier = Modifier.padding(start = 6.dp),
+                text = stringResource(R.string.change_base_currency),
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        AppHorDiv(modifier = Modifier.padding(top = 32.dp))
+        Row(
+            modifier = Modifier.padding(top = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.market_capitalization),
+                fontWeight = FontWeight.Medium,
+                color = ArkColor.TextTertiary
+            )
+            IconButton(
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .size(20.dp),
+                onClick = { showMarketCapitalizationDialog = true }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_info),
+                    contentDescription = "",
+                    tint = ArkColor.Primary
+                )
+            }
+        }
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = stringResource(R.string.n_a),
+            fontWeight = FontWeight.SemiBold,
+            color = ArkColor.TextPrimary
+        )
+        AppHorDiv(modifier = Modifier.padding(top = 24.dp))
+        Row(
+            modifier = Modifier.padding(top = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.value_of_circulating_currency),
+                fontWeight = FontWeight.Medium,
+                color = ArkColor.TextTertiary
+            )
+            IconButton(
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .size(20.dp),
+                onClick = { showValueOfCirculatingDialog = true }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_info),
+                    contentDescription = "",
+                    tint = ArkColor.Primary
+                )
+            }
+        }
+        Text(
+            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
+            text = stringResource(R.string.n_a),
+            fontWeight = FontWeight.SemiBold,
+            color = ArkColor.TextPrimary
+        )
     }
 }
