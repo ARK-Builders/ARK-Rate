@@ -25,7 +25,6 @@ abstract class CurrencyDataSource(
         CurrencyType.CRYPTO -> TimestampType.FetchCrypto
     }
 
-    private var currencyRates: List<CurrencyRate>? = null
     private var updatedTS: Long? = null
     private val mutex = Mutex()
 
@@ -41,34 +40,27 @@ abstract class CurrencyDataSource(
             }
 
             if (!networkStatus.isOnline() && localRates.isNotEmpty()) {
-                currencyRates = localRates
-                return@withContextAndLock Either.Right(currencyRates!!)
+                return@withContextAndLock Either.Right(localRates)
             }
 
             if (networkStatus.isOnline() && hasUpdateIntervalPassed()) {
                 val result = fetchRemote()
-                result.onRight {
-                    currencyRates = it
+                result.onRight { rates ->
                     launch { timestampRepo.rememberTimestamp(timestampType()) }
-                    launch { local.insert(currencyRates!!, currencyType) }
+                    launch { local.insert(rates, currencyType) }
                     updatedTS = System.currentTimeMillis()
-                    return@withContextAndLock Either.Right(currencyRates!!)
+                    return@withContextAndLock Either.Right(rates)
                 }.onLeft {
                     Timber.e(it)
                     fetchRemoteError = it
                 }
             }
 
-            currencyRates ?: let {
-                if (localRates.isNotEmpty()) {
-                    currencyRates = localRates
-                    return@withContextAndLock Either.Right(currencyRates!!)
-                } else {
-                    return@withContextAndLock Either.Left(fetchRemoteError)
-                }
+            return@withContextAndLock if (localRates.isNotEmpty()) {
+                Either.Right(localRates)
+            } else {
+                Either.Left(fetchRemoteError)
             }
-
-            return@withContextAndLock Either.Right(currencyRates!!)
         }
 
     protected abstract suspend fun fetchRemote(): Either<Throwable, List<CurrencyRate>>

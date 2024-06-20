@@ -45,7 +45,7 @@ class FiatCurrencyDataSource @Inject constructor(
         }
 }
 
-private val fiatCodeToCurrency = mutableMapOf(
+private val fiatCodeToCurrency = mapOf(
     "AED" to "United Arab Emirates Dirham",
     "AFN" to "Afghan Afghani",
     "ALL" to "Albanian Lek",
