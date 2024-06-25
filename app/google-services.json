@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "414351467383",
+    "project_id": "ark-builders-test",
+    "storage_bucket": "ark-builders-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414351467383:android:be354cff9341b81e623772",
+        "android_client_info": {
+          "package_name": "dev.arkbuilders.rate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCn2k1dAY8sqK4rjsjOd38fOr54FPOAdyY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

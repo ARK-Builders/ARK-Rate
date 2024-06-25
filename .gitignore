@@ -7,7 +7,6 @@
 /buildSrc/build/
 *.class
 /captures
-app/google-services.json
 .externalNativeBuild
 .cxx
 *.tab
