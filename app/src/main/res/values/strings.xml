@@ -16,10 +16,12 @@
 
     <string name="quick_empty_title">Ready for calculation!</string>
     <string name="quick_empty_desc">Select your currencies and enter an amount to start converting. Your exchange results will appear here.</string>
-    <string name="quick_snackbar_new_title">New pair has been created</string>
-    <string name="quick_snackbar_new_desc">"You added %1$s pair "</string>
-    <string name="quick_snackbar_removed_title">The pair has been deleted</string>
-    <string name="quick_snackbar_removed_desc">You deleted %1$s pair</string>
+    <string name="quick_add_new_calculation">Add new calculation</string>
+    <string name="quick_calculations">Calculations</string>
+    <string name="quick_snackbar_new_title">New calculation has been created</string>
+    <string name="quick_snackbar_new_desc">"You added %1$s calculation "</string>
+    <string name="quick_snackbar_removed_title">The calculation has been deleted</string>
+    <string name="quick_snackbar_removed_desc">You deleted %1$s calculation</string>
     <string name="quick_snackbar_new_added_to">%1$s to %2$s</string>
 
 
@@ -41,7 +43,7 @@
     <string name="alert_snackbar_new_title">Alert for %1$s has been created</string>
     <string name="alert_snackbar_new_desc">You’ll get notified when %1$s price is %2$s %3$s %4$s</string>
     <string name="alert_snackbar_removed_title">Alert for %1$s has been deleted</string>
-    <string name="alert_snackbar_removed_desc">You deleted %1$s to %2$s pair alert</string>
+    <string name="alert_snackbar_removed_desc">You deleted %1$s to %2$s alert</string>
     <string name="add_new_alert">Add new alert</string>
     <string name="create_alert">Create Alert</string>
     <string name="alert_current_price">Current price = %1$s</string>
@@ -70,8 +72,6 @@
     <string name="privacy_policy">Privacy policy</string>
 
     <string name="calculate">Calculate</string>
-    <string name="pairs">Pairs</string>
-    <string name="add_new_pair">Add new pair</string>
     <string name="add_group">Add group</string>
     <string name="save">Save</string>
     <string name="input_value">Input value</string>
