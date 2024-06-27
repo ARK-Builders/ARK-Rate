@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.domain.model.PairAlert
+import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PairAlertRepo
 import dev.arkbuilders.rate.domain.usecase.HandlePairAlertCheckUseCase
 import dev.arkbuilders.rate.presentation.portfolio.PortfolioScreenEffect
+import dev.arkbuilders.rate.presentation.quick.QuickScreenEffect
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.launchIn
@@ -36,9 +38,10 @@ data class PairAlertScreenState(
 )
 
 sealed class PairAlertEffect {
-    class ShowSnackbarAdded(
+    data class ShowSnackbarAdded(
         val visuals: NotifyAddedSnackbarVisuals
     ): PairAlertEffect()
+    data class ShowRemovedSnackbar(val pair: PairAlert): PairAlertEffect()
 }
 
 class PairAlertViewModel(
@@ -87,8 +90,13 @@ class PairAlertViewModel(
     }
 
     fun onDelete(pairAlert: PairAlert) = intent {
-        Timber.d("Remove pair alert ${pairAlert.id}")
-        pairAlertRepo.delete(pairAlert.id)
+        val deleted = pairAlertRepo.delete(pairAlert.id)
+        if (deleted)
+            postSideEffect(PairAlertEffect.ShowRemovedSnackbar(pairAlert))
+    }
+
+    fun undoDelete(pair: PairAlert) = intent {
+        pairAlertRepo.insert(pair)
     }
 
     private suspend fun isRatesAvailable() = currencyRepo.getCurrencyRate().isRight()

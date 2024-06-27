@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +59,7 @@ import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
+import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
@@ -67,7 +69,9 @@ import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
-import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
+import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
+import dev.arkbuilders.rate.presentation.ui.NotifyRemovedSnackbarVisuals
+import dev.arkbuilders.rate.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.presentation.ui.SearchTextField
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -84,14 +88,33 @@ fun QuickScreen(
 
     val state by viewModel.collectAsState()
     val snackState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    val ctx = LocalContext.current
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
             is QuickScreenEffect.ShowSnackbarAdded ->
                 snackState.showSnackbar(effect.visuals)
-        }
 
+            is QuickScreenEffect.ShowRemovedSnackbar -> {
+                val removed =
+                    ctx.getString(
+                        R.string.quick_snackbar_new_added_to,
+                        effect.pair.from,
+                        effect.pair.to.joinToString { it }
+                    )
+                val visuals = NotifyRemovedSnackbarVisuals(
+                    title = ctx.getString(R.string.quick_snackbar_removed_title),
+                    description = ctx.getString(
+                        R.string.quick_snackbar_removed_desc,
+                        removed
+                    ),
+                    onUndo = {
+                        viewModel.undoDelete(effect.pair)
+                    }
+                )
+                snackState.showSnackbar(visuals)
+            }
+        }
     }
 
     val isEmpty = state.pages.isEmpty()
@@ -116,7 +139,7 @@ fun QuickScreen(
             }
         },
         snackbarHost = {
-            NotifyAddedSnackbar(snackState = snackState)
+            RateSnackbarHost(snackState)
         }
     ) {
         Box(modifier = Modifier.padding(it)) {

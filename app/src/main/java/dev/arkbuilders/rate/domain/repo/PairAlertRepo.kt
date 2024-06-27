@@ -8,5 +8,5 @@ interface PairAlertRepo {
     suspend fun getById(id: Long): PairAlert?
     suspend fun getAll(): List<PairAlert>
     fun getAllFlow(): Flow<List<PairAlert>>
-    suspend fun delete(id: Long)
+    suspend fun delete(id: Long): Boolean
 }
