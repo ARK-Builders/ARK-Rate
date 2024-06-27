@@ -47,7 +47,7 @@ class SearchViewModel(
         analyticsManager.trackScreen("SearchScreen")
 
         intent {
-            val all = currencyRepo.getCurrencyNameUnsafe().sortedBy { it.code }
+            val all = currencyRepo.getCurrencyNameUnsafe()
             val frequent = calcFrequentCurrUseCase.invoke()
                 .map { currencyRepo.nameByCodeUnsafe(it) }
             val topResults = frequent + (all - frequent)
