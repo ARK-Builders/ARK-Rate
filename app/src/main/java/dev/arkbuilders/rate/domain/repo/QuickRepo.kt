@@ -13,5 +13,5 @@ interface QuickRepo {
 
     fun allFlow(): Flow<List<QuickPair>>
 
-    suspend fun delete(id: Long)
+    suspend fun delete(id: Long): Boolean
 }

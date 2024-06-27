@@ -16,24 +16,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,25 +43,23 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.domain.model.Asset
-import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.model.Amount
+import dev.arkbuilders.rate.domain.model.Asset
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.presentation.destinations.AddAssetScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.EditAssetScreenDestination
-import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
-import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbar
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
+import dev.arkbuilders.rate.presentation.ui.NotifyRemovedSnackbarVisuals
+import dev.arkbuilders.rate.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.presentation.ui.SearchTextField
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -76,12 +71,28 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
 
     val state by viewModel.collectAsState()
     val snackState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    val ctx = LocalContext.current
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
             is PortfolioScreenEffect.ShowSnackbarAdded ->
                 snackState.showSnackbar(effect.visuals)
+
+            is PortfolioScreenEffect.ShowRemovedSnackbar -> {
+                val removed = CurrUtils.prepareToDisplay(effect.asset.value) +
+                        " ${effect.asset.code}"
+                val visuals = NotifyRemovedSnackbarVisuals(
+                    title = ctx.getString(R.string.portfolio_snackbar_removed_title),
+                    description = ctx.getString(
+                        R.string.portfolio_snackbar_removed_desc,
+                        removed
+                    ),
+                    onUndo = {
+                        viewModel.undoDelete(effect.asset)
+                    }
+                )
+                snackState.showSnackbar(visuals)
+            }
         }
     }
 
@@ -107,7 +118,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
             }
         },
         snackbarHost = {
-            NotifyAddedSnackbar(snackState = snackState)
+            RateSnackbarHost(snackState)
         }
     ) {
         Box(modifier = Modifier.padding(it)) {

@@ -23,7 +23,7 @@ class PairAlertRepoImpl @Inject constructor(
 
     override fun getAllFlow() = dao.getAllFlow().map { it.map { it.toCondition() } }
 
-    override suspend fun delete(id: Long) = dao.delete(id)
+    override suspend fun delete(id: Long) = dao.delete(id) > 0
 }
 
 private fun PairAlert.toRoom() = RoomPairAlert(

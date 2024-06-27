@@ -14,5 +14,5 @@ interface PortfolioRepo {
 
     suspend fun setAssetsList(list: List<Asset>)
 
-    suspend fun removeAsset(id: Long)
+    suspend fun removeAsset(id: Long): Boolean
 }

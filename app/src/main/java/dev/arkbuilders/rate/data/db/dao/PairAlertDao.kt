@@ -23,5 +23,5 @@ interface PairAlertDao {
     fun getAllFlow(): Flow<List<RoomPairAlert>>
 
     @Query("DELETE FROM RoomPairAlert WHERE id = :id")
-    suspend fun delete(id: Long)
+    suspend fun delete(id: Long): Int
 }

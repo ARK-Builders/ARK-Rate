@@ -26,5 +26,5 @@ interface PortfolioDao {
     fun allFlow(): Flow<List<RoomAsset>>
 
     @Query("DELETE FROM RoomAsset WHERE id = :id")
-    suspend fun delete(id: Long)
+    suspend fun delete(id: Long): Int
 }

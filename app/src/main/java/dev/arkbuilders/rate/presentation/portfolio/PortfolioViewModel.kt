@@ -6,13 +6,13 @@ import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
-import dev.arkbuilders.rate.presentation.quick.QuickScreenEffect
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.drop
@@ -50,6 +50,7 @@ sealed class PortfolioScreenEffect {
     class ShowSnackbarAdded(
         val visuals: NotifyAddedSnackbarVisuals
     ) : PortfolioScreenEffect()
+    data class ShowRemovedSnackbar(val asset: Asset): PortfolioScreenEffect()
 }
 
 class PortfolioViewModel(
@@ -86,8 +87,15 @@ class PortfolioViewModel(
         }
     }
 
-    fun onAssetRemove(amount: Asset) = intent {
-        assetsRepo.removeAsset(amount.id)
+    fun onAssetRemove(asset: Asset) = intent {
+        val deleted = assetsRepo.removeAsset(asset.id)
+        if (deleted) {
+            postSideEffect(PortfolioScreenEffect.ShowRemovedSnackbar(asset))
+        }
+    }
+
+    fun undoDelete(asset: Asset) = intent {
+        assetsRepo.setAsset(asset)
     }
 
     fun onFilterChange(filter: String) = blockingIntent {
