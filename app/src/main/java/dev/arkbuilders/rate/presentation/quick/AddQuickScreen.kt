@@ -62,7 +62,6 @@ import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.BasicTextFieldPlaceholder
@@ -113,7 +112,7 @@ fun AddQuickScreen(
     Scaffold(
         topBar = {
             AppTopBarBack(
-                title = stringResource(R.string.add_new_pair),
+                title = stringResource(R.string.quick_add_new_calculation),
                 navigator = navigator
             )
         }

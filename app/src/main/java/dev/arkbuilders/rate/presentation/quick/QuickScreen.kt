@@ -21,10 +21,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -34,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -59,7 +56,6 @@ import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
-import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
@@ -69,7 +65,6 @@ import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
-import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.presentation.ui.SearchTextField
@@ -241,7 +236,7 @@ private fun GroupPage(
                 item {
                     Text(
                         modifier = Modifier.padding(start = 16.dp, top = 24.dp),
-                        text = stringResource(R.string.pairs),
+                        text = stringResource(R.string.quick_calculations),
                         color = ArkColor.TextTertiary,
                         fontWeight = FontWeight.Medium
                     )
