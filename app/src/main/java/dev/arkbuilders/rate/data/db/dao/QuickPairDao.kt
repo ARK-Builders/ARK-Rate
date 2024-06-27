@@ -23,5 +23,5 @@ interface QuickPairDao {
     fun allFlow(): Flow<List<RoomQuickPair>>
 
     @Query("DELETE FROM RoomQuickPair WHERE id = :id")
-    suspend fun delete(id: Long)
+    suspend fun delete(id: Long): Int
 }

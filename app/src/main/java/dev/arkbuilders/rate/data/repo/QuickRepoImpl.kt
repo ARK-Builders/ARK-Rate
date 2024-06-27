@@ -21,7 +21,7 @@ class QuickRepoImpl @Inject constructor(val dao: QuickPairDao): QuickRepo {
     override fun allFlow() =
         dao.allFlow().map { list -> list.map { it.toQuickPair() } }
 
-    override suspend fun delete(id: Long) = dao.delete(id)
+    override suspend fun delete(id: Long) = dao.delete(id) > 0
 }
 
 private fun QuickPair.toRoom() = RoomQuickPair(id, from, amount, to.joinToString(separator = ","), group)

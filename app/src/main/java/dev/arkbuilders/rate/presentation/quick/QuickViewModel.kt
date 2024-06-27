@@ -44,9 +44,10 @@ data class QuickScreenState(
 )
 
 sealed class QuickScreenEffect {
-    class ShowSnackbarAdded(
+    data class ShowSnackbarAdded(
         val visuals: NotifyAddedSnackbarVisuals
     ): QuickScreenEffect()
+    data class ShowRemovedSnackbar(val pair: QuickPair): QuickScreenEffect()
 }
 
 class QuickViewModel(
@@ -108,7 +109,14 @@ class QuickViewModel(
     }
 
     fun onDelete(pair: QuickPair) = intent {
-        quickRepo.delete(pair.id)
+        val deleted = quickRepo.delete(pair.id)
+        if (deleted) {
+            postSideEffect(QuickScreenEffect.ShowRemovedSnackbar(pair))
+        }
+    }
+
+    fun undoDelete(pair: QuickPair) = intent {
+        quickRepo.insert(pair)
     }
 
     private suspend fun isRatesAvailable() = currencyRepo.getCurrencyRate().isRight()

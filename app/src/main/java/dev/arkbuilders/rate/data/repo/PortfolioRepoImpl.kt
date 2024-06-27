@@ -28,7 +28,7 @@ class PortfolioRepoImpl @Inject constructor(
         dao.insertList(list.map { it.toRoom() })
 
     override suspend fun removeAsset(id: Long) =
-        dao.delete(id)
+        dao.delete(id) > 0
 }
 
 private fun RoomAsset.toAsset() =
