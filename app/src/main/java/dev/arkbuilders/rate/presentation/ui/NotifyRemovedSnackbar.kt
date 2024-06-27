@@ -62,6 +62,10 @@ fun NotifyRemovedSnackbarContent(
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .background(Color.White, RoundedCornerShape(12.dp))
             .border(1.dp, ArkColor.Border, RoundedCornerShape(12.dp))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { }
     ) {
         Icon(
             modifier = Modifier
