@@ -1,221 +1,148 @@
 package dev.arkbuilders.rate.presentation.quick
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.data.model.CurrencyAmount
-import dev.arkbuilders.rate.data.model.CurrencyCode
-import dev.arkbuilders.rate.data.model.CurrencyName
-import dev.arkbuilders.rate.data.GeneralCurrencyRepo
-import dev.arkbuilders.rate.data.model.QuickCurrency
-import dev.arkbuilders.rate.data.assets.AssetsRepo
-import dev.arkbuilders.rate.data.db.QuickBaseCurrencyRepo
-import dev.arkbuilders.rate.data.db.QuickCurrencyRepo
-import dev.arkbuilders.rate.data.model.QuickBaseCurrency
-import dev.arkbuilders.rate.data.preferences.PreferenceKey
-import dev.arkbuilders.rate.data.preferences.Preferences
-import dev.arkbuilders.rate.data.preferences.QuickScreenShowAs
-import dev.arkbuilders.rate.data.preferences.QuickScreenSortedBy
-import dev.arkbuilders.rate.presentation.shared.SharedViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
+import dev.arkbuilders.rate.domain.model.QuickPair
+import dev.arkbuilders.rate.domain.model.Amount
+import dev.arkbuilders.rate.domain.model.CurrencyName
+import dev.arkbuilders.rate.domain.repo.AnalyticsManager
+import dev.arkbuilders.rate.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.domain.repo.PortfolioRepo
+import dev.arkbuilders.rate.domain.repo.Prefs
+import dev.arkbuilders.rate.domain.repo.QuickRepo
+import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
+import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
+import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import java.util.Calendar
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.blockingIntent
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
+import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.viewmodel.container
 
-class CurrencyAttraction(
-    val code: CurrencyCode,
-    val name: CurrencyName,
-    val attractionRatio: Double
+data class QuickDisplayPair(
+    val pair: QuickPair,
+    val to: List<Amount>
 )
 
+data class QuickScreenPage(
+    val group: String?,
+    val pairs: List<QuickDisplayPair>
+)
+
+data class QuickScreenState(
+    val filter: String = "",
+    val currencies: List<CurrencyName> = emptyList(),
+    val pages: List<QuickScreenPage> = emptyList(),
+    val initialized: Boolean = false
+)
+
+sealed class QuickScreenEffect {
+    data class ShowSnackbarAdded(
+        val visuals: NotifyAddedSnackbarVisuals
+    ): QuickScreenEffect()
+    data class ShowRemovedSnackbar(val pair: QuickPair): QuickScreenEffect()
+}
+
 class QuickViewModel(
-    val sharedViewModel: SharedViewModel,
-    val currencyRepo: GeneralCurrencyRepo,
-    val assetsRepo: AssetsRepo,
-    val quickCurrencyRepo: QuickCurrencyRepo,
-    val quickBaseCurrencyRepo: QuickBaseCurrencyRepo,
-    val prefs: Preferences
-) : ViewModel() {
-    val currencyAttractionList = mutableStateListOf<CurrencyAttraction>()
-    val quickBaseCurrency = mutableStateListOf<QuickBaseCurrency>()
-    var selectedCurrency: CurrencyAmount? by mutableStateOf(null)
-    val navigateToSummary = MutableSharedFlow<CurrencyAmount>()
-    var showAs by mutableStateOf(QuickScreenShowAs.TAG_CLOUD)
-    var sortedBy by mutableStateOf(QuickScreenSortedBy.USED_COUNT)
-    var sortDialogVisible by mutableStateOf(false)
-    lateinit var quickCurrencies: List<QuickCurrency>
+    private val currencyRepo: CurrencyRepo,
+    private val assetsRepo: PortfolioRepo,
+    private val quickRepo: QuickRepo,
+    private val prefs: Prefs,
+    private val convertUseCase: ConvertWithRateUseCase,
+    private val analyticsManager: AnalyticsManager,
+) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
+    override val container: Container<QuickScreenState, QuickScreenEffect> =
+        container(QuickScreenState())
 
     init {
-        viewModelScope.launch {
-            showAs = QuickScreenShowAs
-                .values()[prefs.get(PreferenceKey.QuickScreenShowAsKey)]
+        analyticsManager.trackScreen("QuickScreen")
 
-            sortedBy = QuickScreenSortedBy
-                .values()[prefs.get(PreferenceKey.QuickScreenSortedByKey)]
+        intent {
+            if (isRatesAvailable().not())
+                return@intent
 
-            quickCurrencyRepo.allFlow().onEach { currencies ->
-                quickCurrencies = currencies
-                calculateAttraction()
+            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+                postSideEffect(QuickScreenEffect.ShowSnackbarAdded(visuals))
             }.launchIn(viewModelScope)
 
-            quickBaseCurrencyRepo.allFlow().onEach {
-                quickBaseCurrency.clear()
-                quickBaseCurrency.addAll(it)
+            quickRepo.allFlow().onEach { all ->
+                val codeToRate = currencyRepo.getCodeToCurrencyRate().getOrNull()!!
+                val displayList = all.reversed().map { pair ->
+                    val toDisplay = pair.to.map { code ->
+                        val (amount, _) = convertUseCase(
+                            Amount(pair.from, pair.amount),
+                            toCode = code,
+                            codeToRate
+                        )
+                        amount
+                    }
+                    QuickDisplayPair(pair, toDisplay)
+                }
+                val pages = displayList.groupBy { it.pair.group }
+                    .map { (group, pairs) -> QuickScreenPage(group, pairs) }
+                intent {
+                    reduce {
+                        state.copy(
+                            pages = pages,
+                            initialized = true
+                        )
+                    }
+                }
             }.launchIn(viewModelScope)
 
-            sharedViewModel.quickCurrencyPickedFlow.onEach { code ->
-                selectedCurrency = CurrencyAmount(code = code, amount = 0.0)
-            }.launchIn(viewModelScope)
+            val names = currencyRepo.getCurrencyName().getOrNull()!!
+            reduce {
+                state.copy(currencies = names)
+            }
         }
     }
 
-    fun onCurrencySelected(code: CurrencyCode) {
-        selectedCurrency = CurrencyAmount(code = code, amount = 0.0)
+    fun onFilterChanged(filter: String) = blockingIntent {
+        reduce { state.copy(filter = filter) }
     }
 
-    fun onExchange() = viewModelScope.launch {
-        var usedCount =
-            quickCurrencyRepo.getByCode(selectedCurrency!!.code)?.usedCount
-                ?: 0
-        quickCurrencyRepo.insert(
-            QuickCurrency(
-                selectedCurrency!!.code,
-                ++usedCount,
-                Calendar.getInstance().timeInMillis
-            )
-        )
-        navigateToSummary.emit(selectedCurrency!!)
-    }
-
-    fun onAmountChanged(
-        oldInput: String,
-        newInput: String
-    ): String {
-        val containsDigitsAndDot = Regex("[0-9]*\\.?[0-9]*")
-        if (!containsDigitsAndDot.matches(newInput))
-            return oldInput
-
-        val containsDigit = Regex(".*[0-9].*")
-        if (!containsDigit.matches(newInput)) {
-            selectedCurrency = selectedCurrency!!.copy(amount = 0.0)
-            return newInput
+    fun onDelete(pair: QuickPair) = intent {
+        val deleted = quickRepo.delete(pair.id)
+        if (deleted) {
+            postSideEffect(QuickScreenEffect.ShowRemovedSnackbar(pair))
         }
-
-        selectedCurrency = selectedCurrency!!.copy(amount = newInput.toDouble())
-
-        val leadingZeros = "^0+(?=\\d)".toRegex()
-
-        return newInput.replace(leadingZeros, "")
     }
 
-    fun onRemoveBaseCurrency(code: CurrencyCode) = viewModelScope.launch {
-        quickBaseCurrencyRepo.delete(code)
+    fun undoDelete(pair: QuickPair) = intent {
+        quickRepo.insert(pair)
     }
 
-    private suspend fun calculateAttraction() {
-        var attraction = when (sortedBy) {
-            QuickScreenSortedBy.USED_COUNT -> calcAttractionUsedCount()
-            QuickScreenSortedBy.USED_TIME -> calcAttractionUsedTime()
-        }
-
-        // most attractive in center
-        val attraction1 = attraction.filterIndexed { index, _ -> index % 2 == 0 }
-        val attraction2Reversed = attraction
-            .filterIndexed { index, _ -> index % 2 == 1 }
-            .reversed()
-
-        attraction = attraction1 + attraction2Reversed
-
-        currencyAttractionList.clear()
-        currencyAttractionList.addAll(attraction)
-    }
-
-    private suspend fun calcAttractionUsedCount(): List<CurrencyAttraction> {
-        val max = quickCurrencies.maxOfOrNull { it.usedCount }?.toDouble()
-
-        val attraction = quickCurrencies.map {
-            CurrencyAttraction(
-                it.code,
-                name = currencyRepo.currencyNameByCode(it.code),
-                attractionRatio = it.usedCount / max!!
-            )
-        }.sortedBy { it.attractionRatio }
-
-        return attraction
-    }
-
-    private suspend fun calcAttractionUsedTime(): List<CurrencyAttraction> {
-        if (quickCurrencies.isEmpty()) {
-            return emptyList()
-        }
-
-        if (quickCurrencies.size == 1) {
-            val quick = quickCurrencies.first()
-            return listOf(
-                CurrencyAttraction(
-                    quick.code,
-                    currencyRepo.currencyNameByCode(quick.code),
-                    attractionRatio = 1.0
-                )
-            )
-        }
-
-        val min = quickCurrencies.minOfOrNull { it.usedTime }!!
-
-        val usedTimesReducedByMin = quickCurrencies.map { it to it.usedTime - min }
-        val max = usedTimesReducedByMin.maxOfOrNull { (_, time) -> time }!!
-
-        val attraction = usedTimesReducedByMin.map { (quick, time) ->
-            CurrencyAttraction(
-                quick.code,
-                name = currencyRepo.currencyNameByCode(quick.code),
-                attractionRatio = time.toDouble() / max
-            )
-        }.sortedBy { it.attractionRatio }
-
-        return attraction
-    }
-
-    fun onSortedByPick(
-        sortedBy: QuickScreenSortedBy
-    ) = viewModelScope.launch {
-        prefs.set(PreferenceKey.QuickScreenSortedByKey, sortedBy.ordinal)
-        this@QuickViewModel.sortedBy = sortedBy
-        calculateAttraction()
-    }
+    private suspend fun isRatesAvailable() = currencyRepo.getCurrencyRate().isRight()
 }
 
 class QuickViewModelFactory @AssistedInject constructor(
-    @Assisted private val sharedViewModel: SharedViewModel,
-    private val assetsRepo: AssetsRepo,
-    private val quickCurrencyRepo: QuickCurrencyRepo,
-    private val currencyRepo: GeneralCurrencyRepo,
-    private val quickBaseCurrencyRepo: QuickBaseCurrencyRepo,
-    private val prefs: Preferences,
+    private val assetsRepo: PortfolioRepo,
+    private val quickRepo: QuickRepo,
+    private val currencyRepo: CurrencyRepo,
+    private val prefs: Prefs,
+    private val convertUseCase: ConvertWithRateUseCase,
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return QuickViewModel(
-            sharedViewModel,
             currencyRepo,
             assetsRepo,
-            quickCurrencyRepo,
-            quickBaseCurrencyRepo,
-            prefs
+            quickRepo,
+            prefs,
+            convertUseCase,
+            analyticsManager
         ) as T
     }
 
     @AssistedFactory
     interface Factory {
-        fun create(
-            @Assisted sharedViewModel: SharedViewModel,
-        ): QuickViewModelFactory
+        fun create(): QuickViewModelFactory
     }
 }

@@ -1,60 +1,46 @@
 package dev.arkbuilders.rate.presentation
 
 import android.app.Application
+import android.os.Build
+import android.webkit.WebView
+import androidx.work.Configuration
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import dev.arkbuilders.rate.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.acra.config.dialog
-import org.acra.config.httpSender
-import org.acra.data.StringFormat
-import org.acra.ktx.initAcra
-import org.acra.sender.HttpSender
-import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.preferences.PreferenceKey
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import java.util.prefs.Preferences
 
-class App : Application() {
+class App : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
         DIManager.init(this)
-        
-        if (!BuildConfig.GOOGLE_PLAY_BUILD)
-            initAcra()
 
+        initCrashlytics()
         initWorker()
     }
 
-    private fun initAcra() = CoroutineScope(Dispatchers.IO).launch {
-        if (!DIManager.component.prefs().get(PreferenceKey.CrashReport))
-            return@launch
+    private fun initCrashlytics() = CoroutineScope(Dispatchers.IO).launch {
+        // Google Play will collect crashes in any case, so we will also send them to Firebase
+        val collect = if (BuildConfig.GOOGLE_PLAY_BUILD)
+            true
+        else
+            DIManager.component.prefs().get(PreferenceKey.CollectCrashReports)
 
-        initAcra {
-            buildConfigClass = BuildConfig::class.java
-            reportFormat = StringFormat.JSON
-            dialog {
-                text = getString(R.string.crash_dialog_description)
-                title = getString(R.string.crash_dialog_title)
-                commentPrompt = getString(R.string.crash_dialog_comment)
-            }
-            httpSender {
-                uri = BuildConfig.ACRA_URI
-                basicAuthLogin = BuildConfig.ACRA_LOGIN
-                basicAuthPassword = BuildConfig.ACRA_PASS
-                httpMethod = HttpSender.Method.POST
-            }
-        }
+        Firebase.crashlytics.setCrashlyticsCollectionEnabled(collect)
     }
 
 
@@ -79,4 +65,9 @@ class App : Application() {
             workRequest
         )
     }
+
+    override fun getWorkManagerConfiguration() = Configuration.Builder()
+        .setMinimumLoggingLevel(android.util.Log.INFO)
+        .setWorkerFactory(DIManager.component.appWorkerFactory())
+        .build()
 }

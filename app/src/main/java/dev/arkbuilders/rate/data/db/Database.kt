@@ -1,30 +1,38 @@
 package dev.arkbuilders.rate.data.db
 
-import androidx.room.AutoMigration
 import androidx.room.RoomDatabase
+import dev.arkbuilders.rate.data.db.dao.CodeUseStatDao
+import dev.arkbuilders.rate.data.db.dao.CurrencyRateDao
+import dev.arkbuilders.rate.data.db.dao.PairAlertDao
+import dev.arkbuilders.rate.data.db.dao.PortfolioDao
+import dev.arkbuilders.rate.data.db.dao.QuickPairDao
+import dev.arkbuilders.rate.data.db.dao.TimestampDao
+import dev.arkbuilders.rate.data.db.entity.RoomAsset
+import dev.arkbuilders.rate.data.db.entity.RoomCodeUseStat
+import dev.arkbuilders.rate.data.db.entity.RoomCurrencyRate
+import dev.arkbuilders.rate.data.db.entity.RoomFetchTimestamp
+import dev.arkbuilders.rate.data.db.entity.RoomPairAlert
+import dev.arkbuilders.rate.data.db.entity.RoomQuickPair
 
 @androidx.room.Database(
     entities = [
-        RoomCurrencyAmount::class,
+        RoomAsset::class,
         RoomCurrencyRate::class,
         RoomFetchTimestamp::class,
-        RoomPairAlertCondition::class,
-        RoomQuickCurrency::class,
-        RoomQuickBaseCurrency::class
+        RoomPairAlert::class,
+        RoomQuickPair::class,
+        RoomCodeUseStat::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = true,
-    autoMigrations = [
-        AutoMigration(from = 3, to = 8)
-    ]
 )
 abstract class Database : RoomDatabase() {
-    abstract fun assetsDao(): AssetsDao
+    abstract fun assetsDao(): PortfolioDao
     abstract fun rateDao(): CurrencyRateDao
-    abstract fun fetchTimestampDao(): FetchTimestampDao
-    abstract fun pairAlertDao(): PairAlertConditionDao
-    abstract fun quickDao(): QuickCurrencyDao
-    abstract fun quickBaseCurrencyDao(): QuickBaseCurrencyDao
+    abstract fun fetchTimestampDao(): TimestampDao
+    abstract fun pairAlertDao(): PairAlertDao
+    abstract fun quickDao(): QuickPairDao
+    abstract fun codeUseStatDao(): CodeUseStatDao
 
     companion object {
         const val DB_NAME = "arkrate.db"
