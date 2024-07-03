@@ -38,6 +38,7 @@ data class AddPairAlertScreenState(
     val oneTimeNotRecurrent: Boolean = true,
     val availableGroups: List<String> = emptyList(),
     val finishEnabled: Boolean = true,
+    val editExisting: Boolean = false
 )
 
 
@@ -174,8 +175,10 @@ class AddPairAlertViewModel(
 
         val percent = state.priceOrPercent.getOrNull()?.toDoubleSafe()
 
+        val id = if (state.editExisting) pairAlertId!! else 0
+
         val pairAlert = PairAlert(
-            id = 0,
+            id = id,
             targetCode = state.targetCode,
             baseCode = state.baseCode,
             targetPrice = targetPrice,
@@ -294,7 +297,8 @@ class AddPairAlertViewModel(
             currentPrice = currentPrice,
             aboveNotBelow = true,
             group = pair.group,
-            oneTimeNotRecurrent = pair.oneTimeNotRecurrent
+            oneTimeNotRecurrent = pair.oneTimeNotRecurrent,
+            editExisting = true
         )
         reduce { state }
     }

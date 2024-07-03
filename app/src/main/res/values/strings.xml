@@ -36,6 +36,7 @@
 
 
     <string name="alerts">Alerts</string>
+    <string name="alert_edit_alert">Edit alert</string>
     <string name="alert_notified_on">Notified on %1$s %2$s - %3$s</string>
     <string name="alert_empty_title">No Alerts at the Moment</string>
     <string name="alert_empty_desc">Stay updated! We\'ll post any important notifications or changes in exchange rates here.</string>
@@ -112,10 +113,11 @@
     <string name="about_donate_eth">Donate using Ethereum</string>
     <string name="about_donate_btc">Donate using Bitcoin</string>
     <string name="ark_website_url">https://www.ark-builders.dev/</string>
-    <string name="ark_tg_url">https://t.me/ark_builders</string>
-    <string name="ark_contribute_url">https://www.ark-builders.dev/contribute/?tab=goodFirstIssue</string>
-    <string name="about_ark_buy_coffee_url">https://buymeacoffee.com/arkbuilders</string>
-    <string name="about_ark_patreon_url">https://www.patreon.com/ARKBuilders</string>
+    <string name="ark_tg_url" translatable="false">https://t.me/ark_builders</string>
+    <string name="ark_contribute_url" translatable="false">https://www.ark-builders.dev/contribute/?tab=goodFirstIssue</string>
+    <string name="about_ark_buy_coffee_url" translatable="false">https://buymeacoffee.com/arkbuilders</string>
+    <string name="about_ark_patreon_url" translatable="false">https://www.patreon.com/ARKBuilders</string>
+    <string name="ark_discord_url" translatable="false">https://discord.gg/tPUJTxud</string>
     <string name="about_discover_issues_to_work_on">Discover issues to work on</string>
     <string name="about_see_open_bounties">See open bounties</string>
     <string name="about_buy_as_a_coffee">Buy us a coffee</string>

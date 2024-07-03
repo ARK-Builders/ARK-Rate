@@ -133,7 +133,7 @@ private fun Content(navigator: DestinationsNavigator) {
                     painterResource(R.drawable.ic_about_discord),
                     text = "Discord"
                 ) {
-
+                    ctx.openLink(ctx.getString(R.string.ark_discord_url))
                 }
             }
             OutlinedButton(
