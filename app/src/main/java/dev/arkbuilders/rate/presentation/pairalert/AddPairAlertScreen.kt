@@ -113,7 +113,10 @@ fun AddPairAlertScreen(
     Scaffold(
         topBar = {
             AppTopBarBack(
-                title = stringResource(R.string.add_new_alert),
+                title = if (state.editExisting)
+                    stringResource(R.string.alert_edit_alert)
+                else
+                    stringResource(R.string.add_new_alert),
                 navigator = navigator
             )
         }
@@ -142,9 +145,10 @@ private fun Content(
     }
 
     Column {
-        Column(modifier = Modifier
-            .weight(1f)
-            .verticalScroll(rememberScrollState())
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
         ) {
             PriceOrPercent(state, viewModel::onPriceOrPercentChanged)
             EditCondition(state, viewModel, navigator)
@@ -197,7 +201,12 @@ private fun Content(
                 onClick = { viewModel.onSaveClick() },
                 enabled = state.finishEnabled
             ) {
-                Text(text = stringResource(R.string.create_alert))
+                Text(
+                    text = if (state.editExisting)
+                        stringResource(R.string.save)
+                    else
+                        stringResource(R.string.create_alert)
+                )
             }
         }
     }

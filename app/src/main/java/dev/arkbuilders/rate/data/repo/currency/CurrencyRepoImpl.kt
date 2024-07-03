@@ -33,7 +33,7 @@ class CurrencyRepoImpl @Inject constructor(
             return crypto
         }
 
-        return (fiat.getOrNull()!! + crypto.getOrNull()!!).right()
+        return (fiat.getOrNull()!! + crypto.getOrNull()!!).sortedBy { it.code }.right()
     }
 
     override suspend fun nameByCode(

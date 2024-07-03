@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -324,7 +325,11 @@ private fun QuickItem(
                     ) {
                         if (quick.to.size == 1) {
                             CurrIcon(
-                                modifier = Modifier.size(39.dp),
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .align(Alignment.Center)
+                                    .clip(CircleShape)
+                                    .background(Color.White),
                                 code = quick.pair.to.first()
                             )
                         } else {
