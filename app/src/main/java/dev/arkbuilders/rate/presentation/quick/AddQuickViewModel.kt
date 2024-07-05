@@ -73,7 +73,7 @@ class AddQuickViewModel(
             intent {
                 val newAmounts = state.currencies + AmountStr(code, "")
                 val calc = calcToResult(newAmounts)
-                reduce {  state.copy(currencies = calc) }
+                reduce { state.copy(currencies = calc) }
                 checkFinishEnabled()
             }
         }.launchIn(viewModelScope)
@@ -134,7 +134,7 @@ class AddQuickViewModel(
     fun onAddQuickPair() = intent {
         val from = state.currencies.first()
         val quick = QuickPair(
-            id = 0,
+            id = quickPairId ?: 0,
             from = from.code,
             amount = from.value.toDouble(),
             to = state.currencies.drop(1).map { it.code },
