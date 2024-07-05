@@ -31,6 +31,17 @@
             </intent-filter>
         </activity>
 
+        <receiver android:name=".presentation.quick.glancewidget.GlanceReceiver"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/glance_widget_provider" />
+        </receiver>
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="dev.arkbuilders.rate.androidx-startup"
