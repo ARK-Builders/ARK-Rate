@@ -101,6 +101,7 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.8.1'
 
     implementation "com.google.dagger:dagger:2.50"
+    implementation 'androidx.glance:glance-appwidget:1.1.0'
     ksp "com.google.dagger:dagger-compiler:2.50"
 
     implementation "androidx.room:room-runtime:2.6.0"
