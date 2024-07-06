@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.presentation.quick.glancewidget
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -14,23 +15,51 @@ import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
+import dev.arkbuilders.rate.presentation.MainActivity
 import dev.arkbuilders.rate.presentation.quick.QuickDisplayPair
 import dev.arkbuilders.rate.presentation.quick.QuickScreenPage
+import dev.arkbuilders.rate.presentation.quick.glancewidget.action.OpenAppAction
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 
-
-class QuickPairsWidgetReceiver : GlanceAppWidgetReceiver() {
-    private val quickRepo: QuickRepo = DIManager.component.quickRepo()
-    private val convertUseCase: ConvertWithRateUseCase = DIManager.component.convertUseCase()
-    private val currencyRepo: CurrencyRepo = DIManager.component.generalCurrencyRepo()
+class QuickPairsWidgetReceiver(
+    private val quickRepo: QuickRepo = DIManager.component.quickRepo(),
+    private val convertUseCase: ConvertWithRateUseCase = DIManager.component.convertUseCase(),
+    private val currencyRepo: CurrencyRepo = DIManager.component.generalCurrencyRepo(),
+) : GlanceAppWidgetReceiver() {
 
     private val coroutineScope = MainScope()
 
     override val glanceAppWidget: GlanceAppWidget = QuickPairsWidget()
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
+        val action = intent.action
+        Timber.d(action)
+        when (action) {
+            AppWidgetManager.ACTION_APPWIDGET_ENABLED ->
+                getQuickPairs(context)
+            OpenAppAction.OPEN_APP -> {
+                val intent = Intent(context, MainActivity::class.java).apply {
+                    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(intent)
+            }
+        }
+    }
+
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray
+    ) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        getQuickPairs(context)
+    }
+
+    private fun getQuickPairs(context: Context) {
+        Timber.d("Get quick pairs for widget")
         quickRepo.allFlow().onEach { all ->
             val codeToRate = currencyRepo.getCodeToCurrencyRate().getOrNull()!!
             val displayList = all.reversed().map { pair ->
