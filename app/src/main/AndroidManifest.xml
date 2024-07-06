@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".presentation.quick.glancewidget.GlanceReceiver"
+        <receiver android:name=".presentation.quick.glancewidget.QuickPairsWidgetReceiver"
             android:exported="true">
 
             <intent-filter>

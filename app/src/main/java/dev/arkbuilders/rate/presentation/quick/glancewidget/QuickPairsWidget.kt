@@ -1,0 +1,72 @@
+package dev.arkbuilders.rate.presentation.quick.glancewidget
+
+import android.content.Context
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.Preferences
+import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
+import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.lazy.LazyColumn
+import androidx.glance.appwidget.lazy.items
+import androidx.glance.appwidget.provideContent
+import androidx.glance.background
+import androidx.glance.currentState
+import androidx.glance.layout.Column
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
+import androidx.glance.layout.padding
+import androidx.glance.text.FontWeight
+import androidx.glance.text.Text
+import androidx.glance.text.TextStyle
+import androidx.glance.unit.ColorProvider
+import com.google.gson.GsonBuilder
+import dev.arkbuilders.rate.presentation.quick.QuickDisplayPair
+import dev.arkbuilders.rate.presentation.theme.ArkColor
+
+class QuickPairsWidget : GlanceAppWidget() {
+
+    private fun parseQuickPairs(quickPairsString: String): List<QuickDisplayPair> {
+        val gson = GsonBuilder().create()
+        return gson.fromJson(quickPairsString, Array<QuickDisplayPair>::class.java).toList()
+    }
+
+    override suspend fun provideGlance(context: Context, id: GlanceId) {
+        provideContent {
+            val prefs = currentState<Preferences>()
+            val quickPairsString = prefs[QuickPairsWidgetReceiver.quickDisplayPairs]
+            val quickPairsList = quickPairsString?.let { parseQuickPairs(it) }
+            GlanceTheme {
+                LazyColumn(
+                    modifier = GlanceModifier.fillMaxSize().background(Color.White)
+                        .padding(horizontal = 12.dp)
+                ) {
+                    item {
+                        Text(
+                            modifier = GlanceModifier.padding(top = 8.dp),
+                            text = "Calculations",
+                            style = TextStyle(
+                                color = ColorProvider(ArkColor.TextTertiary),
+                                fontWeight = FontWeight.Medium
+                            )
+                        )
+                    }
+                    quickPairsList?.let { pairs ->
+                        items(pairs) { quick ->
+                            Column {
+                                QuickPairItem(
+                                    quick = quick,
+                                    context = context
+                                )
+                                Spacer(modifier = GlanceModifier.fillMaxWidth().height(1.dp).background(Color.Gray.copy(alpha = 0.2f)).padding(vertical = 2.dp))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
