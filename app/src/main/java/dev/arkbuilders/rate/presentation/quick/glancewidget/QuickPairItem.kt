@@ -25,7 +25,7 @@ fun QuickPairItem(
     quick: QuickDisplayPair,
     context: Context
 ) {
-    Row(modifier = GlanceModifier.padding(vertical = 2.dp)) {
+    Row(modifier = GlanceModifier.padding(vertical = 2.dp), verticalAlignment = Alignment.Vertical.CenterVertically) {
         Image(
             modifier = GlanceModifier.size(24.dp),
             provider = ImageProvider(
