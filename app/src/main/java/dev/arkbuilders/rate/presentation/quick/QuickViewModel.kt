@@ -13,6 +13,7 @@ import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.repo.QuickRepo
+import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
@@ -34,6 +35,7 @@ data class QuickScreenPage(
 data class QuickScreenState(
     val filter: String = "",
     val currencies: List<CurrencyName> = emptyList(),
+    val frequent: List<CurrencyName> = emptyList(),
     val pages: List<QuickScreenPage> = emptyList(),
     val initialized: Boolean = false
 )
@@ -51,6 +53,7 @@ class QuickViewModel(
     private val quickRepo: QuickRepo,
     private val prefs: Prefs,
     private val convertUseCase: ConvertWithRateUseCase,
+    private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
     override val container: Container<QuickScreenState, QuickScreenEffect> =
@@ -81,8 +84,10 @@ class QuickViewModel(
             }.launchIn(viewModelScope)
 
             val names = currencyRepo.getCurrencyName().getOrNull()!!
+            val frequent = calcFrequentCurrUseCase.invoke()
+                .map { currencyRepo.nameByCodeUnsafe(it) }
             reduce {
-                state.copy(currencies = names)
+                state.copy(currencies = names, frequent = frequent)
             }
         }
     }
@@ -111,6 +116,7 @@ class QuickViewModelFactory @AssistedInject constructor(
     private val currencyRepo: CurrencyRepo,
     private val prefs: Prefs,
     private val convertUseCase: ConvertWithRateUseCase,
+    private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -120,6 +126,7 @@ class QuickViewModelFactory @AssistedInject constructor(
             quickRepo,
             prefs,
             convertUseCase,
+            calcFrequentCurrUseCase,
             analyticsManager
         ) as T
     }

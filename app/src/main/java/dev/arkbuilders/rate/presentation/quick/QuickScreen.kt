@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -66,6 +65,7 @@ import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
+import dev.arkbuilders.rate.presentation.ui.ListHeader
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
 import dev.arkbuilders.rate.presentation.ui.NotifyRemovedSnackbarVisuals
@@ -183,28 +183,36 @@ private fun Content(
         ) {
             onFilterChanged(it)
         }
-        if (state.pages.size == 1) {
-            GroupPage(
+        if (state.filter.isNotEmpty()) {
+            SearchPage(
                 filter = state.filter,
-                currencies = state.currencies,
-                quickPairs = state.pages.first().pairs,
-                onDelete = onDelete,
-                onLongClick = onLongClick,
-                onNewCode = onNewCode
+                frequent = state.frequent,
+                currencies = state.currencies
             )
         } else {
-            GroupViewPager(
-                modifier = Modifier.padding(top = 20.dp),
-                groups = groups
-            ) { index ->
+            if (state.pages.size == 1) {
                 GroupPage(
-                    filter = state.filter,
+                    frequent = state.frequent,
                     currencies = state.currencies,
-                    quickPairs = state.pages[index].pairs,
+                    quickPairs = state.pages.first().pairs,
                     onDelete = onDelete,
                     onLongClick = onLongClick,
                     onNewCode = onNewCode
                 )
+            } else {
+                GroupViewPager(
+                    modifier = Modifier.padding(top = 20.dp),
+                    groups = groups
+                ) { index ->
+                    GroupPage(
+                        frequent = state.frequent,
+                        currencies = state.currencies,
+                        quickPairs = state.pages[index].pairs,
+                        onDelete = onDelete,
+                        onLongClick = onLongClick,
+                        onNewCode = onNewCode
+                    )
+                }
             }
         }
     }
@@ -212,58 +220,69 @@ private fun Content(
 
 @Composable
 private fun GroupPage(
-    filter: String,
+    frequent: List<CurrencyName>,
     currencies: List<CurrencyName>,
     quickPairs: List<QuickPair>,
     onDelete: (QuickPair) -> Unit,
     onLongClick: (QuickPair) -> Unit = {},
     onNewCode: (CurrencyCode) -> Unit = {}
 ) {
-    val filteredPairs = quickPairs.filter { quick ->
-        val containsFrom =
-            quick.from.contains(filter, ignoreCase = true)
-        val containsTo = quick.to.any { amount ->
-            amount.code.contains(
-                filter,
-                ignoreCase = true
-            )
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            ListHeader(text = stringResource(R.string.quick_calculations))
         }
-
-        containsFrom || containsTo
+        items(quickPairs, key = { it.id }) {
+            AppSwipeToDismiss(
+                content = { QuickItem(it, onLongClick) },
+                onDelete = { onDelete(it) }
+            )
+            AppHorDiv16()
+        }
+        if (frequent.isNotEmpty()) {
+            item {
+                ListHeader(text = stringResource(R.string.frequent_currencies))
+            }
+            items(frequent) { name ->
+                CurrencyInfoItem(name) { onNewCode(it.code) }
+            }
+        }
+        item {
+            ListHeader(text = stringResource(R.string.all_currencies))
+        }
+        items(currencies, key = { it.code }) { name ->
+            CurrencyInfoItem(name) { onNewCode(it.code) }
+        }
     }
+}
+
+@Composable
+private fun SearchPage(
+    filter: String,
+    frequent: List<CurrencyName>,
+    currencies: List<CurrencyName>,
+    onNewCode: (CurrencyCode) -> Unit = {}
+) {
     val filteredCurrencies = currencies.filter {
         it.name.contains(filter, ignoreCase = true)
                 || it.code.contains(filter, ignoreCase = true)
     }
-    if (filteredPairs.isNotEmpty() || filteredCurrencies.isNotEmpty()) {
+    val filteredFrequent = frequent.filter {
+        it.name.contains(filter, ignoreCase = true)
+                || it.code.contains(filter, ignoreCase = true)
+    }
+    if (filteredCurrencies.isNotEmpty() || filteredFrequent.isNotEmpty()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            if (filteredPairs.isNotEmpty()) {
+            if (filteredFrequent.isNotEmpty()) {
                 item {
-                    Text(
-                        modifier = Modifier.padding(start = 16.dp, top = 24.dp),
-                        text = stringResource(R.string.quick_calculations),
-                        color = ArkColor.TextTertiary,
-                        fontWeight = FontWeight.Medium
-                    )
-                    AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
+                    ListHeader(text = stringResource(R.string.frequent_currencies))
                 }
-                items(filteredPairs, key = { it.id }) {
-                    AppSwipeToDismiss(
-                        content = { QuickItem(it, onLongClick) },
-                        onDelete = { onDelete(it) }
-                    )
-                    AppHorDiv16()
+                items(filteredFrequent) { name ->
+                    CurrencyInfoItem(name) { onNewCode(it.code) }
                 }
             }
             if (filteredCurrencies.isNotEmpty()) {
                 item {
-                    Text(
-                        modifier = Modifier.padding(start = 16.dp, top = 24.dp),
-                        text = stringResource(R.string.currencies),
-                        color = ArkColor.TextTertiary,
-                        fontWeight = FontWeight.Medium
-                    )
-                    AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
+                    ListHeader(text = stringResource(R.string.all_currencies))
                 }
                 items(filteredCurrencies, key = { it.code }) { name ->
                     CurrencyInfoItem(name) { onNewCode(it.code) }

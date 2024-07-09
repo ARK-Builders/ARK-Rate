@@ -64,7 +64,7 @@
     <string name="new_group">New group</string>
 
     <string name="crash_reports">Crash reports</string>
-    <string name="currencies">Currencies</string>
+    <string name="all_currencies">All currencies</string>
 
     <string name="ok">OK</string>
     <string name="oops_something_went_wrong">Oops! Something went wrong</string>
@@ -133,5 +133,7 @@
     <string name="search_currency">Search a currency</string>
     <string name="new_asset">New Asset</string>
     <string name="undo">Undo</string>
+    <string name="frequent_currencies">Frequent currencies</string>
+    <string name="top_results">Top results</string>
 
 </resources>
