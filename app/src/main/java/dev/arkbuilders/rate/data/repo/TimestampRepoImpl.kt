@@ -11,9 +11,9 @@ import javax.inject.Singleton
 @Singleton
 class TimestampRepoImpl @Inject constructor(private val dao: TimestampDao): TimestampRepo {
     override suspend fun rememberTimestamp(type: TimestampType) =
-        dao.insert(RoomFetchTimestamp(type.name, OffsetDateTime.now().toString()))
+        dao.insert(RoomFetchTimestamp(type.name, OffsetDateTime.now()))
 
     override suspend fun getTimestamp(type: TimestampType) =
-        dao.getTimestamp(type.name)?.timestamp?.let { OffsetDateTime.parse(it) }
+        dao.getTimestamp(type.name)?.timestamp
 }
 

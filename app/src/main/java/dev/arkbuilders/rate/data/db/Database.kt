@@ -1,6 +1,7 @@
 package dev.arkbuilders.rate.data.db
 
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import dev.arkbuilders.rate.data.db.dao.CodeUseStatDao
 import dev.arkbuilders.rate.data.db.dao.CurrencyRateDao
 import dev.arkbuilders.rate.data.db.dao.PairAlertDao
@@ -13,6 +14,8 @@ import dev.arkbuilders.rate.data.db.entity.RoomCurrencyRate
 import dev.arkbuilders.rate.data.db.entity.RoomFetchTimestamp
 import dev.arkbuilders.rate.data.db.entity.RoomPairAlert
 import dev.arkbuilders.rate.data.db.entity.RoomQuickPair
+import dev.arkbuilders.rate.data.db.typeconverters.ListAmountTypeConverter
+import dev.arkbuilders.rate.data.db.typeconverters.OffsetDateTimeTypeConverter
 
 @androidx.room.Database(
     entities = [
@@ -23,9 +26,10 @@ import dev.arkbuilders.rate.data.db.entity.RoomQuickPair
         RoomQuickPair::class,
         RoomCodeUseStat::class
     ],
-    version = 9,
+    version = 10,
     exportSchema = true,
 )
+@TypeConverters(ListAmountTypeConverter::class, OffsetDateTimeTypeConverter::class)
 abstract class Database : RoomDatabase() {
     abstract fun assetsDao(): PortfolioDao
     abstract fun rateDao(): CurrencyRateDao

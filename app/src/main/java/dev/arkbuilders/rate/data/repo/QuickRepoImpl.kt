@@ -9,12 +9,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class QuickRepoImpl @Inject constructor(val dao: QuickPairDao): QuickRepo {
+class QuickRepoImpl @Inject constructor(val dao: QuickPairDao) : QuickRepo {
 
     override suspend fun insert(quick: QuickPair) =
         dao.insert(quick.toRoom())
 
-    override suspend fun getById(id: Long): QuickPair? = dao.getById(id)?.toQuickPair()
+    override suspend fun getById(id: Long): QuickPair? =
+        dao.getById(id)?.toQuickPair()
 
     override suspend fun getAll() = dao.getAll().map { it.toQuickPair() }
 
@@ -24,5 +25,8 @@ class QuickRepoImpl @Inject constructor(val dao: QuickPairDao): QuickRepo {
     override suspend fun delete(id: Long) = dao.delete(id) > 0
 }
 
-private fun QuickPair.toRoom() = RoomQuickPair(id, from, amount, to.joinToString(separator = ","), group)
-private fun RoomQuickPair.toQuickPair() = QuickPair(id, from, amount, to.split(","), group)
+private fun QuickPair.toRoom() =
+    RoomQuickPair(id, from, amount, to, calculatedDate, group)
+
+private fun RoomQuickPair.toQuickPair() =
+    QuickPair(id, from, amount, to, calculatedDate, group)

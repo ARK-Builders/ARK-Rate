@@ -26,14 +26,9 @@ import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
-data class QuickDisplayPair(
-    val pair: QuickPair,
-    val to: List<Amount>
-)
-
 data class QuickScreenPage(
     val group: String?,
-    val pairs: List<QuickDisplayPair>
+    val pairs: List<QuickPair>
 )
 
 data class QuickScreenState(
@@ -73,19 +68,7 @@ class QuickViewModel(
             }.launchIn(viewModelScope)
 
             quickRepo.allFlow().onEach { all ->
-                val codeToRate = currencyRepo.getCodeToCurrencyRate().getOrNull()!!
-                val displayList = all.reversed().map { pair ->
-                    val toDisplay = pair.to.map { code ->
-                        val (amount, _) = convertUseCase(
-                            Amount(pair.from, pair.amount),
-                            toCode = code,
-                            codeToRate
-                        )
-                        amount
-                    }
-                    QuickDisplayPair(pair, toDisplay)
-                }
-                val pages = displayList.groupBy { it.pair.group }
+                val pages = all.reversed().groupBy { it.group }
                     .map { (group, pairs) -> QuickScreenPage(group, pairs) }
                 intent {
                     reduce {

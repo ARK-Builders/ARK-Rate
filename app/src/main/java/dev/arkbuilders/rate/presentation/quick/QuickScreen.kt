@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -54,6 +55,7 @@ import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
@@ -69,8 +71,10 @@ import dev.arkbuilders.rate.presentation.ui.NoResult
 import dev.arkbuilders.rate.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.presentation.ui.SearchTextField
+import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import java.time.OffsetDateTime
 
 @RootNavGraph(start = true)
 @Destination
@@ -96,7 +100,7 @@ fun QuickScreen(
                     ctx.getString(
                         R.string.quick_snackbar_new_added_to,
                         effect.pair.from,
-                        effect.pair.to.joinToString { it }
+                        effect.pair.to.joinToString { it.code }
                     )
                 val visuals = NotifyRemovedSnackbarVisuals(
                     title = ctx.getString(R.string.quick_snackbar_removed_title),
@@ -147,7 +151,7 @@ fun QuickScreen(
                     onFilterChanged = viewModel::onFilterChanged,
                     onDelete = viewModel::onDelete,
                     onLongClick = { quick ->
-                        navigator.navigate(AddQuickScreenDestination(quickPairId = quick.pair.id))
+                        navigator.navigate(AddQuickScreenDestination(quickPairId = quick.id))
                     },
                     onNewCode = {
                         navigator.navigate(AddQuickScreenDestination(newCode = it))
@@ -163,7 +167,7 @@ private fun Content(
     state: QuickScreenState,
     onFilterChanged: (String) -> Unit,
     onDelete: (QuickPair) -> Unit = {},
-    onLongClick: (QuickDisplayPair) -> Unit = {},
+    onLongClick: (QuickPair) -> Unit = {},
     onNewCode: (CurrencyCode) -> Unit = {}
 ) {
     val groups = state.pages.map { it.group }
@@ -210,16 +214,16 @@ private fun Content(
 private fun GroupPage(
     filter: String,
     currencies: List<CurrencyName>,
-    quickPairs: List<QuickDisplayPair>,
+    quickPairs: List<QuickPair>,
     onDelete: (QuickPair) -> Unit,
-    onLongClick: (QuickDisplayPair) -> Unit = {},
+    onLongClick: (QuickPair) -> Unit = {},
     onNewCode: (CurrencyCode) -> Unit = {}
 ) {
-    val filteredPairs = quickPairs.filter { displayPair ->
+    val filteredPairs = quickPairs.filter { quick ->
         val containsFrom =
-            displayPair.pair.from.contains(filter, ignoreCase = true)
-        val containsTo = displayPair.pair.to.any { toCode ->
-            toCode.contains(
+            quick.from.contains(filter, ignoreCase = true)
+        val containsTo = quick.to.any { amount ->
+            amount.code.contains(
                 filter,
                 ignoreCase = true
             )
@@ -243,10 +247,10 @@ private fun GroupPage(
                     )
                     AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
                 }
-                items(filteredPairs, key = { it.pair.id }) {
+                items(filteredPairs, key = { it.id }) {
                     AppSwipeToDismiss(
                         content = { QuickItem(it, onLongClick) },
-                        onDelete = { onDelete(it.pair) }
+                        onDelete = { onDelete(it) }
                     )
                     AppHorDiv16()
                 }
@@ -274,17 +278,15 @@ private fun GroupPage(
 @Preview(showBackground = true)
 @Composable
 private fun QuickItem(
-    quick: QuickDisplayPair = QuickDisplayPair(
-        pair = QuickPair(
-            0,
-            "BTC",
-            1.0,
-            listOf("USD"),
-            null
-        ),
-        to = emptyList()
+    quick: QuickPair = QuickPair(
+        0,
+        "BTC",
+        1.0,
+        listOf(Amount("USD", 30.0)),
+        OffsetDateTime.now(),
+        null
     ),
-    onLongClick: (QuickDisplayPair) -> Unit = {},
+    onLongClick: (QuickPair) -> Unit = {},
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -314,7 +316,7 @@ private fun QuickItem(
                     modifier = Modifier
                         .size(40.dp)
                 ) {
-                    CurrIcon(modifier = Modifier.size(40.dp), code = quick.pair.from)
+                    CurrIcon(modifier = Modifier.size(40.dp), code = quick.from)
                 }
                 if (!expanded) {
                     Box(
@@ -330,7 +332,7 @@ private fun QuickItem(
                                     .align(Alignment.Center)
                                     .clip(CircleShape)
                                     .background(Color.White),
-                                code = quick.pair.to.first()
+                                code = quick.to.first().code
                             )
                         } else {
                             Box(
@@ -355,13 +357,14 @@ private fun QuickItem(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "${quick.pair.from} to ${quick.pair.to.joinToString(", ")}",
+                    text = "${quick.from} to " +
+                            quick.to.joinToString(", ") { it.code },
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextPrimary
                 )
                 if (expanded) {
                     Text(
-                        text = "${CurrUtils.prepareToDisplay(quick.pair.amount)} ${quick.pair.from} =",
+                        text = "${CurrUtils.prepareToDisplay(quick.amount)} ${quick.from} =",
                         color = ArkColor.TextTertiary
                     )
                     quick.to.forEach {
@@ -379,11 +382,20 @@ private fun QuickItem(
                     }
                 } else {
                     Text(
-                        text = "${CurrUtils.prepareToDisplay(quick.pair.amount)} ${quick.pair.from} = " +
+                        text = "${CurrUtils.prepareToDisplay(quick.amount)} ${quick.from} = " +
                                 "${CurrUtils.prepareToDisplay(quick.to.first().value)} ${quick.to.first().code}",
                         color = ArkColor.TextTertiary
                     )
                 }
+                Text(
+                    modifier = Modifier.padding(top = if (expanded) 8.dp else 0.dp),
+                    text = stringResource(
+                        R.string.quick_calculated_on,
+                        DateFormatUtils.calculatedOn(quick.calculatedDate)
+                    ),
+                    color = ArkColor.TextTertiary,
+                    fontSize = 13.sp
+                )
             }
         }
         if (quick.to.size > 1) {
