@@ -4,6 +4,7 @@ package dev.arkbuilders.rate.presentation.ui
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -32,7 +33,7 @@ fun BasicTextFieldPlaceholder(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     BasicTextField(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         value = value,
         onValueChange = { onValueChange(it) },
         textStyle = TextStyle.Default.copy(
