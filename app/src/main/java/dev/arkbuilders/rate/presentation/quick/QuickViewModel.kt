@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.domain.model.QuickPair
-import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
@@ -36,6 +35,7 @@ data class QuickScreenState(
     val filter: String = "",
     val currencies: List<CurrencyName> = emptyList(),
     val frequent: List<CurrencyName> = emptyList(),
+    val topResults: List<CurrencyName> = emptyList(),
     val pages: List<QuickScreenPage> = emptyList(),
     val initialized: Boolean = false
 )
@@ -43,8 +43,9 @@ data class QuickScreenState(
 sealed class QuickScreenEffect {
     data class ShowSnackbarAdded(
         val visuals: NotifyAddedSnackbarVisuals
-    ): QuickScreenEffect()
-    data class ShowRemovedSnackbar(val pair: QuickPair): QuickScreenEffect()
+    ) : QuickScreenEffect()
+
+    data class ShowRemovedSnackbar(val pair: QuickPair) : QuickScreenEffect()
 }
 
 class QuickViewModel(
@@ -83,11 +84,17 @@ class QuickViewModel(
                 }
             }.launchIn(viewModelScope)
 
-            val names = currencyRepo.getCurrencyName().getOrNull()!!
+            val all = currencyRepo.getCurrencyName().getOrNull()!!
             val frequent = calcFrequentCurrUseCase.invoke()
                 .map { currencyRepo.nameByCodeUnsafe(it) }
+            val topResults = frequent + (all - frequent)
+
             reduce {
-                state.copy(currencies = names, frequent = frequent)
+                state.copy(
+                    currencies = all,
+                    frequent = frequent,
+                    topResults = topResults
+                )
             }
         }
     }

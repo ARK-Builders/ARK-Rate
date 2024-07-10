@@ -186,8 +186,7 @@ private fun Content(
         if (state.filter.isNotEmpty()) {
             SearchPage(
                 filter = state.filter,
-                frequent = state.frequent,
-                currencies = state.currencies
+                topResults = state.topResults
             )
         } else {
             if (state.pages.size == 1) {
@@ -258,35 +257,20 @@ private fun GroupPage(
 @Composable
 private fun SearchPage(
     filter: String,
-    frequent: List<CurrencyName>,
-    currencies: List<CurrencyName>,
+    topResults: List<CurrencyName>,
     onNewCode: (CurrencyCode) -> Unit = {}
 ) {
-    val filteredCurrencies = currencies.filter {
+    val filtered = topResults.filter {
         it.name.contains(filter, ignoreCase = true)
                 || it.code.contains(filter, ignoreCase = true)
     }
-    val filteredFrequent = frequent.filter {
-        it.name.contains(filter, ignoreCase = true)
-                || it.code.contains(filter, ignoreCase = true)
-    }
-    if (filteredCurrencies.isNotEmpty() || filteredFrequent.isNotEmpty()) {
+    if (filtered.isNotEmpty()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            if (filteredFrequent.isNotEmpty()) {
-                item {
-                    ListHeader(text = stringResource(R.string.frequent_currencies))
-                }
-                items(filteredFrequent) { name ->
-                    CurrencyInfoItem(name) { onNewCode(it.code) }
-                }
+            item {
+                ListHeader(text = stringResource(R.string.top_results))
             }
-            if (filteredCurrencies.isNotEmpty()) {
-                item {
-                    ListHeader(text = stringResource(R.string.all_currencies))
-                }
-                items(filteredCurrencies, key = { it.code }) { name ->
-                    CurrencyInfoItem(name) { onNewCode(it.code) }
-                }
+            items(filtered) { name ->
+                CurrencyInfoItem(name) { onNewCode(it.code) }
             }
         }
     } else {
