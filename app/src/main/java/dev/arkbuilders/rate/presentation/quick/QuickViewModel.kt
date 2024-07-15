@@ -16,6 +16,7 @@ import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
@@ -25,6 +26,7 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import timber.log.Timber
 
 data class QuickScreenPage(
     val group: String?,
@@ -71,29 +73,45 @@ class QuickViewModel(
                 postSideEffect(QuickScreenEffect.ShowSnackbarAdded(visuals))
             }.launchIn(viewModelScope)
 
-            quickRepo.allFlow().onEach { all ->
-                val pages = all.reversed().groupBy { it.group }
+            quickRepo.allFlow().drop(1).onEach { quick ->
+                val pages = quick.reversed().groupBy { it.group }
                     .map { (group, pairs) -> QuickScreenPage(group, pairs) }
                 intent {
                     reduce {
                         state.copy(
-                            pages = pages,
-                            initialized = true
+                            pages = pages
                         )
                     }
                 }
             }.launchIn(viewModelScope)
 
-            val all = currencyRepo.getCurrencyName().getOrNull()!!
-            val frequent = calcFrequentCurrUseCase.invoke()
+            calcFrequentCurrUseCase.flow().drop(1).onEach {
+                val currencies = currencyRepo.getCurrencyNameUnsafe()
+                val frequent = calcFrequentCurrUseCase.invoke()
+                    .map { currencyRepo.nameByCodeUnsafe(it) }
+                val topResults = frequent + (currencies - frequent)
+                reduce {
+                    state.copy(
+                        frequent = frequent,
+                        topResults = topResults
+                    )
+                }
+            }.launchIn(viewModelScope)
+
+            val all = currencyRepo.getCurrencyNameUnsafe()
+            val frequent = calcFrequentCurrUseCase()
                 .map { currencyRepo.nameByCodeUnsafe(it) }
             val topResults = frequent + (all - frequent)
-
+            val quick = quickRepo.getAll()
+            val pages = quick.reversed().groupBy { it.group }
+                .map { (group, pairs) -> QuickScreenPage(group, pairs) }
             reduce {
                 state.copy(
                     currencies = all,
                     frequent = frequent,
-                    topResults = topResults
+                    topResults = topResults,
+                    pages = pages,
+                    initialized = true
                 )
             }
         }
