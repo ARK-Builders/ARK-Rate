@@ -30,7 +30,7 @@ class CodeUseStatRepoImpl @Inject constructor(private val dao: CodeUseStatDao) :
 }
 
 private fun RoomCodeUseStat.toCodeUseStat() =
-    CodeUseStat(code, count, OffsetDateTime.parse(lastUsedDate))
+    CodeUseStat(code, count, lastUsedDate)
 
 private fun CodeUseStat.toRoom() =
-    RoomCodeUseStat(code, count, lastUsedDate.toString())
+    RoomCodeUseStat(code, count, lastUsedDate)

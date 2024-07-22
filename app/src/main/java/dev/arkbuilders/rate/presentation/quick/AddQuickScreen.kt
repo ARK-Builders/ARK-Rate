@@ -95,7 +95,7 @@ fun AddQuickScreen(
                     ctx.getString(
                         R.string.quick_snackbar_new_added_to,
                         effect.pair.from,
-                        effect.pair.to.joinToString { it }
+                        effect.pair.to.joinToString { it.code }
                     )
                 AppSharedFlow.ShowAddedSnackbarQuick.flow.emit(
                     NotifyAddedSnackbarVisuals(

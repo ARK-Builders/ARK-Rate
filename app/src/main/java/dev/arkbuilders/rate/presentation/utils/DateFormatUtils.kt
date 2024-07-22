@@ -36,9 +36,23 @@ object DateFormatUtils {
         date: OffsetDateTime
     ): String {
         val format = DateTimeFormatter
-            .ofPattern("hh:mm a, dd MMM yyyy", Locale.getDefault())
+            .ofPattern("hh:mm a, dd MMM yyyy", Locale.ENGLISH)
         return format.format(date)
     }
 
+    fun calculatedOn(
+        date: OffsetDateTime
+    ): String {
+        val format = DateTimeFormatter
+            .ofPattern("dd MMM yyyy", Locale.ENGLISH)
+        return format.format(date)
+    }
 
+    fun notifiedOn(
+        date: OffsetDateTime
+    ): String {
+        val format =
+            DateTimeFormatter.ofPattern("MMM dd - hh:mm a", Locale.ENGLISH)
+        return format.format(date)
+    }
 }
