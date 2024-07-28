@@ -9,6 +9,7 @@ import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
+import dev.arkbuilders.rate.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import org.orbitmvi.orbit.Container
@@ -37,6 +38,7 @@ class SearchViewModel(
     private val pos: Int?,
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
+    private val getTopResultUseCase: GetTopResultUseCase,
     private val analyticsManager: AnalyticsManager
 ) : ContainerHost<SearchScreenState, SearchScreenEffect>,
     ViewModel() {
@@ -50,7 +52,7 @@ class SearchViewModel(
             val all = currencyRepo.getCurrencyNameUnsafe()
             val frequent = calcFrequentCurrUseCase.invoke()
                 .map { currencyRepo.nameByCodeUnsafe(it) }
-            val topResults = frequent + (all - frequent)
+            val topResults = getTopResultUseCase()
 
             reduce {
                 state.copy(
@@ -108,6 +110,7 @@ class SearchViewModelFactory @AssistedInject constructor(
     @Assisted private val pos: Int?,
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
+    private val getTopResultUseCase: GetTopResultUseCase,
     private val analyticsManager: AnalyticsManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -116,6 +119,7 @@ class SearchViewModelFactory @AssistedInject constructor(
             pos,
             currencyRepo,
             calcFrequentCurrUseCase,
+            getTopResultUseCase,
             analyticsManager
         ) as T
     }

@@ -17,6 +17,7 @@ import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
+import dev.arkbuilders.rate.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.drop
@@ -63,6 +64,7 @@ class QuickViewModel(
     private val timestampRepo: TimestampRepo,
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
+    private val getTopResultUseCase: GetTopResultUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
     override val container: Container<QuickScreenState, QuickScreenEffect> =
@@ -94,7 +96,7 @@ class QuickViewModel(
             calcFrequentCurrUseCase.flow().drop(1).onEach {
                 val frequent = calcFrequentCurrUseCase.invoke()
                     .map { currencyRepo.nameByCodeUnsafe(it) }
-                val topResults = frequent + (allCurrencies - frequent)
+                val topResults = getTopResultUseCase()
                 reduce {
                     state.copy(
                         frequent = frequent,
@@ -105,7 +107,7 @@ class QuickViewModel(
 
             val frequent = calcFrequentCurrUseCase()
                 .map { currencyRepo.nameByCodeUnsafe(it) }
-            val topResults = frequent + (allCurrencies - frequent)
+            val topResults = getTopResultUseCase()
             val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
                 state.copy(
@@ -190,6 +192,7 @@ class QuickViewModelFactory @AssistedInject constructor(
     private val timestampRepo: TimestampRepo,
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
+    private val getTopResultUseCase: GetTopResultUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -199,6 +202,7 @@ class QuickViewModelFactory @AssistedInject constructor(
             timestampRepo,
             convertUseCase,
             calcFrequentCurrUseCase,
+            getTopResultUseCase,
             analyticsManager
         ) as T
     }
