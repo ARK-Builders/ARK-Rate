@@ -60,7 +60,7 @@ fun PinnedQuickSwipeItem(
         backgroundContent = {
             DismissBackground(
                 state = dismissState,
-                isPinned = pair.isPinned
+                isPinned = pair.isPinned()
             )
         },
         content = { content() },
@@ -97,7 +97,7 @@ fun QuickSwipeItem(
         backgroundContent = {
             DismissBackground(
                 state = dismissState,
-                isPinned = pair.isPinned
+                isPinned = pair.isPinned()
             )
         },
         content = { content() },

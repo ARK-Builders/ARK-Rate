@@ -8,9 +8,11 @@ data class QuickPair(
     val amount: Double,
     val to: List<Amount>,
     val calculatedDate: OffsetDateTime,
-    val isPinned: Boolean,
+    val pinnedDate: OffsetDateTime?,
     val group: String?,
-)
+) {
+    fun isPinned() = pinnedDate != null
+}
 
 data class PinnedQuickPair(
     val pair: QuickPair,

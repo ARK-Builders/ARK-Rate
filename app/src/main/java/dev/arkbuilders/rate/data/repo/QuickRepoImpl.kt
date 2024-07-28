@@ -26,7 +26,7 @@ class QuickRepoImpl @Inject constructor(val dao: QuickPairDao) : QuickRepo {
 }
 
 private fun QuickPair.toRoom() =
-    RoomQuickPair(id, from, amount, to, calculatedDate, isPinned, group)
+    RoomQuickPair(id, from, amount, to, calculatedDate, pinnedDate, group)
 
 private fun RoomQuickPair.toQuickPair() =
-    QuickPair(id, from, amount, to, calculatedDate, isPinned, group)
+    QuickPair(id, from, amount, to, calculatedDate, pinnedDate, group)

@@ -111,7 +111,7 @@ private fun Content(
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    if (pair.isPinned)
+                    if (pair.isPinned())
                         onUnpin(pair)
                     else
                         onPin(pair)

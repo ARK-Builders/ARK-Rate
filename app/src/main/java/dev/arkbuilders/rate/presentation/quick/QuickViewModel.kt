@@ -128,12 +128,12 @@ class QuickViewModel(
     }
 
     fun onPin(pair: QuickPair) = intent {
-        val newPair = pair.copy(isPinned = true)
+        val newPair = pair.copy(pinnedDate = OffsetDateTime.now())
         quickRepo.insert(newPair)
     }
 
     fun onUnpin(pair: QuickPair) = intent {
-        val newPair = pair.copy(isPinned = false)
+        val newPair = pair.copy(pinnedDate = null)
         quickRepo.insert(newPair)
     }
 
@@ -160,9 +160,13 @@ class QuickViewModel(
             .reversed()
             .groupBy { it.group }
             .map { (group, pairs) ->
-                val (pinned, notPinned) = pairs.partition { it.isPinned }
+                val (pinned, notPinned) = pairs.partition { it.isPinned() }
                 val pinnedMapped = pinned.map { mapPairToPinned(it, refreshDate!!) }
-                QuickScreenPage(group, pinnedMapped, notPinned)
+                val sortedPinned =
+                    pinnedMapped.sortedByDescending { it.pair.pinnedDate }
+                val sortedNotPinned =
+                    notPinned.sortedByDescending { it.calculatedDate }
+                QuickScreenPage(group, sortedPinned, sortedNotPinned)
             }
         return pages
     }

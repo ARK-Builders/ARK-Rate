@@ -145,7 +145,7 @@ class AddQuickViewModel(
             amount = from.value.toDouble(),
             to = state.currencies.drop(1).map { it.toDAmount() },
             calculatedDate = OffsetDateTime.now(),
-            isPinned = false,
+            pinnedDate = null,
             group = state.group,
         )
         quickRepo.insert(quick)
