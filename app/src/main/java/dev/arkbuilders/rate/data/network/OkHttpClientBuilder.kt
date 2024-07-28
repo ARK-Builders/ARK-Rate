@@ -10,6 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.Collections
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import javax.net.ssl.SSLContext
@@ -21,6 +22,7 @@ class OkHttpClientBuilder @Inject constructor(val context: Context) {
         val agent = WebSettings.getDefaultUserAgent(context)
 
         val client = OkHttpClient.Builder()
+            .callTimeout(3L, TimeUnit.SECONDS)
             .addNetworkInterceptor { chain ->
                 chain.proceed(
                     chain.request()
