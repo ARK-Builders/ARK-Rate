@@ -43,7 +43,7 @@ import kotlin.math.abs
 fun QuickOptionsBottomSheet(
     pair: QuickPair,
     onPin: (QuickPair) -> Unit,
-    onUnpin: (QuickPair)  -> Unit,
+    onUnpin: (QuickPair) -> Unit,
     onEdit: (QuickPair) -> Unit,
     onReuse: (QuickPair) -> Unit,
     onDelete: (QuickPair) -> Unit,
@@ -72,7 +72,7 @@ fun QuickOptionsBottomSheet(
 private fun Content(
     pair: QuickPair,
     onPin: (QuickPair) -> Unit,
-    onUnpin: (QuickPair)  -> Unit,
+    onUnpin: (QuickPair) -> Unit,
     onEdit: (QuickPair) -> Unit,
     onReuse: (QuickPair) -> Unit,
     onDelete: (QuickPair) -> Unit,
@@ -83,7 +83,7 @@ private fun Content(
             modifier = Modifier
                 .padding(start = 16.dp, top = 24.dp)
                 .align(Alignment.TopStart),
-            text = "Options",
+            text = stringResource(R.string.options),
             color = ArkColor.TextPrimary,
             fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp
@@ -128,7 +128,10 @@ private fun Content(
                 )
                 Text(
                     modifier = Modifier.padding(start = 6.dp),
-                    text = "Pin",
+                    text = if (pair.isPinned())
+                        stringResource(R.string.unpin)
+                    else
+                        stringResource(R.string.pin),
                     color = ArkColor.TextSecondary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
@@ -151,7 +154,7 @@ private fun Content(
                 )
                 Text(
                     modifier = Modifier.padding(start = 6.dp),
-                    text = "Edit",
+                    text = stringResource(R.string.edit),
                     color = ArkColor.TextSecondary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp

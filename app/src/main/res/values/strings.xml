@@ -142,5 +142,7 @@
     <string name="quick_pinned_pairs">Pinned pairs</string>
     <string name="delete">Delete</string>
     <string name="re_use">Re-use</string>
+    <string name="edit">Edit</string>
+    <string name="options">Options</string>
 
 </resources>
