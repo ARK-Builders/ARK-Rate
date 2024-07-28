@@ -1,6 +1,5 @@
 package dev.arkbuilders.rate.domain.model
 
-import dev.arkbuilders.rate.domain.model.CurrencyCode
 import java.time.OffsetDateTime
 
 data class QuickPair(
@@ -9,5 +8,12 @@ data class QuickPair(
     val amount: Double,
     val to: List<Amount>,
     val calculatedDate: OffsetDateTime,
+    val isPinned: Boolean,
     val group: String?,
+)
+
+data class PinnedQuickPair(
+    val pair: QuickPair,
+    val actualTo: List<Amount>,
+    val refreshDate: OffsetDateTime
 )

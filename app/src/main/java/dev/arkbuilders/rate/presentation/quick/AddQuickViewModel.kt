@@ -48,6 +48,7 @@ sealed class AddQuickScreenEffect {
 class AddQuickViewModel(
     private val quickPairId: Long?,
     private val newCode: CurrencyCode?,
+    private val reuseNotEdit: Boolean,
     private val quickRepo: QuickRepo,
     private val convertUseCase: ConvertWithRateUseCase,
     private val codeUseStatRepo: CodeUseStatRepo,
@@ -134,12 +135,17 @@ class AddQuickViewModel(
 
     fun onAddQuickPair() = intent {
         val from = state.currencies.first()
+        val id = if (quickPairId != null) {
+            if (reuseNotEdit) 0 else quickPairId
+        } else 0
+
         val quick = QuickPair(
-            id = 0,
+            id = id,
             from = from.code,
             amount = from.value.toDouble(),
             to = state.currencies.drop(1).map { it.toDAmount() },
             calculatedDate = OffsetDateTime.now(),
+            isPinned = false,
             group = state.group,
         )
         quickRepo.insert(quick)
@@ -186,6 +192,7 @@ class AddQuickViewModel(
 class AddQuickViewModelFactory @AssistedInject constructor(
     @Assisted private val quickPairId: Long?,
     @Assisted private val newCode: CurrencyCode?,
+    @Assisted private val reuseNotEdit: Boolean,
     private val quickRepo: QuickRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase,
@@ -195,6 +202,7 @@ class AddQuickViewModelFactory @AssistedInject constructor(
         return AddQuickViewModel(
             quickPairId,
             newCode,
+            reuseNotEdit,
             quickRepo,
             convertUseCase,
             codeUseStatRepo,
@@ -206,7 +214,8 @@ class AddQuickViewModelFactory @AssistedInject constructor(
     interface Factory {
         fun create(
             quickPairId: Long?,
-            newCode: CurrencyCode?
+            newCode: CurrencyCode?,
+            reuseNotEdit: Boolean,
         ): AddQuickViewModelFactory
     }
 }

@@ -7,11 +7,14 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.model.CurrencyName
+import dev.arkbuilders.rate.domain.model.PinnedQuickPair
+import dev.arkbuilders.rate.domain.model.TimestampType
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.repo.QuickRepo
+import dev.arkbuilders.rate.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
@@ -26,12 +29,15 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
-import timber.log.Timber
+import java.time.OffsetDateTime
 
 data class QuickScreenPage(
     val group: String?,
-    val pairs: List<QuickPair>
+    val pinned: List<PinnedQuickPair>,
+    val notPinned: List<QuickPair>
 )
+
+data class OptionsData(val pair: QuickPair)
 
 data class QuickScreenState(
     val filter: String = "",
@@ -39,6 +45,7 @@ data class QuickScreenState(
     val frequent: List<CurrencyName> = emptyList(),
     val topResults: List<CurrencyName> = emptyList(),
     val pages: List<QuickScreenPage> = emptyList(),
+    val optionsData: OptionsData? = null,
     val initialized: Boolean = false
 )
 
@@ -52,9 +59,8 @@ sealed class QuickScreenEffect {
 
 class QuickViewModel(
     private val currencyRepo: CurrencyRepo,
-    private val assetsRepo: PortfolioRepo,
     private val quickRepo: QuickRepo,
-    private val prefs: Prefs,
+    private val timestampRepo: TimestampRepo,
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val analyticsManager: AnalyticsManager,
@@ -74,9 +80,8 @@ class QuickViewModel(
             }.launchIn(viewModelScope)
 
             quickRepo.allFlow().drop(1).onEach { quick ->
-                val pages = quick.reversed().groupBy { it.group }
-                    .map { (group, pairs) -> QuickScreenPage(group, pairs) }
                 intent {
+                    val pages = mapPairsToPages(quick)
                     reduce {
                         state.copy(
                             pages = pages
@@ -85,11 +90,11 @@ class QuickViewModel(
                 }
             }.launchIn(viewModelScope)
 
+            val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
             calcFrequentCurrUseCase.flow().drop(1).onEach {
-                val currencies = currencyRepo.getCurrencyNameUnsafe()
                 val frequent = calcFrequentCurrUseCase.invoke()
                     .map { currencyRepo.nameByCodeUnsafe(it) }
-                val topResults = frequent + (currencies - frequent)
+                val topResults = frequent + (allCurrencies - frequent)
                 reduce {
                     state.copy(
                         frequent = frequent,
@@ -98,16 +103,13 @@ class QuickViewModel(
                 }
             }.launchIn(viewModelScope)
 
-            val all = currencyRepo.getCurrencyNameUnsafe()
             val frequent = calcFrequentCurrUseCase()
                 .map { currencyRepo.nameByCodeUnsafe(it) }
-            val topResults = frequent + (all - frequent)
-            val quick = quickRepo.getAll()
-            val pages = quick.reversed().groupBy { it.group }
-                .map { (group, pairs) -> QuickScreenPage(group, pairs) }
+            val topResults = frequent + (allCurrencies - frequent)
+            val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
                 state.copy(
-                    currencies = all,
+                    currencies = allCurrencies,
                     frequent = frequent,
                     topResults = topResults,
                     pages = pages,
@@ -115,6 +117,24 @@ class QuickViewModel(
                 )
             }
         }
+    }
+
+    fun onShowOptions(pair: QuickPair) = intent {
+        reduce { state.copy(optionsData = OptionsData(pair)) }
+    }
+
+    fun onHideOptions() = intent {
+        reduce { state.copy(optionsData = null) }
+    }
+
+    fun onPin(pair: QuickPair) = intent {
+        val newPair = pair.copy(isPinned = true)
+        quickRepo.insert(newPair)
+    }
+
+    fun onUnpin(pair: QuickPair) = intent {
+        val newPair = pair.copy(isPinned = false)
+        quickRepo.insert(newPair)
     }
 
     fun onFilterChanged(filter: String) = blockingIntent {
@@ -133,13 +153,37 @@ class QuickViewModel(
     }
 
     private suspend fun isRatesAvailable() = currencyRepo.getCurrencyRate().isRight()
+
+    private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
+        val refreshDate = timestampRepo.getTimestamp(TimestampType.FetchFiat)
+        val pages = pairs
+            .reversed()
+            .groupBy { it.group }
+            .map { (group, pairs) ->
+                val (pinned, notPinned) = pairs.partition { it.isPinned }
+                val pinnedMapped = pinned.map { mapPairToPinned(it, refreshDate!!) }
+                QuickScreenPage(group, pinnedMapped, notPinned)
+            }
+        return pages
+    }
+
+
+    private suspend fun mapPairToPinned(
+        pair: QuickPair,
+        refreshDate: OffsetDateTime
+    ): PinnedQuickPair {
+        val actualTo = pair.to.map { to ->
+            val (amount, _) = convertUseCase.invoke(pair.from, pair.amount, to.code)
+            amount
+        }
+        return PinnedQuickPair(pair, actualTo, refreshDate)
+    }
 }
 
 class QuickViewModelFactory @AssistedInject constructor(
-    private val assetsRepo: PortfolioRepo,
     private val quickRepo: QuickRepo,
     private val currencyRepo: CurrencyRepo,
-    private val prefs: Prefs,
+    private val timestampRepo: TimestampRepo,
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val analyticsManager: AnalyticsManager,
@@ -147,9 +191,8 @@ class QuickViewModelFactory @AssistedInject constructor(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return QuickViewModel(
             currencyRepo,
-            assetsRepo,
             quickRepo,
-            prefs,
+            timestampRepo,
             convertUseCase,
             calcFrequentCurrUseCase,
             analyticsManager

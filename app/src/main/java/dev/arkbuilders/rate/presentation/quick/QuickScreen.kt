@@ -8,11 +8,12 @@ package dev.arkbuilders.rate.presentation.quick
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -46,6 +47,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -57,6 +60,7 @@ import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
+import dev.arkbuilders.rate.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
@@ -69,6 +73,8 @@ import dev.arkbuilders.rate.presentation.ui.ListHeader
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
 import dev.arkbuilders.rate.presentation.ui.NotifyRemovedSnackbarVisuals
+import dev.arkbuilders.rate.presentation.ui.PinnedQuickSwipeItem
+import dev.arkbuilders.rate.presentation.ui.QuickSwipeItem
 import dev.arkbuilders.rate.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
@@ -150,14 +156,36 @@ fun QuickScreen(
                     state = state,
                     onFilterChanged = viewModel::onFilterChanged,
                     onDelete = viewModel::onDelete,
-                    onLongClick = { quick ->
-                        navigator.navigate(AddQuickScreenDestination(quickPairId = quick.id))
-                    },
+                    onClick = viewModel::onShowOptions,
+                    onPin = viewModel::onPin,
+                    onUnpin = viewModel::onUnpin,
                     onNewCode = {
                         navigator.navigate(AddQuickScreenDestination(newCode = it))
                     }
                 )
             }
+        }
+        state.optionsData?.let {
+            QuickOptionsBottomSheet(
+                pair = it.pair,
+                onPin = viewModel::onPin,
+                onUnpin = viewModel::onUnpin,
+                onEdit = {
+                    navigator.navigate(
+                        AddQuickScreenDestination(
+                            quickPairId = it.id,
+                            reuseNotEdit = false
+                        )
+                    )
+                },
+                onReuse = {
+                    navigator.navigate(
+                        AddQuickScreenDestination(quickPairId = it.id)
+                    )
+                },
+                onDelete = viewModel::onDelete,
+                onDismiss = viewModel::onHideOptions
+            )
         }
     }
 }
@@ -166,9 +194,11 @@ fun QuickScreen(
 private fun Content(
     state: QuickScreenState,
     onFilterChanged: (String) -> Unit,
-    onDelete: (QuickPair) -> Unit = {},
-    onLongClick: (QuickPair) -> Unit = {},
-    onNewCode: (CurrencyCode) -> Unit = {}
+    onDelete: (QuickPair) -> Unit,
+    onClick: (QuickPair) -> Unit,
+    onPin: (QuickPair) -> Unit,
+    onUnpin: (QuickPair) -> Unit,
+    onNewCode: (CurrencyCode) -> Unit
 ) {
     val groups = state.pages.map { it.group }
     Column {
@@ -186,16 +216,20 @@ private fun Content(
         if (state.filter.isNotEmpty()) {
             SearchPage(
                 filter = state.filter,
-                topResults = state.topResults
+                topResults = state.topResults,
+                onNewCode = onNewCode
             )
         } else {
             if (state.pages.size == 1) {
                 GroupPage(
                     frequent = state.frequent,
                     currencies = state.currencies,
-                    quickPairs = state.pages.first().pairs,
+                    pinned = state.pages.first().pinned,
+                    notPinned = state.pages.first().notPinned,
                     onDelete = onDelete,
-                    onLongClick = onLongClick,
+                    onClick = onClick,
+                    onPin = onPin,
+                    onUnpin = onUnpin,
                     onNewCode = onNewCode
                 )
             } else {
@@ -206,9 +240,12 @@ private fun Content(
                     GroupPage(
                         frequent = state.frequent,
                         currencies = state.currencies,
-                        quickPairs = state.pages[index].pairs,
+                        pinned = state.pages[index].pinned,
+                        notPinned = state.pages[index].notPinned,
                         onDelete = onDelete,
-                        onLongClick = onLongClick,
+                        onClick = onClick,
+                        onPin = onPin,
+                        onUnpin = onUnpin,
                         onNewCode = onNewCode
                     )
                 }
@@ -221,21 +258,67 @@ private fun Content(
 private fun GroupPage(
     frequent: List<CurrencyName>,
     currencies: List<CurrencyName>,
-    quickPairs: List<QuickPair>,
+    pinned: List<PinnedQuickPair>,
+    notPinned: List<QuickPair>,
     onDelete: (QuickPair) -> Unit,
-    onLongClick: (QuickPair) -> Unit = {},
-    onNewCode: (CurrencyCode) -> Unit = {}
+    onPin: (QuickPair) -> Unit,
+    onUnpin: (QuickPair) -> Unit,
+    onClick: (QuickPair) -> Unit = {},
+    onNewCode: (CurrencyCode) -> Unit
 ) {
+    val ctx = LocalContext.current
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        item {
-            ListHeader(text = stringResource(R.string.quick_calculations))
+        if (pinned.isNotEmpty()) {
+            item {
+                ListHeader(text = stringResource(R.string.quick_pinned_pairs))
+            }
+            items(pinned, key = { it.pair.id }) {
+                PinnedQuickSwipeItem(
+                    content = {
+                        QuickItem(
+                            from = Amount(it.pair.from, it.pair.amount),
+                            to = it.actualTo,
+                            dateText = stringResource(
+                                R.string.quick_last_refreshed,
+                                DateFormatUtils.latestCheckElapsedTime(
+                                    ctx,
+                                    OffsetDateTime.now(),
+                                    it.refreshDate
+                                )
+                            ),
+                            onClick = { onClick(it.pair) },
+                        )
+                    },
+                    pair = it.pair,
+                    onDelete = { onDelete(it.pair) },
+                    onUnpin = onUnpin
+                )
+                AppHorDiv16()
+            }
         }
-        items(quickPairs, key = { it.id }) {
-            AppSwipeToDismiss(
-                content = { QuickItem(it, onLongClick) },
-                onDelete = { onDelete(it) }
-            )
-            AppHorDiv16()
+        if (notPinned.isNotEmpty()) {
+            item {
+                ListHeader(text = stringResource(R.string.quick_calculations))
+            }
+            items(notPinned, key = { it.id }) {
+                QuickSwipeItem(
+                    content = {
+                        QuickItem(
+                            from = Amount(it.from, it.amount),
+                            to = it.to,
+                            dateText = stringResource(
+                                R.string.quick_calculated_on,
+                                DateFormatUtils.calculatedOn(it.calculatedDate)
+                            ),
+                            onClick = { onClick(it) },
+                        )
+                    },
+                    pair = it,
+                    onDelete = { onDelete(it) },
+                    onPin = onPin,
+                )
+                AppHorDiv16()
+            }
         }
         if (frequent.isNotEmpty()) {
             item {
@@ -258,7 +341,7 @@ private fun GroupPage(
 private fun SearchPage(
     filter: String,
     topResults: List<CurrencyName>,
-    onNewCode: (CurrencyCode) -> Unit = {}
+    onNewCode: (CurrencyCode) -> Unit
 ) {
     val filtered = topResults.filter {
         it.name.contains(filter, ignoreCase = true)
@@ -278,148 +361,164 @@ private fun SearchPage(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 private fun QuickItem(
-    quick: QuickPair = QuickPair(
-        0,
-        "BTC",
-        1.0,
-        listOf(Amount("USD", 30.0)),
-        OffsetDateTime.now(),
-        null
-    ),
-    onLongClick: (QuickPair) -> Unit = {},
+    from: Amount,
+    to: List<Amount>,
+    dateText: String,
+    onClick: () -> Unit,
 ) {
     var expanded by remember {
         mutableStateOf(false)
     }
 
-    Row(
+    ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .combinedClickable(
-                onClick = {
-                    if (quick.to.size > 1)
-                        expanded = !expanded
-                },
-                onLongClick = {
-                    onLongClick(quick)
-                }
-            )
-            .padding(16.dp),
+            .clickable {
+                onClick()
+            },
     ) {
-        Row(modifier = Modifier.weight(1f)) {
-            Row(
-                modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically
+        val (icons, content, chevron) = createRefs()
+        Row(
+            modifier = Modifier.constrainAs(icons) {
+                top.linkTo(parent.top, margin = 16.dp)
+                start.linkTo(parent.start, margin = 24.dp)
+            },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
             ) {
+                CurrIcon(modifier = Modifier.size(40.dp), code = from.code)
+            }
+            if (!expanded) {
                 Box(
                     modifier = Modifier
                         .size(40.dp)
+                        .offset((-12).dp)
+                        .border(2.dp, Color.White, CircleShape)
                 ) {
-                    CurrIcon(modifier = Modifier.size(40.dp), code = quick.from)
-                }
-                if (!expanded) {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .offset((-12).dp)
-                            .border(2.dp, Color.White, CircleShape)
-                    ) {
-                        if (quick.to.size == 1) {
-                            CurrIcon(
-                                modifier = Modifier
-                                    .size(38.dp)
-                                    .align(Alignment.Center)
-                                    .clip(CircleShape)
-                                    .background(Color.White),
-                                code = quick.to.first().code
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .background(ArkColor.BGTertiary, CircleShape)
-                            ) {
-                                Text(
-                                    modifier = Modifier.align(Alignment.Center),
-                                    text = "+ ${quick.to.size}",
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 16.sp,
-                                    color = ArkColor.TextTertiary
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            Column(
-                modifier = Modifier.padding(start = if (expanded) 12.dp else 0.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "${quick.from} to " +
-                            quick.to.joinToString(", ") { it.code },
-                    fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary
-                )
-                if (expanded) {
-                    Text(
-                        text = "${CurrUtils.prepareToDisplay(quick.amount)} ${quick.from} =",
-                        color = ArkColor.TextTertiary
-                    )
-                    quick.to.forEach {
-                        Row(
-                            modifier = Modifier.padding(top = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                    if (to.size == 1) {
+                        CurrIcon(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .align(Alignment.Center)
+                                .clip(CircleShape)
+                                .background(Color.White),
+                            code = to.first().code
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(ArkColor.BGTertiary, CircleShape)
                         ) {
-                            CurrIcon(modifier = Modifier.size(20.dp), code = it.code)
                             Text(
-                                modifier = Modifier.padding(start = 8.dp),
-                                text = "${CurrUtils.prepareToDisplay(it.value)} ${it.code}",
+                                modifier = Modifier.align(Alignment.Center),
+                                text = "+ ${to.size}",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 16.sp,
                                 color = ArkColor.TextTertiary
                             )
                         }
                     }
-                } else {
-                    Text(
-                        text = "${CurrUtils.prepareToDisplay(quick.amount)} ${quick.from} = " +
-                                "${CurrUtils.prepareToDisplay(quick.to.first().value)} ${quick.to.first().code}",
-                        color = ArkColor.TextTertiary
-                    )
                 }
-                Text(
-                    modifier = Modifier.padding(top = if (expanded) 8.dp else 0.dp),
-                    text = stringResource(
-                        R.string.quick_calculated_on,
-                        DateFormatUtils.calculatedOn(quick.calculatedDate)
-                    ),
-                    color = ArkColor.TextTertiary,
-                    fontSize = 13.sp
-                )
             }
         }
-        if (quick.to.size > 1) {
+        Column(
+            modifier = Modifier
+                .constrainAs(content) {
+                    linkTo(icons.end, chevron.start, bias = 0f)
+                    top.linkTo(parent.top, margin = 16.dp)
+                    bottom.linkTo(parent.bottom, margin = 16.dp)
+                }
+                .padding(start = if (expanded) 12.dp else 0.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "${from.code} to " +
+                        to.joinToString(", ") { it.code },
+                fontWeight = FontWeight.Medium,
+                color = ArkColor.TextPrimary
+            )
             if (expanded) {
-                Icon(
-                    modifier = Modifier.padding(top = 18.dp, end = 13.dp),
-                    painter = painterResource(R.drawable.ic_chevron_up),
-                    contentDescription = "",
-                    tint = ArkColor.FGSecondary
+                Text(
+                    text = "${CurrUtils.prepareToDisplay(from.value)} ${from.code} =",
+                    color = ArkColor.TextTertiary
                 )
+                to.forEach {
+                    Row(
+                        modifier = Modifier.padding(top = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CurrIcon(modifier = Modifier.size(20.dp), code = it.code)
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = "${CurrUtils.prepareToDisplay(it.value)} ${it.code}",
+                            color = ArkColor.TextTertiary
+                        )
+                    }
+                }
             } else {
-                Icon(
-                    modifier = Modifier.padding(top = 18.dp, end = 13.dp),
-                    painter = painterResource(R.drawable.ic_chevron),
-                    contentDescription = "",
-                    tint = ArkColor.FGSecondary
+                Text(
+                    text = "${CurrUtils.prepareToDisplay(from.value)} ${from.code} = " +
+                            "${CurrUtils.prepareToDisplay(to.first().value)} ${to.first().code}",
+                    color = ArkColor.TextTertiary
                 )
+            }
+            Text(
+                modifier = Modifier.padding(top = if (expanded) 8.dp else 0.dp),
+                text = dateText,
+                color = ArkColor.TextTertiary,
+                fontSize = 12.sp
+            )
+        }
+        if (to.size > 1) {
+            Box(
+                modifier = Modifier
+                    .constrainAs(chevron) {
+                        height = Dimension.fillToConstraints
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                    }
+                    .clickable {
+                        expanded = !expanded
+                    }
+                    .padding(start = 13.dp, end = 29.dp, top = 23.dp)
+            ) {
+                if (expanded) {
+                    Icon(
+                        modifier = Modifier,
+                        painter = painterResource(R.drawable.ic_chevron_up),
+                        contentDescription = "",
+                        tint = ArkColor.FGSecondary
+                    )
+                } else {
+                    Icon(
+                        modifier = Modifier,
+                        painter = painterResource(R.drawable.ic_chevron),
+                        contentDescription = "",
+                        tint = ArkColor.FGSecondary
+                    )
+                }
             }
         }
     }
+}
 
+@Preview(showBackground = true)
+@Composable
+private fun PreviewItem() {
+    QuickItem(
+        from = Amount("BTC", 1.0),
+        to = listOf(Amount("USD", 30.0)),
+        dateText = "Calculated on",
+        onClick = {},
+    )
 }
 
 @Composable
