@@ -157,7 +157,7 @@ class QuickViewModel(
     private suspend fun isRatesAvailable() = currencyRepo.getCurrencyRate().isRight()
 
     private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
-        val refreshDate = timestampRepo.getTimestamp(TimestampType.FetchFiat)
+        val refreshDate = timestampRepo.getTimestamp(TimestampType.FetchRates)
         val pages = pairs
             .reversed()
             .groupBy { it.group }

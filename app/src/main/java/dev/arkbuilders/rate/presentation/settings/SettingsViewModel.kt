@@ -21,8 +21,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 data class SettingsScreenState(
-    val latestFiatRefresh: OffsetDateTime? = null,
-    val latestCryptoRefresh: OffsetDateTime? = null,
+    val latestRefresh: OffsetDateTime? = null,
     val latestPairAlertCheck: OffsetDateTime? = null,
     val showCrashReports: Boolean = BuildConfig.GOOGLE_PLAY_BUILD.not(),
     val crashReportsEnabled: Boolean = false,
@@ -43,8 +42,7 @@ class SettingsViewModel(
         analyticsManager.trackScreen("SettingsScreen")
 
         intent {
-            val fiat = timestampRepo.getTimestamp(TimestampType.FetchFiat)
-            val crypto = timestampRepo.getTimestamp(TimestampType.FetchCrypto)
+            val refresh = timestampRepo.getTimestamp(TimestampType.FetchRates)
             val pairAlertCheck =
                 timestampRepo.getTimestamp(TimestampType.CheckPairAlerts)
             val crashReports = prefs.get(PreferenceKey.CollectCrashReports)
@@ -52,8 +50,7 @@ class SettingsViewModel(
 
             reduce {
                 state.copy(
-                    latestFiatRefresh = fiat,
-                    latestCryptoRefresh = crypto,
+                    latestRefresh = refresh,
                     latestPairAlertCheck = pairAlertCheck,
                     crashReportsEnabled = crashReports,
                     analyticsEnabled = analytics

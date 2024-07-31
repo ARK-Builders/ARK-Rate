@@ -1,79 +1,39 @@
 package dev.arkbuilders.rate.presentation.settings
 
-import android.content.Intent
-import android.net.Uri
-import android.text.format.DateUtils
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.presentation.destinations.AboutScreenDestination
 import dev.arkbuilders.rate.presentation.theme.ArkColor
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
-import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
 import org.orbitmvi.orbit.compose.collectAsState
 import java.time.Duration
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import java.util.Locale
 
 
 @Destination
@@ -125,22 +85,15 @@ private fun Content(
         }
 
 
-        val fiatDesc = state.latestFiatRefresh?.let {
-            formatTime(it)
-        } ?: stringResource(R.string.n_a)
-        val cryptoDesc = state.latestCryptoRefresh?.let {
+        val refreshDesc = state.latestRefresh?.let {
             formatTime(it)
         } ?: stringResource(R.string.n_a)
         val pairAlertDesc = state.latestPairAlertCheck?.let {
             formatTime(it)
         } ?: stringResource(R.string.n_a)
         LatestRefresh(
-            title = stringResource(R.string.settings_latest_fiat_rates_refresh),
-            description = fiatDesc
-        )
-        LatestRefresh(
-            title = stringResource(R.string.settings_latest_crypto_rates_refresh),
-            description = cryptoDesc
+            title = stringResource(R.string.settings_latest_rates_refresh),
+            description = refreshDesc
         )
         LatestRefresh(
             title = stringResource(R.string.settings_latest_alerts_check),

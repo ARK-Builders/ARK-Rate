@@ -54,8 +54,7 @@
 
     <string name="settings_quick_portfolio_alerts">Quick/Portfolio/Alerts</string>
     <string name="settings_elapsed_ago">"%1$s ago · "</string>
-    <string name="settings_latest_fiat_rates_refresh">Latest fiat rates refresh</string>
-    <string name="settings_latest_crypto_rates_refresh">Latest crypto rates refresh</string>
+    <string name="settings_latest_rates_refresh">Latest rates refresh</string>
     <string name="settings_latest_alerts_check">Latest alerts check</string>
 
     <string name="group_create_group">Create Group</string>
