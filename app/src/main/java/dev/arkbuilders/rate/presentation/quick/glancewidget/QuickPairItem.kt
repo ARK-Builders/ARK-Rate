@@ -16,13 +16,13 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.presentation.quick.QuickDisplayPair
+import dev.arkbuilders.rate.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.utils.IconUtils
 
 @Composable
 fun QuickPairItem(
-    quick: QuickDisplayPair,
+    quick: PinnedQuickPair,
     context: Context
 ) {
     Row(modifier = GlanceModifier.padding(vertical = 2.dp), verticalAlignment = Alignment.Vertical.CenterVertically) {
@@ -41,7 +41,7 @@ fun QuickPairItem(
             provider = ImageProvider(
                 IconUtils.iconForCurrCode(
                     context,
-                    quick.to.first().code
+                    quick.actualTo.first().code
                 )
             ),
             contentDescription = null,
@@ -58,7 +58,7 @@ fun QuickPairItem(
             )
             Text(
                 text = "${CurrUtils.prepareToDisplay(quick.pair.amount)} ${quick.pair.from} = " +
-                        "${CurrUtils.prepareToDisplay(quick.to.first().value)} ${quick.to.first().code}",
+                        "${CurrUtils.prepareToDisplay(quick.actualTo.first().value)} ${quick.actualTo.first().code}",
                 style = TextStyle(
                     color = ColorProvider(ArkColor.TextTertiary),
                 )

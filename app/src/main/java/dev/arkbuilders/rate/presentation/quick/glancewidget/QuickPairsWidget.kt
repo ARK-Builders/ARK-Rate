@@ -28,7 +28,7 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.google.gson.GsonBuilder
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.presentation.quick.QuickDisplayPair
+import dev.arkbuilders.rate.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.OpenAppAction
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
@@ -88,8 +88,8 @@ class QuickPairsWidget : GlanceAppWidget() {
         }
     }
 
-    private fun parseQuickPairs(quickPairsString: String): List<QuickDisplayPair> {
+    private fun parseQuickPairs(quickPairsString: String): List<PinnedQuickPair> {
         val gson = GsonBuilder().create()
-        return gson.fromJson(quickPairsString, Array<QuickDisplayPair>::class.java).toList()
+        return gson.fromJson(quickPairsString, Array<PinnedQuickPair>::class.java).toList()
     }
 }
