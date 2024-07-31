@@ -6,6 +6,7 @@ import dagger.BindsInstance
 import dagger.Component
 import dev.arkbuilders.rate.data.repo.currency.CurrencyRepoImpl
 import dev.arkbuilders.rate.data.repo.PortfolioRepoImpl
+import dev.arkbuilders.rate.data.repo.QuickRepoImpl
 import dev.arkbuilders.rate.data.worker.AppWorkerFactory
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.module.ApiModule
@@ -13,6 +14,7 @@ import dev.arkbuilders.rate.di.module.DBModule
 import dev.arkbuilders.rate.di.module.RepoModule
 import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
+import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.presentation.portfolio.AddAssetViewModelFactory
 import dev.arkbuilders.rate.presentation.portfolio.PortfolioViewModelFactory
 import dev.arkbuilders.rate.presentation.pairalert.AddPairAlertViewModelFactory
@@ -48,6 +50,8 @@ interface AppComponent {
 
     fun generalCurrencyRepo(): CurrencyRepoImpl
     fun assetsRepo(): PortfolioRepoImpl
+    fun quickRepo(): QuickRepoImpl
+    fun convertUseCase(): ConvertWithRateUseCase
     fun inject(currencyMonitorWorker: CurrencyMonitorWorker)
 
     fun calcFrequentCurrUseCase(): CalcFrequentCurrUseCase
