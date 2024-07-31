@@ -11,18 +11,19 @@ import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import com.google.gson.GsonBuilder
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.domain.model.Amount
+import dev.arkbuilders.rate.domain.model.PinnedQuickPair
+import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.presentation.MainActivity
-import dev.arkbuilders.rate.presentation.quick.QuickDisplayPair
 import dev.arkbuilders.rate.presentation.quick.QuickScreenPage
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.OpenAppAction
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
+import java.time.OffsetDateTime
 
 class QuickPairsWidgetReceiver(
     private val quickRepo: QuickRepo = DIManager.component.quickRepo(),
@@ -60,22 +61,10 @@ class QuickPairsWidgetReceiver(
 
     private fun getQuickPairs(context: Context) {
         Timber.d("Get quick pairs for widget")
-        quickRepo.allFlow().onEach { all ->
-            val codeToRate = currencyRepo.getCodeToCurrencyRate().getOrNull()!!
-            val displayList = all.reversed().map { pair ->
-                val toDisplay = pair.to.map { code ->
-                    val (amount, _) = convertUseCase(
-                        from = Amount(pair.from, pair.amount),
-                        toCode = code,
-                        _rates = codeToRate
-                    )
-                    amount
-                }
-                QuickDisplayPair(pair, toDisplay)
-            }
-            val pages = displayList.groupBy { it.pair.group }
-                .map { (group, pairs) -> QuickScreenPage(group, pairs) }
-            val quickDisplayPair = pages.first().pairs
+        quickRepo.allFlow().onEach { quick ->
+            val pages = mapPairsToPages(quick)
+
+            val quickDisplayPair = pages.first().pinned
             val quickPairs = GsonBuilder().create().toJson(quickDisplayPair)
             val glanceId =
                 GlanceAppWidgetManager(context).getGlanceIds(QuickPairsWidget::class.java)
@@ -89,6 +78,32 @@ class QuickPairsWidgetReceiver(
                 glanceAppWidget.update(context, it)
             }
         }.launchIn(coroutineScope)
+    }
+
+     suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
+        val pages = pairs
+            .reversed()
+            .groupBy { it.group }
+            .map { (group, pairs) ->
+                val (pinned, notPinned) = pairs.partition { it.isPinned() }
+                val pinnedMapped = pinned.map { mapPairToPinned(it) }
+                val sortedPinned =
+                    pinnedMapped.sortedByDescending { it.pair.pinnedDate }
+                val sortedNotPinned =
+                    notPinned.sortedByDescending { it.calculatedDate }
+                QuickScreenPage(group, sortedPinned, sortedNotPinned)
+            }
+        return pages
+    }
+
+    private suspend fun mapPairToPinned(
+        pair: QuickPair,
+    ): PinnedQuickPair {
+        val actualTo = pair.to.map { to ->
+            val (amount, _) = convertUseCase.invoke(pair.from, pair.amount, to.code)
+            amount
+        }
+        return PinnedQuickPair(pair, actualTo, OffsetDateTime.now())
     }
 
     companion object {
