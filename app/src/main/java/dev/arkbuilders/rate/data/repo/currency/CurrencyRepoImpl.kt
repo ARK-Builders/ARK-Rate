@@ -72,24 +72,6 @@ class CurrencyRepoImpl @Inject constructor(
         return names.right()
     }
 
-    override suspend fun nameByCode(
-        code: CurrencyCode
-    ): Either<Throwable, CurrencyName> = getCurrencyName().fold(
-        ifLeft = {
-            it.left()
-        },
-        ifRight = { names ->
-            val name = names.find { name -> name.code == code }
-            return name?.right() ?: IllegalStateException().left()
-        }
-    )
-
-    override suspend fun rateByCode(code: CurrencyCode): Either<Throwable, CurrencyRate> =
-        getCodeToCurrencyRate().map { codeToRate -> codeToRate[code]!! }
-
-    override suspend fun getCodeToCurrencyRate(): Either<Throwable, Map<CurrencyCode, CurrencyRate>> =
-        getCurrencyRate().map { rates -> rates.associateBy { it.code } }
-
     private suspend fun updateRates() = mutex.withLock {
         val updatedDate = timestampRepo
             .getTimestamp(TimestampType.FetchRates)
