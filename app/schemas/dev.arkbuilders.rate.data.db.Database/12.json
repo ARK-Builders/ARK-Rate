@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 10,
-    "identityHash": "836e56850e8c5622688578e0af03adab",
+    "version": 12,
+    "identityHash": "301f82a916bc28b251a3014fd3a70d26",
     "entities": [
       {
         "tableName": "RoomAsset",
@@ -176,7 +176,7 @@
       },
       {
         "tableName": "RoomQuickPair",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `from` TEXT NOT NULL, `amount` REAL NOT NULL, `to` TEXT NOT NULL, `calculatedDate` TEXT NOT NULL, `isPinned` INTEGER NOT NULL, `group` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `from` TEXT NOT NULL, `amount` REAL NOT NULL, `to` TEXT NOT NULL, `calculatedDate` TEXT NOT NULL, `pinnedDate` TEXT, `group` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -209,10 +209,10 @@
             "notNull": true
           },
           {
-            "fieldPath": "isPinned",
-            "columnName": "isPinned",
-            "affinity": "INTEGER",
-            "notNull": true
+            "fieldPath": "pinnedDate",
+            "columnName": "pinnedDate",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "group",
@@ -266,7 +266,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '836e56850e8c5622688578e0af03adab')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '301f82a916bc28b251a3014fd3a70d26')"
     ]
   }
 }
