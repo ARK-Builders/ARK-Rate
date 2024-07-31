@@ -12,6 +12,8 @@ interface CurrencyRepo {
 
     suspend fun getCurrencyName(): Either<Throwable, List<CurrencyName>>
 
+    suspend fun isRatesAvailable(): Boolean
+
     suspend fun getCurrencyNameUnsafe() = getCurrencyName().getOrNull()!!
 
     suspend fun nameByCode(code: CurrencyCode): Either<Throwable, CurrencyName> =

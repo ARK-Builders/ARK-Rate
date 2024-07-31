@@ -59,7 +59,7 @@ class PairAlertViewModel(
         analyticsManager.trackScreen("PairAlertScreen")
 
         intent {
-            if (isRatesAvailable().not())
+            if (currencyRepo.isRatesAvailable().not())
                 return@intent
 
             AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
@@ -98,8 +98,6 @@ class PairAlertViewModel(
     fun undoDelete(pair: PairAlert) = intent {
         pairAlertRepo.insert(pair)
     }
-
-    private suspend fun isRatesAvailable() = currencyRepo.getCurrencyRate().isRight()
 }
 
 @Singleton

@@ -68,7 +68,7 @@ class PortfolioViewModel(
         analyticsManager.trackScreen("PortfolioScreen")
 
         intent {
-            if (isRatesAvailable().not())
+            if (currencyRepo.isRatesAvailable().not())
                 return@intent
 
             init()
@@ -133,8 +133,6 @@ class PortfolioViewModel(
             PortfolioDisplayAsset(asset, baseAmount, rate)
         }
     }
-
-    private suspend fun isRatesAvailable() = currencyRepo.getCurrencyRate().isRight()
 }
 
 @Singleton

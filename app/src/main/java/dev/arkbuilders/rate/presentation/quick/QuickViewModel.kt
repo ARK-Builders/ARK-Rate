@@ -74,7 +74,7 @@ class QuickViewModel(
         analyticsManager.trackScreen("QuickScreen")
 
         intent {
-            if (isRatesAvailable().not())
+            if (currencyRepo.isRatesAvailable().not())
                 return@intent
 
             AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
@@ -153,8 +153,6 @@ class QuickViewModel(
     fun undoDelete(pair: QuickPair) = intent {
         quickRepo.insert(pair)
     }
-
-    private suspend fun isRatesAvailable() = currencyRepo.getCurrencyRate().isRight()
 
     private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
         val refreshDate = timestampRepo.getTimestamp(TimestampType.FetchRates)
