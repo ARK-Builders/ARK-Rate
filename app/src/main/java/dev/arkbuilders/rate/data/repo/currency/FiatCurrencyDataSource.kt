@@ -9,18 +9,15 @@ import dev.arkbuilders.rate.domain.model.CurrencyRate
 import dev.arkbuilders.rate.domain.model.CurrencyType
 import dev.arkbuilders.rate.data.network.NetworkStatus
 import dev.arkbuilders.rate.data.network.api.FiatAPI
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.repo.TimestampRepo
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FiatCurrencyDataSource @Inject constructor(
-    private val ctx: Context,
     private val fiatAPI: FiatAPI,
-    private val local: LocalCurrencyDataSource,
-    private val networkStatus: NetworkStatus,
-    private val timestampRepo: TimestampRepo
-) : CurrencyDataSource(local, networkStatus, timestampRepo) {
+) : CurrencyDataSource {
     override val currencyType = CurrencyType.FIAT
 
     override suspend fun fetchRemote(): Either<Throwable, List<CurrencyRate>> {
@@ -37,12 +34,10 @@ class FiatCurrencyDataSource @Inject constructor(
         }
     }
 
-    override suspend fun getCurrencyName(): Either<Throwable, List<CurrencyName>> =
-        getCurrencyRate().map { rates ->
-            rates.map {
-                CurrencyName(it.code, fiatCodeToCurrency[it.code]!!)
-            }
-        }
+    override suspend fun getCurrencyName(): Map<CurrencyCode, CurrencyName> =
+        fiatCodeToCurrency
+            .map { (code, desc) -> code to CurrencyName(code, desc) }
+            .toMap()
 }
 
 private val fiatCodeToCurrency = mapOf(
