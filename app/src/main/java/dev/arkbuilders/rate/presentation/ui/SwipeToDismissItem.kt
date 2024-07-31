@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
+// bug: callbacks from swipe called multiply times
 @Composable
 fun AppSwipeToDismiss(content: @Composable () -> Unit, onDelete: () -> Unit) {
     val dismissState = rememberSwipeToDismissBoxState(
@@ -59,7 +60,7 @@ private fun DismissBackground(state: SwipeToDismissBoxState) {
     ) {
         Spacer(modifier = Modifier)
         Icon(
-            modifier = Modifier.padding(end = 27.dp),
+            modifier = Modifier.padding(end = 17.dp),
             painter = painterResource(id = R.drawable.ic_delete),
             contentDescription = "",
             tint = ArkColor.FGErrorPrimary

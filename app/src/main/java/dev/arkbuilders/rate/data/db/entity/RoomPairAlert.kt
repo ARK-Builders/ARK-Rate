@@ -3,6 +3,7 @@ package dev.arkbuilders.rate.data.db.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import dev.arkbuilders.rate.domain.model.CurrencyCode
+import java.time.OffsetDateTime
 
 @Entity
 data class RoomPairAlert(
@@ -15,6 +16,6 @@ data class RoomPairAlert(
     val alertPercent: Double?,
     val oneTimeNotRecurrent: Boolean,
     val enabled: Boolean,
-    val lastDateTriggered: String?,
+    val lastDateTriggered: OffsetDateTime?,
     val group: String?
 )

@@ -76,13 +76,14 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun AddQuickScreen(
     quickPairId: Long? = null,
     newCode: CurrencyCode? = null,
+    reuseNotEdit: Boolean = true,
     navigator: DestinationsNavigator
 ) {
     val ctx = LocalContext.current
     val viewModel: AddQuickViewModel =
         viewModel(
             factory = DIManager.component.addQuickVMFactory()
-                .create(quickPairId, newCode)
+                .create(quickPairId, newCode, reuseNotEdit)
         )
 
     val state by viewModel.collectAsState()
@@ -95,7 +96,7 @@ fun AddQuickScreen(
                     ctx.getString(
                         R.string.quick_snackbar_new_added_to,
                         effect.pair.from,
-                        effect.pair.to.joinToString { it }
+                        effect.pair.to.joinToString { it.code }
                     )
                 AppSharedFlow.ShowAddedSnackbarQuick.flow.emit(
                     NotifyAddedSnackbarVisuals(
@@ -111,8 +112,12 @@ fun AddQuickScreen(
     }
     Scaffold(
         topBar = {
+            val title = if (reuseNotEdit)
+                R.string.quick_add_new_calculation
+            else
+                R.string.quick_edit_pair
             AppTopBarBack(
-                title = stringResource(R.string.quick_add_new_calculation),
+                title = stringResource(title),
                 navigator = navigator
             )
         }

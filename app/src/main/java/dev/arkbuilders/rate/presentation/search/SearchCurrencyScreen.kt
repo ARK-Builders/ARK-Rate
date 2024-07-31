@@ -32,6 +32,7 @@ import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
+import dev.arkbuilders.rate.presentation.ui.ListHeader
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
 import dev.arkbuilders.rate.presentation.ui.SearchTextField
@@ -106,7 +107,7 @@ private fun Results(
         filter.isNotEmpty() -> {
             if (topResultsFiltered.isNotEmpty()) {
                 LazyColumn {
-                    item { Header(header = "Top results") }
+                    item { ListHeader(stringResource(R.string.top_results)) }
                     items(topResultsFiltered) { name ->
                         CurrencyInfoItem(name) { onClick(it) }
                     }
@@ -119,33 +120,18 @@ private fun Results(
         else -> {
             LazyColumn {
                 if (frequent.isNotEmpty()) {
-                    item { Header(header = "Frequent currencies") }
+                    item { ListHeader(stringResource(R.string.frequent_currencies)) }
                     items(frequent) { name ->
                         CurrencyInfoItem(name) { onClick(it) }
                     }
                 }
-                item { Header(header = "All currencies") }
+                item { ListHeader(stringResource(R.string.all_currencies)) }
                 items(all) { name ->
                     CurrencyInfoItem(name) { onClick(it) }
                 }
             }
         }
     }
-}
-
-@Composable
-private fun Header(header: String) {
-    Text(
-        modifier = Modifier.padding(
-            start = 16.dp,
-            top = 24.dp,
-            end = 16.dp,
-        ),
-        text = header,
-        fontWeight = FontWeight.Medium,
-        color = ArkColor.TextTertiary
-    )
-    AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
 }
 
 

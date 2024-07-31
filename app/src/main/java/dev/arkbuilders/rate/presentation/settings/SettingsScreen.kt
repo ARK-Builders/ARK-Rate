@@ -121,12 +121,7 @@ private fun Content(
         fun formatTime(date: OffsetDateTime): String {
             val elapsed = DateFormatUtils.latestCheckElapsedTime(ctx, now, date)
             val time = DateFormatUtils.latestCheckTime(date)
-            var final = ""
-            elapsed?.let {
-                final = ctx.getString(R.string.settings_elapsed_ago, elapsed)
-            }
-            final += time
-            return final
+            return ctx.getString(R.string.settings_elapsed_ago, elapsed) + time
         }
 
 

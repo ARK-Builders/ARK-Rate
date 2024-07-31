@@ -17,6 +17,7 @@ object ArkColor {
     val TextQuarterary = Color(0xFF667085)
     val TextPlaceHolder = Color(0xFF667085)
     val TextBrandSecondary = Color(0xFF6941C6)
+    val TextError = Color(0xFFB42318)
 
     val BGSecondaryAlt = Color(0xFFF9FAFB)
     val BGTertiary = Color(0xFFF2F4F7)
@@ -25,6 +26,7 @@ object ArkColor {
     val FGQuinary = Color(0xFF98A2B3)
     val Border = Color(0xFFD0D5DD)
     val BorderSecondary = Color(0xFFEAECF0)
+    val BorderError = Color(0xFFFDA29B)
 
     val PairAlertInc = Color(0xFF079455)
     val PairAlertDec = Color(0xFFD92D20)

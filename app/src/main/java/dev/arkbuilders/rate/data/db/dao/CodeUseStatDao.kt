@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 import dev.arkbuilders.rate.data.db.entity.RoomCodeUseStat
 import dev.arkbuilders.rate.domain.model.CurrencyCode
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CodeUseStatDao {
@@ -18,4 +19,7 @@ interface CodeUseStatDao {
 
     @Query("SELECT * FROM RoomCodeUseStat")
     suspend fun getAll(): List<RoomCodeUseStat>
+
+    @Query("SELECT * FROM RoomCodeUseStat")
+    fun getAllFlow(): Flow<List<RoomCodeUseStat>>
 }

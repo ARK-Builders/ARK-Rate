@@ -28,6 +28,7 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -47,6 +48,7 @@ sealed class AddQuickScreenEffect {
 class AddQuickViewModel(
     private val quickPairId: Long?,
     private val newCode: CurrencyCode?,
+    private val reuseNotEdit: Boolean,
     private val quickRepo: QuickRepo,
     private val convertUseCase: ConvertWithRateUseCase,
     private val codeUseStatRepo: CodeUseStatRepo,
@@ -88,7 +90,7 @@ class AddQuickViewModel(
                         quickPair.from,
                         quickPair.amount.toString()
                     )
-                ) + quickPair.to.map { AmountStr(it, "") }
+                ) + quickPair.to.map { AmountStr(it.code, "") }
                 val calc = calcToResult(currencies)
 
                 reduce {
@@ -133,15 +135,23 @@ class AddQuickViewModel(
 
     fun onAddQuickPair() = intent {
         val from = state.currencies.first()
+        val id = if (quickPairId != null) {
+            if (reuseNotEdit) 0 else quickPairId
+        } else 0
+
         val quick = QuickPair(
-            id = 0,
+            id = id,
             from = from.code,
             amount = from.value.toDouble(),
-            to = state.currencies.drop(1).map { it.code },
-            group = state.group
+            to = state.currencies.drop(1).map { it.toDAmount() },
+            calculatedDate = OffsetDateTime.now(),
+            pinnedDate = null,
+            group = state.group,
         )
         quickRepo.insert(quick)
-        codeUseStatRepo.codesUsed(quick.from, *quick.to.toTypedArray())
+        codeUseStatRepo.codesUsed(
+            quick.from, *quick.to.map { it.code }.toTypedArray()
+        )
         postSideEffect(AddQuickScreenEffect.NotifyPairAdded(quick))
         postSideEffect(AddQuickScreenEffect.NavigateBack)
     }
@@ -182,6 +192,7 @@ class AddQuickViewModel(
 class AddQuickViewModelFactory @AssistedInject constructor(
     @Assisted private val quickPairId: Long?,
     @Assisted private val newCode: CurrencyCode?,
+    @Assisted private val reuseNotEdit: Boolean,
     private val quickRepo: QuickRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase,
@@ -191,6 +202,7 @@ class AddQuickViewModelFactory @AssistedInject constructor(
         return AddQuickViewModel(
             quickPairId,
             newCode,
+            reuseNotEdit,
             quickRepo,
             convertUseCase,
             codeUseStatRepo,
@@ -202,7 +214,8 @@ class AddQuickViewModelFactory @AssistedInject constructor(
     interface Factory {
         fun create(
             quickPairId: Long?,
-            newCode: CurrencyCode?
+            newCode: CurrencyCode?,
+            reuseNotEdit: Boolean,
         ): AddQuickViewModelFactory
     }
 }

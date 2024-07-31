@@ -35,7 +35,7 @@ private fun PairAlert.toRoom() = RoomPairAlert(
     percent,
     oneTimeNotRecurrent,
     enabled,
-    lastDateTriggered?.toString(),
+    lastDateTriggered,
     group
 )
 
@@ -48,6 +48,6 @@ private fun RoomPairAlert.toCondition() = PairAlert(
     alertPercent,
     oneTimeNotRecurrent,
     enabled,
-    lastDateTriggered?.let { OffsetDateTime.parse(lastDateTriggered) },
+    lastDateTriggered,
     group
 )

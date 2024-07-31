@@ -30,7 +30,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,6 +60,7 @@ import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.presentation.ui.RateSnackbarHost
+import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import timber.log.Timber
@@ -301,18 +301,10 @@ private fun PairAlertItem(
                 date
                     ?: Timber.e("Pair alert marked as triggered but lastDateTriggered is null")
                 if (date != null) {
-                    val monthFormat =
-                        DateTimeFormatter.ofPattern("MMM", Locale.getDefault())
-                    val monthStr = monthFormat.format(date)
-                    val timeFormat =
-                        DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
-                    val timeStr = timeFormat.format(date)
                     Text(
                         text = stringResource(
                             R.string.alert_notified_on,
-                            monthStr,
-                            date.dayOfMonth,
-                            timeStr
+                            DateFormatUtils.notifiedOn(date),
                         ),
                         color = ArkColor.TextTertiary
                     )

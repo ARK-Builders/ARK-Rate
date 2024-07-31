@@ -17,7 +17,10 @@
     <string name="quick_empty_title">Ready for calculation!</string>
     <string name="quick_empty_desc">Select your currencies and enter an amount to start converting. Your exchange results will appear here.</string>
     <string name="quick_add_new_calculation">Add new calculation</string>
+    <string name="quick_edit_pair">Edit pair</string>
+    <string name="quick_last_refreshed">Last refreshed %1$s ago</string>
     <string name="quick_calculations">Calculations</string>
+    <string name="quick_calculated_on">Calculated on %1$s</string>
     <string name="quick_snackbar_new_title">New calculation has been created</string>
     <string name="quick_snackbar_new_desc">"You added %1$s calculation "</string>
     <string name="quick_snackbar_removed_title">The calculation has been deleted</string>
@@ -38,7 +41,7 @@
 
     <string name="alerts">Alerts</string>
     <string name="alert_edit_alert">Edit alert</string>
-    <string name="alert_notified_on">Notified on %1$s %2$s - %3$s</string>
+    <string name="alert_notified_on">Notified on %1$s</string>
     <string name="alert_empty_title">No Alerts at the Moment</string>
     <string name="alert_empty_desc">Stay updated! We\'ll post any important notifications or changes in exchange rates here.</string>
     <string name="new_alert">New Alert</string>
@@ -64,7 +67,7 @@
     <string name="new_group">New group</string>
 
     <string name="crash_reports">Crash reports</string>
-    <string name="currencies">Currencies</string>
+    <string name="all_currencies">All currencies</string>
 
     <string name="ok">OK</string>
     <string name="oops_something_went_wrong">Oops! Something went wrong</string>
@@ -133,5 +136,14 @@
     <string name="search_currency">Search a currency</string>
     <string name="new_asset">New Asset</string>
     <string name="undo">Undo</string>
+    <string name="frequent_currencies">Frequent currencies</string>
+    <string name="top_results">Top results</string>
+    <string name="unpin">Unpin</string>
+    <string name="pin">Pin</string>
+    <string name="quick_pinned_pairs">Pinned pairs</string>
+    <string name="delete">Delete</string>
+    <string name="re_use">Re-use</string>
+    <string name="edit">Edit</string>
+    <string name="options">Options</string>
 
 </resources>
