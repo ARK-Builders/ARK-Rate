@@ -72,9 +72,6 @@ class CurrencyRepoImpl @Inject constructor(
         return names.sortedBy { it.code }.right()
     }
 
-    override suspend fun isRatesAvailable(): Boolean =
-        localCurrencyDataSource.getAll().isNotEmpty()
-
     private suspend fun updateRates() = mutex.withLock {
         val updatedDate = timestampRepo
             .getTimestamp(TimestampType.FetchRates)
