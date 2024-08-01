@@ -34,7 +34,8 @@ data class PairAlertScreenPage(
 
 data class PairAlertScreenState(
     val pages: List<PairAlertScreenPage> = emptyList(),
-    val initialized: Boolean = false
+    val initialized: Boolean = false,
+    val noInternet: Boolean = false
 )
 
 sealed class PairAlertEffect {
@@ -59,28 +60,45 @@ class PairAlertViewModel(
         analyticsManager.trackScreen("PairAlertScreen")
 
         intent {
-            if (currencyRepo.isRatesAvailable().not())
-                return@intent
-
-            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
-                postSideEffect(PairAlertEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
-
-            pairAlertRepo.getAllFlow().onEach { all ->
-                val pages = all.reversed().groupBy { it.group }
-                    .map { (group, pairAlertList) ->
-                        val oneTimeTriggered =
-                            pairAlertList.filter { it.triggered() && it.oneTimeNotRecurrent && !it.enabled }
-                        val created = pairAlertList - oneTimeTriggered
-
-                        PairAlertScreenPage(group, created, oneTimeTriggered)
-                    }
-                intent {
-                    reduce {
-                        state.copy(pages = pages, initialized = true)
-                    }
+            if (currencyRepo.isRatesAvailable().not()) {
+                reduce {
+                    state.copy(noInternet = true)
                 }
-            }.launchIn(viewModelScope)
+                return@intent
+            }
+
+            init()
+        }
+    }
+
+    private fun init() = intent {
+        AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+            postSideEffect(PairAlertEffect.ShowSnackbarAdded(visuals))
+        }.launchIn(viewModelScope)
+
+        pairAlertRepo.getAllFlow().onEach { all ->
+            val pages = all.reversed().groupBy { it.group }
+                .map { (group, pairAlertList) ->
+                    val oneTimeTriggered =
+                        pairAlertList.filter { it.triggered() && it.oneTimeNotRecurrent && !it.enabled }
+                    val created = pairAlertList - oneTimeTriggered
+
+                    PairAlertScreenPage(group, created, oneTimeTriggered)
+                }
+            intent {
+                reduce {
+                    state.copy(pages = pages, initialized = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun onRefreshClick() = intent {
+        reduce { state.copy(noInternet = false) }
+        if (currencyRepo.isRatesAvailable()) {
+            init()
+        } else {
+            reduce { state.copy(noInternet = true) }
         }
     }
 

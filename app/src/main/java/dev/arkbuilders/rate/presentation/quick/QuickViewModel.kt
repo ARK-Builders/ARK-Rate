@@ -47,7 +47,8 @@ data class QuickScreenState(
     val topResults: List<CurrencyName> = emptyList(),
     val pages: List<QuickScreenPage> = emptyList(),
     val optionsData: OptionsData? = null,
-    val initialized: Boolean = false
+    val initialized: Boolean = false,
+    val noInternet: Boolean = false
 )
 
 sealed class QuickScreenEffect {
@@ -74,50 +75,67 @@ class QuickViewModel(
         analyticsManager.trackScreen("QuickScreen")
 
         intent {
-            if (currencyRepo.isRatesAvailable().not())
-                return@intent
-
-            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
-                postSideEffect(QuickScreenEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
-
-            quickRepo.allFlow().drop(1).onEach { quick ->
-                intent {
-                    val pages = mapPairsToPages(quick)
-                    reduce {
-                        state.copy(
-                            pages = pages
-                        )
-                    }
+            if (currencyRepo.isRatesAvailable().not()) {
+                reduce {
+                    state.copy(noInternet = true)
                 }
-            }.launchIn(viewModelScope)
+                return@intent
+            }
 
-            val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
-            calcFrequentCurrUseCase.flow().drop(1).onEach {
-                val frequent = calcFrequentCurrUseCase.invoke()
-                    .map { currencyRepo.nameByCodeUnsafe(it) }
-                val topResults = getTopResultUseCase()
+            init()
+        }
+    }
+
+    private fun init() = intent {
+        AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+            postSideEffect(QuickScreenEffect.ShowSnackbarAdded(visuals))
+        }.launchIn(viewModelScope)
+
+        quickRepo.allFlow().drop(1).onEach { quick ->
+            intent {
+                val pages = mapPairsToPages(quick)
                 reduce {
                     state.copy(
-                        frequent = frequent,
-                        topResults = topResults
+                        pages = pages
                     )
                 }
-            }.launchIn(viewModelScope)
+            }
+        }.launchIn(viewModelScope)
 
-            val frequent = calcFrequentCurrUseCase()
+        val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
+        calcFrequentCurrUseCase.flow().drop(1).onEach {
+            val frequent = calcFrequentCurrUseCase.invoke()
                 .map { currencyRepo.nameByCodeUnsafe(it) }
             val topResults = getTopResultUseCase()
-            val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
                 state.copy(
-                    currencies = allCurrencies,
                     frequent = frequent,
-                    topResults = topResults,
-                    pages = pages,
-                    initialized = true
+                    topResults = topResults
                 )
             }
+        }.launchIn(viewModelScope)
+
+        val frequent = calcFrequentCurrUseCase()
+            .map { currencyRepo.nameByCodeUnsafe(it) }
+        val topResults = getTopResultUseCase()
+        val pages = mapPairsToPages(quickRepo.getAll())
+        reduce {
+            state.copy(
+                currencies = allCurrencies,
+                frequent = frequent,
+                topResults = topResults,
+                pages = pages,
+                initialized = true
+            )
+        }
+    }
+
+    fun onRefreshClick() = intent {
+        reduce { state.copy(noInternet = false) }
+        if (currencyRepo.isRatesAvailable()) {
+            init()
+        } else {
+            reduce { state.copy(noInternet = true) }
         }
     }
 

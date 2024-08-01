@@ -12,7 +12,7 @@ interface CurrencyRepo {
 
     suspend fun getCurrencyName(): Either<Throwable, List<CurrencyName>>
 
-    suspend fun isRatesAvailable(): Boolean
+    suspend fun isRatesAvailable() = getCurrencyRate().isRight()
 
     suspend fun getCurrencyNameUnsafe() = getCurrencyName().getOrNull()!!
 

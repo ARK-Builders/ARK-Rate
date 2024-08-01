@@ -69,7 +69,7 @@ class CurrencyRepoImpl @Inject constructor(
             name
         }
 
-        return names.right()
+        return names.sortedBy { it.code }.right()
     }
 
     override suspend fun isRatesAvailable(): Boolean =
