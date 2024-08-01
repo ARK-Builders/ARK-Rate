@@ -16,7 +16,6 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
@@ -107,7 +105,7 @@ fun QuickSwipeItem(
 @Composable
 private fun DismissBackground(state: SwipeToDismissBoxState, isPinned: Boolean) {
     val color = when (state.dismissDirection) {
-        SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError
+        SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError200
         else -> if (isPinned) ArkColor.FGQuarterary else ArkColor.Secondary
     }
 

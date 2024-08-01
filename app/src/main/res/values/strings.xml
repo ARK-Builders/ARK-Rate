@@ -146,5 +146,9 @@
     <string name="oops_request_time_out">Oops, request time out!</string>
     <string name="check_connection_and_refresh">Please check your connection and refresh the page to try again.</string>
     <string name="refresh">Refresh</string>
+    <string name="online">Online</string>
+    <string name="your_connection_is_back">Your connection is back.</string>
+    <string name="offline">Offline</string>
+    <string name="your_network_is_offline">Your network is offline.</string>
 
 </resources>

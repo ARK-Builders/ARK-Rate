@@ -1,4 +1,5 @@
-@file:OptIn(ExperimentalMaterialNavigationApi::class,
+@file:OptIn(
+    ExperimentalMaterialNavigationApi::class,
     ExperimentalAnimationApi::class
 )
 
@@ -8,12 +9,18 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -21,13 +28,19 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.utils.startDestination
+import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PortfolioScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.SettingsScreenDestination
 import dev.arkbuilders.rate.presentation.ui.AnimatedRateBottomNavigation
-import dev.arkbuilders.rate.presentation.ui.RateScaffold
+import dev.arkbuilders.rate.presentation.ui.ConnectivityOfflineSnackbar
+import dev.arkbuilders.rate.presentation.ui.ConnectivityOfflineSnackbarVisuals
+import dev.arkbuilders.rate.presentation.ui.ConnectivityOnlineSnackbar
+import dev.arkbuilders.rate.presentation.ui.ConnectivityOnlineSnackbarVisuals
 import dev.arkbuilders.rate.presentation.utils.keyboardAsState
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.drop
 
 
 @Composable
@@ -36,6 +49,19 @@ fun MainScreen() {
         rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING,
     )
     val navController = engine.rememberNavController()
+    val snackState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = Unit) {
+        DIManager.component.networkStatus().onlineStatus
+            .drop(1)
+            .collect { online ->
+                val visuals = if (online)
+                    ConnectivityOnlineSnackbarVisuals
+                else
+                    ConnectivityOfflineSnackbarVisuals
+                snackState.showSnackbar(visuals)
+            }
+    }
 
 
     val isKeyboardOpen by keyboardAsState()
@@ -43,6 +69,8 @@ fun MainScreen() {
     val scope = rememberCoroutineScope()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val destination = navController.appCurrentDestinationAsState().value
+        ?: NavGraphs.root.startAppDestination
 
 
     bottomBarVisible.value = when (navBackStackEntry?.destination?.route) {
@@ -56,12 +84,25 @@ fun MainScreen() {
     if (isKeyboardOpen)
         bottomBarVisible.value = false
 
-    RateScaffold(
+    Scaffold(
         modifier = Modifier
             .systemBarsPadding()
             .imePadding(),
-        navController = navController,
-        bottomBar = { destination ->
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackState
+            ) { data ->
+                val visuals = data.visuals
+                when (visuals) {
+                    is ConnectivityOnlineSnackbarVisuals ->
+                        ConnectivityOnlineSnackbar()
+
+                    is ConnectivityOfflineSnackbarVisuals ->
+                        ConnectivityOfflineSnackbar()
+                }
+            }
+        },
+        bottomBar = {
             AnimatedRateBottomNavigation(
                 currentDestination = destination,
                 onBottomBarItemClick = {
