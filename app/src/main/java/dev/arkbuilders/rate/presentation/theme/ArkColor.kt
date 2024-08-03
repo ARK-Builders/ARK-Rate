@@ -32,5 +32,12 @@ object ArkColor {
     val PairAlertDec = Color(0xFFD92D20)
 
     val FGErrorPrimary = Color(0xFFD92D20)
-    val UtilityError = Color(0xFFFECDCA)
+    val UtilityError50 = Color(0xFFFEF3F2)
+    val UtilityError200 = Color(0xFFFECDCA)
+    val UtilityError500 = Color(0xFFF04438)
+
+    val UtilitySuccess50 = Color(0xFFECFDF3)
+    val UtilitySuccess200 = Color(0xFFABEFC6)
+    val UtilitySuccess500 = Color(0xFF17B26A)
+    val UtilitySuccess700 = Color(0xFF067647)
 }

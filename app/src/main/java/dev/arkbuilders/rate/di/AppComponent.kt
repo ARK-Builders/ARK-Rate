@@ -11,6 +11,7 @@ import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.module.ApiModule
 import dev.arkbuilders.rate.di.module.DBModule
 import dev.arkbuilders.rate.di.module.RepoModule
+import dev.arkbuilders.rate.domain.repo.NetworkStatus
 import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.presentation.portfolio.AddAssetViewModelFactory
@@ -45,6 +46,7 @@ interface AppComponent {
     fun appWorkerFactory(): AppWorkerFactory
 
     fun prefs(): Prefs
+    fun networkStatus(): NetworkStatus
 
     fun generalCurrencyRepo(): CurrencyRepoImpl
     fun assetsRepo(): PortfolioRepoImpl

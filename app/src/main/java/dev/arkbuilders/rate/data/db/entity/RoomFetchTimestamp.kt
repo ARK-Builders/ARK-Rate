@@ -7,6 +7,6 @@ import java.time.OffsetDateTime
 @Entity
 data class RoomFetchTimestamp(
     @PrimaryKey
-    val currencyType: String,
+    val type: String,
     val timestamp: OffsetDateTime
 )

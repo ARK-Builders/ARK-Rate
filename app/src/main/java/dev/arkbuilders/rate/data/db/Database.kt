@@ -26,7 +26,7 @@ import dev.arkbuilders.rate.data.db.typeconverters.OffsetDateTimeTypeConverter
         RoomQuickPair::class,
         RoomCodeUseStat::class
     ],
-    version = 12,
+    version = 13,
     exportSchema = true,
 )
 @TypeConverters(ListAmountTypeConverter::class, OffsetDateTimeTypeConverter::class)

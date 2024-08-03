@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyCode
-import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
@@ -32,7 +31,8 @@ data class PortfolioScreenState(
     val filter: String = "",
     val baseCode: CurrencyCode = "USD",
     val pages: List<PortfolioScreenPage> = emptyList(),
-    val initialized: Boolean = false
+    val initialized: Boolean = false,
+    val noInternet: Boolean = false,
 )
 
 data class PortfolioScreenPage(
@@ -68,22 +68,39 @@ class PortfolioViewModel(
         analyticsManager.trackScreen("PortfolioScreen")
 
         intent {
-            if (isRatesAvailable().not())
+            if (currencyRepo.isRatesAvailable().not()) {
+                reduce {
+                    state.copy(noInternet = true)
+                }
                 return@intent
+            }
 
             init()
+        }
+    }
 
-            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
-                postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
+    private fun init() = intent {
+        initPages()
 
-            prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
-                init()
-            }.launchIn(viewModelScope)
+        AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+            postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(visuals))
+        }.launchIn(viewModelScope)
 
-            assetsRepo.allAssetsFlow().drop(1).onEach {
-                init()
-            }.launchIn(viewModelScope)
+        prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
+            initPages()
+        }.launchIn(viewModelScope)
+
+        assetsRepo.allAssetsFlow().drop(1).onEach {
+            initPages()
+        }.launchIn(viewModelScope)
+    }
+
+    fun onRefreshClick() = intent {
+        reduce { state.copy(noInternet = false) }
+        if (currencyRepo.isRatesAvailable()) {
+            init()
+        } else {
+            reduce { state.copy(noInternet = true) }
         }
     }
 
@@ -102,7 +119,7 @@ class PortfolioViewModel(
         reduce { state.copy(filter = filter) }
     }
 
-    private fun init() = intent {
+    private fun initPages() = intent {
         val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
         val assets = assetsRepo.allAssets().reversed()
         val groups = assets.groupBy(keySelector = { it.group })
@@ -133,8 +150,6 @@ class PortfolioViewModel(
             PortfolioDisplayAsset(asset, baseAmount, rate)
         }
     }
-
-    private suspend fun isRatesAvailable() = currencyRepo.getCurrencyRate().isRight()
 }
 
 @Singleton
