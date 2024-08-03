@@ -66,7 +66,6 @@ fun MainScreen() {
 
     val isKeyboardOpen by keyboardAsState()
     val bottomBarVisible = rememberSaveable { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val destination = navController.appCurrentDestinationAsState().value

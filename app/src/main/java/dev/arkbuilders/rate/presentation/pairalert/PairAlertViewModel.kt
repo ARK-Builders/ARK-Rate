@@ -81,7 +81,7 @@ class PairAlertViewModel(
                 .map { (group, pairAlertList) ->
                     val oneTimeTriggered =
                         pairAlertList.filter { it.triggered() && it.oneTimeNotRecurrent && !it.enabled }
-                    val created = pairAlertList - oneTimeTriggered
+                    val created = pairAlertList - oneTimeTriggered.toSet()
 
                     PairAlertScreenPage(group, created, oneTimeTriggered)
                 }
