@@ -88,7 +88,7 @@ private fun Content(navigator: DestinationsNavigator) {
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
                 modifier = Modifier.padding(top = 32.dp),
@@ -177,7 +177,7 @@ private fun Content(navigator: DestinationsNavigator) {
                     DonateBtn(
                         modifier = Modifier,
                         icon = painterResource(dev.arkbuilders.rate.cryptoicons.R.drawable.btc),
-                        text = stringResource(R.string.about_donate_using_btc),
+                        text = stringResource(R.string.about_donate_using_btc)
                     ) {
                         btcDialogVisible = true
                     }

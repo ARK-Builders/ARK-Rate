@@ -31,8 +31,9 @@ fun AppSwipeToDismiss(content: @Composable () -> Unit, onDelete: () -> Unit) {
             if (it == SwipeToDismissBoxValue.EndToStart) {
                 onDelete()
                 true
-            } else
+            } else {
                 false
+            }
         }
     )
 

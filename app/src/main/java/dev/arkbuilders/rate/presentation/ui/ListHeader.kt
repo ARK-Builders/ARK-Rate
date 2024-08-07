@@ -14,7 +14,7 @@ fun ListHeader(text: String) {
         modifier = Modifier.padding(
             start = 16.dp,
             top = 24.dp,
-            end = 16.dp,
+            end = 16.dp
         ),
         text = text,
         fontWeight = FontWeight.Medium,

@@ -31,7 +31,7 @@ fun GroupSelectPopup(
     widthPx: Int = 10,
     onGroupSelect: (String) -> Unit = {},
     onNewGroupClick: () -> Unit = {},
-    onDismiss: () -> Unit = {},
+    onDismiss: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier.width(with(LocalDensity.current) { widthPx.toDp() }),

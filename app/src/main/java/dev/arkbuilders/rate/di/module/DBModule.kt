@@ -6,7 +6,6 @@ import dagger.Module
 import dagger.Provides
 import dev.arkbuilders.rate.data.db.Database
 import dev.arkbuilders.rate.data.db.Database.Companion.DB_NAME
-import dev.arkbuilders.rate.data.db.typeconverters.ListAmountTypeConverter
 import javax.inject.Singleton
 
 @Module

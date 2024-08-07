@@ -3,14 +3,14 @@ package dev.arkbuilders.rate.di.module
 import dagger.Binds
 import dagger.Module
 import dev.arkbuilders.rate.data.network.NetworkStatusImpl
+import dev.arkbuilders.rate.data.preferences.PrefsImpl
 import dev.arkbuilders.rate.data.repo.AnalyticsManagerImpl
-import dev.arkbuilders.rate.data.repo.currency.CurrencyRepoImpl
 import dev.arkbuilders.rate.data.repo.CodeUseStatRepoImpl
 import dev.arkbuilders.rate.data.repo.PairAlertRepoImpl
 import dev.arkbuilders.rate.data.repo.PortfolioRepoImpl
 import dev.arkbuilders.rate.data.repo.QuickRepoImpl
-import dev.arkbuilders.rate.data.preferences.PrefsImpl
 import dev.arkbuilders.rate.data.repo.TimestampRepoImpl
+import dev.arkbuilders.rate.data.repo.currency.CurrencyRepoImpl
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo

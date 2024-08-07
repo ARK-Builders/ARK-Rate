@@ -7,29 +7,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.presentation.theme.ArkColor
+import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.presentation.ui.ListHeader
@@ -44,7 +35,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SearchCurrencyScreen(
     appSharedFlowKeyString: String,
     pos: Int? = null,
-    navigator: DestinationsNavigator,
+    navigator: DestinationsNavigator
 ) {
     val viewModel: SearchViewModel = viewModel(
         factory = DIManager.component.searchVMFactory()
@@ -90,7 +81,7 @@ private fun Input(input: String, onInputChange: (String) -> Unit) {
             .padding(16.dp)
             .fillMaxWidth(),
         text = input,
-        onValueChange = { onInputChange(it) },
+        onValueChange = { onInputChange(it) }
     )
     AppHorDiv()
 }
@@ -133,5 +124,3 @@ private fun Results(
         }
     }
 }
-
-

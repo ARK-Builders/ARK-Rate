@@ -16,29 +16,32 @@ object DateFormatUtils {
         var dur = Duration.between(date, now)
 
         val days = dur.toDays()
-        if (days > 0)
+        if (days > 0) {
             return ctx.resources.getQuantityString(
                 R.plurals.plurals_day,
                 days.toInt(),
                 days.toInt()
             )
+        }
 
         val hours = dur.toHours()
-        if (hours > 0)
+        if (hours > 0) {
             return ctx.resources.getQuantityString(
                 R.plurals.plurals_hour,
                 hours.toInt(),
                 hours.toInt()
             )
+        }
         dur = dur.minusHours(hours)
 
         val minutes = dur.toMinutes()
-        if (minutes > 0)
+        if (minutes > 0) {
             return ctx.resources.getQuantityString(
                 R.plurals.plurals_minute,
                 minutes.toInt(),
                 minutes.toInt()
             )
+        }
         dur = dur.minusMinutes(hours)
 
         val seconds = dur.seconds

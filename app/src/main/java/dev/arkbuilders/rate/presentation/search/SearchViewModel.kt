@@ -68,8 +68,8 @@ class SearchViewModel(
     fun onInputChange(input: String) = blockingIntent {
         val filtered = state.topResults
             .filter {
-                it.name.contains(input, ignoreCase = true)
-                        || it.code.contains(input, ignoreCase = true)
+                it.name.contains(input, ignoreCase = true) ||
+                    it.code.contains(input, ignoreCase = true)
             }
         reduce { state.copy(filter = input, topResultsFiltered = filtered) }
     }
@@ -128,7 +128,7 @@ class SearchViewModelFactory @AssistedInject constructor(
     interface Factory {
         fun create(
             appSharedFlowKeyString: String,
-            pos: Int?,
+            pos: Int?
         ): SearchViewModelFactory
     }
 }

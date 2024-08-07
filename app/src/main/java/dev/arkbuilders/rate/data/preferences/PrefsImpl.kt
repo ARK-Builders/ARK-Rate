@@ -14,7 +14,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PrefsImpl @Inject constructor(val context: Context): Prefs {
+class PrefsImpl @Inject constructor(val context: Context) : Prefs {
     private val SHARED_PREFERENCES_KEY = "user_preferences"
 
     private val Context.preferencesDatastore by preferencesDataStore(
@@ -51,5 +51,4 @@ class PrefsImpl @Inject constructor(val context: Context): Prefs {
 
         return result as Preferences.Key<T>
     }
-
 }

@@ -3,10 +3,8 @@ package dev.arkbuilders.rate.presentation.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,8 +19,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,7 +50,7 @@ fun GroupCreateDialog(onDismiss: () -> Unit, onConfirmClick: (String) -> Unit) {
 @Composable
 fun GroupCreateDialogContent(
     onDismiss: () -> Unit = {},
-    onConfirmClick: (String) -> Unit = {},
+    onConfirmClick: (String) -> Unit = {}
 ) {
     var input by remember {
         mutableStateOf("")
@@ -75,7 +71,8 @@ fun GroupCreateDialogContent(
             modifier = Modifier
                 .padding(end = 12.dp, top = 12.dp)
                 .align(Alignment.TopEnd),
-            onClick = {}) {
+            onClick = {}
+        ) {
             Icon(
                 modifier = Modifier,
                 painter = painterResource(id = R.drawable.ic_close),
@@ -171,7 +168,6 @@ fun GroupCreateDialogContent(
                     color = ArkColor.FGSecondary
                 )
             }
-
         }
     }
 }

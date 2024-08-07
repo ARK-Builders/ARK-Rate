@@ -3,7 +3,6 @@ package dev.arkbuilders.rate.presentation.shared
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 
 sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {
     data object AddPairAlertTarget : AppSharedFlow<CurrencyCode>(MutableSharedFlow())

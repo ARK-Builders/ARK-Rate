@@ -1,6 +1,5 @@
 package dev.arkbuilders.rate.presentation.pairalert
 
-import android.icu.util.Currency
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -9,9 +8,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.CurrUtils
+import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.PairAlert
-import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
@@ -40,7 +39,6 @@ data class AddPairAlertScreenState(
     val finishEnabled: Boolean = true,
     val editExisting: Boolean = false
 )
-
 
 sealed class AddPairAlertScreenEffect {
     data object NavigateBack : AddPairAlertScreenEffect()
@@ -75,7 +73,6 @@ class AddPairAlertViewModel(
                 checkAboveNotBelow()
             }
         } ?: initOnCodeChange()
-
 
         intent {
             val groups =
@@ -123,10 +120,11 @@ class AddPairAlertViewModel(
     fun onPriceOrPercentChanged(priceNotPercent: Boolean) = intent {
         reduce {
             val newState = state.copy(
-                priceOrPercent = if (priceNotPercent)
+                priceOrPercent = if (priceNotPercent) {
                     Either.Left("")
-                else
+                } else {
                     Either.Right("")
+                }
             )
             val newPriceOrPercent = calcNewPriceOrPercent(newState)
             newState.copy(priceOrPercent = newPriceOrPercent)
@@ -135,19 +133,22 @@ class AddPairAlertViewModel(
     }
 
     fun onIncreaseToggle() = intent {
-        if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft())
+        if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft()) {
             return@intent
+        }
 
         val newPriceOrPercent = state.priceOrPercent.mapLeft {
-            if (it.startsWith("-"))
+            if (it.startsWith("-")) {
                 it.replace("-", "")
-            else
+            } else {
                 "-$it"
+            }
         }.map {
-            if (it.startsWith("-"))
+            if (it.startsWith("-")) {
                 it.replace("-", "")
-            else
+            } else {
                 "-$it"
+            }
         }
         reduce { state.copy(priceOrPercent = newPriceOrPercent) }
         checkAboveNotBelow()
@@ -165,12 +166,13 @@ class AddPairAlertViewModel(
     fun onSaveClick() = intent {
         val targetPrice = state.priceOrPercent.fold(
             ifLeft = { price ->
-                if (state.oneTimeNotRecurrent)
+                if (state.oneTimeNotRecurrent) {
                     price.toDoubleSafe()
-                else
+                } else {
                     (state.currentPrice + price.toDoubleSafe())
+                }
             },
-            ifRight = { percent -> (state.currentPrice * (1.0 + percent.toDoubleSafe() / 100)) },
+            ifRight = { percent -> (state.currentPrice * (1.0 + percent.toDoubleSafe() / 100)) }
         )
 
         val percent = state.priceOrPercent.getOrNull()?.toDoubleSafe()
@@ -216,7 +218,7 @@ class AddPairAlertViewModel(
             }
         reduce {
             state.copy(
-                priceOrPercent = newPrice,
+                priceOrPercent = newPrice
             )
         }
         checkAboveNotBelow()
@@ -279,10 +281,11 @@ class AddPairAlertViewModel(
             Either.Right(CurrUtils.roundOff(percent))
         } ?: let {
             Either.Left(
-                if (pair.oneTimeNotRecurrent)
+                if (pair.oneTimeNotRecurrent) {
                     CurrUtils.roundOff(pair.targetPrice)
-                else
+                } else {
                     CurrUtils.roundOff(pair.byPriceStep())
+                }
             )
         }
         val (_, currentPrice) = convertUseCase(
@@ -310,11 +313,13 @@ class AddPairAlertViewModel(
             ifLeft = { it.toDoubleSafe() == 0.0 },
             ifRight = { it.toDoubleSafe() == 0.0 }
         )
-        if (priceOrPercentNotSuit)
+        if (priceOrPercentNotSuit) {
             enabled = false
+        }
 
-        if (state.targetCode == state.baseCode)
+        if (state.targetCode == state.baseCode) {
             enabled = false
+        }
 
         reduce { state.copy(finishEnabled = enabled) }
     }
@@ -326,7 +331,7 @@ class AddPairAlertViewModelFactory @AssistedInject constructor(
     private val pairAlertRepo: PairAlertRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase,
-    private val analyticsManager: AnalyticsManager,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddPairAlertViewModel(
@@ -335,14 +340,14 @@ class AddPairAlertViewModelFactory @AssistedInject constructor(
             pairAlertRepo,
             codeUseStatRepo,
             convertUseCase,
-            analyticsManager,
+            analyticsManager
         ) as T
     }
 
     @AssistedFactory
     interface Factory {
         fun create(
-            pairAlertId: Long?,
+            pairAlertId: Long?
         ): AddPairAlertViewModelFactory
     }
 }

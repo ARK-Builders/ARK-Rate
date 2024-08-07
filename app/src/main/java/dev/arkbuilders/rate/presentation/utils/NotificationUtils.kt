@@ -23,8 +23,11 @@ object NotificationUtils {
         ctx: Context
     ) {
         val pair = pairAlert
-        val aboveOrBelow = if (pair.above()) ctx.getString(R.string.above)
-        else ctx.getString(R.string.below)
+        val aboveOrBelow = if (pair.above()) {
+            ctx.getString(R.string.above)
+        } else {
+            ctx.getString(R.string.below)
+        }
 
         val title = ctx.getString(R.string.alert_notification_title)
         val builder = NotificationCompat.Builder(ctx, CHANNEL_ID)
@@ -45,7 +48,6 @@ object NotificationUtils {
         createNotificationChannel(ctx)
 
         with(NotificationManagerCompat.from(ctx)) {
-
             if (ActivityCompat.checkSelfPermission(
                     ctx,
                     Manifest.permission.POST_NOTIFICATIONS
@@ -53,10 +55,8 @@ object NotificationUtils {
             ) {
                 notify(pairAlert.id.toInt(), builder.build())
             }
-
         }
     }
-
 
     private fun appIntent(ctx: Context): PendingIntent {
         val intent = Intent(ctx, MainActivity::class.java).apply {

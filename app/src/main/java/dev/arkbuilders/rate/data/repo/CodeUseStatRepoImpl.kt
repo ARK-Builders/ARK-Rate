@@ -34,7 +34,6 @@ class CodeUseStatRepoImpl @Inject constructor(
         dao.getAllFlow().map { list ->
             list.map { it.toCodeUseStat() }
         }
-
 }
 
 private fun RoomCodeUseStat.toCodeUseStat() =

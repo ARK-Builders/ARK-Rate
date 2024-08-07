@@ -28,7 +28,7 @@ class CurrencyRepoImpl @Inject constructor(
     private val cryptoDataSource: CryptoCurrencyDataSource,
     private val localCurrencyDataSource: LocalCurrencyDataSource,
     private val timestampRepo: TimestampRepo,
-    private val networkStatus: NetworkStatus,
+    private val networkStatus: NetworkStatus
 ) : CurrencyRepo {
 
     private val mutex = Mutex()
@@ -42,17 +42,19 @@ class CurrencyRepoImpl @Inject constructor(
             } else {
                 updateRates()
                 val newLocal = localCurrencyDataSource.getAll()
-                return@withContext if (newLocal.isEmpty())
+                return@withContext if (newLocal.isEmpty()) {
                     IllegalStateException("Local rates are empty").left()
-                else
+                } else {
                     newLocal.right()
+                }
             }
         }
 
     override suspend fun getCurrencyName(): Either<Throwable, List<CurrencyName>> {
         val localRates = localCurrencyDataSource.getAll()
-        if (localRates.isEmpty())
+        if (localRates.isEmpty()) {
             return IllegalStateException("Local rates are empty").left()
+        }
 
         val fiatNames = fiatDataSource.getCurrencyName()
         val cryptoNames = cryptoDataSource.getCurrencyName()
@@ -62,8 +64,9 @@ class CurrencyRepoImpl @Inject constructor(
                 CurrencyType.FIAT -> fiatNames[rate.code]
                 CurrencyType.CRYPTO -> cryptoNames[rate.code]
             }
-            if (name == null)
+            if (name == null) {
                 name = CurrencyName(rate.code, "")
+            }
 
             name
         }
@@ -92,8 +95,8 @@ class CurrencyRepoImpl @Inject constructor(
 
     private fun hasUpdateIntervalPassed(updatedDate: OffsetDateTime?) =
         updatedDate == null ||
-                Duration.between(updatedDate, OffsetDateTime.now())
-                    .toMillis() > dayInMillis
+            Duration.between(updatedDate, OffsetDateTime.now())
+            .toMillis() > dayInMillis
 
     private val dayInMillis = TimeUnit.DAYS.toMillis(1)
 }

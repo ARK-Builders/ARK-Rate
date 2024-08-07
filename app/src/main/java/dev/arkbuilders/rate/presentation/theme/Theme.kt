@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 private val LightColorScheme = lightColorScheme(
     primary = ArkColor.Primary,
     secondary = ArkColor.Secondary,
-    background = Color.White,
+    background = Color.White
 )
 
 @Composable

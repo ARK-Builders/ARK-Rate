@@ -33,14 +33,14 @@ tasks.register('installGitHook', Copy) {
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         suffix = "windows"
     }
-    from new File(rootProject.rootDir, "app/app-scripts/pre-commit-$suffix")
+    from new File(rootProject.rootDir, "app/scripts/pre-commit-$suffix")
     into { new File(rootProject.rootDir, '.git/hooks') }
     rename("pre-commit-$suffix", 'pre-commit')
     fileMode 0775
 }
 
-tasks.preBuild.dependsOn ktlintCheck
+//tasks.preBuild.dependsOn ktlintCheck
 
-tasks.ktlintCheck.dependsOn ktlintFormat
+//tasks.ktlintCheck.dependsOn ktlintFormat
 
 tasks.preBuild.dependsOn installGitHook

@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,7 +61,6 @@ import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
@@ -74,7 +72,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun AddPairAlertScreen(
     pairAlertId: Long? = null,
-    navigator: DestinationsNavigator,
+    navigator: DestinationsNavigator
 ) {
     val ctx = LocalContext.current
     val viewModel: AddPairAlertViewModel =
@@ -90,8 +88,11 @@ fun AddPairAlertScreen(
             is AddPairAlertScreenEffect.NotifyPairAdded -> {
                 val pair = effect.pair
                 val aboveOrBelow =
-                    if (pair.above()) ctx.getString(R.string.above)
-                    else ctx.getString(R.string.below)
+                    if (pair.above()) {
+                        ctx.getString(R.string.above)
+                    } else {
+                        ctx.getString(R.string.below)
+                    }
                 val visuals = NotifyAddedSnackbarVisuals(
                     title = ctx.getString(
                         R.string.alert_snackbar_new_title,
@@ -113,10 +114,11 @@ fun AddPairAlertScreen(
     Scaffold(
         topBar = {
             AppTopBarBack(
-                title = if (state.editExisting)
+                title = if (state.editExisting) {
                     stringResource(R.string.alert_edit_alert)
-                else
-                    stringResource(R.string.add_new_alert),
+                } else {
+                    stringResource(R.string.add_new_alert)
+                },
                 navigator = navigator
             )
         }
@@ -125,7 +127,6 @@ fun AddPairAlertScreen(
             Content(state, navigator, viewModel)
         }
     }
-
 }
 
 @Composable
@@ -202,10 +203,11 @@ private fun Content(
                 enabled = state.finishEnabled
             ) {
                 Text(
-                    text = if (state.editExisting)
+                    text = if (state.editExisting) {
                         stringResource(R.string.save)
-                    else
+                    } else {
                         stringResource(R.string.create_alert)
+                    }
                 )
             }
         }
@@ -273,11 +275,11 @@ private fun SegmentBtn(
         shape = RoundedCornerShape(6.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = if (enabled) 1.dp else 0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (enabled) Color.White else ArkColor.BGSecondaryAlt,
+            containerColor = if (enabled) Color.White else ArkColor.BGSecondaryAlt
         ),
         onClick = {
             onClick()
-        },
+        }
     ) {
         Text(
             modifier = Modifier
@@ -401,10 +403,11 @@ private fun EditCondition(
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
                     .run {
-                        if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft())
+                        if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft()) {
                             this
-                        else
+                        } else {
                             clickable { viewModel.onIncreaseToggle() }
+                        }
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -416,8 +419,11 @@ private fun EditCondition(
                 )
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
-                    text = if (state.aboveNotBelow) ctx.getString(R.string.above)
-                    else ctx.getString(R.string.below),
+                    text = if (state.aboveNotBelow) {
+                        ctx.getString(R.string.above)
+                    } else {
+                        ctx.getString(R.string.below)
+                    },
                     color = if (state.aboveNotBelow) ArkColor.PairAlertInc else ArkColor.PairAlertDec
                 )
             }
@@ -522,8 +528,11 @@ private fun OneTimeOrRecurrent(
             modifier = Modifier
                 .padding(6.dp)
                 .weight(1f),
-            title = if (byPrice) stringResource(R.string.every_c)
-            else stringResource(R.string.recurrent),
+            title = if (byPrice) {
+                stringResource(R.string.every_c)
+            } else {
+                stringResource(R.string.recurrent)
+            },
             enabled = !oneTimeNotRecurrent
         ) {
             onOneTimeChanged(false)

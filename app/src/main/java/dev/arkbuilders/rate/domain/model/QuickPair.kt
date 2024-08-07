@@ -9,7 +9,7 @@ data class QuickPair(
     val to: List<Amount>,
     val calculatedDate: OffsetDateTime,
     val pinnedDate: OffsetDateTime?,
-    val group: String?,
+    val group: String?
 ) {
     fun isPinned() = pinnedDate != null
 }

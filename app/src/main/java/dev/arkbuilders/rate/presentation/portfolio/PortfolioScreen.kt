@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -81,7 +80,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
 
             is PortfolioScreenEffect.ShowRemovedSnackbar -> {
                 val removed = CurrUtils.prepareToDisplay(effect.asset.value) +
-                        " ${effect.asset.code}"
+                    " ${effect.asset.code}"
                 val visuals = NotifyRemovedSnackbarVisuals(
                     title = ctx.getString(R.string.portfolio_snackbar_removed_title),
                     description = ctx.getString(
@@ -101,11 +100,13 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
 
     Scaffold(
         floatingActionButton = {
-            if (state.initialized.not())
+            if (state.initialized.not()) {
                 return@Scaffold
+            }
 
-            if (isEmpty)
+            if (isEmpty) {
                 return@Scaffold
+            }
 
             FloatingActionButton(
                 contentColor = Color.White,
@@ -266,7 +267,7 @@ private fun GroupPage(
 @Composable
 private fun CurrencyItem(
     amount: PortfolioDisplayAsset = previewPortfolioAmount,
-    onClick: (PortfolioDisplayAsset) -> Unit = {},
+    onClick: (PortfolioDisplayAsset) -> Unit = {}
 ) {
     Row(
         modifier = Modifier
@@ -315,7 +316,6 @@ private fun CurrencyItem(
     }
 }
 
-
 @Composable
 private fun PortfolioEmpty(navigator: DestinationsNavigator) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -326,7 +326,7 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_empty_portfolio),
                 contentDescription = "",
-                tint = Color.Unspecified,
+                tint = Color.Unspecified
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),

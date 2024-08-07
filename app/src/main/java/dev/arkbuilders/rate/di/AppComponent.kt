@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import dev.arkbuilders.rate.data.repo.currency.CurrencyRepoImpl
 import dev.arkbuilders.rate.data.repo.PortfolioRepoImpl
+import dev.arkbuilders.rate.data.repo.currency.CurrencyRepoImpl
 import dev.arkbuilders.rate.data.worker.AppWorkerFactory
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.module.ApiModule
@@ -14,11 +14,11 @@ import dev.arkbuilders.rate.di.module.RepoModule
 import dev.arkbuilders.rate.domain.repo.NetworkStatus
 import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
-import dev.arkbuilders.rate.presentation.portfolio.AddAssetViewModelFactory
-import dev.arkbuilders.rate.presentation.portfolio.PortfolioViewModelFactory
 import dev.arkbuilders.rate.presentation.pairalert.AddPairAlertViewModelFactory
 import dev.arkbuilders.rate.presentation.pairalert.PairAlertViewModelFactory
+import dev.arkbuilders.rate.presentation.portfolio.AddAssetViewModelFactory
 import dev.arkbuilders.rate.presentation.portfolio.EditAssetViewModelFactory
+import dev.arkbuilders.rate.presentation.portfolio.PortfolioViewModelFactory
 import dev.arkbuilders.rate.presentation.quick.AddQuickViewModelFactory
 import dev.arkbuilders.rate.presentation.quick.QuickViewModelFactory
 import dev.arkbuilders.rate.presentation.search.SearchViewModelFactory

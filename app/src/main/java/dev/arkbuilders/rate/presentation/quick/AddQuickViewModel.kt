@@ -17,7 +17,6 @@ import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
-import dev.arkbuilders.rate.presentation.search.SearchViewModelFactory
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -29,8 +28,6 @@ import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import java.time.OffsetDateTime
-import javax.inject.Inject
-import javax.inject.Singleton
 
 data class AddQuickScreenState(
     val quickPairId: Long? = null,
@@ -75,7 +72,7 @@ class AddQuickViewModel(
             intent {
                 val newAmounts = state.currencies + AmountStr(code, "")
                 val calc = calcToResult(newAmounts)
-                reduce {  state.copy(currencies = calc) }
+                reduce { state.copy(currencies = calc) }
                 checkFinishEnabled()
             }
         }.launchIn(viewModelScope)
@@ -137,7 +134,9 @@ class AddQuickViewModel(
         val from = state.currencies.first()
         val id = if (quickPairId != null) {
             if (reuseNotEdit) 0 else quickPairId
-        } else 0
+        } else {
+            0
+        }
 
         val quick = QuickPair(
             id = id,
@@ -146,11 +145,12 @@ class AddQuickViewModel(
             to = state.currencies.drop(1).map { it.toDAmount() },
             calculatedDate = OffsetDateTime.now(),
             pinnedDate = null,
-            group = state.group,
+            group = state.group
         )
         quickRepo.insert(quick)
         codeUseStatRepo.codesUsed(
-            quick.from, *quick.to.map { it.code }.toTypedArray()
+            quick.from,
+            *quick.to.map { it.code }.toTypedArray()
         )
         postSideEffect(AddQuickScreenEffect.NotifyPairAdded(quick))
         postSideEffect(AddQuickScreenEffect.NavigateBack)
@@ -176,17 +176,18 @@ class AddQuickViewModel(
 
         var finishEnabled = true
 
-        if (from.value.toDoubleSafe() == 0.0)
+        if (from.value.toDoubleSafe() == 0.0) {
             finishEnabled = false
+        }
 
-        if (to.isEmpty())
+        if (to.isEmpty()) {
             finishEnabled = false
+        }
 
         reduce {
             state.copy(finishEnabled = finishEnabled)
         }
     }
-
 }
 
 class AddQuickViewModelFactory @AssistedInject constructor(
@@ -215,7 +216,7 @@ class AddQuickViewModelFactory @AssistedInject constructor(
         fun create(
             quickPairId: Long?,
             newCode: CurrencyCode?,
-            reuseNotEdit: Boolean,
+            reuseNotEdit: Boolean
         ): AddQuickViewModelFactory
     }
 }

@@ -4,25 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.domain.model.PairAlert
-import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PairAlertRepo
-import dev.arkbuilders.rate.domain.usecase.HandlePairAlertCheckUseCase
-import dev.arkbuilders.rate.presentation.portfolio.PortfolioScreenEffect
-import dev.arkbuilders.rate.presentation.quick.QuickScreenEffect
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,14 +35,14 @@ data class PairAlertScreenState(
 sealed class PairAlertEffect {
     data class ShowSnackbarAdded(
         val visuals: NotifyAddedSnackbarVisuals
-    ): PairAlertEffect()
-    data class ShowRemovedSnackbar(val pair: PairAlert): PairAlertEffect()
+    ) : PairAlertEffect()
+    data class ShowRemovedSnackbar(val pair: PairAlert) : PairAlertEffect()
 }
 
 class PairAlertViewModel(
     private val pairAlertRepo: PairAlertRepo,
     private val currencyRepo: CurrencyRepo,
-    private val analyticsManager: AnalyticsManager,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModel(), ContainerHost<PairAlertScreenState, PairAlertEffect> {
 
     override val container: Container<PairAlertScreenState, PairAlertEffect> =
@@ -109,8 +103,9 @@ class PairAlertViewModel(
 
     fun onDelete(pairAlert: PairAlert) = intent {
         val deleted = pairAlertRepo.delete(pairAlert.id)
-        if (deleted)
+        if (deleted) {
             postSideEffect(PairAlertEffect.ShowRemovedSnackbar(pairAlert))
+        }
     }
 
     fun undoDelete(pair: PairAlert) = intent {
@@ -122,7 +117,7 @@ class PairAlertViewModel(
 class PairAlertViewModelFactory @Inject constructor(
     private val pairAlertRepo: PairAlertRepo,
     private val currencyRepo: CurrencyRepo,
-    private val analyticsManager: AnalyticsManager,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return PairAlertViewModel(
