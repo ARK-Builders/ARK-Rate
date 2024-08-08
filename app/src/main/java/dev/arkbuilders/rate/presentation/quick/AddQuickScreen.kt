@@ -54,8 +54,8 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.data.toDoubleSafe
-import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
@@ -112,10 +112,11 @@ fun AddQuickScreen(
     }
     Scaffold(
         topBar = {
-            val title = if (reuseNotEdit)
+            val title = if (reuseNotEdit) {
                 R.string.quick_add_new_calculation
-            else
+            } else {
                 R.string.quick_edit_pair
+            }
             AppTopBarBack(
                 title = stringResource(title),
                 navigator = navigator
@@ -185,7 +186,7 @@ private fun Content(
                 border = BorderStroke(1.dp, ArkColor.Border),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
-                    contentColor = ArkColor.FGSecondary,
+                    contentColor = ArkColor.FGSecondary
                 ),
                 onClick = { onNewCurrencyClick() },
                 contentPadding = PaddingValues(0.dp)
@@ -193,7 +194,7 @@ private fun Content(
                 Icon(
                     modifier = Modifier.padding(start = 20.dp),
                     painter = painterResource(id = R.drawable.ic_add),
-                    contentDescription = "",
+                    contentDescription = ""
                 )
                 Text(
                     modifier = Modifier.padding(
@@ -264,7 +265,7 @@ private fun Currencies(
     state: AddQuickScreenState,
     onAmountChanged: (String) -> Unit,
     onCurrencyRemove: (Int) -> Unit,
-    onCodeChange: (Int) -> Unit,
+    onCodeChange: (Int) -> Unit
 ) {
     val from = state.currencies.first()
     Text(
@@ -288,8 +289,9 @@ private fun Currencies(
         color = ArkColor.TextSecondary
     )
     state.currencies.forEachIndexed { index, amountStr ->
-        if (index == 0)
+        if (index == 0) {
             return@forEachIndexed
+        }
 
         ToResult(
             index = index,

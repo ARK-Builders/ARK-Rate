@@ -28,8 +28,9 @@ class AnalyticsManagerImpl @Inject constructor(
     private fun needToCollect(action: () -> Unit) {
         scope.launch {
             val collect = prefs.get(PreferenceKey.CollectAnalytics)
-            if (collect)
+            if (collect) {
                 action()
+            }
         }
     }
 }

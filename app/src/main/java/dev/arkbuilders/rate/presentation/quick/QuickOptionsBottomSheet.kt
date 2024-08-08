@@ -8,19 +8,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +25,6 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.R
@@ -47,7 +40,7 @@ fun QuickOptionsBottomSheet(
     onEdit: (QuickPair) -> Unit,
     onReuse: (QuickPair) -> Unit,
     onDelete: (QuickPair) -> Unit,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     ModalBottomSheet(
         modifier = Modifier,
@@ -76,7 +69,7 @@ private fun Content(
     onEdit: (QuickPair) -> Unit,
     onReuse: (QuickPair) -> Unit,
     onDelete: (QuickPair) -> Unit,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     Box(modifier = Modifier.verticalScrollDisabled()) {
         Text(
@@ -111,10 +104,11 @@ private fun Content(
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    if (pair.isPinned())
+                    if (pair.isPinned()) {
                         onUnpin(pair)
-                    else
+                    } else {
                         onPin(pair)
+                    }
                     onDismiss()
                 },
                 shape = RoundedCornerShape(8.dp),
@@ -124,14 +118,15 @@ private fun Content(
                     modifier = Modifier,
                     painter = painterResource(id = R.drawable.ic_pin),
                     contentDescription = "",
-                    tint = ArkColor.TextSecondary,
+                    tint = ArkColor.TextSecondary
                 )
                 Text(
                     modifier = Modifier.padding(start = 6.dp),
-                    text = if (pair.isPinned())
+                    text = if (pair.isPinned()) {
                         stringResource(R.string.unpin)
-                    else
-                        stringResource(R.string.pin),
+                    } else {
+                        stringResource(R.string.pin)
+                    },
                     color = ArkColor.TextSecondary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
@@ -150,7 +145,7 @@ private fun Content(
                     modifier = Modifier,
                     painter = painterResource(id = R.drawable.ic_edit),
                     contentDescription = "",
-                    tint = ArkColor.TextSecondary,
+                    tint = ArkColor.TextSecondary
                 )
                 Text(
                     modifier = Modifier.padding(start = 6.dp),
@@ -173,7 +168,7 @@ private fun Content(
                     modifier = Modifier,
                     painter = painterResource(id = R.drawable.ic_reuse),
                     contentDescription = "",
-                    tint = ArkColor.TextSecondary,
+                    tint = ArkColor.TextSecondary
                 )
                 Text(
                     modifier = Modifier.padding(start = 6.dp),
@@ -196,7 +191,7 @@ private fun Content(
                     modifier = Modifier,
                     painter = painterResource(id = R.drawable.ic_delete),
                     contentDescription = "",
-                    tint = ArkColor.TextError,
+                    tint = ArkColor.TextError
                 )
                 Text(
                     modifier = Modifier.padding(start = 6.dp),
@@ -208,7 +203,6 @@ private fun Content(
             }
         }
     }
-
 }
 
 fun Modifier.verticalScrollDisabled() = then(

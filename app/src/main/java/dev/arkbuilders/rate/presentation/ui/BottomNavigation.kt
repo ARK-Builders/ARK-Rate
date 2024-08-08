@@ -37,7 +37,7 @@ sealed class BottomNavItem(
     @StringRes val title: Int,
     @DrawableRes val iconDisabled: Int,
     @DrawableRes val iconEnabled: Int,
-    val route: String,
+    val route: String
 ) {
     data object Assets : BottomNavItem(
         R.string.bottom_nav_portfolio,
@@ -66,7 +66,6 @@ sealed class BottomNavItem(
         R.drawable.ic_nav_settings_enabled,
         SettingsScreenDestination.route
     )
-
 }
 
 @Composable
@@ -79,11 +78,12 @@ fun AnimatedRateBottomNavigation(
         targetState = bottomBarVisible.value,
         transitionSpec = {
             slideInVertically { height -> height } with
-                    slideOutVertically { height -> height }
+                slideOutVertically { height -> height }
         }
     ) { expanded ->
-        if (expanded)
+        if (expanded) {
             RateBottomNavigation(currentDestination, onBottomBarItemClick)
+        }
     }
 }
 
@@ -101,7 +101,7 @@ fun RateBottomNavigation(
     Column {
         HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
         BottomAppBar(
-            containerColor = Color.White,
+            containerColor = Color.White
         ) {
             items.forEach { item ->
                 val selected = item.route.contains(currentDestination.baseRoute)
@@ -113,8 +113,11 @@ fun RateBottomNavigation(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
                                     painter = painterResource(
-                                        if (innerSelected) item.iconEnabled
-                                        else item.iconDisabled
+                                        if (innerSelected) {
+                                            item.iconEnabled
+                                        } else {
+                                            item.iconDisabled
+                                        }
                                     ),
                                     contentDescription = stringResource(item.title)
                                 )

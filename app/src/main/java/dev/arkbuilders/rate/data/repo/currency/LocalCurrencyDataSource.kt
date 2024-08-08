@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class LocalCurrencyDataSource @Inject constructor(val dao: CurrencyRateDao) {
     suspend fun insert(
-        currencyRate: List<CurrencyRate>,
+        currencyRate: List<CurrencyRate>
     ) = dao.insert(currencyRate.map { it.toRoom() })
 
     suspend fun getByType(currencyType: CurrencyType) =

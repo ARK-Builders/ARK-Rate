@@ -5,7 +5,6 @@ import dev.arkbuilders.rate.data.db.entity.RoomPairAlert
 import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.domain.repo.PairAlertRepo
 import kotlinx.coroutines.flow.map
-import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 

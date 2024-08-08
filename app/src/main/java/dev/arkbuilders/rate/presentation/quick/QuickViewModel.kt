@@ -5,14 +5,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.PinnedQuickPair
+import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.model.TimestampType
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
-import dev.arkbuilders.rate.domain.repo.PortfolioRepo
-import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
@@ -66,7 +64,7 @@ class QuickViewModel(
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val getTopResultUseCase: GetTopResultUseCase,
-    private val analyticsManager: AnalyticsManager,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
     override val container: Container<QuickScreenState, QuickScreenEffect> =
         container(QuickScreenState())
@@ -189,7 +187,6 @@ class QuickViewModel(
         return pages
     }
 
-
     private suspend fun mapPairToPinned(
         pair: QuickPair,
         refreshDate: OffsetDateTime
@@ -209,7 +206,7 @@ class QuickViewModelFactory @AssistedInject constructor(
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val getTopResultUseCase: GetTopResultUseCase,
-    private val analyticsManager: AnalyticsManager,
+    private val analyticsManager: AnalyticsManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return QuickViewModel(

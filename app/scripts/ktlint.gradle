@@ -1,0 +1,46 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+configurations {
+    ktlint
+}
+
+dependencies {
+    ktlint("com.pinterest:ktlint:0.47.1")
+}
+
+tasks.register('ktlintFormat', JavaExec) {
+    mainClass = "com.pinterest.ktlint.Main"
+    classpath = configurations.ktlint
+    args("$rootDir/**/*.kt", "!$rootDir/**/build/**")
+    jvmArgs "--add-opens=java.base/java.lang=ALL-UNNAMED"
+
+    if (project.hasProperty("autoCorrect") && project.property("autoCorrect") == "0") {
+        logger.quiet("(KTLINT): auto correction is disabled")
+    } else {
+        logger.quiet("(KTLINT): auto correction is enabled")
+        args "-F"
+    }
+}
+
+tasks.register('ktlintCheck', JavaExec) {
+    classpath = configurations.ktlint
+    mainClass = "com.pinterest.ktlint.Main"
+    args "src/**/*.kt", "**.kts", "!**/build/**"
+}
+
+tasks.register('installGitHook', Copy) {
+    def suffix = "unix"
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        suffix = "windows"
+    }
+    from new File(rootProject.rootDir, "app/scripts/pre-commit-$suffix")
+    into { new File(rootProject.rootDir, '.git/hooks') }
+    rename("pre-commit-$suffix", 'pre-commit')
+    fileMode 0775
+}
+
+tasks.preBuild.dependsOn ktlintCheck
+
+tasks.ktlintCheck.dependsOn ktlintFormat
+
+tasks.preBuild.dependsOn installGitHook

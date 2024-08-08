@@ -8,7 +8,7 @@ import javax.inject.Singleton
 @Singleton
 class GetTopResultUseCase @Inject constructor(
     private val currencyRepo: CurrencyRepo,
-    private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
+    private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase
 ) {
     suspend operator fun invoke(): List<CurrencyName> {
         val allCurrencies = currencyRepo.getCurrencyNameUnsafe()

@@ -61,7 +61,7 @@ fun PinnedQuickSwipeItem(
                 isPinned = pair.isPinned()
             )
         },
-        content = { content() },
+        content = { content() }
     )
 }
 
@@ -98,7 +98,7 @@ fun QuickSwipeItem(
                 isPinned = pair.isPinned()
             )
         },
-        content = { content() },
+        content = { content() }
     )
 }
 
@@ -116,7 +116,7 @@ private fun DismissBackground(state: SwipeToDismissBoxState, isPinned: Boolean) 
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        if (state.dismissDirection == SwipeToDismissBoxValue.StartToEnd ) {
+        if (state.dismissDirection == SwipeToDismissBoxValue.StartToEnd) {
             if (isPinned.not()) {
                 Row {
                     Icon(
@@ -142,7 +142,7 @@ private fun DismissBackground(state: SwipeToDismissBoxState, isPinned: Boolean) 
             }
         }
         Spacer(modifier = Modifier)
-        if (state.dismissDirection == SwipeToDismissBoxValue.EndToStart ) {
+        if (state.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
             Icon(
                 modifier = Modifier.padding(end = 17.dp),
                 painter = painterResource(id = R.drawable.ic_delete),

@@ -1,6 +1,5 @@
 package dev.arkbuilders.rate.domain.model.stats
 
-import androidx.room.PrimaryKey
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import java.time.OffsetDateTime
 

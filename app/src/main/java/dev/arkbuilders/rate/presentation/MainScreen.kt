@@ -17,10 +17,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -42,11 +40,10 @@ import dev.arkbuilders.rate.presentation.utils.keyboardAsState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
 
-
 @Composable
 fun MainScreen() {
     val engine = rememberAnimatedNavHostEngine(
-        rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING,
+        rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING
     )
     val navController = engine.rememberNavController()
     val snackState = remember { SnackbarHostState() }
@@ -55,14 +52,14 @@ fun MainScreen() {
         DIManager.component.networkStatus().onlineStatus
             .drop(1)
             .collect { online ->
-                val visuals = if (online)
+                val visuals = if (online) {
                     ConnectivityOnlineSnackbarVisuals
-                else
+                } else {
                     ConnectivityOfflineSnackbarVisuals
+                }
                 snackState.showSnackbar(visuals)
             }
     }
-
 
     val isKeyboardOpen by keyboardAsState()
     val bottomBarVisible = rememberSaveable { mutableStateOf(false) }
@@ -70,7 +67,6 @@ fun MainScreen() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val destination = navController.appCurrentDestinationAsState().value
         ?: NavGraphs.root.startAppDestination
-
 
     bottomBarVisible.value = when (navBackStackEntry?.destination?.route) {
         QuickScreenDestination.route -> true
@@ -80,8 +76,9 @@ fun MainScreen() {
         else -> false
     }
 
-    if (isKeyboardOpen)
+    if (isKeyboardOpen) {
         bottomBarVisible.value = false
+    }
 
     Scaffold(
         modifier = Modifier
@@ -132,4 +129,3 @@ fun MainScreen() {
         )
     }
 }
-

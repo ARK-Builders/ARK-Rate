@@ -23,7 +23,7 @@ fun SearchTextField(
     modifier: Modifier = Modifier,
     text: String = "",
     placeHolderText: String = stringResource(R.string.search),
-    onValueChange: (String) -> Unit = {},
+    onValueChange: (String) -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -49,7 +49,7 @@ fun SearchTextField(
                     contentDescription = "",
                     tint = ArkColor.FGQuarterary
                 )
-            },
+            }
         )
     }
 }

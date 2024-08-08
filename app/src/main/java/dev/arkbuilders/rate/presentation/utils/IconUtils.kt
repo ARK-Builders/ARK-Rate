@@ -19,8 +19,10 @@ object IconUtils {
                 ctx.packageName
             )
 
-        return if (drawableID > 0) drawableID
-        else R.drawable.ic_earth
+        return if (drawableID > 0) {
+            drawableID
+        } else {
+            R.drawable.ic_earth
+        }
     }
-
 }

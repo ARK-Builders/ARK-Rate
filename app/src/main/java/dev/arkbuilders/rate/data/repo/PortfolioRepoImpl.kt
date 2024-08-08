@@ -2,17 +2,17 @@ package dev.arkbuilders.rate.data.repo
 
 import dev.arkbuilders.rate.data.db.dao.PortfolioDao
 import dev.arkbuilders.rate.data.db.entity.RoomAsset
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class PortfolioRepoImpl @Inject constructor(
     private val dao: PortfolioDao
-): PortfolioRepo {
+) : PortfolioRepo {
     override suspend fun allAssets(): List<Asset> = dao.getAll()
         .map { it.toAsset() }
 

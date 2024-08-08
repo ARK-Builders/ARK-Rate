@@ -35,7 +35,6 @@ import org.orbitmvi.orbit.compose.collectAsState
 import java.time.Duration
 import java.time.OffsetDateTime
 
-
 @Destination
 @Composable
 fun SettingsScreen(navigator: DestinationsNavigator) {
@@ -83,7 +82,6 @@ private fun Content(
             val time = DateFormatUtils.latestCheckTime(date)
             return ctx.getString(R.string.settings_elapsed_ago, elapsed) + time
         }
-
 
         val refreshDesc = state.latestRefresh?.let {
             formatTime(it)
@@ -180,17 +178,20 @@ private fun LatestRefresh(title: String, description: String) {
 private fun mapElapsedTime(now: OffsetDateTime, date: OffsetDateTime): String? {
     var dur = Duration.between(date, now)
     val days = dur.toDays()
-    if (days > 0)
+    if (days > 0) {
         return null
+    }
 
     val hours = dur.toHours()
-    if (hours > 0)
+    if (hours > 0) {
         return "$hours hours"
+    }
     dur = dur.minusHours(hours)
 
     val minutes = dur.toMinutes()
-    if (minutes > 0)
+    if (minutes > 0) {
         return "$minutes minutes"
+    }
     dur = dur.minusMinutes(hours)
 
     val seconds = dur.seconds

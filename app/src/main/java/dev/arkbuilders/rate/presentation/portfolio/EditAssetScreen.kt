@@ -40,8 +40,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
@@ -101,7 +101,6 @@ private fun Content(
     if (showValueOfCirculatingDialog) {
         InfoValueOfCirculatingDialog { showValueOfCirculatingDialog = false }
     }
-
 
     Column(
         modifier = Modifier

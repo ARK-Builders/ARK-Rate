@@ -65,13 +65,11 @@ import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import timber.log.Timber
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Destination
 @Composable
 fun PairAlertConditionScreen(
-    navigator: DestinationsNavigator,
+    navigator: DestinationsNavigator
 ) {
     val viewModel: PairAlertViewModel =
         viewModel(factory = DIManager.component.pairAlertVMFactory())
@@ -109,11 +107,13 @@ fun PairAlertConditionScreen(
 
     Scaffold(
         floatingActionButton = {
-            if (state.initialized.not())
+            if (state.initialized.not()) {
                 return@Scaffold
+            }
 
-            if (isEmpty)
+            if (isEmpty) {
                 return@Scaffold
+            }
 
             FloatingActionButton(
                 contentColor = Color.White,
@@ -287,10 +287,11 @@ private fun PairAlertItem(
                 text = buildString {
                     append(
                         "${
-                            if (pairAlert.above())
-                                stringResource(R.string.above_c)
-                            else
-                                stringResource(R.string.below_c)
+                        if (pairAlert.above()) {
+                            stringResource(R.string.above_c)
+                        } else {
+                            stringResource(R.string.below_c)
+                        }
                         } "
                     )
                     append("${CurrUtils.prepareToDisplay(pairAlert.targetPrice)} ")
@@ -306,7 +307,7 @@ private fun PairAlertItem(
                     Text(
                         text = stringResource(
                             R.string.alert_notified_on,
-                            DateFormatUtils.notifiedOn(date),
+                            DateFormatUtils.notifiedOn(date)
                         ),
                         color = ArkColor.TextTertiary
                     )
@@ -326,9 +327,7 @@ private fun PairAlertItem(
             )
         )
     }
-
 }
-
 
 @Composable
 private fun Empty(navigator: DestinationsNavigator) {
@@ -340,7 +339,7 @@ private fun Empty(navigator: DestinationsNavigator) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_empty_pair),
                 contentDescription = "",
-                tint = Color.Unspecified,
+                tint = Color.Unspecified
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),

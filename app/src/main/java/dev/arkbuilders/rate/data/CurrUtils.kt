@@ -10,11 +10,12 @@ import java.util.Locale
 object CurrUtils {
     fun validateInput(
         oldInput: String,
-        newInput: String,
+        newInput: String
     ): String {
         val containsDigitsAndDot = Regex("[0-9]*\\.?[0-9]*")
-        if (!containsDigitsAndDot.matches(newInput))
+        if (!containsDigitsAndDot.matches(newInput)) {
             return oldInput
+        }
 
         val leadingZeros = "^0+(?=\\d)".toRegex()
 
@@ -23,11 +24,12 @@ object CurrUtils {
 
     fun validateInputWithMinusChar(
         oldInput: String,
-        newInput: String,
+        newInput: String
     ): String {
         val containsDigitsAndDot = Regex("-?[0-9]*\\.?[0-9]*")
-        if (!containsDigitsAndDot.matches(newInput))
+        if (!containsDigitsAndDot.matches(newInput)) {
             return oldInput
+        }
 
         val leadingZeros = "^0+(?=\\d)".toRegex()
 
@@ -41,10 +43,11 @@ object CurrUtils {
         if (fractionalPart == 0.0) {
             fractionSize = 0
         }
-        val fractionPattern = if (fractionSize == 0)
+        val fractionPattern = if (fractionSize == 0) {
             ""
-        else
+        } else {
             "." + "#".repeat(fractionSize)
+        }
 
         val formatSymbols = DecimalFormatSymbols(Locale.ENGLISH)
         formatSymbols.decimalSeparator = '.'

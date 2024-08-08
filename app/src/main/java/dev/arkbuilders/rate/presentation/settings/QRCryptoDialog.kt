@@ -60,8 +60,9 @@ fun QRCryptoDialog(
     @DrawableRes qrBitmap: Int,
     onDismiss: () -> Unit
 ) {
-    if (visible.not())
+    if (visible.not()) {
         return
+    }
 
     Dialog(
         onDismissRequest = onDismiss,

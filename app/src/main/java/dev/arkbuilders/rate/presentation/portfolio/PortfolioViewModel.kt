@@ -32,7 +32,7 @@ data class PortfolioScreenState(
     val baseCode: CurrencyCode = "USD",
     val pages: List<PortfolioScreenPage> = emptyList(),
     val initialized: Boolean = false,
-    val noInternet: Boolean = false,
+    val noInternet: Boolean = false
 )
 
 data class PortfolioScreenPage(
@@ -50,7 +50,7 @@ sealed class PortfolioScreenEffect {
     class ShowSnackbarAdded(
         val visuals: NotifyAddedSnackbarVisuals
     ) : PortfolioScreenEffect()
-    data class ShowRemovedSnackbar(val asset: Asset): PortfolioScreenEffect()
+    data class ShowRemovedSnackbar(val asset: Asset) : PortfolioScreenEffect()
 }
 
 class PortfolioViewModel(

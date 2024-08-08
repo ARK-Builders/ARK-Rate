@@ -3,11 +3,11 @@ package dev.arkbuilders.rate.di.module
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import dev.arkbuilders.rate.data.network.OkHttpClientBuilder
 import dev.arkbuilders.rate.data.network.api.CryptoAPI
 import dev.arkbuilders.rate.data.network.api.FiatAPI
-import dev.arkbuilders.rate.data.network.OkHttpClientBuilder
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
