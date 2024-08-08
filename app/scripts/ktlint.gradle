@@ -39,8 +39,8 @@ tasks.register('installGitHook', Copy) {
     fileMode 0775
 }
 
-//tasks.preBuild.dependsOn ktlintCheck
+tasks.preBuild.dependsOn ktlintCheck
 
-//tasks.ktlintCheck.dependsOn ktlintFormat
+tasks.ktlintCheck.dependsOn ktlintFormat
 
 tasks.preBuild.dependsOn installGitHook

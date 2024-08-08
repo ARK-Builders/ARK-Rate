@@ -7,7 +7,7 @@ plugins {
     id 'com.google.firebase.crashlytics'
 }
 
-apply from: "${projectDir}/scripts/ktlint.gradle"
+apply from: "$projectDir/scripts/ktlint.gradle"
 
 android {
     compileSdk 34
