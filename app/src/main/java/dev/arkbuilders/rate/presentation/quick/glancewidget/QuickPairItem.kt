@@ -50,7 +50,7 @@ fun QuickPairItem(
             verticalAlignment = Alignment.Vertical.CenterVertically
         ) {
             Text(
-                text = "${quick.pair.from} to ${quick.pair.to.joinToString(", ")}",
+                text = "${quick.pair.from} to ${quick.pair.to.first().code}",
                 style = TextStyle(
                     color = ColorProvider(ArkColor.TextPrimary),
                     fontWeight = FontWeight.Medium
