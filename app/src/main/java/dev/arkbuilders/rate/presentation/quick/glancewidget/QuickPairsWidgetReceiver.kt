@@ -76,18 +76,16 @@ class QuickPairsWidgetReceiver(
         }.launchIn(coroutineScope)
     }
 
-     private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
+    private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
         val pages = pairs
             .reversed()
             .groupBy { it.group }
             .map { (group, pairs) ->
-                val (pinned, notPinned) = pairs.partition { it.isPinned() }
-                val pinnedMapped = pinned.map { mapPairToPinned(it) }
+                val pinnedQuickPairs = pairs.filter { it.isPinned() }
+                val pinnedMappedQuickPairs = pinnedQuickPairs.map { mapPairToPinned(it) }
                 val sortedPinned =
-                    pinnedMapped.sortedByDescending { it.pair.pinnedDate }
-                val sortedNotPinned =
-                    notPinned.sortedByDescending { it.calculatedDate }
-                QuickScreenPage(group, sortedPinned, sortedNotPinned)
+                    pinnedMappedQuickPairs.sortedByDescending { it.pair.pinnedDate }
+                QuickScreenPage(group, sortedPinned, listOf())
             }
         return pages
     }
