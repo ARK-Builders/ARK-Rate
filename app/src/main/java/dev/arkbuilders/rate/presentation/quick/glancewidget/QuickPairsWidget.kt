@@ -45,19 +45,19 @@ class QuickPairsWidget : GlanceAppWidget() {
                     .padding(horizontal = 12.dp)
             ) {
                 Row(
-                    modifier = GlanceModifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Vertical.CenterVertically
+                    modifier = GlanceModifier.fillMaxWidth().padding(top = 8.dp),
+                    verticalAlignment = Alignment.Vertical.CenterVertically,
                 ) {
                     Text(
-                        modifier = GlanceModifier.padding(top = 8.dp).defaultWeight(),
-                        text = context.getString(R.string.quick_calculations),
+                        modifier = GlanceModifier.defaultWeight(),
+                        text = context.getString(R.string.quick_pinned_pairs),
                         style = TextStyle(
                             color = ColorProvider(ArkColor.TextTertiary),
                             fontWeight = FontWeight.Medium
                         )
                     )
                     Text(
-                        modifier = GlanceModifier.padding(top = 8.dp)
+                        modifier = GlanceModifier
                             .clickable(actionRunCallback<OpenAppAction>()),
                         text = context.getString(R.string.quick_open_app),
                         style = TextStyle(
