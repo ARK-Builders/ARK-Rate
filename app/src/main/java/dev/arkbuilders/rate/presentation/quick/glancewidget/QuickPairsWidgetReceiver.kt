@@ -13,7 +13,6 @@ import com.google.gson.GsonBuilder
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.domain.model.QuickPair
-import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.presentation.MainActivity
@@ -28,7 +27,6 @@ import java.time.OffsetDateTime
 class QuickPairsWidgetReceiver(
     private val quickRepo: QuickRepo = DIManager.component.quickRepo(),
     private val convertUseCase: ConvertWithRateUseCase = DIManager.component.convertUseCase(),
-    private val currencyRepo: CurrencyRepo = DIManager.component.generalCurrencyRepo(),
 ) : GlanceAppWidgetReceiver() {
 
     private val coroutineScope = MainScope()
@@ -63,9 +61,6 @@ class QuickPairsWidgetReceiver(
         quickRepo.allFlow().onEach { quick ->
             val pages = mapPairsToPages(quick)
             val quickDisplayPair = pages.first().pinned
-
-
-
             val quickPairs = GsonBuilder().create().toJson(quickDisplayPair)
             val glanceId =
                 GlanceAppWidgetManager(context).getGlanceIds(QuickPairsWidget::class.java)
@@ -81,7 +76,7 @@ class QuickPairsWidgetReceiver(
         }.launchIn(coroutineScope)
     }
 
-     suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
+     private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
         val pages = pairs
             .reversed()
             .groupBy { it.group }
