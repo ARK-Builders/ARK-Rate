@@ -56,6 +56,7 @@ import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
+import dev.arkbuilders.rate.presentation.ui.NoInternetScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
 import dev.arkbuilders.rate.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.presentation.ui.RateSnackbarHost
@@ -123,6 +124,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
     ) {
         Box(modifier = Modifier.padding(it)) {
             when {
+                state.noInternet -> NoInternetScreen(viewModel::onRefreshClick)
                 state.initialized.not() -> LoadingScreen()
                 isEmpty -> PortfolioEmpty(navigator)
                 else -> Content(

@@ -47,7 +47,7 @@ fun AppSwipeToDismiss(content: @Composable () -> Unit, onDelete: () -> Unit) {
 @Composable
 private fun DismissBackground(state: SwipeToDismissBoxState) {
     val color = when (state.dismissDirection) {
-        SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError
+        SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError200
         else -> Color.Transparent
     }
 

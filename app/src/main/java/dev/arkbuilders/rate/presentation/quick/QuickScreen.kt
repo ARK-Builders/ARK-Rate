@@ -62,6 +62,7 @@ import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.presentation.ui.ListHeader
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
+import dev.arkbuilders.rate.presentation.ui.NoInternetScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
 import dev.arkbuilders.rate.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.presentation.ui.PinnedQuickSwipeItem
@@ -121,6 +122,9 @@ fun QuickScreen(
             if (state.initialized.not())
                 return@Scaffold
 
+            if (state.noInternet)
+                return@Scaffold
+
             if (isEmpty)
                 return@Scaffold
 
@@ -141,6 +145,7 @@ fun QuickScreen(
     ) {
         Box(modifier = Modifier.padding(it)) {
             when {
+                state.noInternet -> NoInternetScreen(viewModel::onRefreshClick)
                 state.initialized.not() -> LoadingScreen()
                 isEmpty -> QuickEmpty(navigator = navigator)
                 else -> Content(
