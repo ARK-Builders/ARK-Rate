@@ -2,6 +2,7 @@ package dev.arkbuilders.rate.presentation.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
@@ -11,6 +12,9 @@ import dev.arkbuilders.rate.data.preferences.PrefsImpl
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.domain.repo.TimestampRepo
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -21,8 +25,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 data class SettingsScreenState(
-    val latestFiatRefresh: OffsetDateTime? = null,
-    val latestCryptoRefresh: OffsetDateTime? = null,
+    val latestRefresh: OffsetDateTime? = null,
     val latestPairAlertCheck: OffsetDateTime? = null,
     val showCrashReports: Boolean = BuildConfig.GOOGLE_PLAY_BUILD.not(),
     val crashReportsEnabled: Boolean = false,
@@ -43,8 +46,22 @@ class SettingsViewModel(
         analyticsManager.trackScreen("SettingsScreen")
 
         intent {
-            val fiat = timestampRepo.getTimestamp(TimestampType.FetchFiat)
-            val crypto = timestampRepo.getTimestamp(TimestampType.FetchCrypto)
+            timestampRepo
+                .timestampFlow(TimestampType.FetchRates)
+                .drop(1)
+                .onEach {
+                    reduce { state.copy(latestRefresh = it) }
+                }.launchIn(viewModelScope)
+
+            timestampRepo
+                .timestampFlow(TimestampType.CheckPairAlerts)
+                .drop(1)
+                .onEach {
+                    reduce { state.copy(latestPairAlertCheck = it) }
+                }.launchIn(viewModelScope)
+
+
+            val refresh = timestampRepo.getTimestamp(TimestampType.FetchRates)
             val pairAlertCheck =
                 timestampRepo.getTimestamp(TimestampType.CheckPairAlerts)
             val crashReports = prefs.get(PreferenceKey.CollectCrashReports)
@@ -52,8 +69,7 @@ class SettingsViewModel(
 
             reduce {
                 state.copy(
-                    latestFiatRefresh = fiat,
-                    latestCryptoRefresh = crypto,
+                    latestRefresh = refresh,
                     latestPairAlertCheck = pairAlertCheck,
                     crashReportsEnabled = crashReports,
                     analyticsEnabled = analytics

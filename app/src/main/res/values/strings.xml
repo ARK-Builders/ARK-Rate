@@ -54,8 +54,7 @@
 
     <string name="settings_quick_portfolio_alerts">Quick/Portfolio/Alerts</string>
     <string name="settings_elapsed_ago">"%1$s ago · "</string>
-    <string name="settings_latest_fiat_rates_refresh">Latest fiat rates refresh</string>
-    <string name="settings_latest_crypto_rates_refresh">Latest crypto rates refresh</string>
+    <string name="settings_latest_rates_refresh">Latest rates refresh</string>
     <string name="settings_latest_alerts_check">Latest alerts check</string>
 
     <string name="group_create_group">Create Group</string>
@@ -144,5 +143,12 @@
     <string name="re_use">Re-use</string>
     <string name="edit">Edit</string>
     <string name="options">Options</string>
+    <string name="oops_request_time_out">Oops, request time out!</string>
+    <string name="check_connection_and_refresh">Please check your connection and refresh the page to try again.</string>
+    <string name="refresh">Refresh</string>
+    <string name="online">Online</string>
+    <string name="your_connection_is_back">Your connection is back.</string>
+    <string name="offline">Offline</string>
+    <string name="your_network_is_offline">Your network is offline.</string>
 
 </resources>

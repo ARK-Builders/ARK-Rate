@@ -14,4 +14,7 @@ interface CurrencyRateDao {
 
     @Query("SELECT * FROM RoomCurrencyRate WHERE currencyType = :currencyType")
     suspend fun getByType(currencyType: String): List<RoomCurrencyRate>
+
+    @Query("SELECT * FROM RoomCurrencyRate")
+    suspend fun getAll(): List<RoomCurrencyRate>
 }
