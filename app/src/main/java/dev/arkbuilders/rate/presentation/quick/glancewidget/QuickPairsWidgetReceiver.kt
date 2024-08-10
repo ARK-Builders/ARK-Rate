@@ -42,10 +42,9 @@ class QuickPairsWidgetReceiver(
             AppWidgetManager.ACTION_APPWIDGET_ENABLED ->
                 getQuickPairs(context)
             OpenAppAction.OPEN_APP -> {
-                val intent = Intent(context, MainActivity::class.java).apply {
+                context.startActivity(Intent(context, MainActivity::class.java).apply {
                     setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-                context.startActivity(intent)
+                })
             }
         }
     }
@@ -63,8 +62,10 @@ class QuickPairsWidgetReceiver(
         Timber.d("Get quick pairs for widget")
         quickRepo.allFlow().onEach { quick ->
             val pages = mapPairsToPages(quick)
-
             val quickDisplayPair = pages.first().pinned
+
+
+
             val quickPairs = GsonBuilder().create().toJson(quickDisplayPair)
             val glanceId =
                 GlanceAppWidgetManager(context).getGlanceIds(QuickPairsWidget::class.java)
