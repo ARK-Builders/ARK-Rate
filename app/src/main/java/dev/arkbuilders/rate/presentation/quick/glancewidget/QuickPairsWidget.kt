@@ -18,6 +18,7 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
@@ -35,7 +36,6 @@ import dev.arkbuilders.rate.presentation.theme.ArkColor
 class QuickPairsWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        context.getString(R.string.quick_calculations)
         provideContent {
             val prefs = currentState<Preferences>()
             val quickPairsString = prefs[QuickPairsWidgetReceiver.quickDisplayPairs]
@@ -66,8 +66,7 @@ class QuickPairsWidget : GlanceAppWidget() {
                         )
                     )
                 }
-
-                LazyColumn {
+                LazyColumn(modifier = GlanceModifier.fillMaxHeight()) {
                     quickPairsList?.let { pairs ->
                         items(pairs) { quick ->
                             Column {
