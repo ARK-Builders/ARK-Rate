@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -55,17 +54,16 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.PinnedQuickPair
+import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
-import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
@@ -87,7 +85,7 @@ import java.time.OffsetDateTime
 @Destination
 @Composable
 fun QuickScreen(
-    navigator: DestinationsNavigator,
+    navigator: DestinationsNavigator
 ) {
     val viewModel: QuickViewModel = viewModel(
         factory = DIManager.component.quickVMFactory().create()
@@ -128,14 +126,17 @@ fun QuickScreen(
 
     Scaffold(
         floatingActionButton = {
-            if (state.initialized.not())
+            if (state.initialized.not()) {
                 return@Scaffold
+            }
 
-            if (state.noInternet)
+            if (state.noInternet) {
                 return@Scaffold
+            }
 
-            if (isEmpty)
+            if (isEmpty) {
                 return@Scaffold
+            }
 
             FloatingActionButton(
                 contentColor = Color.White,
@@ -291,7 +292,7 @@ private fun GroupPage(
                                     it.refreshDate
                                 )
                             ),
-                            onClick = { onClick(it.pair) },
+                            onClick = { onClick(it.pair) }
                         )
                     },
                     pair = it.pair,
@@ -315,12 +316,12 @@ private fun GroupPage(
                                 R.string.quick_calculated_on,
                                 DateFormatUtils.calculatedOn(it.calculatedDate)
                             ),
-                            onClick = { onClick(it) },
+                            onClick = { onClick(it) }
                         )
                     },
                     pair = it,
                     onDelete = { onDelete(it) },
-                    onPin = onPin,
+                    onPin = onPin
                 )
                 AppHorDiv16()
             }
@@ -349,8 +350,8 @@ private fun SearchPage(
     onNewCode: (CurrencyCode) -> Unit
 ) {
     val filtered = topResults.filter {
-        it.name.contains(filter, ignoreCase = true)
-                || it.code.contains(filter, ignoreCase = true)
+        it.name.contains(filter, ignoreCase = true) ||
+            it.code.contains(filter, ignoreCase = true)
     }
     if (filtered.isNotEmpty()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -371,7 +372,7 @@ private fun QuickItem(
     from: Amount,
     to: List<Amount>,
     dateText: String,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -383,7 +384,7 @@ private fun QuickItem(
             .background(Color.White)
             .clickable {
                 onClick()
-            },
+            }
     ) {
         val (icons, content, chevron) = createRefs()
         Row(
@@ -445,7 +446,7 @@ private fun QuickItem(
         ) {
             Text(
                 text = "${from.code} to " +
-                        to.joinToString(", ") { it.code },
+                    to.joinToString(", ") { it.code },
                 fontWeight = FontWeight.Medium,
                 color = ArkColor.TextPrimary
             )
@@ -470,7 +471,7 @@ private fun QuickItem(
             } else {
                 Text(
                     text = "${CurrUtils.prepareToDisplay(from.value)} ${from.code} = " +
-                            "${CurrUtils.prepareToDisplay(to.first().value)} ${to.first().code}",
+                        "${CurrUtils.prepareToDisplay(to.first().value)} ${to.first().code}",
                     color = ArkColor.TextTertiary
                 )
             }
@@ -522,7 +523,7 @@ private fun PreviewItem() {
         from = Amount("BTC", 1.0),
         to = listOf(Amount("USD", 30.0)),
         dateText = "Calculated on",
-        onClick = {},
+        onClick = {}
     )
 }
 
@@ -536,7 +537,7 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_empty_quick),
                 contentDescription = "",
-                tint = Color.Unspecified,
+                tint = Color.Unspecified
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),

@@ -7,8 +7,8 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import dev.arkbuilders.rate.BuildConfig
-import dev.arkbuilders.rate.domain.model.TimestampType
 import dev.arkbuilders.rate.data.preferences.PrefsImpl
+import dev.arkbuilders.rate.domain.model.TimestampType
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.domain.repo.TimestampRepo
@@ -60,7 +60,6 @@ class SettingsViewModel(
                     reduce { state.copy(latestPairAlertCheck = it) }
                 }.launchIn(viewModelScope)
 
-
             val refresh = timestampRepo.getTimestamp(TimestampType.FetchRates)
             val pairAlertCheck =
                 timestampRepo.getTimestamp(TimestampType.CheckPairAlerts)
@@ -93,7 +92,6 @@ class SettingsViewModel(
             state.copy(analyticsEnabled = enabled)
         }
     }
-
 }
 
 @Singleton

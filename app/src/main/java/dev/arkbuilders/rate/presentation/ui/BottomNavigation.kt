@@ -110,7 +110,9 @@ fun RateBottomNavigation(
                     onClick = { onBottomBarItemClick(item.route) },
                     icon = {
                         AnimatedContent(targetState = selected) { innerSelected ->
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
                                 Icon(
                                     painter = painterResource(
                                         if (innerSelected) {

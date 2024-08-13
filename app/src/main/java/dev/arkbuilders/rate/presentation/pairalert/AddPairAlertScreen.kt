@@ -273,7 +273,9 @@ private fun SegmentBtn(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(6.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (enabled) 1.dp else 0.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (enabled) 1.dp else 0.dp
+        ),
         colors = CardDefaults.cardColors(
             containerColor = if (enabled) Color.White else ArkColor.BGSecondaryAlt
         ),
@@ -392,7 +394,11 @@ private fun EditCondition(
                 modifier = Modifier.padding(start = 8.dp),
                 title = state.targetCode
             ) {
-                navigator.navigate(SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertTarget.name))
+                navigator.navigate(
+                    SearchCurrencyScreenDestination(
+                        AppSharedFlowKey.AddPairAlertTarget.name
+                    )
+                )
             }
             Text(
                 modifier = Modifier.padding(start = 8.dp),
@@ -413,7 +419,13 @@ private fun EditCondition(
             ) {
                 Icon(
                     modifier = Modifier.padding(start = 8.dp),
-                    painter = painterResource(id = if (state.aboveNotBelow) R.drawable.ic_pair_alert_inc else R.drawable.ic_pair_alert_dec),
+                    painter = painterResource(
+                        id = if (state.aboveNotBelow) {
+                            R.drawable.ic_pair_alert_inc
+                        } else {
+                            R.drawable.ic_pair_alert_dec
+                        }
+                    ),
                     contentDescription = "",
                     tint = if (state.aboveNotBelow) ArkColor.PairAlertInc else ArkColor.PairAlertDec
                 )
@@ -424,7 +436,11 @@ private fun EditCondition(
                     } else {
                         ctx.getString(R.string.below)
                     },
-                    color = if (state.aboveNotBelow) ArkColor.PairAlertInc else ArkColor.PairAlertDec
+                    color = if (state.aboveNotBelow) {
+                        ArkColor.PairAlertInc
+                    } else {
+                        ArkColor.PairAlertDec
+                    }
                 )
             }
         }
@@ -496,7 +512,11 @@ private fun EditCondition(
                 modifier = Modifier.padding(start = 16.dp),
                 title = state.baseCode
             ) {
-                navigator.navigate(SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertBase.name))
+                navigator.navigate(
+                    SearchCurrencyScreenDestination(
+                        AppSharedFlowKey.AddPairAlertBase.name
+                    )
+                )
             }
         }
     }

@@ -21,12 +21,20 @@ private val interFontFamily = FontFamily(
 private val defaultTypography = Typography()
 val Typography = Typography(
     displayLarge = defaultTypography.displayLarge.copy(fontFamily = interFontFamily),
-    displayMedium = defaultTypography.displayMedium.copy(fontFamily = interFontFamily),
+    displayMedium = defaultTypography.displayMedium.copy(
+        fontFamily = interFontFamily
+    ),
     displaySmall = defaultTypography.displaySmall.copy(fontFamily = interFontFamily),
 
-    headlineLarge = defaultTypography.headlineLarge.copy(fontFamily = interFontFamily),
-    headlineMedium = defaultTypography.headlineMedium.copy(fontFamily = interFontFamily),
-    headlineSmall = defaultTypography.headlineSmall.copy(fontFamily = interFontFamily),
+    headlineLarge = defaultTypography.headlineLarge.copy(
+        fontFamily = interFontFamily
+    ),
+    headlineMedium = defaultTypography.headlineMedium.copy(
+        fontFamily = interFontFamily
+    ),
+    headlineSmall = defaultTypography.headlineSmall.copy(
+        fontFamily = interFontFamily
+    ),
 
     titleLarge = defaultTypography.titleLarge.copy(fontFamily = interFontFamily),
     titleMedium = defaultTypography.titleMedium.copy(fontFamily = interFontFamily),

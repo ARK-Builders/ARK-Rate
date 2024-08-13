@@ -74,7 +74,9 @@ class PairAlertViewModel(
             val pages = all.reversed().groupBy { it.group }
                 .map { (group, pairAlertList) ->
                     val oneTimeTriggered =
-                        pairAlertList.filter { it.triggered() && it.oneTimeNotRecurrent && !it.enabled }
+                        pairAlertList.filter {
+                            it.triggered() && it.oneTimeNotRecurrent && !it.enabled
+                        }
                     val created = pairAlertList - oneTimeTriggered.toSet()
 
                     PairAlertScreenPage(group, created, oneTimeTriggered)

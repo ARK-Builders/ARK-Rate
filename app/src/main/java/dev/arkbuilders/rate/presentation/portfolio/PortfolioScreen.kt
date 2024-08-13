@@ -131,7 +131,9 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                 else -> Content(
                     state,
                     onClick = { display ->
-                        navigator.navigate(EditAssetScreenDestination(display.asset.id))
+                        navigator.navigate(
+                            EditAssetScreenDestination(display.asset.id)
+                        )
                     },
                     onFilterChange = viewModel::onFilterChange,
                     onDelete = viewModel::onAssetRemove
@@ -294,7 +296,8 @@ private fun CurrencyItem(
                     color = ArkColor.TextPrimary
                 )
                 Text(
-                    text = "${CurrUtils.prepareToDisplay(amount.baseAmount.value)} ${amount.baseAmount.code}",
+                    text = CurrUtils.prepareToDisplay(amount.baseAmount.value) +
+                        " ${amount.baseAmount.code}",
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextPrimary
                 )

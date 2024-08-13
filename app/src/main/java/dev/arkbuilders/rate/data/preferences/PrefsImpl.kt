@@ -45,8 +45,12 @@ class PrefsImpl @Inject constructor(val context: Context) : Prefs {
         val result = when (key) {
             PreferenceKey.CollectAnalytics -> booleanPreferencesKey("analytics")
 
-            PreferenceKey.BaseCurrencyCode -> stringPreferencesKey("baseCurrencyCode")
-            PreferenceKey.CollectCrashReports -> booleanPreferencesKey("crashReports")
+            PreferenceKey.BaseCurrencyCode -> stringPreferencesKey(
+                "baseCurrencyCode"
+            )
+            PreferenceKey.CollectCrashReports -> booleanPreferencesKey(
+                "crashReports"
+            )
         }
 
         return result as Preferences.Key<T>

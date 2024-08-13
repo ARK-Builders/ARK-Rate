@@ -73,8 +73,15 @@ private fun InfoMarketCapitalizationDialogContent(
             color = ArkColor.TextPrimary
         )
         Text(
-            modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp, bottom = 36.dp),
-            text = stringResource(id = R.string.info_dialog_market_capitalization_description),
+            modifier = Modifier.padding(
+                top = 4.dp,
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 36.dp
+            ),
+            text = stringResource(
+                id = R.string.info_dialog_market_capitalization_description
+            ),
             fontSize = 18.sp,
             color = ArkColor.TextTertiary
         )
@@ -130,8 +137,15 @@ private fun InfoValueOfCirculatingDialogContent(
             color = ArkColor.TextPrimary
         )
         Text(
-            modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp, bottom = 36.dp),
-            text = stringResource(id = R.string.info_dialog_value_of_circulating_description),
+            modifier = Modifier.padding(
+                top = 4.dp,
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 36.dp
+            ),
+            text = stringResource(
+                id = R.string.info_dialog_value_of_circulating_description
+            ),
             fontSize = 18.sp,
             color = ArkColor.TextTertiary
         )

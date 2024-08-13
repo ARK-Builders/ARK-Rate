@@ -90,7 +90,9 @@ private fun Content(
     val ctx = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("image/jpg")) { uri ->
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.CreateDocument("image/jpg")
+        ) { uri ->
             uri ?: return@rememberLauncherForActivityResult
             val input = ctx.resources.openRawResource(qrBitmap)
             ctx.contentResolver.openOutputStream(uri).use { output ->
@@ -127,7 +129,9 @@ private fun Content(
                     tag = "email",
                     annotation = ctx.getString(R.string.ark_support_email)
                 )
-                withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
+                withStyle(
+                    style = SpanStyle(textDecoration = TextDecoration.Underline)
+                ) {
                     append(ctx.getString(R.string.ark_support_email))
                 }
                 pop()

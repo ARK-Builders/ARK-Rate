@@ -20,7 +20,10 @@ class CodeUseStatRepoImpl @Inject constructor(
         codes.forEach { code ->
             val old = dao.getByCode(code)?.toCodeUseStat()
             val new =
-                old?.copy(count = old.count.inc(), lastUsedDate = OffsetDateTime.now())
+                old?.copy(
+                    count = old.count.inc(),
+                    lastUsedDate = OffsetDateTime.now()
+                )
                     ?: CodeUseStat(code, 1, OffsetDateTime.now())
 
             dao.insert(new.toRoom())

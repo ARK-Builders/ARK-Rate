@@ -95,7 +95,9 @@ fun GroupCreateDialogContent(
             )
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = stringResource(R.string.group_please_enter_a_name_for_this_group),
+                text = stringResource(
+                    R.string.group_please_enter_a_name_for_this_group
+                ),
                 color = ArkColor.TextTertiary
             )
 
@@ -139,7 +141,9 @@ fun GroupCreateDialogContent(
                     onConfirmClick(input)
                     onDismiss()
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = ArkColor.Primary),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = ArkColor.Primary
+                ),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(

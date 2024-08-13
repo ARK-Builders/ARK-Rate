@@ -279,7 +279,8 @@ private fun PairAlertItem(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "$currencyName(${pairAlert.targetCode}) ${if (pairAlert.oneTimeNotRecurrent) "(One-time)" else ""}",
+                text = "$currencyName(${pairAlert.targetCode}) " +
+                    if (pairAlert.oneTimeNotRecurrent) "(One-time)" else "",
                 fontWeight = FontWeight.Medium,
                 color = ArkColor.TextPrimary
             )
@@ -302,7 +303,9 @@ private fun PairAlertItem(
             if (oneTimeTriggered) {
                 val date = pairAlert.lastDateTriggered
                 date
-                    ?: Timber.e("Pair alert marked as triggered but lastDateTriggered is null")
+                    ?: Timber.e(
+                        "Pair alert marked as triggered but lastDateTriggered is null"
+                    )
                 if (date != null) {
                     Text(
                         text = stringResource(

@@ -32,5 +32,6 @@ sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {
 }
 
 enum class AppSharedFlowKey {
-    AddPairAlertTarget, AddPairAlertBase, SetAssetCode, AddAsset, SetQuickCode, AddQuickCode, PickBaseCurrency
+    AddPairAlertTarget, AddPairAlertBase, SetAssetCode, AddAsset, SetQuickCode, AddQuickCode,
+    PickBaseCurrency
 }

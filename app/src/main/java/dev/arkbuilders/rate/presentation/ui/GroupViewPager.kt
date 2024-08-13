@@ -63,7 +63,9 @@ fun GroupViewPager(
                         selectedContentColor = Color.Transparent
                     ) {
                         Text(
-                            text = group ?: stringResource(R.string.group_default_name),
+                            text = group ?: stringResource(
+                                R.string.group_default_name
+                            ),
                             color = if (selected) ArkColor.Teal700 else ArkColor.TextQuarterary,
                             fontWeight = FontWeight.SemiBold
                         )

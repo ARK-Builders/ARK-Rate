@@ -147,7 +147,9 @@ private fun Content(
             modifier = Modifier
                 .padding(top = 16.dp)
                 .height(22.dp),
-            colors = ButtonDefaults.textButtonColors(contentColor = ArkColor.BrandUtility),
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = ArkColor.BrandUtility
+            ),
             onClick = {
                 navigator.navigate(
                     SearchCurrencyScreenDestination(

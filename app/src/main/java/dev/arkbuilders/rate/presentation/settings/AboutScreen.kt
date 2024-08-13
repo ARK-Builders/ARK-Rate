@@ -170,20 +170,26 @@ private fun Content(navigator: DestinationsNavigator) {
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
-                    text = stringResource(R.string.about_we_greatly_appreciate_every_bit_of_support),
+                    text = stringResource(
+                        R.string.about_we_greatly_appreciate_every_bit_of_support
+                    ),
                     color = ArkColor.TextTertiary
                 )
                 Row(modifier = Modifier.padding(top = 12.dp)) {
                     DonateBtn(
                         modifier = Modifier,
-                        icon = painterResource(dev.arkbuilders.rate.cryptoicons.R.drawable.btc),
+                        icon = painterResource(
+                            dev.arkbuilders.rate.cryptoicons.R.drawable.btc
+                        ),
                         text = stringResource(R.string.about_donate_using_btc)
                     ) {
                         btcDialogVisible = true
                     }
                     DonateBtn(
                         modifier = Modifier.padding(start = 12.dp),
-                        icon = painterResource(dev.arkbuilders.rate.cryptoicons.R.drawable.eth),
+                        icon = painterResource(
+                            dev.arkbuilders.rate.cryptoicons.R.drawable.eth
+                        ),
                         text = stringResource(R.string.about_donate_using_eth)
                     ) {
                         ethDialogVisible = true
@@ -202,14 +208,20 @@ private fun Content(navigator: DestinationsNavigator) {
                         icon = painterResource(R.drawable.ic_about_coffee),
                         text = stringResource(R.string.about_buy_as_a_coffee)
                     ) {
-                        ctx.openLink(ctx.getString(R.string.about_ark_buy_coffee_url))
+                        ctx.openLink(
+                            ctx.getString(R.string.about_ark_buy_coffee_url)
+                        )
                     }
                 }
                 AppHorDiv(modifier = Modifier.padding(top = 20.dp))
                 Row(modifier = Modifier.padding(top = 12.dp, bottom = 50.dp)) {
                     OutlinedButton(
                         modifier = Modifier,
-                        onClick = { ctx.openLink(ctx.getString(R.string.ark_contribute_url)) },
+                        onClick = {
+                            ctx.openLink(
+                                ctx.getString(R.string.ark_contribute_url)
+                            )
+                        },
                         border = BorderStroke(
                             width = 1.dp,
                             color = ArkColor.BorderSecondary
@@ -219,7 +231,9 @@ private fun Content(navigator: DestinationsNavigator) {
                     ) {
                         Text(
                             modifier = Modifier.padding(8.dp),
-                            text = stringResource(R.string.about_discover_issues_to_work_on),
+                            text = stringResource(
+                                R.string.about_discover_issues_to_work_on
+                            ),
                             color = ArkColor.TextSecondary,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium
