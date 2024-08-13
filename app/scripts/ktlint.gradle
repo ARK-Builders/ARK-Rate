@@ -22,7 +22,7 @@ tasks.register('ktlintFormat', JavaExec) {
     }
 }
 
-tasks.register('ktlintCheck', JavaExec) {
+tasks.register('ktlint', JavaExec) {
     classpath = configurations.ktlint
     mainClass = "com.pinterest.ktlint.Main"
     args "src/**/*.kt", "**.kts", "!**/build/**"
@@ -39,8 +39,8 @@ tasks.register('installGitHook', Copy) {
     fileMode 0775
 }
 
-tasks.preBuild.dependsOn ktlintCheck
+tasks.preBuild.dependsOn ktlint
 
-tasks.ktlintCheck.dependsOn ktlintFormat
+tasks.ktlint.dependsOn ktlintFormat
 
 tasks.preBuild.dependsOn installGitHook
