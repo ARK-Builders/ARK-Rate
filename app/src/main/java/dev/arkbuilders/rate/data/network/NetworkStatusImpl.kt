@@ -1,6 +1,7 @@
 package dev.arkbuilders.rate.data.network
 
 import android.content.Context
+import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -28,9 +29,8 @@ class NetworkStatusImpl @Inject constructor(
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
             .apply {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
                     addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED)
-                }
             }
             .build()
 
@@ -55,12 +55,12 @@ class NetworkStatusImpl @Inject constructor(
             cm.getNetworkCapabilities(network) ?: return false
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
-                networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) &&
-                networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED)
+            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                    && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED)
         } else {
-            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
-                networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
         }
     }
 }

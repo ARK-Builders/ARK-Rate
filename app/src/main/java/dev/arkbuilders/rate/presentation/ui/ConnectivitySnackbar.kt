@@ -23,14 +23,14 @@ import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
-object ConnectivityOnlineSnackbarVisuals : SnackbarVisuals {
+object ConnectivityOnlineSnackbarVisuals: SnackbarVisuals {
     override val actionLabel = ""
     override val duration = SnackbarDuration.Short
     override val message = ""
     override val withDismissAction = true
 }
 
-object ConnectivityOfflineSnackbarVisuals : SnackbarVisuals {
+object ConnectivityOfflineSnackbarVisuals: SnackbarVisuals {
     override val actionLabel = ""
     override val duration = SnackbarDuration.Short
     override val message = ""
@@ -70,7 +70,7 @@ private fun ConnectivityContent(
     backgroundColor: Color,
     dotColor: Color,
     textColor: Color,
-    borderColor: Color
+    borderColor: Color,
 ) {
     Row(
         modifier = Modifier

@@ -24,3 +24,4 @@ class TimestampRepoImpl @Inject constructor(private val dao: TimestampDao) :
             it?.timestamp
         }
 }
+
