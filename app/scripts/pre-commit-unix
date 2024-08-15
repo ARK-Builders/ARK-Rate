@@ -3,7 +3,7 @@ echo "*********************************************************"
 echo "Running git pre-commit hook, ktlintCheck in progress..."
 echo "*********************************************************"
 
-./gradlew ktlintCheck
+./gradlew ktlint
 
 status=$?
 
