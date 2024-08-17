@@ -1,7 +1,5 @@
 name: Telegram message
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
     
@@ -18,8 +16,6 @@ jobs:
           format: markdown
           message: |
             👨‍💻 *New PR Updates from ${{ github.actor }}*
-            
-            ⭐️ *Latest commit*: ${{ github.event.commits[0].message }}
             
             🚀 *PR*: https://github.com/${{ github.repository }}/${{ github.event.pull_request.number }}
             
