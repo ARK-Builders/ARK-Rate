@@ -3,6 +3,7 @@ package dev.arkbuilders.rate.presentation.quick
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -58,6 +59,7 @@ import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
+import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidgetReceiver
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction.Companion.ADD_NEW_PAIR
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
@@ -89,7 +91,6 @@ fun QuickScreen(
     val viewModel: QuickViewModel = viewModel(
         factory = DIManager.component.quickVMFactory().create()
     )
-
 
     val state by viewModel.collectAsState()
     val snackState = remember { SnackbarHostState() }
@@ -161,6 +162,11 @@ fun QuickScreen(
             when {
                 state.noInternet -> NoInternetScreen(viewModel::onRefreshClick)
                 state.initialized.not() -> LoadingScreen()
+                state.initialized -> ctx.sendBroadcast(
+                    Intent(ctx, QuickPairsWidgetReceiver::class.java).apply {
+                        action = QuickPairsWidgetReceiver.ratesLatestRefresh
+                    }
+                )
                 isEmpty -> QuickEmpty(navigator = navigator)
                 else -> Content(
                     state = state,

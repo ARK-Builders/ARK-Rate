@@ -38,7 +38,7 @@ class QuickPairsWidgetReceiver(
         val action = intent.action
         Timber.d(action)
         when (action) {
-            AppWidgetManager.ACTION_APPWIDGET_ENABLED ->
+            AppWidgetManager.ACTION_APPWIDGET_ENABLED,  ratesLatestRefresh ->
                 getQuickPairs(context)
             OpenAppAction.OPEN_APP -> {
                 context.startActivity(Intent(context, MainActivity::class.java).apply {
@@ -47,7 +47,7 @@ class QuickPairsWidgetReceiver(
             }
             AddNewPairAction.ADD_NEW_PAIR -> {
                 context.startActivity(Intent(context, MainActivity::class.java).apply {
-                    putExtra( AddNewPairAction.ADD_NEW_PAIR, "ADD_NEW_PAIR")
+                    putExtra(AddNewPairAction.ADD_NEW_PAIR, "ADD_NEW_PAIR")
                     setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 })
             }
@@ -109,5 +109,6 @@ class QuickPairsWidgetReceiver(
 
     companion object {
         val quickDisplayPairs = stringPreferencesKey("quick_pair_display")
+        val ratesLatestRefresh = "RATES_REFRESH"
     }
 }

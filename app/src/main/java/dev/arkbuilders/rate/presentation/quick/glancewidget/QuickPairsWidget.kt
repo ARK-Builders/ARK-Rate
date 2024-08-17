@@ -44,7 +44,7 @@ class QuickPairsWidget : GlanceAppWidget() {
             val prefs = currentState<Preferences>()
             val quickPairsString = prefs[QuickPairsWidgetReceiver.quickDisplayPairs]
             val quickPairsList = quickPairsString?.let { parseQuickPairs(it) }
-            Column(
+                Column(
                 modifier = GlanceModifier.fillMaxSize().background(Color.White)
                     .padding(horizontal = 12.dp)
             ) {
