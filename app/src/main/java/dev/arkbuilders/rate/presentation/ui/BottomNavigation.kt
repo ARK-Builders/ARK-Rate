@@ -104,7 +104,7 @@ fun RateBottomNavigation(
             containerColor = Color.White
         ) {
             items.forEach { item ->
-                val selected = item.route.contains(currentDestination.baseRoute)
+                val selected = item.route.contains(currentDestination.route)
                 NavigationBarItem(
                     selected = selected,
                     onClick = { onBottomBarItemClick(item.route) },
