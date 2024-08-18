@@ -150,4 +150,6 @@ ktlint {
 
 tasks.preBuild.dependsOn ktlintCheck
 
-tasks.ktlintCheck.dependsOn ktlintFormat
+tasks.preBuild.dependsOn ktlintFormat
+
+tasks.ktlintCheck.shouldRunAfter ktlintFormat
