@@ -19,4 +19,6 @@ jobs:
             
             🚀 *PR*: ${{ github.event.pull_request.title }}
             https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
+
+            ⭐️ Latest commit message: ${{ github.event.workflow_run.head_commit.message }}
   
