@@ -5,6 +5,7 @@ plugins {
     id 'com.google.devtools.ksp'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id "org.jlleitschuh.gradle.ktlint"
 }
 
 android {
@@ -141,3 +142,12 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:1.5.4"
     debugImplementation "androidx.compose.ui:ui-test-manifest:1.5.4"
 }
+
+ktlint {
+    android.set(true)
+    outputToConsole = true
+}
+
+tasks.preBuild.dependsOn ktlintCheck
+
+tasks.ktlintCheck.dependsOn ktlintFormat
