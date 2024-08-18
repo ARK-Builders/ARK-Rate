@@ -19,5 +19,4 @@ jobs:
             
             🚀 *PR*: ${{ github.event.pull_request.title }}
             https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}
-            
-            🛠️ *Changes*: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+  
