@@ -37,7 +37,6 @@ import dev.arkbuilders.rate.presentation.ui.ConnectivityOfflineSnackbarVisuals
 import dev.arkbuilders.rate.presentation.ui.ConnectivityOnlineSnackbar
 import dev.arkbuilders.rate.presentation.ui.ConnectivityOnlineSnackbarVisuals
 import dev.arkbuilders.rate.presentation.utils.keyboardAsState
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
 
 @Composable
