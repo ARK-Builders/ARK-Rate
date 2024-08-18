@@ -3,7 +3,6 @@ package dev.arkbuilders.rate.presentation.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -34,35 +33,36 @@ fun InfoMarketCapitalizationDialog(onDismiss: () -> Unit) {
 
 @Preview
 @Composable
-private fun InfoMarketCapitalizationDialogContent(
-    onDismiss: () -> Unit = {}
-) {
+private fun InfoMarketCapitalizationDialogContent(onDismiss: () -> Unit = {}) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(12.dp))
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(Color.White, RoundedCornerShape(12.dp)),
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
-                modifier = Modifier
-                    .padding(top = 20.dp, start = 16.dp)
-                    .align(Alignment.TopStart),
+                modifier =
+                    Modifier
+                        .padding(top = 20.dp, start = 16.dp)
+                        .align(Alignment.TopStart),
                 painter = painterResource(id = R.drawable.ic_info_bg),
                 contentDescription = "",
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
             )
             IconButton(
-                modifier = Modifier
-                    .size(44.dp)
-                    .padding(top = 12.dp, end = 12.dp)
-                    .align(Alignment.TopEnd),
-                onClick = { onDismiss() }
+                modifier =
+                    Modifier
+                        .size(44.dp)
+                        .padding(top = 12.dp, end = 12.dp)
+                        .align(Alignment.TopEnd),
+                onClick = { onDismiss() },
             ) {
                 Icon(
                     modifier = Modifier,
                     painter = painterResource(id = R.drawable.ic_close),
                     contentDescription = "",
-                    tint = ArkColor.FGQuinary
+                    tint = ArkColor.FGQuinary,
                 )
             }
         }
@@ -71,13 +71,13 @@ private fun InfoMarketCapitalizationDialogContent(
             text = "Market Capitalization",
             fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp,
-            color = ArkColor.TextPrimary
+            color = ArkColor.TextPrimary,
         )
         Text(
             modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp, bottom = 36.dp),
             text = stringResource(id = R.string.info_dialog_market_capitalization_description),
             fontSize = 18.sp,
-            color = ArkColor.TextTertiary
+            color = ArkColor.TextTertiary,
         )
     }
 }
@@ -89,38 +89,38 @@ fun InfoValueOfCirculatingDialog(onDismiss: () -> Unit) {
     }
 }
 
-
 @Preview
 @Composable
-private fun InfoValueOfCirculatingDialogContent(
-    onDismiss: () -> Unit = {}
-) {
+private fun InfoValueOfCirculatingDialogContent(onDismiss: () -> Unit = {}) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(12.dp))
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(Color.White, RoundedCornerShape(12.dp)),
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
-                modifier = Modifier
-                    .padding(top = 20.dp, start = 16.dp)
-                    .align(Alignment.TopStart),
+                modifier =
+                    Modifier
+                        .padding(top = 20.dp, start = 16.dp)
+                        .align(Alignment.TopStart),
                 painter = painterResource(id = R.drawable.ic_info_bg),
                 contentDescription = "",
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
             )
             IconButton(
-                modifier = Modifier
-                    .size(44.dp)
-                    .padding(top = 12.dp, end = 12.dp)
-                    .align(Alignment.TopEnd),
-                onClick = { onDismiss() }
+                modifier =
+                    Modifier
+                        .size(44.dp)
+                        .padding(top = 12.dp, end = 12.dp)
+                        .align(Alignment.TopEnd),
+                onClick = { onDismiss() },
             ) {
                 Icon(
                     modifier = Modifier,
                     painter = painterResource(id = R.drawable.ic_close),
                     contentDescription = "",
-                    tint = ArkColor.FGQuinary
+                    tint = ArkColor.FGQuinary,
                 )
             }
         }
@@ -129,13 +129,13 @@ private fun InfoValueOfCirculatingDialogContent(
             text = "Value of Circulating Currency",
             fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp,
-            color = ArkColor.TextPrimary
+            color = ArkColor.TextPrimary,
         )
         Text(
             modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp, bottom = 36.dp),
             text = stringResource(id = R.string.info_dialog_value_of_circulating_description),
             fontSize = 18.sp,
-            color = ArkColor.TextTertiary
+            color = ArkColor.TextTertiary,
         )
     }
 }

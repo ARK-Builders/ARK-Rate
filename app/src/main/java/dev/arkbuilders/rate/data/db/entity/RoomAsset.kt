@@ -10,5 +10,5 @@ data class RoomAsset(
     val id: Long = 0,
     val code: CurrencyCode,
     val amount: Double,
-    val group: String?
+    val group: String?,
 )

@@ -1,6 +1,6 @@
 @file:OptIn(
     ExperimentalMaterialNavigationApi::class,
-    ExperimentalAnimationApi::class
+    ExperimentalAnimationApi::class,
 )
 
 package dev.arkbuilders.rate.presentation
@@ -17,10 +17,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -42,12 +40,12 @@ import dev.arkbuilders.rate.presentation.utils.keyboardAsState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
 
-
 @Composable
 fun MainScreen() {
-    val engine = rememberAnimatedNavHostEngine(
-        rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING,
-    )
+    val engine =
+        rememberAnimatedNavHostEngine(
+            rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING,
+        )
     val navController = engine.rememberNavController()
     val snackState = remember { SnackbarHostState() }
 
@@ -55,47 +53,48 @@ fun MainScreen() {
         DIManager.component.networkStatus().onlineStatus
             .drop(1)
             .collect { online ->
-                val visuals = if (online)
-                    ConnectivityOnlineSnackbarVisuals
-                else
-                    ConnectivityOfflineSnackbarVisuals
+                val visuals =
+                    if (online)
+                        ConnectivityOnlineSnackbarVisuals
+                    else
+                        ConnectivityOfflineSnackbarVisuals
                 snackState.showSnackbar(visuals)
             }
     }
-
 
     val isKeyboardOpen by keyboardAsState()
     val bottomBarVisible = rememberSaveable { mutableStateOf(false) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val destination = navController.appCurrentDestinationAsState().value
-        ?: NavGraphs.root.startAppDestination
+    val destination =
+        navController.appCurrentDestinationAsState().value
+            ?: NavGraphs.root.startAppDestination
 
-
-    bottomBarVisible.value = when (navBackStackEntry?.destination?.route) {
-        QuickScreenDestination.route -> true
-        PortfolioScreenDestination.route -> true
-        PairAlertConditionScreenDestination.route -> true
-        SettingsScreenDestination.route -> true
-        else -> false
-    }
+    bottomBarVisible.value =
+        when (navBackStackEntry?.destination?.route) {
+            QuickScreenDestination.route -> true
+            PortfolioScreenDestination.route -> true
+            PairAlertConditionScreenDestination.route -> true
+            SettingsScreenDestination.route -> true
+            else -> false
+        }
 
     if (isKeyboardOpen)
         bottomBarVisible.value = false
 
     Scaffold(
-        modifier = Modifier
-            .systemBarsPadding()
-            .imePadding(),
+        modifier =
+            Modifier
+                .systemBarsPadding()
+                .imePadding(),
         snackbarHost = {
             SnackbarHost(
-                hostState = snackState
+                hostState = snackState,
             ) { data ->
                 val visuals = data.visuals
                 when (visuals) {
                     is ConnectivityOnlineSnackbarVisuals ->
                         ConnectivityOnlineSnackbar()
-
                     is ConnectivityOfflineSnackbarVisuals ->
                         ConnectivityOfflineSnackbar()
                 }
@@ -119,17 +118,16 @@ fun MainScreen() {
                         restoreState = true
                     }
                 },
-                bottomBarVisible = bottomBarVisible
+                bottomBarVisible = bottomBarVisible,
             )
-        }
+        },
     ) {
         DestinationsNavHost(
             engine = engine,
             navController = navController,
             navGraph = NavGraphs.root,
             modifier = Modifier.padding(it),
-            startRoute = QuickScreenDestination.startDestination
+            startRoute = QuickScreenDestination.startDestination,
         )
     }
 }
-

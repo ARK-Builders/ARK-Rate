@@ -24,43 +24,44 @@ import dev.arkbuilders.rate.presentation.theme.ArkColor
 fun NoInternetScreen(onRefreshClick: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                Modifier
+                    .align(Alignment.Center)
+                    .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_wifi_off),
                 contentDescription = "",
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp),
                 text = stringResource(R.string.oops_request_time_out),
                 color = ArkColor.TextPrimary,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp
+                fontSize = 20.sp,
             )
             Text(
                 modifier = Modifier.padding(top = 6.dp),
                 text = stringResource(R.string.check_connection_and_refresh),
                 color = ArkColor.TextTertiary,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             AppButton(
                 modifier = Modifier.padding(top = 24.dp),
-                onClick = { onRefreshClick() }
+                onClick = { onRefreshClick() },
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_refresh2),
-                    contentDescription = ""
+                    contentDescription = "",
                 )
                 Text(
                     modifier = Modifier.padding(start = 6.dp),
                     text = stringResource(R.string.refresh),
                     color = Color.White,
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
                 )
             }
         }

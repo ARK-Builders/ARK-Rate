@@ -43,44 +43,43 @@ sealed class BottomNavItem(
         R.string.bottom_nav_portfolio,
         R.drawable.ic_nav_portfolio_disabled,
         R.drawable.ic_nav_portfolio_enabled,
-        PortfolioScreenDestination.route
+        PortfolioScreenDestination.route,
     )
 
     data object PairAlert : BottomNavItem(
         R.string.bottom_nav_alerts,
         R.drawable.ic_nav_alerts_disabled,
         R.drawable.ic_nav_alerts_enabled,
-        PairAlertConditionScreenDestination.route
+        PairAlertConditionScreenDestination.route,
     )
 
     data object Quick : BottomNavItem(
         R.string.bottom_nav_quick,
         R.drawable.ic_nav_quick_disabled,
         R.drawable.ic_nav_quick_enabled,
-        QuickScreenDestination.route
+        QuickScreenDestination.route,
     )
 
     data object Settings : BottomNavItem(
         R.string.bottom_nav_settings,
         R.drawable.ic_nav_settings_disabled,
         R.drawable.ic_nav_settings_enabled,
-        SettingsScreenDestination.route
+        SettingsScreenDestination.route,
     )
-
 }
 
 @Composable
 fun AnimatedRateBottomNavigation(
     currentDestination: Destination,
     onBottomBarItemClick: (String) -> Unit,
-    bottomBarVisible: State<Boolean>
+    bottomBarVisible: State<Boolean>,
 ) {
     AnimatedContent(
         targetState = bottomBarVisible.value,
         transitionSpec = {
             slideInVertically { height -> height } with
-                    slideOutVertically { height -> height }
-        }
+                slideOutVertically { height -> height }
+        },
     ) { expanded ->
         if (expanded)
             RateBottomNavigation(currentDestination, onBottomBarItemClick)
@@ -90,14 +89,15 @@ fun AnimatedRateBottomNavigation(
 @Composable
 fun RateBottomNavigation(
     currentDestination: Destination,
-    onBottomBarItemClick: (String) -> Unit
+    onBottomBarItemClick: (String) -> Unit,
 ) {
-    val items = listOf(
-        BottomNavItem.Quick,
-        BottomNavItem.Assets,
-        BottomNavItem.PairAlert,
-        BottomNavItem.Settings
-    )
+    val items =
+        listOf(
+            BottomNavItem.Quick,
+            BottomNavItem.Assets,
+            BottomNavItem.PairAlert,
+            BottomNavItem.Settings,
+        )
     Column {
         HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
         BottomAppBar(
@@ -112,27 +112,31 @@ fun RateBottomNavigation(
                         AnimatedContent(targetState = selected) { innerSelected ->
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
-                                    painter = painterResource(
-                                        if (innerSelected) item.iconEnabled
-                                        else item.iconDisabled
-                                    ),
-                                    contentDescription = stringResource(item.title)
+                                    painter =
+                                        painterResource(
+                                            if (innerSelected)
+                                                item.iconEnabled
+                                            else
+                                                item.iconDisabled,
+                                        ),
+                                    contentDescription = stringResource(item.title),
                                 )
                                 Text(
                                     text = stringResource(item.title),
                                     fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
                                 )
                             }
                         }
                     },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = ArkColor.BrandUtility,
-                        selectedTextColor = ArkColor.BrandUtility,
-                        indicatorColor = Color.Transparent,
-                        unselectedTextColor = ArkColor.BrandSecondary,
-                        unselectedIconColor = ArkColor.BrandSecondary
-                    )
+                    colors =
+                        NavigationBarItemDefaults.colors(
+                            selectedIconColor = ArkColor.BrandUtility,
+                            selectedTextColor = ArkColor.BrandUtility,
+                            indicatorColor = Color.Transparent,
+                            unselectedTextColor = ArkColor.BrandSecondary,
+                            unselectedIconColor = ArkColor.BrandSecondary,
+                        ),
                 )
             }
         }

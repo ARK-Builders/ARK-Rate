@@ -9,14 +9,14 @@ import javax.inject.Singleton
 @Singleton
 class AppWorkerFactory @Inject constructor(
     private val handlePairAlertCheckUseCase: HandlePairAlertCheckUseCase,
-    private val timestampRepo: TimestampRepo
+    private val timestampRepo: TimestampRepo,
 ) : DelegatingWorkerFactory() {
     init {
         addFactory(
             CurrencyMonitorWorkerFactory(
                 handlePairAlertCheckUseCase,
-                timestampRepo
-            )
+                timestampRepo,
+            ),
         )
     }
 }

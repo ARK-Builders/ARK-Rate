@@ -12,7 +12,7 @@ fun AppHorDiv16(modifier: Modifier = Modifier) {
     HorizontalDivider(
         modifier = modifier.padding(horizontal = 16.dp),
         thickness = 1.dp,
-        color = ArkColor.BorderSecondary
+        color = ArkColor.BorderSecondary,
     )
 }
 
@@ -21,6 +21,6 @@ fun AppHorDiv(modifier: Modifier = Modifier) {
     HorizontalDivider(
         modifier = modifier,
         thickness = 1.dp,
-        color = ArkColor.BorderSecondary
+        color = ArkColor.BorderSecondary,
     )
 }

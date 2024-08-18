@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,7 +61,6 @@ import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
@@ -79,7 +77,7 @@ fun AddPairAlertScreen(
     val ctx = LocalContext.current
     val viewModel: AddPairAlertViewModel =
         viewModel(
-            factory = DIManager.component.addPairAlertVMFactory().create(pairAlertId)
+            factory = DIManager.component.addPairAlertVMFactory().create(pairAlertId),
         )
 
     val state by viewModel.collectAsState()
@@ -90,21 +88,26 @@ fun AddPairAlertScreen(
             is AddPairAlertScreenEffect.NotifyPairAdded -> {
                 val pair = effect.pair
                 val aboveOrBelow =
-                    if (pair.above()) ctx.getString(R.string.above)
-                    else ctx.getString(R.string.below)
-                val visuals = NotifyAddedSnackbarVisuals(
-                    title = ctx.getString(
-                        R.string.alert_snackbar_new_title,
-                        pair.targetCode
-                    ),
-                    description = ctx.getString(
-                        R.string.alert_snackbar_new_desc,
-                        pair.targetCode,
-                        aboveOrBelow,
-                        CurrUtils.prepareToDisplay(pair.targetPrice),
-                        pair.baseCode
+                    if (pair.above())
+                        ctx.getString(R.string.above)
+                    else
+                        ctx.getString(R.string.below)
+                val visuals =
+                    NotifyAddedSnackbarVisuals(
+                        title =
+                            ctx.getString(
+                                R.string.alert_snackbar_new_title,
+                                pair.targetCode,
+                            ),
+                        description =
+                            ctx.getString(
+                                R.string.alert_snackbar_new_desc,
+                                pair.targetCode,
+                                aboveOrBelow,
+                                CurrUtils.prepareToDisplay(pair.targetPrice),
+                                pair.baseCode,
+                            ),
                     )
-                )
                 AppSharedFlow.ShowAddedSnackbarPairAlert.flow.emit(visuals)
             }
         }
@@ -113,26 +116,26 @@ fun AddPairAlertScreen(
     Scaffold(
         topBar = {
             AppTopBarBack(
-                title = if (state.editExisting)
-                    stringResource(R.string.alert_edit_alert)
-                else
-                    stringResource(R.string.add_new_alert),
-                navigator = navigator
+                title =
+                    if (state.editExisting)
+                        stringResource(R.string.alert_edit_alert)
+                    else
+                        stringResource(R.string.add_new_alert),
+                navigator = navigator,
             )
-        }
+        },
     ) {
         Box(modifier = Modifier.padding(it)) {
             Content(state, navigator, viewModel)
         }
     }
-
 }
 
 @Composable
 private fun Content(
     state: AddPairAlertScreenState,
     navigator: DestinationsNavigator,
-    viewModel: AddPairAlertViewModel
+    viewModel: AddPairAlertViewModel,
 ) {
     var showNewGroupDialog by remember { mutableStateOf(false) }
     var showGroupsPopup by remember { mutableStateOf(false) }
@@ -146,47 +149,51 @@ private fun Content(
 
     Column {
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
         ) {
             PriceOrPercent(state, viewModel::onPriceOrPercentChanged)
             EditCondition(state, viewModel, navigator)
             OneTimeOrRecurrent(
                 state.priceOrPercent.isLeft(),
                 state.oneTimeNotRecurrent,
-                viewModel::onOneTimeChanged
+                viewModel::onOneTimeChanged,
             )
             DropDownWithIcon(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp, start = 16.dp, end = 16.dp)
-                    .onPlaced {
-                        addGroupBtnWidth = it.size.width
-                    },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                        .onPlaced {
+                            addGroupBtnWidth = it.size.width
+                        },
                 onClick = { showGroupsPopup = !showGroupsPopup },
-                title = state.group?.let { state.group }
-                    ?: stringResource(R.string.add_group),
-                icon = painterResource(id = R.drawable.ic_group)
+                title =
+                    state.group?.let { state.group }
+                        ?: stringResource(R.string.add_group),
+                icon = painterResource(id = R.drawable.ic_group),
             )
             if (showGroupsPopup) {
                 Box(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 4.dp
-                    )
+                    modifier =
+                        Modifier.padding(
+                            start = 16.dp,
+                            top = 4.dp,
+                        ),
                 ) {
                     Popup(
                         offset = IntOffset(0, 0),
                         properties = PopupProperties(),
-                        onDismissRequest = { showGroupsPopup = false }
+                        onDismissRequest = { showGroupsPopup = false },
                     ) {
                         GroupSelectPopup(
                             groups = state.availableGroups,
                             widthPx = addGroupBtnWidth,
                             onGroupSelect = { viewModel.onGroupSelect(it) },
                             onNewGroupClick = { showNewGroupDialog = true },
-                            onDismiss = { showGroupsPopup = false }
+                            onDismiss = { showGroupsPopup = false },
                         )
                     }
                 }
@@ -195,17 +202,19 @@ private fun Content(
         Column {
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
             AppButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                 onClick = { viewModel.onSaveClick() },
-                enabled = state.finishEnabled
+                enabled = state.finishEnabled,
             ) {
                 Text(
-                    text = if (state.editExisting)
-                        stringResource(R.string.save)
-                    else
-                        stringResource(R.string.create_alert)
+                    text =
+                        if (state.editExisting)
+                            stringResource(R.string.save)
+                        else
+                            stringResource(R.string.create_alert),
                 )
             }
         }
@@ -215,30 +224,33 @@ private fun Content(
 @Composable
 private fun PriceOrPercent(
     state: AddPairAlertScreenState,
-    onPriceOrPercentChanged: (Boolean) -> Unit
+    onPriceOrPercentChanged: (Boolean) -> Unit,
 ) {
     SegmentBtnBg(
-        modifier = Modifier.padding(
-            start = 16.dp,
-            end = 16.dp,
-            top = 16.dp
-        )
+        modifier =
+            Modifier.padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 16.dp,
+            ),
     ) {
         SegmentBtn(
-            modifier = Modifier
-                .padding(6.dp)
-                .weight(1f),
+            modifier =
+                Modifier
+                    .padding(6.dp)
+                    .weight(1f),
             title = stringResource(R.string.by_price),
-            enabled = state.priceOrPercent.isLeft()
+            enabled = state.priceOrPercent.isLeft(),
         ) {
             onPriceOrPercentChanged(true)
         }
         SegmentBtn(
-            modifier = Modifier
-                .padding(6.dp)
-                .weight(1f),
+            modifier =
+                Modifier
+                    .padding(6.dp)
+                    .weight(1f),
             title = stringResource(R.string.by_percent),
-            enabled = state.priceOrPercent.isRight()
+            enabled = state.priceOrPercent.isRight(),
         ) {
             onPriceOrPercentChanged(false)
         }
@@ -248,14 +260,15 @@ private fun PriceOrPercent(
 @Composable
 private fun SegmentBtnBg(
     modifier: Modifier,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .background(ArkColor.BGSecondaryAlt)
-            .border(1.dp, ArkColor.BorderSecondary, RoundedCornerShape(12.dp)),
+        modifier =
+            modifier
+                .background(ArkColor.BGSecondaryAlt)
+                .border(1.dp, ArkColor.BorderSecondary, RoundedCornerShape(12.dp)),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         content()
     }
@@ -266,27 +279,29 @@ private fun SegmentBtn(
     modifier: Modifier,
     title: String,
     enabled: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(6.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = if (enabled) 1.dp else 0.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (enabled) Color.White else ArkColor.BGSecondaryAlt,
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = if (enabled) Color.White else ArkColor.BGSecondaryAlt,
+            ),
         onClick = {
             onClick()
         },
     ) {
         Text(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(vertical = 10.dp),
+            modifier =
+                Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 10.dp),
             text = title,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
-            color = if (enabled) ArkColor.TextBrandSecondary else ArkColor.TextTertiary
+            color = if (enabled) ArkColor.TextBrandSecondary else ArkColor.TextTertiary,
         )
     }
 }
@@ -295,31 +310,32 @@ private fun SegmentBtn(
 private fun DropDownBtn(
     modifier: Modifier = Modifier,
     title: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .height(36.dp)
-            .border(
-                1.dp,
-                ArkColor.Border,
-                RoundedCornerShape(8.dp)
-            )
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { onClick() },
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .height(36.dp)
+                .border(
+                    1.dp,
+                    ArkColor.Border,
+                    RoundedCornerShape(8.dp),
+                )
+                .clip(RoundedCornerShape(8.dp))
+                .clickable { onClick() },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             modifier = Modifier.padding(start = 12.dp),
             text = title,
             fontWeight = FontWeight.SemiBold,
-            color = ArkColor.FGSecondary
+            color = ArkColor.FGSecondary,
         )
         Icon(
             modifier = Modifier.padding(start = 8.dp, end = 15.dp),
             painter = painterResource(id = R.drawable.ic_chevron),
             contentDescription = "",
-            tint = ArkColor.FGSecondary
+            tint = ArkColor.FGSecondary,
         )
     }
 }
@@ -329,39 +345,41 @@ fun DropDownWithIcon(
     modifier: Modifier,
     onClick: () -> Unit,
     title: String,
-    icon: Painter
+    icon: Painter,
 ) {
     Row(
-        modifier = modifier
-            .height(44.dp)
-            .border(
-                1.dp,
-                ArkColor.Border,
-                RoundedCornerShape(8.dp)
-            )
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { onClick() },
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .height(44.dp)
+                .border(
+                    1.dp,
+                    ArkColor.Border,
+                    RoundedCornerShape(8.dp),
+                )
+                .clip(RoundedCornerShape(8.dp))
+                .clickable { onClick() },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier.padding(start = 16.dp),
             painter = icon,
             contentDescription = "",
-            tint = ArkColor.FGSecondary
+            tint = ArkColor.FGSecondary,
         )
         Text(
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .weight(1f),
+            modifier =
+                Modifier
+                    .padding(start = 8.dp)
+                    .weight(1f),
             text = title,
             fontSize = 16.sp,
-            color = ArkColor.TextPlaceHolder
+            color = ArkColor.TextPlaceHolder,
         )
         Icon(
             modifier = Modifier.padding(end = 20.dp),
             painter = painterResource(id = R.drawable.ic_chevron),
             contentDescription = "",
-            tint = ArkColor.FGSecondary
+            tint = ArkColor.FGSecondary,
         )
     }
 }
@@ -370,64 +388,86 @@ fun DropDownWithIcon(
 private fun EditCondition(
     state: AddPairAlertScreenState,
     viewModel: AddPairAlertViewModel,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
 ) {
     val ctx = LocalContext.current
     Column(
         modifier = Modifier.padding(top = 48.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = stringResource(R.string.when_),
-                color = ArkColor.TextTertiary
+                color = ArkColor.TextTertiary,
             )
             DropDownBtn(
                 modifier = Modifier.padding(start = 8.dp),
-                title = state.targetCode
+                title = state.targetCode,
             ) {
-                navigator.navigate(SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertTarget.name))
+                navigator.navigate(
+                    SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertTarget.name),
+                )
             }
             Text(
                 modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(R.string.price_is),
-                color = ArkColor.TextTertiary
+                color = ArkColor.TextTertiary,
             )
             Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .run {
-                        if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft())
-                            this
-                        else
-                            clickable { viewModel.onIncreaseToggle() }
-                    },
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .run {
+                            if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft())
+                                this
+                            else
+                                clickable { viewModel.onIncreaseToggle() }
+                        },
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     modifier = Modifier.padding(start = 8.dp),
-                    painter = painterResource(id = if (state.aboveNotBelow) R.drawable.ic_pair_alert_inc else R.drawable.ic_pair_alert_dec),
+                    painter =
+                        painterResource(
+                            id =
+                                if (state.aboveNotBelow)
+                                    R.drawable.ic_pair_alert_inc
+                                else
+                                    R.drawable.ic_pair_alert_dec,
+                        ),
                     contentDescription = "",
-                    tint = if (state.aboveNotBelow) ArkColor.PairAlertInc else ArkColor.PairAlertDec
+                    tint =
+                        if (state.aboveNotBelow)
+                            ArkColor.PairAlertInc
+                        else
+                            ArkColor.PairAlertDec,
                 )
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
-                    text = if (state.aboveNotBelow) ctx.getString(R.string.above)
-                    else ctx.getString(R.string.below),
-                    color = if (state.aboveNotBelow) ArkColor.PairAlertInc else ArkColor.PairAlertDec
+                    text =
+                        if (state.aboveNotBelow)
+                            ctx.getString(R.string.above)
+                        else
+                            ctx.getString(R.string.below),
+                    color =
+                        if (state.aboveNotBelow)
+                            ArkColor.PairAlertInc
+                        else
+                            ArkColor.PairAlertDec,
                 )
             }
         }
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp),
-            horizontalArrangement = Arrangement.Center
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp),
+            horizontalArrangement = Arrangement.Center,
         ) {
             if (!state.oneTimeNotRecurrent) {
                 Text(
@@ -435,26 +475,30 @@ private fun EditCondition(
                     text = stringResource(R.string.every),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary
+                    color = ArkColor.TextPrimary,
                 )
             }
             BasicTextField(
-                modifier = Modifier
-                    .width(IntrinsicSize.Min)
-                    .defaultMinSize(minWidth = 20.dp)
-                    .align(Alignment.CenterVertically),
-                value = state.priceOrPercent.fold(
-                    ifLeft = { it },
-                    ifRight = { it }
-                ),
+                modifier =
+                    Modifier
+                        .width(IntrinsicSize.Min)
+                        .defaultMinSize(minWidth = 20.dp)
+                        .align(Alignment.CenterVertically),
+                value =
+                    state.priceOrPercent.fold(
+                        ifLeft = { it },
+                        ifRight = { it },
+                    ),
                 onValueChange = { viewModel.onPriceOrPercentInputChanged(it) },
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 36.sp,
-                    color = ArkColor.TextPrimary,
-                    fontWeight = FontWeight.SemiBold
-                ),
-                keyboardOptions = KeyboardOptions.Default
-                    .copy(keyboardType = KeyboardType.Number)
+                textStyle =
+                    LocalTextStyle.current.copy(
+                        fontSize = 36.sp,
+                        color = ArkColor.TextPrimary,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                keyboardOptions =
+                    KeyboardOptions.Default
+                        .copy(keyboardType = KeyboardType.Number),
             )
             if (state.priceOrPercent.isLeft()) {
                 Text(
@@ -462,7 +506,7 @@ private fun EditCondition(
                     text = CurrUtils.getSymbolOrCode(state.baseCode),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary
+                    color = ArkColor.TextPrimary,
                 )
             }
             if (state.priceOrPercent.isRight()) {
@@ -471,26 +515,29 @@ private fun EditCondition(
                     text = "%",
                     fontSize = 36.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = ArkColor.TextPrimary
+                    color = ArkColor.TextPrimary,
                 )
             }
         }
         Row(
             modifier = Modifier.padding(top = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = stringResource(
-                    R.string.alert_current_price,
-                    CurrUtils.prepareToDisplay(state.currentPrice)
-                ),
-                color = ArkColor.TextTertiary
+                text =
+                    stringResource(
+                        R.string.alert_current_price,
+                        CurrUtils.prepareToDisplay(state.currentPrice),
+                    ),
+                color = ArkColor.TextTertiary,
             )
             DropDownBtn(
                 modifier = Modifier.padding(start = 16.dp),
-                title = state.baseCode
+                title = state.baseCode,
             ) {
-                navigator.navigate(SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertBase.name))
+                navigator.navigate(
+                    SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertBase.name),
+                )
             }
         }
     }
@@ -500,31 +547,37 @@ private fun EditCondition(
 private fun OneTimeOrRecurrent(
     byPrice: Boolean,
     oneTimeNotRecurrent: Boolean,
-    onOneTimeChanged: (Boolean) -> Unit
+    onOneTimeChanged: (Boolean) -> Unit,
 ) {
     SegmentBtnBg(
-        modifier = Modifier.padding(
-            top = 32.dp,
-            start = 16.dp,
-            end = 16.dp
-        )
+        modifier =
+            Modifier.padding(
+                top = 32.dp,
+                start = 16.dp,
+                end = 16.dp,
+            ),
     ) {
         SegmentBtn(
-            modifier = Modifier
-                .padding(6.dp)
-                .weight(1f),
+            modifier =
+                Modifier
+                    .padding(6.dp)
+                    .weight(1f),
             title = stringResource(R.string.one_time),
-            enabled = oneTimeNotRecurrent
+            enabled = oneTimeNotRecurrent,
         ) {
             onOneTimeChanged(true)
         }
         SegmentBtn(
-            modifier = Modifier
-                .padding(6.dp)
-                .weight(1f),
-            title = if (byPrice) stringResource(R.string.every_c)
-            else stringResource(R.string.recurrent),
-            enabled = !oneTimeNotRecurrent
+            modifier =
+                Modifier
+                    .padding(6.dp)
+                    .weight(1f),
+            title =
+                if (byPrice)
+                    stringResource(R.string.every_c)
+                else
+                    stringResource(R.string.recurrent),
+            enabled = !oneTimeNotRecurrent,
         ) {
             onOneTimeChanged(false)
         }

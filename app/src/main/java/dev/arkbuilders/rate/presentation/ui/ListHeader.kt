@@ -11,14 +11,15 @@ import dev.arkbuilders.rate.presentation.theme.ArkColor
 @Composable
 fun ListHeader(text: String) {
     Text(
-        modifier = Modifier.padding(
-            start = 16.dp,
-            top = 24.dp,
-            end = 16.dp,
-        ),
+        modifier =
+            Modifier.padding(
+                start = 16.dp,
+                top = 24.dp,
+                end = 16.dp,
+            ),
         text = text,
         fontWeight = FontWeight.Medium,
-        color = ArkColor.TextTertiary
+        color = ArkColor.TextTertiary,
     )
     AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
 }

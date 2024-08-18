@@ -47,7 +47,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
     Scaffold(
         topBar = {
             AppTopBarBack(title = stringResource(R.string.about), navigator)
-        }
+        },
     ) {
         Box(modifier = Modifier.padding(it)) {
             Content(navigator)
@@ -67,7 +67,7 @@ private fun Content(navigator: DestinationsNavigator) {
         title = stringResource(R.string.about_donate_btc),
         wallet = stringResource(R.string.about_btc_wallet),
         fileName = "ArkQrBtc.jpg",
-        qrBitmap = R.drawable.qr_btc
+        qrBitmap = R.drawable.qr_btc,
     ) {
         btcDialogVisible = false
     }
@@ -77,14 +77,15 @@ private fun Content(navigator: DestinationsNavigator) {
         title = stringResource(R.string.about_donate_eth),
         wallet = stringResource(R.string.about_eth_wallet),
         fileName = "ArkQrEth.jpg",
-        qrBitmap = R.drawable.qr_eth
+        qrBitmap = R.drawable.qr_eth,
     ) {
         ethDialogVisible = false
     }
 
     Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
+        modifier =
+            Modifier
+                .verticalScroll(rememberScrollState()),
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -94,69 +95,71 @@ private fun Content(navigator: DestinationsNavigator) {
                 modifier = Modifier.padding(top = 32.dp),
                 painter = painterResource(id = R.drawable.ic_about_logo),
                 contentDescription = "",
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
             )
             Text(
                 modifier = Modifier.padding(top = 20.dp),
                 text = stringResource(R.string.app_name),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = ArkColor.TextPrimary
+                color = ArkColor.TextPrimary,
             )
             Text(
                 modifier = Modifier.padding(top = 12.dp),
                 text = "Version ${BuildConfig.VERSION_NAME}",
-                color = ArkColor.TextTertiary
+                color = ArkColor.TextTertiary,
             )
             Text(
                 modifier = Modifier.padding(top = 12.dp),
                 text = "ARK Builders · Copyright ©2024",
-                color = ArkColor.TextTertiary
+                color = ArkColor.TextTertiary,
             )
             Row(
                 modifier = Modifier.padding(top = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 SocialLink(
                     painterResource(R.drawable.ic_about_site),
-                    text = "Website"
+                    text = "Website",
                 ) {
                     ctx.openLink(ctx.getString(R.string.ark_website_url))
                 }
                 SocialLink(
                     painterResource(R.drawable.ic_about_telegram),
-                    text = "Telegram"
+                    text = "Telegram",
                 ) {
                     ctx.openLink(ctx.getString(R.string.ark_tg_url))
                 }
                 SocialLink(
                     painterResource(R.drawable.ic_about_discord),
-                    text = "Discord"
+                    text = "Discord",
                 ) {
                     ctx.openLink(ctx.getString(R.string.ark_discord_url))
                 }
             }
             OutlinedButton(
-                modifier = Modifier
-                    .padding(top = 32.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(top = 32.dp)
+                        .fillMaxWidth(),
                 onClick = { ctx.openLink(ctx.getString(R.string.privacy_policy_url)) },
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = ArkColor.BorderSecondary
-                ),
-                shape = RoundedCornerShape(8.dp)
+                border =
+                    BorderStroke(
+                        width = 1.dp,
+                        color = ArkColor.BorderSecondary,
+                    ),
+                shape = RoundedCornerShape(8.dp),
             ) {
                 Text(
                     text = stringResource(R.string.privacy_policy),
                     fontWeight = FontWeight.SemiBold,
-                    color = ArkColor.FGSecondary
+                    color = ArkColor.FGSecondary,
                 )
                 Icon(
                     modifier = Modifier.padding(start = 6.dp),
                     painter = painterResource(R.drawable.ic_external),
                     contentDescription = "",
-                    tint = ArkColor.FGSecondary
+                    tint = ArkColor.FGSecondary,
                 )
             }
             AppHorDiv(modifier = Modifier.padding(top = 20.dp))
@@ -166,12 +169,15 @@ private fun Content(navigator: DestinationsNavigator) {
                     text = stringResource(R.string.about_support_us),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = ArkColor.TextPrimary
+                    color = ArkColor.TextPrimary,
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
-                    text = stringResource(R.string.about_we_greatly_appreciate_every_bit_of_support),
-                    color = ArkColor.TextTertiary
+                    text =
+                        stringResource(
+                            R.string.about_we_greatly_appreciate_every_bit_of_support,
+                        ),
+                    color = ArkColor.TextTertiary,
                 )
                 Row(modifier = Modifier.padding(top = 12.dp)) {
                     DonateBtn(
@@ -184,7 +190,7 @@ private fun Content(navigator: DestinationsNavigator) {
                     DonateBtn(
                         modifier = Modifier.padding(start = 12.dp),
                         icon = painterResource(dev.arkbuilders.rate.cryptoicons.R.drawable.eth),
-                        text = stringResource(R.string.about_donate_using_eth)
+                        text = stringResource(R.string.about_donate_using_eth),
                     ) {
                         ethDialogVisible = true
                     }
@@ -193,14 +199,14 @@ private fun Content(navigator: DestinationsNavigator) {
                     DonateBtn(
                         modifier = Modifier,
                         icon = painterResource(R.drawable.ic_about_patreon),
-                        text = stringResource(R.string.about_donate_on_patreon)
+                        text = stringResource(R.string.about_donate_on_patreon),
                     ) {
                         ctx.openLink(ctx.getString(R.string.about_ark_patreon_url))
                     }
                     DonateBtn(
                         modifier = Modifier.padding(start = 12.dp),
                         icon = painterResource(R.drawable.ic_about_coffee),
-                        text = stringResource(R.string.about_buy_as_a_coffee)
+                        text = stringResource(R.string.about_buy_as_a_coffee),
                     ) {
                         ctx.openLink(ctx.getString(R.string.about_ark_buy_coffee_url))
                     }
@@ -210,38 +216,40 @@ private fun Content(navigator: DestinationsNavigator) {
                     OutlinedButton(
                         modifier = Modifier,
                         onClick = { ctx.openLink(ctx.getString(R.string.ark_contribute_url)) },
-                        border = BorderStroke(
-                            width = 1.dp,
-                            color = ArkColor.BorderSecondary
-                        ),
+                        border =
+                            BorderStroke(
+                                width = 1.dp,
+                                color = ArkColor.BorderSecondary,
+                            ),
                         shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(0.dp)
+                        contentPadding = PaddingValues(0.dp),
                     ) {
                         Text(
                             modifier = Modifier.padding(8.dp),
                             text = stringResource(R.string.about_discover_issues_to_work_on),
                             color = ArkColor.TextSecondary,
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
                         )
                     }
                     OutlinedButton(
                         modifier = Modifier.padding(start = 12.dp),
                         onClick = { },
-                        border = BorderStroke(
-                            width = 1.dp,
-                            color = ArkColor.BorderSecondary
-                        ),
+                        border =
+                            BorderStroke(
+                                width = 1.dp,
+                                color = ArkColor.BorderSecondary,
+                            ),
                         shape = RoundedCornerShape(8.dp),
                         contentPadding = PaddingValues(0.dp),
-                        enabled = false
+                        enabled = false,
                     ) {
                         Text(
                             modifier = Modifier.padding(8.dp),
                             text = stringResource(R.string.about_see_open_bounties),
                             color = ArkColor.TextPlaceHolder,
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
                         )
                     }
                 }
@@ -251,24 +259,29 @@ private fun Content(navigator: DestinationsNavigator) {
 }
 
 @Composable
-private fun SocialLink(painter: Painter, text: String, onClick: () -> Unit) {
+private fun SocialLink(
+    painter: Painter,
+    text: String,
+    onClick: () -> Unit,
+) {
     Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(4.dp))
-            .clickable { onClick() }
-            .padding(horizontal = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .clickable { onClick() }
+                .padding(horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier.size(20.dp),
             painter = painter,
             contentDescription = text,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
         Text(
             modifier = Modifier.padding(start = 4.dp),
             text = text,
-            color = ArkColor.TextTertiary
+            color = ArkColor.TextTertiary,
         )
     }
 }
@@ -278,32 +291,34 @@ private fun DonateBtn(
     modifier: Modifier,
     icon: Painter,
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     OutlinedButton(
         modifier = modifier,
         onClick = onClick,
-        border = BorderStroke(
-            width = 1.dp,
-            color = ArkColor.BorderSecondary
-        ),
+        border =
+            BorderStroke(
+                width = 1.dp,
+                color = ArkColor.BorderSecondary,
+            ),
         shape = RoundedCornerShape(8.dp),
-        contentPadding = PaddingValues(0.dp)
+        contentPadding = PaddingValues(0.dp),
     ) {
         Icon(
-            modifier = Modifier
-                .padding(start = 8.dp, top = 8.dp, bottom = 8.dp)
-                .size(20.dp),
+            modifier =
+                Modifier
+                    .padding(start = 8.dp, top = 8.dp, bottom = 8.dp)
+                    .size(20.dp),
             painter = icon,
             contentDescription = "",
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
         Text(
             modifier = Modifier.padding(start = 8.dp, end = 8.dp),
             text = text,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = ArkColor.FGSecondary
+            color = ArkColor.FGSecondary,
         )
     }
 }
