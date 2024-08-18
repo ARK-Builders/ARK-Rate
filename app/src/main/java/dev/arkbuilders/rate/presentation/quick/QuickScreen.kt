@@ -101,6 +101,7 @@ fun QuickScreen(
         val createNewPair = intent?.getStringExtra(ADD_NEW_PAIR) ?: ""
         if (createNewPair.isNotEmpty()) {
             navigator.navigate(AddQuickScreenDestination())
+            intent?.removeExtra(ADD_NEW_PAIR)
         }
     }
     viewModel.collectSideEffect { effect ->
@@ -162,23 +163,25 @@ fun QuickScreen(
             when {
                 state.noInternet -> NoInternetScreen(viewModel::onRefreshClick)
                 state.initialized.not() -> LoadingScreen()
-                state.initialized -> ctx.sendBroadcast(
-                    Intent(ctx, QuickPairsWidgetReceiver::class.java).apply {
-                        action = QuickPairsWidgetReceiver.ratesLatestRefresh
-                    }
-                )
                 isEmpty -> QuickEmpty(navigator = navigator)
-                else -> Content(
-                    state = state,
-                    onFilterChanged = viewModel::onFilterChanged,
-                    onDelete = viewModel::onDelete,
-                    onClick = viewModel::onShowOptions,
-                    onPin = viewModel::onPin,
-                    onUnpin = viewModel::onUnpin,
-                    onNewCode = {
-                        navigator.navigate(AddQuickScreenDestination(newCode = it))
-                    }
-                )
+                else -> {
+                    ctx.sendBroadcast(
+                        Intent(ctx, QuickPairsWidgetReceiver::class.java).apply {
+                            action = QuickPairsWidgetReceiver.ratesLatestRefresh
+                        }
+                    )
+                    Content(
+                        state = state,
+                        onFilterChanged = viewModel::onFilterChanged,
+                        onDelete = viewModel::onDelete,
+                        onClick = viewModel::onShowOptions,
+                        onPin = viewModel::onPin,
+                        onUnpin = viewModel::onUnpin,
+                        onNewCode = {
+                            navigator.navigate(AddQuickScreenDestination(newCode = it))
+                        }
+                    )
+                }
             }
         }
         state.optionsData?.let {
@@ -217,6 +220,7 @@ private fun Content(
     onNewCode: (CurrencyCode) -> Unit
 ) {
     val groups = state.pages.map { it.group }
+
     Column {
         SearchTextField(
             modifier = Modifier.padding(

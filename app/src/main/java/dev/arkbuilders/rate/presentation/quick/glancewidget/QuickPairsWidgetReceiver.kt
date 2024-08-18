@@ -69,16 +69,17 @@ class QuickPairsWidgetReceiver(
             val pages = mapPairsToPages(quick)
             val quickDisplayPair = pages.first().pinned
             val quickPairs = GsonBuilder().create().toJson(quickDisplayPair)
-            val glanceId =
+            val glanceIds =
                 GlanceAppWidgetManager(context).getGlanceIds(QuickPairsWidget::class.java)
-                    .firstOrNull()
-            glanceId?.let {
-                updateAppWidgetState(context, PreferencesGlanceStateDefinition, it) { pref ->
-                    pref.toMutablePreferences().apply {
-                        this[quickDisplayPairs] = quickPairs
+            for(glanceId in glanceIds) {
+                glanceId.let { it ->
+                    updateAppWidgetState(context, PreferencesGlanceStateDefinition, it) { pref ->
+                        pref.toMutablePreferences().apply {
+                            this[quickDisplayPairs] = quickPairs
+                        }
                     }
+                    glanceAppWidget.update(context, it)
                 }
-                glanceAppWidget.update(context, it)
             }
         }.launchIn(coroutineScope)
     }
