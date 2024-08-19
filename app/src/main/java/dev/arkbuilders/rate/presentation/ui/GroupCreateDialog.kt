@@ -3,10 +3,8 @@ package dev.arkbuilders.rate.presentation.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,8 +19,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +40,10 @@ import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 @Composable
-fun GroupCreateDialog(onDismiss: () -> Unit, onConfirmClick: (String) -> Unit) {
+fun GroupCreateDialog(
+    onDismiss: () -> Unit,
+    onConfirmClick: (String) -> Unit,
+) {
     Dialog(onDismissRequest = { onDismiss() }) {
         GroupCreateDialogContent(onDismiss, onConfirmClick)
     }
@@ -61,117 +60,126 @@ fun GroupCreateDialogContent(
     }
 
     Box(
-        modifier = Modifier
-            .background(Color.White, RoundedCornerShape(12.dp))
-            .clip(RoundedCornerShape(12.dp))
+        modifier =
+            Modifier
+                .background(Color.White, RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(12.dp)),
     ) {
         Icon(
             modifier = Modifier.padding(start = 30.dp, top = 35.dp),
             painter = painterResource(id = R.drawable.ic_group),
             contentDescription = "",
-            tint = ArkColor.FGSecondary
+            tint = ArkColor.FGSecondary,
         )
         IconButton(
-            modifier = Modifier
-                .padding(end = 12.dp, top = 12.dp)
-                .align(Alignment.TopEnd),
-            onClick = {}) {
+            modifier =
+                Modifier
+                    .padding(end = 12.dp, top = 12.dp)
+                    .align(Alignment.TopEnd),
+            onClick = {},
+        ) {
             Icon(
                 modifier = Modifier,
                 painter = painterResource(id = R.drawable.ic_close),
                 contentDescription = "",
-                tint = ArkColor.FGQuinary
+                tint = ArkColor.FGQuinary,
             )
         }
         GroupIconCircles(modifier = Modifier.absoluteOffset((-80).dp, (-76).dp))
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 80.dp, start = 16.dp, end = 16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 80.dp, start = 16.dp, end = 16.dp),
         ) {
             Text(
                 modifier = Modifier.padding(top = 28.dp),
                 text = stringResource(R.string.group_create_group),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = ArkColor.TextPrimary
+                color = ArkColor.TextPrimary,
             )
             Text(
                 modifier = Modifier.padding(top = 4.dp),
                 text = stringResource(R.string.group_please_enter_a_name_for_this_group),
-                color = ArkColor.TextTertiary
+                color = ArkColor.TextTertiary,
             )
 
             Text(
                 modifier = Modifier.padding(top = 20.dp),
                 text = stringResource(R.string.group_name),
                 fontWeight = FontWeight.Medium,
-                color = ArkColor.TextSecondary
+                color = ArkColor.TextSecondary,
             )
             OutlinedTextField(
-                modifier = Modifier
-                    .padding(top = 6.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(top = 6.dp)
+                        .fillMaxWidth(),
                 value = input,
                 onValueChange = { input = it },
-                textStyle = TextStyle.Default.copy(
-                    fontSize = 16.sp,
-                    color = ArkColor.TextPrimary
-                ),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults
-                    .colors(
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent,
-                        focusedBorderColor = ArkColor.Border,
-                        unfocusedBorderColor = ArkColor.Border
+                textStyle =
+                    TextStyle.Default.copy(
+                        fontSize = 16.sp,
+                        color = ArkColor.TextPrimary,
                     ),
+                shape = RoundedCornerShape(8.dp),
+                colors =
+                    OutlinedTextFieldDefaults
+                        .colors(
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            focusedBorderColor = ArkColor.Border,
+                            unfocusedBorderColor = ArkColor.Border,
+                        ),
                 placeholder = {
                     Text(
                         text = stringResource(R.string.e_g_group_1),
                         fontSize = 16.sp,
-                        color = ArkColor.TextPlaceHolder
+                        color = ArkColor.TextPlaceHolder,
                     )
-                }
+                },
             )
             Button(
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(top = 24.dp)
+                        .fillMaxWidth(),
                 onClick = {
                     onConfirmClick(input)
                     onDismiss()
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = ArkColor.Primary),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
             ) {
                 Text(
                     text = stringResource(R.string.confirm),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.White
+                    color = Color.White,
                 )
             }
             OutlinedButton(
-                modifier = Modifier
-                    .padding(top = 12.dp, bottom = 16.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(top = 12.dp, bottom = 16.dp)
+                        .fillMaxWidth(),
                 onClick = { onDismiss() },
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = ArkColor.BorderSecondary
-                ),
+                border =
+                    BorderStroke(
+                        width = 1.dp,
+                        color = ArkColor.BorderSecondary,
+                    ),
                 colors = ButtonDefaults.outlinedButtonColors(),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
             ) {
                 Text(
                     text = stringResource(R.string.cancel),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = ArkColor.FGSecondary
+                    color = ArkColor.FGSecondary,
                 )
             }
-
         }
     }
 }
@@ -180,49 +188,54 @@ fun GroupCreateDialogContent(
 private fun GroupIconCircles(modifier: Modifier) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Box(
-            modifier = Modifier
-                .size(48.dp)
-                .border(
-                    width = 1.dp,
-                    shape = RoundedCornerShape(10.dp),
-                    color = ArkColor.BorderSecondary.copy(alpha = 0.95f)
-                )
+            modifier =
+                Modifier
+                    .size(48.dp)
+                    .border(
+                        width = 1.dp,
+                        shape = RoundedCornerShape(10.dp),
+                        color = ArkColor.BorderSecondary.copy(alpha = 0.95f),
+                    ),
         )
         Box(
-            modifier = Modifier
-                .size(96.dp)
-                .border(
-                    width = 1.dp,
-                    shape = CircleShape,
-                    color = ArkColor.BorderSecondary.copy(alpha = 0.8f)
-                )
+            modifier =
+                Modifier
+                    .size(96.dp)
+                    .border(
+                        width = 1.dp,
+                        shape = CircleShape,
+                        color = ArkColor.BorderSecondary.copy(alpha = 0.8f),
+                    ),
         )
         Box(
-            modifier = Modifier
-                .size(144.dp)
-                .border(
-                    width = 1.dp,
-                    shape = CircleShape,
-                    color = ArkColor.BorderSecondary.copy(alpha = 0.6f)
-                )
+            modifier =
+                Modifier
+                    .size(144.dp)
+                    .border(
+                        width = 1.dp,
+                        shape = CircleShape,
+                        color = ArkColor.BorderSecondary.copy(alpha = 0.6f),
+                    ),
         )
         Box(
-            modifier = Modifier
-                .size(192.dp)
-                .border(
-                    width = 1.dp,
-                    shape = CircleShape,
-                    color = ArkColor.BorderSecondary.copy(alpha = 0.3f)
-                )
+            modifier =
+                Modifier
+                    .size(192.dp)
+                    .border(
+                        width = 1.dp,
+                        shape = CircleShape,
+                        color = ArkColor.BorderSecondary.copy(alpha = 0.3f),
+                    ),
         )
         Box(
-            modifier = Modifier
-                .size(240.dp)
-                .border(
-                    width = 1.dp,
-                    shape = CircleShape,
-                    color = ArkColor.BorderSecondary.copy(alpha = 0.2f)
-                )
+            modifier =
+                Modifier
+                    .size(240.dp)
+                    .border(
+                        width = 1.dp,
+                        shape = CircleShape,
+                        color = ArkColor.BorderSecondary.copy(alpha = 0.2f),
+                    ),
         )
     }
 }

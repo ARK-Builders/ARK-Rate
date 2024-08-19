@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ScrollableTabRow
@@ -31,7 +30,7 @@ import kotlinx.coroutines.launch
 fun GroupViewPager(
     modifier: Modifier = Modifier,
     groups: List<String?>,
-    pageContent: @Composable (index: Int) -> Unit
+    pageContent: @Composable (index: Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState { groups.size }
@@ -39,18 +38,20 @@ fun GroupViewPager(
         Box {
             AppHorDiv(modifier = Modifier.align(Alignment.BottomCenter))
             ScrollableTabRow(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
                 containerColor = Color.Transparent,
                 selectedTabIndex = pagerState.currentPage,
                 divider = { },
                 indicator = { tabPositions ->
                     TabRowDefaults.SecondaryIndicator(
-                        modifier = Modifier
-                            .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                        color = ArkColor.Teal500
+                        modifier =
+                            Modifier
+                                .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                        color = ArkColor.Teal500,
                     )
-                }
+                },
             ) {
                 groups.forEachIndexed { index, group ->
                     val selected = index == pagerState.currentPage
@@ -61,7 +62,7 @@ fun GroupViewPager(
                                 pagerState.animateScrollToPage(index)
                             }
                         },
-                        selectedContentColor = Color.Transparent
+                        selectedContentColor = Color.Transparent,
                     ) {
                         Text(
                             text = group ?: stringResource(R.string.group_default_name),

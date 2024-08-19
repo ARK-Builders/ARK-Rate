@@ -3,11 +3,11 @@ package dev.arkbuilders.rate.data.repo.currency
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
+import dev.arkbuilders.rate.data.network.api.CryptoAPI
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.CurrencyRate
 import dev.arkbuilders.rate.domain.model.CurrencyType
-import dev.arkbuilders.rate.data.network.api.CryptoAPI
-import dev.arkbuilders.rate.domain.model.CurrencyCode
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,6 +27,5 @@ class CryptoCurrencyDataSource @Inject constructor(
         }
     }
 
-    override suspend fun getCurrencyName(): Map<CurrencyCode, CurrencyName> =
-        emptyMap()
+    override suspend fun getCurrencyName(): Map<CurrencyCode, CurrencyName> = emptyMap()
 }

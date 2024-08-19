@@ -33,32 +33,33 @@ fun PinnedQuickSwipeItem(
     content: @Composable () -> Unit,
     pair: QuickPair,
     onUnpin: (QuickPair) -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
 ) {
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = {
-            when (it) {
-                SwipeToDismissBoxValue.StartToEnd -> {
-                    onUnpin(pair)
-                    true
-                }
+    val dismissState =
+        rememberSwipeToDismissBoxState(
+            confirmValueChange = {
+                when (it) {
+                    SwipeToDismissBoxValue.StartToEnd -> {
+                        onUnpin(pair)
+                        true
+                    }
 
-                SwipeToDismissBoxValue.EndToStart -> {
-                    onDelete()
-                    true
-                }
+                    SwipeToDismissBoxValue.EndToStart -> {
+                        onDelete()
+                        true
+                    }
 
-                SwipeToDismissBoxValue.Settled -> false
-            }
-        }
-    )
+                    SwipeToDismissBoxValue.Settled -> false
+                }
+            },
+        )
 
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
             DismissBackground(
                 state = dismissState,
-                isPinned = pair.isPinned()
+                isPinned = pair.isPinned(),
             )
         },
         content = { content() },
@@ -70,32 +71,33 @@ fun QuickSwipeItem(
     content: @Composable () -> Unit,
     pair: QuickPair,
     onPin: (QuickPair) -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
 ) {
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = {
-            when (it) {
-                SwipeToDismissBoxValue.StartToEnd -> {
-                    onPin(pair)
-                    true
-                }
+    val dismissState =
+        rememberSwipeToDismissBoxState(
+            confirmValueChange = {
+                when (it) {
+                    SwipeToDismissBoxValue.StartToEnd -> {
+                        onPin(pair)
+                        true
+                    }
 
-                SwipeToDismissBoxValue.EndToStart -> {
-                    onDelete()
-                    true
-                }
+                    SwipeToDismissBoxValue.EndToStart -> {
+                        onDelete()
+                        true
+                    }
 
-                SwipeToDismissBoxValue.Settled -> false
-            }
-        }
-    )
+                    SwipeToDismissBoxValue.Settled -> false
+                }
+            },
+        )
 
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
             DismissBackground(
                 state = dismissState,
-                isPinned = pair.isPinned()
+                isPinned = pair.isPinned(),
             )
         },
         content = { content() },
@@ -103,33 +105,38 @@ fun QuickSwipeItem(
 }
 
 @Composable
-private fun DismissBackground(state: SwipeToDismissBoxState, isPinned: Boolean) {
-    val color = when (state.dismissDirection) {
-        SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError200
-        else -> if (isPinned) ArkColor.FGQuarterary else ArkColor.Secondary
-    }
+private fun DismissBackground(
+    state: SwipeToDismissBoxState,
+    isPinned: Boolean,
+) {
+    val color =
+        when (state.dismissDirection) {
+            SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError200
+            else -> if (isPinned) ArkColor.FGQuarterary else ArkColor.Secondary
+        }
 
     Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(color),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        if (state.dismissDirection == SwipeToDismissBoxValue.StartToEnd ) {
+        if (state.dismissDirection == SwipeToDismissBoxValue.StartToEnd) {
             if (isPinned.not()) {
                 Row {
                     Icon(
                         modifier = Modifier.padding(start = 17.dp),
                         painter = painterResource(id = R.drawable.ic_pin),
                         contentDescription = "",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                     Text(
                         modifier = Modifier.padding(start = 4.dp),
                         text = stringResource(R.string.pin),
                         fontWeight = FontWeight.Medium,
-                        color = Color.White
+                        color = Color.White,
                     )
                 }
             } else {
@@ -137,17 +144,17 @@ private fun DismissBackground(state: SwipeToDismissBoxState, isPinned: Boolean) 
                     modifier = Modifier.padding(start = 17.dp),
                     text = stringResource(R.string.unpin),
                     fontWeight = FontWeight.Medium,
-                    color = Color.White
+                    color = Color.White,
                 )
             }
         }
         Spacer(modifier = Modifier)
-        if (state.dismissDirection == SwipeToDismissBoxValue.EndToStart ) {
+        if (state.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
             Icon(
                 modifier = Modifier.padding(end = 17.dp),
                 painter = painterResource(id = R.drawable.ic_delete),
                 contentDescription = "",
-                tint = ArkColor.FGErrorPrimary
+                tint = ArkColor.FGErrorPrimary,
             )
         }
     }

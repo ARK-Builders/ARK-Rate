@@ -17,5 +17,5 @@ data class QuickPair(
 data class PinnedQuickPair(
     val pair: QuickPair,
     val actualTo: List<Amount>,
-    val refreshDate: OffsetDateTime
+    val refreshDate: OffsetDateTime,
 )

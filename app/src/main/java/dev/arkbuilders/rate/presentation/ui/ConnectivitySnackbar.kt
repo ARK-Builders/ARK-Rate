@@ -23,14 +23,14 @@ import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
-object ConnectivityOnlineSnackbarVisuals: SnackbarVisuals {
+object ConnectivityOnlineSnackbarVisuals : SnackbarVisuals {
     override val actionLabel = ""
     override val duration = SnackbarDuration.Short
     override val message = ""
     override val withDismissAction = true
 }
 
-object ConnectivityOfflineSnackbarVisuals: SnackbarVisuals {
+object ConnectivityOfflineSnackbarVisuals : SnackbarVisuals {
     override val actionLabel = ""
     override val duration = SnackbarDuration.Short
     override val message = ""
@@ -46,7 +46,7 @@ fun ConnectivityOnlineSnackbar() {
         backgroundColor = ArkColor.UtilitySuccess50,
         dotColor = ArkColor.UtilitySuccess500,
         textColor = ArkColor.UtilitySuccess700,
-        borderColor = ArkColor.UtilitySuccess200
+        borderColor = ArkColor.UtilitySuccess200,
     )
 }
 
@@ -59,7 +59,7 @@ fun ConnectivityOfflineSnackbar() {
         backgroundColor = ArkColor.UtilityError50,
         dotColor = ArkColor.UtilityError500,
         textColor = ArkColor.TextError,
-        borderColor = ArkColor.UtilityError200
+        borderColor = ArkColor.UtilityError200,
     )
 }
 
@@ -73,54 +73,59 @@ private fun ConnectivityContent(
     borderColor: Color,
 ) {
     Row(
-        modifier = Modifier
-            .padding(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 15.dp
-            )
-            .fillMaxWidth()
-            .background(backgroundColor, CircleShape)
-            .border(1.dp, borderColor, CircleShape),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 15.dp,
+                )
+                .fillMaxWidth()
+                .background(backgroundColor, CircleShape)
+                .border(1.dp, borderColor, CircleShape),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
-            modifier = Modifier
-                .padding(start = 4.dp, top = 4.dp, bottom = 4.dp)
-                .background(Color.White, CircleShape)
-                .border(1.dp, borderColor, CircleShape),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .padding(start = 4.dp, top = 4.dp, bottom = 4.dp)
+                    .background(Color.White, CircleShape)
+                    .border(1.dp, borderColor, CircleShape),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
-                modifier = Modifier
-                    .padding(start = 7.dp, top = 8.dp, bottom = 8.dp)
-                    .size(6.dp)
-                    .background(dotColor, CircleShape)
+                modifier =
+                    Modifier
+                        .padding(start = 7.dp, top = 8.dp, bottom = 8.dp)
+                        .size(6.dp)
+                        .background(dotColor, CircleShape),
             )
             Text(
-                modifier = Modifier.padding(
-                    start = 4.dp,
-                    end = 8.dp,
-                    top = 2.dp,
-                    bottom = 2.dp
-                ),
+                modifier =
+                    Modifier.padding(
+                        start = 4.dp,
+                        end = 8.dp,
+                        top = 2.dp,
+                        bottom = 2.dp,
+                    ),
                 text = onlineOrOffline,
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp,
-                color = textColor
+                color = textColor,
             )
         }
         Text(
-            modifier = Modifier.padding(
-                start = 6.dp,
-                top = 2.dp,
-                bottom = 2.dp,
-                end = 7.dp
-            ),
+            modifier =
+                Modifier.padding(
+                    start = 6.dp,
+                    top = 2.dp,
+                    bottom = 2.dp,
+                    end = 7.dp,
+                ),
             text = desc,
             fontWeight = FontWeight.Medium,
             fontSize = 12.sp,
-            color = textColor
+            color = textColor,
         )
     }
 }

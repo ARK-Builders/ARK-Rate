@@ -58,21 +58,21 @@ fun QRCryptoDialog(
     wallet: String,
     fileName: String,
     @DrawableRes qrBitmap: Int,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     if (visible.not())
         return
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Content(
             title = title,
             wallet = wallet,
             fileName = fileName,
             qrBitmap = qrBitmap,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
     }
 }
@@ -84,12 +84,14 @@ private fun Content(
     wallet: String,
     fileName: String,
     @DrawableRes qrBitmap: Int,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     val ctx = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("image/jpg")) { uri ->
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.CreateDocument("image/jpg"),
+        ) { uri ->
             uri ?: return@rememberLauncherForActivityResult
             val input = ctx.resources.openRawResource(qrBitmap)
             ctx.contentResolver.openOutputStream(uri).use { output ->
@@ -101,15 +103,17 @@ private fun Content(
         }
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .background(Color.White, RoundedCornerShape(12.dp))
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(Color.White, RoundedCornerShape(12.dp)),
     ) {
         Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState()),
         ) {
             Row {
                 Text(
@@ -117,25 +121,26 @@ private fun Content(
                     text = title,
                     fontWeight = FontWeight.SemiBold,
                     color = ArkColor.TextPrimary,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
                 )
             }
-            val emailText = buildAnnotatedString {
-                append(stringResource(R.string.about_send_email_part_1))
-                pushStringAnnotation(
-                    tag = "email",
-                    annotation = ctx.getString(R.string.ark_support_email)
-                )
-                withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
-                    append(ctx.getString(R.string.ark_support_email))
+            val emailText =
+                buildAnnotatedString {
+                    append(stringResource(R.string.about_send_email_part_1))
+                    pushStringAnnotation(
+                        tag = "email",
+                        annotation = ctx.getString(R.string.ark_support_email),
+                    )
+                    withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
+                        append(ctx.getString(R.string.ark_support_email))
+                    }
+                    pop()
+                    append(stringResource(R.string.about_send_email_part_2))
                 }
-                pop()
-                append(stringResource(R.string.about_send_email_part_2))
-            }
             ClickableText(
                 modifier = Modifier.padding(top = 4.dp),
                 text = emailText,
-                style = TextStyle.Default.copy(color = ArkColor.TextTertiary)
+                style = TextStyle.Default.copy(color = ArkColor.TextTertiary),
             ) { offset ->
                 emailText
                     .getStringAnnotations(tag = "email", offset, offset)
@@ -145,103 +150,109 @@ private fun Content(
                     }
             }
             Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
                 painter = painterResource(qrBitmap),
                 contentDescription = "",
-                contentScale = ContentScale.FillWidth
+                contentScale = ContentScale.FillWidth,
             )
             Row(
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth()
-                    .height(45.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .border(1.dp, ArkColor.Border, RoundedCornerShape(8.dp)),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .padding(top = 24.dp)
+                        .fillMaxWidth()
+                        .height(45.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .border(1.dp, ArkColor.Border, RoundedCornerShape(8.dp)),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
                     text = wallet,
                     fontSize = 16.sp,
                     maxLines = 1,
                     color = ArkColor.TextPlaceHolder,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
                 VerticalDivider(
                     modifier = Modifier.height(45.dp),
-                    color = ArkColor.Border
+                    color = ArkColor.Border,
                 )
                 Row(
-                    modifier = Modifier
-                        .clickable {
-                            clipboardManager.setText(AnnotatedString(wallet))
-                            Toast
-                                .makeText(
-                                    ctx,
-                                    ctx.getString(R.string.about_wallet_copied),
-                                    Toast.LENGTH_SHORT
-                                )
-                                .show()
-                        }
-                        .padding(
-                            horizontal = 16.dp,
-                            vertical = 12.dp
-                        )
-
+                    modifier =
+                        Modifier
+                            .clickable {
+                                clipboardManager.setText(AnnotatedString(wallet))
+                                Toast
+                                    .makeText(
+                                        ctx,
+                                        ctx.getString(R.string.about_wallet_copied),
+                                        Toast.LENGTH_SHORT,
+                                    )
+                                    .show()
+                            }
+                            .padding(
+                                horizontal = 16.dp,
+                                vertical = 12.dp,
+                            ),
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_copy),
                         contentDescription = "",
-                        tint = ArkColor.TextSecondary
+                        tint = ArkColor.TextSecondary,
                     )
                     Text(
                         modifier = Modifier.padding(start = 6.dp),
                         text = stringResource(R.string.copy),
                         color = ArkColor.TextSecondary,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
                     )
                 }
             }
             OutlinedButton(
-                modifier = Modifier
-                    .padding(top = 12.dp, bottom = 16.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(top = 12.dp, bottom = 16.dp)
+                        .fillMaxWidth(),
                 onClick = { launcher.launch(fileName) },
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = ArkColor.BorderSecondary
-                ),
-                shape = RoundedCornerShape(8.dp)
+                border =
+                    BorderStroke(
+                        width = 1.dp,
+                        color = ArkColor.BorderSecondary,
+                    ),
+                shape = RoundedCornerShape(8.dp),
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_download),
                     contentDescription = "",
-                    tint = ArkColor.TextSecondary
+                    tint = ArkColor.TextSecondary,
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
                     text = stringResource(R.string.about_download_qr_image),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
-                    color = ArkColor.TextSecondary
+                    color = ArkColor.TextSecondary,
                 )
             }
         }
         IconButton(
-            modifier = Modifier
-                .padding(end = 12.dp, top = 12.dp)
-                .align(Alignment.TopEnd),
-            onClick = { onDismiss() }
+            modifier =
+                Modifier
+                    .padding(end = 12.dp, top = 12.dp)
+                    .align(Alignment.TopEnd),
+            onClick = { onDismiss() },
         ) {
             Icon(
                 modifier = Modifier,
                 painter = painterResource(id = R.drawable.ic_close),
                 contentDescription = "",
-                tint = ArkColor.FGQuinary
+                tint = ArkColor.FGQuinary,
             )
         }
     }

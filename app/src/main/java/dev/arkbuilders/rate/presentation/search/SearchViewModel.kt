@@ -26,7 +26,7 @@ data class SearchScreenState(
     val filter: String = "",
     val topResults: List<CurrencyName> = emptyList(),
     val topResultsFiltered: List<CurrencyName> = emptyList(),
-    val initialized: Boolean = false
+    val initialized: Boolean = false,
 )
 
 sealed class SearchScreenEffect {
@@ -39,7 +39,7 @@ class SearchViewModel(
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val getTopResultUseCase: GetTopResultUseCase,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsManager: AnalyticsManager,
 ) : ContainerHost<SearchScreenState, SearchScreenEffect>,
     ViewModel() {
     override val container: Container<SearchScreenState, SearchScreenEffect> =
@@ -50,8 +50,9 @@ class SearchViewModel(
 
         intent {
             val all = currencyRepo.getCurrencyNameUnsafe()
-            val frequent = calcFrequentCurrUseCase.invoke()
-                .map { currencyRepo.nameByCodeUnsafe(it) }
+            val frequent =
+                calcFrequentCurrUseCase.invoke()
+                    .map { currencyRepo.nameByCodeUnsafe(it) }
             val topResults = getTopResultUseCase()
 
             reduce {
@@ -59,25 +60,28 @@ class SearchViewModel(
                     frequent = frequent,
                     all = all,
                     topResults = topResults,
-                    initialized = true
+                    initialized = true,
                 )
             }
         }
     }
 
-    fun onInputChange(input: String) = blockingIntent {
-        val filtered = state.topResults
-            .filter {
-                it.name.contains(input, ignoreCase = true)
-                        || it.code.contains(input, ignoreCase = true)
-            }
-        reduce { state.copy(filter = input, topResultsFiltered = filtered) }
-    }
+    fun onInputChange(input: String) =
+        blockingIntent {
+            val filtered =
+                state.topResults
+                    .filter {
+                        it.name.contains(input, ignoreCase = true) ||
+                            it.code.contains(input, ignoreCase = true)
+                    }
+            reduce { state.copy(filter = input, topResultsFiltered = filtered) }
+        }
 
-    fun onClick(name: CurrencyName) = intent {
-        emitResult(name)
-        postSideEffect(SearchScreenEffect.NavigateBack)
-    }
+    fun onClick(name: CurrencyName) =
+        intent {
+            emitResult(name)
+            postSideEffect(SearchScreenEffect.NavigateBack)
+        }
 
     private suspend fun emitResult(name: CurrencyName) {
         val appFlowKey = AppSharedFlowKey.valueOf(appSharedFlowKeyString)
@@ -111,7 +115,7 @@ class SearchViewModelFactory @AssistedInject constructor(
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val getTopResultUseCase: GetTopResultUseCase,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SearchViewModel(
@@ -120,7 +124,7 @@ class SearchViewModelFactory @AssistedInject constructor(
             currencyRepo,
             calcFrequentCurrUseCase,
             getTopResultUseCase,
-            analyticsManager
+            analyticsManager,
         ) as T
     }
 

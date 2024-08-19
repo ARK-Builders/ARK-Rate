@@ -17,7 +17,6 @@ import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
-import dev.arkbuilders.rate.presentation.search.SearchViewModelFactory
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -29,19 +28,18 @@ import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import java.time.OffsetDateTime
-import javax.inject.Inject
-import javax.inject.Singleton
 
 data class AddQuickScreenState(
     val quickPairId: Long? = null,
     val currencies: List<AmountStr> = listOf(AmountStr("USD", "")),
     val group: String? = null,
     val availableGroups: List<String> = emptyList(),
-    val finishEnabled: Boolean = false
+    val finishEnabled: Boolean = false,
 )
 
 sealed class AddQuickScreenEffect {
     data class NotifyPairAdded(val pair: QuickPair) : AddQuickScreenEffect()
+
     data object NavigateBack : AddQuickScreenEffect()
 }
 
@@ -52,9 +50,8 @@ class AddQuickViewModel(
     private val quickRepo: QuickRepo,
     private val convertUseCase: ConvertWithRateUseCase,
     private val codeUseStatRepo: CodeUseStatRepo,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<AddQuickScreenState, AddQuickScreenEffect> {
-
     override val container: Container<AddQuickScreenState, AddQuickScreenEffect> =
         container(AddQuickScreenState())
 
@@ -75,7 +72,7 @@ class AddQuickViewModel(
             intent {
                 val newAmounts = state.currencies + AmountStr(code, "")
                 val calc = calcToResult(newAmounts)
-                reduce {  state.copy(currencies = calc) }
+                reduce { state.copy(currencies = calc) }
                 checkFinishEnabled()
             }
         }.launchIn(viewModelScope)
@@ -85,12 +82,13 @@ class AddQuickViewModel(
                 quickRepo.getAll().mapNotNull { it.group }.distinct()
             val quickPair = quickPairId?.let { quickRepo.getById(it) }
             quickPair?.let {
-                val currencies = listOf(
-                    AmountStr(
-                        quickPair.from,
-                        quickPair.amount.toString()
-                    )
-                ) + quickPair.to.map { AmountStr(it.code, "") }
+                val currencies =
+                    listOf(
+                        AmountStr(
+                            quickPair.from,
+                            quickPair.amount.toString(),
+                        ),
+                    ) + quickPair.to.map { AmountStr(it.code, "") }
                 val calc = calcToResult(currencies)
 
                 reduce {
@@ -98,95 +96,107 @@ class AddQuickViewModel(
                         quickPairId = quickPairId,
                         currencies = calc,
                         group = quickPair.group,
-                        availableGroups = groups
+                        availableGroups = groups,
                     )
                 }
                 checkFinishEnabled()
             } ?: reduce {
-                val currencies = newCode?.let {
-                    listOf(AmountStr(newCode, ""))
-                } ?: state.currencies
+                val currencies =
+                    newCode?.let {
+                        listOf(AmountStr(newCode, ""))
+                    } ?: state.currencies
                 state.copy(currencies = currencies, availableGroups = groups)
             }
         }
     }
 
-    fun onCurrencyRemove(removeIndex: Int) = intent {
-        reduce {
-            state.copy(
-                currencies = state.currencies
-                    .filterIndexed { index, _ -> index != removeIndex }
-            )
+    fun onCurrencyRemove(removeIndex: Int) =
+        intent {
+            reduce {
+                state.copy(
+                    currencies =
+                        state.currencies
+                            .filterIndexed { index, _ -> index != removeIndex },
+                )
+            }
+            checkFinishEnabled()
         }
-        checkFinishEnabled()
-    }
 
-    fun onGroupSelect(group: String?) = intent {
-        reduce { state.copy(group = group) }
-    }
+    fun onGroupSelect(group: String?) =
+        intent {
+            reduce { state.copy(group = group) }
+        }
 
-    fun onAssetAmountChange(input: String) = blockingIntent {
-        val from = state.currencies.first()
-        val new = from.copy(value = CurrUtils.validateInput(from.value, input))
-        val calc = calcToResult(listOf(new) + state.currencies.drop(1))
-        reduce { state.copy(currencies = calc) }
-        checkFinishEnabled()
-    }
+    fun onAssetAmountChange(input: String) =
+        blockingIntent {
+            val from = state.currencies.first()
+            val new = from.copy(value = CurrUtils.validateInput(from.value, input))
+            val calc = calcToResult(listOf(new) + state.currencies.drop(1))
+            reduce { state.copy(currencies = calc) }
+            checkFinishEnabled()
+        }
 
-    fun onAddQuickPair() = intent {
-        val from = state.currencies.first()
-        val id = if (quickPairId != null) {
-            if (reuseNotEdit) 0 else quickPairId
-        } else 0
+    fun onAddQuickPair() =
+        intent {
+            val from = state.currencies.first()
+            val id =
+                if (quickPairId != null) {
+                    if (reuseNotEdit) 0 else quickPairId
+                } else {
+                    0
+                }
 
-        val quick = QuickPair(
-            id = id,
-            from = from.code,
-            amount = from.value.toDouble(),
-            to = state.currencies.drop(1).map { it.toDAmount() },
-            calculatedDate = OffsetDateTime.now(),
-            pinnedDate = null,
-            group = state.group,
-        )
-        quickRepo.insert(quick)
-        codeUseStatRepo.codesUsed(
-            quick.from, *quick.to.map { it.code }.toTypedArray()
-        )
-        postSideEffect(AddQuickScreenEffect.NotifyPairAdded(quick))
-        postSideEffect(AddQuickScreenEffect.NavigateBack)
-    }
+            val quick =
+                QuickPair(
+                    id = id,
+                    from = from.code,
+                    amount = from.value.toDouble(),
+                    to = state.currencies.drop(1).map { it.toDAmount() },
+                    calculatedDate = OffsetDateTime.now(),
+                    pinnedDate = null,
+                    group = state.group,
+                )
+            quickRepo.insert(quick)
+            codeUseStatRepo.codesUsed(
+                quick.from,
+                *quick.to.map { it.code }.toTypedArray(),
+            )
+            postSideEffect(AddQuickScreenEffect.NotifyPairAdded(quick))
+            postSideEffect(AddQuickScreenEffect.NavigateBack)
+        }
 
     private suspend fun calcToResult(old: List<AmountStr>): List<AmountStr> {
         val from = old.first()
         val to = old.drop(1)
-        val new = to.map {
-            if (from.value == "") {
-                it.copy(value = "")
-            } else {
-                val (amount, _) = convertUseCase.invoke(from.toDAmount(), it.code)
-                amount.toStrAmount()
+        val new =
+            to.map {
+                if (from.value == "") {
+                    it.copy(value = "")
+                } else {
+                    val (amount, _) = convertUseCase.invoke(from.toDAmount(), it.code)
+                    amount.toStrAmount()
+                }
             }
-        }
         return listOf(from) + new
     }
 
-    private fun checkFinishEnabled() = intent {
-        val from = state.currencies.first()
-        val to = state.currencies.drop(1)
+    private fun checkFinishEnabled() =
+        intent {
+            val from = state.currencies.first()
+            val to = state.currencies.drop(1)
 
-        var finishEnabled = true
+            var finishEnabled = true
 
-        if (from.value.toDoubleSafe() == 0.0)
-            finishEnabled = false
+            if (from.value.toDoubleSafe() == 0.0)
+                finishEnabled = false
 
-        if (to.isEmpty())
-            finishEnabled = false
+            if (to.isEmpty())
+                finishEnabled = false
 
-        reduce {
-            state.copy(finishEnabled = finishEnabled)
+            reduce {
+                state.copy(finishEnabled = finishEnabled)
+            }
         }
-    }
-
 }
 
 class AddQuickViewModelFactory @AssistedInject constructor(
@@ -196,7 +206,7 @@ class AddQuickViewModelFactory @AssistedInject constructor(
     private val quickRepo: QuickRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddQuickViewModel(
@@ -206,7 +216,7 @@ class AddQuickViewModelFactory @AssistedInject constructor(
             quickRepo,
             convertUseCase,
             codeUseStatRepo,
-            analyticsManager
+            analyticsManager,
         ) as T
     }
 

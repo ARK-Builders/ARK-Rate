@@ -14,11 +14,9 @@ private const val FREQUENT_LIMIT = 5
 
 @Singleton
 class CalcFrequentCurrUseCase @Inject constructor(
-    private val codeUseStatRepo: CodeUseStatRepo
+    private val codeUseStatRepo: CodeUseStatRepo,
 ) {
-    suspend operator fun invoke(
-        stats: List<CodeUseStat>? = null
-    ): List<CurrencyCode> {
+    suspend operator fun invoke(stats: List<CodeUseStat>? = null): List<CurrencyCode> {
         val codeUseStats = stats ?: codeUseStatRepo.getAll()
         return mapToSortRating(codeUseStats)
             .sortedByDescending { (_, sortRating) -> sortRating }
@@ -26,9 +24,10 @@ class CalcFrequentCurrUseCase @Inject constructor(
             .map { (code, _) -> code }
     }
 
-    fun flow(): Flow<List<CurrencyCode>> = codeUseStatRepo.getAllFlow().map { list ->
-        invoke(list)
-    }
+    fun flow(): Flow<List<CurrencyCode>> =
+        codeUseStatRepo.getAllFlow().map { list ->
+            invoke(list)
+        }
 
     private fun mapToSortRating(list: List<CodeUseStat>): List<Pair<CurrencyCode, Double>> {
         val now = OffsetDateTime.now()

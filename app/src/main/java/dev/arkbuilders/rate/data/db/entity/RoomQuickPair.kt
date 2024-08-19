@@ -15,5 +15,5 @@ data class RoomQuickPair(
     val to: List<Amount>,
     val calculatedDate: OffsetDateTime,
     val pinnedDate: OffsetDateTime?,
-    val group: String?
+    val group: String?,
 )

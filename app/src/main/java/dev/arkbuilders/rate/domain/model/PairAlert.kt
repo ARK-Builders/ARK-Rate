@@ -12,9 +12,11 @@ data class PairAlert(
     val oneTimeNotRecurrent: Boolean,
     val enabled: Boolean,
     val lastDateTriggered: OffsetDateTime?,
-    val group: String?
+    val group: String?,
 ) {
     fun above() = targetPrice > startPrice
+
     fun triggered() = lastDateTriggered != null
+
     fun byPriceStep() = targetPrice - startPrice
 }

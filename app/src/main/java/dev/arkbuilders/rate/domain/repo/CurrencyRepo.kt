@@ -24,7 +24,7 @@ interface CurrencyRepo {
             ifRight = { names ->
                 val name = names.find { name -> name.code == code }
                 return name?.right() ?: IllegalStateException().left()
-            }
+            },
         )
 
     suspend fun nameByCodeUnsafe(code: CurrencyCode) = nameByCode(code).getOrNull()!!

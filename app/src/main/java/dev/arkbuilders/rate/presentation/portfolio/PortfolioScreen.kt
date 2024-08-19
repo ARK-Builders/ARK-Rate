@@ -26,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -80,18 +79,21 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                 snackState.showSnackbar(effect.visuals)
 
             is PortfolioScreenEffect.ShowRemovedSnackbar -> {
-                val removed = CurrUtils.prepareToDisplay(effect.asset.value) +
+                val removed =
+                    CurrUtils.prepareToDisplay(effect.asset.value) +
                         " ${effect.asset.code}"
-                val visuals = NotifyRemovedSnackbarVisuals(
-                    title = ctx.getString(R.string.portfolio_snackbar_removed_title),
-                    description = ctx.getString(
-                        R.string.portfolio_snackbar_removed_desc,
-                        removed
-                    ),
-                    onUndo = {
-                        viewModel.undoDelete(effect.asset)
-                    }
-                )
+                val visuals =
+                    NotifyRemovedSnackbarVisuals(
+                        title = ctx.getString(R.string.portfolio_snackbar_removed_title),
+                        description =
+                            ctx.getString(
+                                R.string.portfolio_snackbar_removed_desc,
+                                removed,
+                            ),
+                        onUndo = {
+                            viewModel.undoDelete(effect.asset)
+                        },
+                    )
                 snackState.showSnackbar(visuals)
             }
         }
@@ -113,51 +115,55 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                 shape = CircleShape,
                 onClick = {
                     navigator.navigate(AddAssetScreenDestination)
-                }
+                },
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
             }
         },
         snackbarHost = {
             RateSnackbarHost(snackState)
-        }
+        },
     ) {
         Box(modifier = Modifier.padding(it)) {
             when {
                 state.noInternet -> NoInternetScreen(viewModel::onRefreshClick)
                 state.initialized.not() -> LoadingScreen()
                 isEmpty -> PortfolioEmpty(navigator)
-                else -> Content(
-                    state,
-                    onClick = { display ->
-                        navigator.navigate(EditAssetScreenDestination(display.asset.id))
-                    },
-                    onFilterChange = viewModel::onFilterChange,
-                    onDelete = viewModel::onAssetRemove
-                )
+                else ->
+                    Content(
+                        state,
+                        onClick = { display ->
+                            navigator.navigate(EditAssetScreenDestination(display.asset.id))
+                        },
+                        onFilterChange = viewModel::onFilterChange,
+                        onDelete = viewModel::onAssetRemove,
+                    )
             }
         }
     }
 }
 
-private val previewPortfolioAmount = PortfolioDisplayAsset(
-    Asset(code = "EUR", value = 1100.2),
-    Amount(code = "USD", value = 1200.0),
-    ratioToBase = 1.1
-)
-
-private val previewState = PortfolioScreenState(
-    pages = listOf(
-        PortfolioScreenPage(
-            "Group1",
-            listOf(previewPortfolioAmount, previewPortfolioAmount)
-        ),
-        PortfolioScreenPage(
-            "Group2",
-            listOf(previewPortfolioAmount, previewPortfolioAmount)
-        )
+private val previewPortfolioAmount =
+    PortfolioDisplayAsset(
+        Asset(code = "EUR", value = 1100.2),
+        Amount(code = "USD", value = 1200.0),
+        ratioToBase = 1.1,
     )
-)
+
+private val previewState =
+    PortfolioScreenState(
+        pages =
+            listOf(
+                PortfolioScreenPage(
+                    "Group1",
+                    listOf(previewPortfolioAmount, previewPortfolioAmount),
+                ),
+                PortfolioScreenPage(
+                    "Group2",
+                    listOf(previewPortfolioAmount, previewPortfolioAmount),
+                ),
+            ),
+    )
 
 @Preview(showBackground = true)
 @Composable
@@ -165,19 +171,20 @@ private fun Content(
     state: PortfolioScreenState = previewState,
     onClick: (PortfolioDisplayAsset) -> Unit = {},
     onFilterChange: (String) -> Unit = {},
-    onDelete: (Asset) -> Unit = {}
+    onDelete: (Asset) -> Unit = {},
 ) {
     val groups = state.pages.map { it.group }
     Column {
         SearchTextField(
-            modifier = Modifier.padding(
-                top = 16.dp,
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 16.dp
-            ),
+            modifier =
+                Modifier.padding(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 16.dp,
+                ),
             text = state.filter,
-            onValueChange = onFilterChange
+            onValueChange = onFilterChange,
         )
         if (state.pages.size == 1) {
             GroupPage(
@@ -185,19 +192,19 @@ private fun Content(
                 baseCode = state.baseCode,
                 amounts = state.pages.first().assets,
                 onClick = onClick,
-                onDelete = onDelete
+                onDelete = onDelete,
             )
         } else {
             GroupViewPager(
                 modifier = Modifier.padding(top = 20.dp),
-                groups = groups
+                groups = groups,
             ) { index ->
                 GroupPage(
                     filter = state.filter,
                     baseCode = state.baseCode,
                     amounts = state.pages[index].assets,
                     onClick = onClick,
-                    onDelete = onDelete
+                    onDelete = onDelete,
                 )
             }
         }
@@ -210,17 +217,18 @@ private fun GroupPage(
     baseCode: CurrencyCode,
     amounts: List<PortfolioDisplayAsset>,
     onClick: (PortfolioDisplayAsset) -> Unit = {},
-    onDelete: (Asset) -> Unit
+    onDelete: (Asset) -> Unit,
 ) {
-    val total = amounts.fold(0.0) { acc, amount ->
-        acc + amount.baseAmount.value
-    }
+    val total =
+        amounts.fold(0.0) { acc, amount ->
+            acc + amount.baseAmount.value
+        }
     val filtered =
         amounts.filter { it.asset.code.contains(filter, ignoreCase = true) }
     if (filtered.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (filter.isEmpty()) {
                 item {
@@ -228,7 +236,7 @@ private fun GroupPage(
                         modifier = Modifier.padding(top = 32.dp),
                         text = stringResource(R.string.portfolio_total_assets),
                         color = ArkColor.TextTertiary,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
                     )
                     Row(modifier = Modifier.padding(top = 8.dp)) {
                         Text(
@@ -236,14 +244,14 @@ private fun GroupPage(
                             text = CurrUtils.prepareToDisplay(total),
                             color = ArkColor.TextPrimary,
                             fontWeight = FontWeight.SemiBold,
-                            fontSize = 36.sp
+                            fontSize = 36.sp,
                         )
                         Text(
                             modifier = Modifier.padding(start = 2.dp, top = 2.dp),
                             text = CurrUtils.getSymbolOrCode(baseCode),
                             color = ArkColor.TextPrimary,
                             fontWeight = FontWeight.SemiBold,
-                            fontSize = 20.sp
+                            fontSize = 20.sp,
                         )
                     }
                     AppHorDiv16(Modifier.padding(top = 32.dp))
@@ -252,7 +260,7 @@ private fun GroupPage(
             items(filtered, key = { it.asset.id }) {
                 AppSwipeToDismiss(
                     content = { CurrencyItem(it, onClick = onClick) },
-                    onDelete = { onDelete(it.asset) }
+                    onDelete = { onDelete(it.asset) },
                 )
                 AppHorDiv16()
             }
@@ -269,59 +277,61 @@ private fun CurrencyItem(
     onClick: (PortfolioDisplayAsset) -> Unit = {},
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .clickable {
-                onClick(amount)
-            }
-            .padding(horizontal = 24.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .clickable {
+                    onClick(amount)
+                }
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         CurrIcon(modifier = Modifier.size(40.dp), code = amount.asset.code)
         Column(
             modifier = Modifier.padding(start = 12.dp),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
                     text = amount.asset.code,
                     fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary
+                    color = ArkColor.TextPrimary,
                 )
                 Text(
-                    text = "${CurrUtils.prepareToDisplay(amount.baseAmount.value)} ${amount.baseAmount.code}",
+                    text = "${CurrUtils.prepareToDisplay(
+                        amount.baseAmount.value,
+                    )} ${amount.baseAmount.code}",
                     fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary
+                    color = ArkColor.TextPrimary,
                 )
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
                     text = CurrUtils.prepareToDisplay(amount.ratioToBase),
-                    color = ArkColor.TextTertiary
+                    color = ArkColor.TextTertiary,
                 )
                 Text(
                     text = "${CurrUtils.prepareToDisplay(amount.asset.value)} ${amount.asset.code}",
-                    color = ArkColor.TextTertiary
+                    color = ArkColor.TextTertiary,
                 )
             }
         }
     }
 }
 
-
 @Composable
 private fun PortfolioEmpty(navigator: DestinationsNavigator) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_empty_portfolio),
@@ -333,7 +343,7 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
                 text = stringResource(R.string.portfolio_empty_title),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
-                color = ArkColor.TextPrimary
+                color = ArkColor.TextPrimary,
             )
             Text(
                 modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
@@ -341,21 +351,21 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 color = ArkColor.TextTertiary,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             AppButton(
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {
                     navigator.navigate(AddAssetScreenDestination)
-                }
+                },
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_add),
-                    contentDescription = ""
+                    contentDescription = "",
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(R.string.new_asset)
+                    text = stringResource(R.string.new_asset),
                 )
             }
         }

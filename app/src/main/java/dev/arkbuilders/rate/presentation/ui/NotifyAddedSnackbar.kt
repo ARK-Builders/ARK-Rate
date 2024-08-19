@@ -13,8 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +29,7 @@ import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 class NotifyAddedSnackbarVisuals(
     val title: String,
-    val description: String
+    val description: String,
 ) : SnackbarVisuals {
     override val actionLabel = ""
     override val duration = SnackbarDuration.Long
@@ -42,62 +40,67 @@ class NotifyAddedSnackbarVisuals(
 @Preview(showBackground = true)
 @Composable
 fun NotifyAddedSnackbarContent(
-    visuals: NotifyAddedSnackbarVisuals = NotifyAddedSnackbarVisuals(
-        "Title",
-        "Desc"
-    ),
-    onDismiss: () -> Unit = {}
+    visuals: NotifyAddedSnackbarVisuals =
+        NotifyAddedSnackbarVisuals(
+            "Title",
+            "Desc",
+        ),
+    onDismiss: () -> Unit = {},
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .background(Color.White, RoundedCornerShape(12.dp))
-            .border(1.dp, ArkColor.Border, RoundedCornerShape(12.dp))
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { }
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .background(Color.White, RoundedCornerShape(12.dp))
+                .border(1.dp, ArkColor.Border, RoundedCornerShape(12.dp))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) { },
     ) {
         Icon(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(top = 7.dp, start = 7.dp),
+            modifier =
+                Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 7.dp, start = 7.dp),
             painter = painterResource(id = R.drawable.ic_snackbar_done),
             contentDescription = "",
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
         )
         IconButton(
-            modifier = Modifier
-                .size(36.dp)
-                .padding(top = 8.dp, end = 8.dp)
-                .align(Alignment.TopEnd),
-            onClick = { onDismiss() }
+            modifier =
+                Modifier
+                    .size(36.dp)
+                    .padding(top = 8.dp, end = 8.dp)
+                    .align(Alignment.TopEnd),
+            onClick = { onDismiss() },
         ) {
             Icon(
                 modifier = Modifier,
                 painter = painterResource(id = R.drawable.ic_close),
                 contentDescription = "",
-                tint = ArkColor.FGQuinary
+                tint = ArkColor.FGQuinary,
             )
         }
         Column(
-            modifier = Modifier.padding(
-                top = 52.dp,
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 16.dp
-            )
+            modifier =
+                Modifier.padding(
+                    top = 52.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 16.dp,
+                ),
         ) {
             Text(
                 text = visuals.title,
                 fontWeight = FontWeight.SemiBold,
-                color = ArkColor.TextPrimary
+                color = ArkColor.TextPrimary,
             )
             Text(
                 modifier = Modifier.padding(top = 4.dp),
                 text = visuals.description,
-                color = ArkColor.TextSecondary
+                color = ArkColor.TextSecondary,
             )
         }
     }

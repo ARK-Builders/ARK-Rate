@@ -10,12 +10,15 @@ import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.presentation.utils.IconUtils
 
 @Composable
-fun CurrIcon(modifier: Modifier = Modifier, code: CurrencyCode) {
+fun CurrIcon(
+    modifier: Modifier = Modifier,
+    code: CurrencyCode,
+) {
     val ctx = LocalContext.current
     Icon(
         modifier = modifier,
         painter = painterResource(id = IconUtils.iconForCurrCode(ctx, code)),
         contentDescription = code,
-        tint = Color.Unspecified
+        tint = Color.Unspecified,
     )
 }

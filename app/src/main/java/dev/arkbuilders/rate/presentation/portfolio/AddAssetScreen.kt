@@ -3,20 +3,31 @@ package dev.arkbuilders.rate.presentation.portfolio
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,7 +36,6 @@ import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +50,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.model.AmountStr
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
@@ -49,7 +58,6 @@ import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.BasicTextFieldPlaceholder
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
@@ -60,9 +68,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Destination
 @Composable
-fun AddAssetScreen(
-    navigator: DestinationsNavigator,
-) {
+fun AddAssetScreen(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current
     val viewModel: AddAssetViewModel =
         viewModel(factory = DIManager.component.addCurrencyVMFactory())
@@ -73,18 +79,19 @@ fun AddAssetScreen(
         when (effect) {
             AddAssetSideEffect.NavigateBack -> navigator.popBackStack()
             is AddAssetSideEffect.NotifyAssetAdded -> {
-                val added = effect.amounts
-                    .joinToString {
-                        "${CurrUtils.prepareToDisplay(it.value)} ${it.code}"
-                    }
+                val added =
+                    effect.amounts
+                        .joinToString {
+                            "${CurrUtils.prepareToDisplay(it.value)} ${it.code}"
+                        }
                 AppSharedFlow.ShowAddedSnackbarPortfolio.flow.emit(
                     NotifyAddedSnackbarVisuals(
                         ctx.getString(R.string.portfolio_snackbar_new_title),
                         ctx.getString(
                             R.string.portfolio_snackbar_new_desc,
-                            added
-                        )
-                    )
+                            added,
+                        ),
+                    ),
                 )
             }
         }
@@ -94,9 +101,9 @@ fun AddAssetScreen(
         topBar = {
             AppTopBarBack(
                 title = stringResource(R.string.add_new_asset),
-                navigator = navigator
+                navigator = navigator,
             )
-        }
+        },
     ) {
         Box(modifier = Modifier.padding(it)) {
             Content(
@@ -106,8 +113,8 @@ fun AddAssetScreen(
                 onNewCurrencyClick = {
                     navigator.navigate(
                         SearchCurrencyScreenDestination(
-                            AppSharedFlowKey.AddAsset.toString()
-                        )
+                            AppSharedFlowKey.AddAsset.toString(),
+                        ),
                     )
                 },
                 onAssetRemove = viewModel::onAssetRemove,
@@ -116,11 +123,11 @@ fun AddAssetScreen(
                     navigator.navigate(
                         SearchCurrencyScreenDestination(
                             AppSharedFlowKey.SetAssetCode.name,
-                            it
-                        )
+                            it,
+                        ),
                     )
                 },
-                onAddAsset = viewModel::onAddAsset
+                onAddAsset = viewModel::onAddAsset,
             )
         }
     }
@@ -136,7 +143,7 @@ private fun Content(
     onAssetRemove: (Int) -> Unit = {},
     onGroupSelect: (String) -> Unit = {},
     onCodeChange: (Int) -> Unit = {},
-    onAddAsset: () -> Unit = {}
+    onAddAsset: () -> Unit = {},
 ) {
     var showNewGroupDialog by remember { mutableStateOf(false) }
     var showGroupsPopup by remember { mutableStateOf(false) }
@@ -150,21 +157,23 @@ private fun Content(
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
         ) {
             Currencies(state, onAssetValueChanged, onAssetRemove, onCodeChange)
             Button(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, ArkColor.Border),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = ArkColor.FGSecondary,
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = ArkColor.FGSecondary,
+                    ),
                 onClick = { onNewCurrencyClick() },
-                contentPadding = PaddingValues(0.dp)
+                contentPadding = PaddingValues(0.dp),
             ) {
                 Icon(
                     modifier = Modifier.padding(start = 20.dp),
@@ -172,47 +181,51 @@ private fun Content(
                     contentDescription = "",
                 )
                 Text(
-                    modifier = Modifier.padding(
-                        start = 8.dp,
-                        top = 10.dp,
-                        bottom = 10.dp,
-                        end = 18.dp
-                    ),
+                    modifier =
+                        Modifier.padding(
+                            start = 8.dp,
+                            top = 10.dp,
+                            bottom = 10.dp,
+                            end = 18.dp,
+                        ),
                     text = stringResource(R.string.new_currency),
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
                 )
             }
             DropDownWithIcon(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                    .onPlaced {
-                        addGroupBtnWidth = it.size.width
-                    },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                        .onPlaced {
+                            addGroupBtnWidth = it.size.width
+                        },
                 onClick = { showGroupsPopup = true },
-                title = state.group?.let { state.group }
-                    ?: stringResource(R.string.add_group),
-                icon = painterResource(id = R.drawable.ic_group)
+                title =
+                    state.group?.let { state.group }
+                        ?: stringResource(R.string.add_group),
+                icon = painterResource(id = R.drawable.ic_group),
             )
             if (showGroupsPopup) {
                 Box(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 4.dp
-                    )
+                    modifier =
+                        Modifier.padding(
+                            start = 16.dp,
+                            top = 4.dp,
+                        ),
                 ) {
                     Popup(
                         offset = IntOffset(0, 0),
                         properties = PopupProperties(),
-                        onDismissRequest = { showGroupsPopup = false }
+                        onDismissRequest = { showGroupsPopup = false },
                     ) {
                         GroupSelectPopup(
                             groups = state.availableGroups,
                             widthPx = addGroupBtnWidth,
                             onGroupSelect = { onGroupSelect(it) },
                             onNewGroupClick = { showNewGroupDialog = true },
-                            onDismiss = { showGroupsPopup = false }
+                            onDismiss = { showGroupsPopup = false },
                         )
                     }
                 }
@@ -221,9 +234,10 @@ private fun Content(
         Column {
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
             AppButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                 onClick = {
                     onAddAsset()
                 },
@@ -247,7 +261,7 @@ private fun Currencies(
             amount,
             onAssetValueChanged,
             onAssetRemove,
-            onCodeChange
+            onCodeChange,
         )
     }
 }
@@ -258,39 +272,41 @@ fun InputCurrency(
     amount: AmountStr,
     onAssetValueChanged: (Int, String) -> Unit,
     onAssetRemove: (Int) -> Unit,
-    onCodeChange: (Int) -> Unit
+    onCodeChange: (Int) -> Unit,
 ) {
     Row(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
         Row(
-            modifier = Modifier
-                .weight(1f)
-                .height(44.dp)
-                .border(
-                    1.dp,
-                    ArkColor.Border,
-                    RoundedCornerShape(8.dp)
-                )
-                .clip(RoundedCornerShape(8.dp)),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .height(44.dp)
+                    .border(
+                        1.dp,
+                        ArkColor.Border,
+                        RoundedCornerShape(8.dp),
+                    )
+                    .clip(RoundedCornerShape(8.dp)),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .clip(RoundedCornerShape(8.dp))
-                    .clickable { onCodeChange(pos) },
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { onCodeChange(pos) },
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     modifier = Modifier.padding(start = 14.dp),
                     text = amount.code,
                     fontSize = 16.sp,
-                    color = ArkColor.TextSecondary
+                    color = ArkColor.TextSecondary,
                 )
                 Icon(
                     modifier = Modifier.padding(start = 9.dp, end = 5.dp),
                     painter = painterResource(R.drawable.ic_chevron),
                     contentDescription = "",
-                    tint = ArkColor.FGQuinary
+                    tint = ArkColor.FGQuinary,
                 )
             }
             BasicTextFieldPlaceholder(
@@ -298,28 +314,30 @@ fun InputCurrency(
                 value = amount.value,
                 onValueChange = { onAssetValueChanged(pos, it) },
                 placeholder = stringResource(R.string.input_value),
-                keyboardOptions = KeyboardOptions.Default
-                    .copy(keyboardType = KeyboardType.Number)
+                keyboardOptions =
+                    KeyboardOptions.Default
+                        .copy(keyboardType = KeyboardType.Number),
             )
         }
 
         Box(
-            modifier = Modifier
-                .padding(start = 16.dp)
-                .size(44.dp)
-                .border(
-                    1.dp,
-                    ArkColor.Border,
-                    RoundedCornerShape(8.dp)
-                )
-                .clip(RoundedCornerShape(8.dp))
-                .clickable { onAssetRemove(pos) },
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .padding(start = 16.dp)
+                    .size(44.dp)
+                    .border(
+                        1.dp,
+                        ArkColor.Border,
+                        RoundedCornerShape(8.dp),
+                    )
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onAssetRemove(pos) },
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_delete),
                 contentDescription = "",
-                tint = ArkColor.FGSecondary
+                tint = ArkColor.FGSecondary,
             )
         }
     }

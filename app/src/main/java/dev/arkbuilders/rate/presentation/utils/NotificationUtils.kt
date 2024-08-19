@@ -20,54 +20,56 @@ object NotificationUtils {
     fun showPairAlert(
         pairAlert: PairAlert,
         curRatio: Double,
-        ctx: Context
+        ctx: Context,
     ) {
         val pair = pairAlert
-        val aboveOrBelow = if (pair.above()) ctx.getString(R.string.above)
-        else ctx.getString(R.string.below)
+        val aboveOrBelow =
+            if (pair.above())
+                ctx.getString(R.string.above)
+            else
+                ctx.getString(R.string.below)
 
         val title = ctx.getString(R.string.alert_notification_title)
-        val builder = NotificationCompat.Builder(ctx, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notifications)
-            .setContentTitle(title)
-            .setContentText(
-                ctx.getString(
-                    R.string.alert_notification_desc,
-                    pair.targetCode,
-                    aboveOrBelow,
-                    pair.targetPrice.toString(),
-                    pair.baseCode
+        val builder =
+            NotificationCompat.Builder(ctx, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle(title)
+                .setContentText(
+                    ctx.getString(
+                        R.string.alert_notification_desc,
+                        pair.targetCode,
+                        aboveOrBelow,
+                        pair.targetPrice.toString(),
+                        pair.baseCode,
+                    ),
                 )
-            )
-            .setContentIntent(appIntent(ctx))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(appIntent(ctx))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         createNotificationChannel(ctx)
 
         with(NotificationManagerCompat.from(ctx)) {
-
             if (ActivityCompat.checkSelfPermission(
                     ctx,
-                    Manifest.permission.POST_NOTIFICATIONS
+                    Manifest.permission.POST_NOTIFICATIONS,
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 notify(pairAlert.id.toInt(), builder.build())
             }
-
         }
     }
 
-
     private fun appIntent(ctx: Context): PendingIntent {
-        val intent = Intent(ctx, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
+        val intent =
+            Intent(ctx, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
 
         return PendingIntent.getActivity(
             ctx,
             0,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE,
         )
     }
 
@@ -77,10 +79,11 @@ object NotificationUtils {
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID, name, importance)
 
-            val manager = ContextCompat.getSystemService(
-                ctx,
-                android.app.NotificationManager::class.java
-            )
+            val manager =
+                ContextCompat.getSystemService(
+                    ctx,
+                    android.app.NotificationManager::class.java,
+                )
             channel.enableVibration(true)
             manager?.createNotificationChannel(channel)
         }

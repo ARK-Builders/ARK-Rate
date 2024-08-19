@@ -9,20 +9,21 @@ import dev.arkbuilders.rate.domain.usecase.HandlePairAlertCheckUseCase
 
 class CurrencyMonitorWorkerFactory(
     private val handlePairAlertCheckUseCase: HandlePairAlertCheckUseCase,
-    private val timestampRepo: TimestampRepo
+    private val timestampRepo: TimestampRepo,
 ) : WorkerFactory() {
     override fun createWorker(
         appContext: Context,
         workerClassName: String,
-        workerParameters: WorkerParameters
+        workerParameters: WorkerParameters,
     ): ListenableWorker? {
         return when (workerClassName) {
-            CurrencyMonitorWorker::class.java.name -> CurrencyMonitorWorker(
-                appContext,
-                workerParameters,
-                handlePairAlertCheckUseCase,
-                timestampRepo
-            )
+            CurrencyMonitorWorker::class.java.name ->
+                CurrencyMonitorWorker(
+                    appContext,
+                    workerParameters,
+                    handlePairAlertCheckUseCase,
+                    timestampRepo,
+                )
 
             else -> null
         }
