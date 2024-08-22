@@ -1,9 +1,11 @@
 package dev.arkbuilders.rate.data.worker
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.appwidget.updateAll
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -46,6 +48,7 @@ class RatesRefreshWorker(
                     )
                 }
             }
+            QuickPairsWidget().updateAll(context)
         }
         return Result.success()
     }
