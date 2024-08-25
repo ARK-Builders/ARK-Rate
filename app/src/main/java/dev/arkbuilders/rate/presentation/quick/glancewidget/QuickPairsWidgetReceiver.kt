@@ -110,6 +110,6 @@ class QuickPairsWidgetReceiver(
 
     companion object {
         val quickDisplayPairs = stringPreferencesKey("quick_pair_display")
-        val ratesLatestRefresh = "RATES_REFRESH"
+        const val ratesLatestRefresh = "RATES_REFRESH"
     }
 }
