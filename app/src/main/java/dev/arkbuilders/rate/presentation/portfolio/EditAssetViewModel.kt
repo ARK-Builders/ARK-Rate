@@ -7,9 +7,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.CurrUtils
+import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyName
-import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
@@ -31,7 +31,7 @@ data class EditAssetScreenState(
     val asset: Asset = Asset.EMPTY,
     val name: CurrencyName = CurrencyName.EMPTY,
     val value: String = "",
-    val initialized: Boolean = false
+    val initialized: Boolean = false,
 )
 
 sealed class EditAssetScreenEffect
@@ -43,9 +43,8 @@ class EditAssetViewModel(
     private val currencyRepo: CurrencyRepo,
     private val assetsRepo: PortfolioRepo,
     private val prefs: Prefs,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<EditAssetScreenState, EditAssetScreenEffect> {
-
     override val container: Container<EditAssetScreenState, EditAssetScreenEffect> =
         container(EditAssetScreenState())
 
@@ -72,13 +71,14 @@ class EditAssetViewModel(
         }.launchIn(viewModelScope)
     }
 
-    fun onValueChange(input: String) = blockingIntent {
-        val validated = CurrUtils.validateInput(state.value, input)
-        inputFlow.emit(validated)
-        reduce {
-            state.copy(value = validated)
+    fun onValueChange(input: String) =
+        blockingIntent {
+            val validated = CurrUtils.validateInput(state.value, input)
+            inputFlow.emit(validated)
+            reduce {
+                state.copy(value = validated)
+            }
         }
-    }
 }
 
 class EditAssetViewModelFactory @AssistedInject constructor(
@@ -86,7 +86,7 @@ class EditAssetViewModelFactory @AssistedInject constructor(
     private val currencyRepo: CurrencyRepo,
     private val assetsRepo: PortfolioRepo,
     private val prefs: Prefs,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return EditAssetViewModel(
@@ -94,7 +94,7 @@ class EditAssetViewModelFactory @AssistedInject constructor(
             currencyRepo,
             assetsRepo,
             prefs,
-            analyticsManager
+            analyticsManager,
         ) as T
     }
 

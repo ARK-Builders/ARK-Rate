@@ -13,9 +13,8 @@ import javax.inject.Singleton
 
 @Singleton
 class CodeUseStatRepoImpl @Inject constructor(
-    private val dao: CodeUseStatDao
+    private val dao: CodeUseStatDao,
 ) : CodeUseStatRepo {
-
     override suspend fun codesUsed(vararg codes: CurrencyCode) {
         codes.forEach { code ->
             val old = dao.getByCode(code)?.toCodeUseStat()
@@ -27,18 +26,14 @@ class CodeUseStatRepoImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAll(): List<CodeUseStat> =
-        dao.getAll().map { it.toCodeUseStat() }
+    override suspend fun getAll(): List<CodeUseStat> = dao.getAll().map { it.toCodeUseStat() }
 
     override fun getAllFlow(): Flow<List<CodeUseStat>> =
         dao.getAllFlow().map { list ->
             list.map { it.toCodeUseStat() }
         }
-
 }
 
-private fun RoomCodeUseStat.toCodeUseStat() =
-    CodeUseStat(code, count, lastUsedDate)
+private fun RoomCodeUseStat.toCodeUseStat() = CodeUseStat(code, count, lastUsedDate)
 
-private fun CodeUseStat.toRoom() =
-    RoomCodeUseStat(code, count, lastUsedDate)
+private fun CodeUseStat.toRoom() = RoomCodeUseStat(code, count, lastUsedDate)

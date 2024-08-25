@@ -15,15 +15,16 @@ import javax.inject.Singleton
 
 @Singleton
 class AnalyticsManagerImpl @Inject constructor(
-    private val prefs: Prefs
+    private val prefs: Prefs,
 ) : AnalyticsManager {
     private val scope = CoroutineScope(Dispatchers.IO)
 
-    override fun trackScreen(name: String) = needToCollect {
-        Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-            param(FirebaseAnalytics.Param.SCREEN_NAME, name)
+    override fun trackScreen(name: String) =
+        needToCollect {
+            Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+                param(FirebaseAnalytics.Param.SCREEN_NAME, name)
+            }
         }
-    }
 
     private fun needToCollect(action: () -> Unit) {
         scope.launch {

@@ -8,5 +8,5 @@ import java.time.OffsetDateTime
 data class RoomFetchTimestamp(
     @PrimaryKey
     val type: String,
-    val timestamp: OffsetDateTime
+    val timestamp: OffsetDateTime,
 )

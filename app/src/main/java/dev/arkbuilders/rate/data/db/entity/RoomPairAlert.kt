@@ -17,5 +17,5 @@ data class RoomPairAlert(
     val oneTimeNotRecurrent: Boolean,
     val enabled: Boolean,
     val lastDateTriggered: OffsetDateTime?,
-    val group: String?
+    val group: String?,
 )

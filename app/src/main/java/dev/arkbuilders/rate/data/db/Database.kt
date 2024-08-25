@@ -24,7 +24,7 @@ import dev.arkbuilders.rate.data.db.typeconverters.OffsetDateTimeTypeConverter
         RoomFetchTimestamp::class,
         RoomPairAlert::class,
         RoomQuickPair::class,
-        RoomCodeUseStat::class
+        RoomCodeUseStat::class,
     ],
     version = 13,
     exportSchema = true,
@@ -32,10 +32,15 @@ import dev.arkbuilders.rate.data.db.typeconverters.OffsetDateTimeTypeConverter
 @TypeConverters(ListAmountTypeConverter::class, OffsetDateTimeTypeConverter::class)
 abstract class Database : RoomDatabase() {
     abstract fun assetsDao(): PortfolioDao
+
     abstract fun rateDao(): CurrencyRateDao
+
     abstract fun fetchTimestampDao(): TimestampDao
+
     abstract fun pairAlertDao(): PairAlertDao
+
     abstract fun quickDao(): QuickPairDao
+
     abstract fun codeUseStatDao(): CodeUseStatDao
 
     companion object {

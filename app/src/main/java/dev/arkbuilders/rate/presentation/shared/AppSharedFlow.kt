@@ -3,10 +3,10 @@ package dev.arkbuilders.rate.presentation.shared
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 
 sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {
     data object AddPairAlertTarget : AppSharedFlow<CurrencyCode>(MutableSharedFlow())
+
     data object AddPairAlertBase : AppSharedFlow<CurrencyCode>(MutableSharedFlow())
 
     data object SetAssetCode :
@@ -33,5 +33,11 @@ sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {
 }
 
 enum class AppSharedFlowKey {
-    AddPairAlertTarget, AddPairAlertBase, SetAssetCode, AddAsset, SetQuickCode, AddQuickCode, PickBaseCurrency
+    AddPairAlertTarget,
+    AddPairAlertBase,
+    SetAssetCode,
+    AddAsset,
+    SetQuickCode,
+    AddQuickCode,
+    PickBaseCurrency,
 }

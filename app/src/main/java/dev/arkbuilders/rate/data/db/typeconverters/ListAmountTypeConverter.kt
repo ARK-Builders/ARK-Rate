@@ -4,7 +4,6 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dev.arkbuilders.rate.domain.model.Amount
-import java.sql.Types
 
 class ListAmountTypeConverter {
     @TypeConverter
@@ -12,6 +11,7 @@ class ListAmountTypeConverter {
         val type = object : TypeToken<List<Amount>>() {}.type
         return Gson().toJson(list, type)
     }
+
     @TypeConverter
     fun toListAmount(list: String): List<Amount> {
         val type = object : TypeToken<List<Amount>>() {}.type

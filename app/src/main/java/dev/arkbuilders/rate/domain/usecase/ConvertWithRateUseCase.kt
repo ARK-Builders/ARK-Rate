@@ -15,13 +15,13 @@ import javax.inject.Singleton
 
 @Singleton
 class ConvertWithRateUseCase @Inject constructor(
-    private val currencyRepo: CurrencyRepo
+    private val currencyRepo: CurrencyRepo,
 ) {
     suspend operator fun invoke(
         fromCode: CurrencyCode,
         fromValue: Double,
         toCode: CurrencyCode,
-        _rates: Map<CurrencyCode, CurrencyRate>? = null
+        _rates: Map<CurrencyCode, CurrencyRate>? = null,
     ): Pair<Amount, Double> {
         val rates = _rates ?: currencyRepo.getCodeToCurrencyRate().getOrNull()!!
         val toRate =
@@ -33,6 +33,6 @@ class ConvertWithRateUseCase @Inject constructor(
     suspend operator fun invoke(
         from: Amount,
         toCode: CurrencyCode,
-        _rates: Map<CurrencyCode, CurrencyRate>? = null
+        _rates: Map<CurrencyCode, CurrencyRate>? = null,
     ) = invoke(from.code, from.value, toCode, _rates)
 }

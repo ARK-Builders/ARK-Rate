@@ -1,6 +1,5 @@
 package dev.arkbuilders.rate.presentation.pairalert
 
-import android.icu.util.Currency
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -9,9 +8,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.CurrUtils
+import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.PairAlert
-import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
@@ -38,12 +37,12 @@ data class AddPairAlertScreenState(
     val oneTimeNotRecurrent: Boolean = true,
     val availableGroups: List<String> = emptyList(),
     val finishEnabled: Boolean = true,
-    val editExisting: Boolean = false
+    val editExisting: Boolean = false,
 )
-
 
 sealed class AddPairAlertScreenEffect {
     data object NavigateBack : AddPairAlertScreenEffect()
+
     class NotifyPairAdded(val pair: PairAlert) : AddPairAlertScreenEffect()
 }
 
@@ -53,7 +52,7 @@ class AddPairAlertViewModel(
     private val pairAlertRepo: PairAlertRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<AddPairAlertScreenState, AddPairAlertScreenEffect> {
     override val container: Container<AddPairAlertScreenState, AddPairAlertScreenEffect> =
         container(AddPairAlertScreenState())
@@ -76,7 +75,6 @@ class AddPairAlertViewModel(
             }
         } ?: initOnCodeChange()
 
-
         intent {
             val groups =
                 pairAlertRepo.getAll().mapNotNull { it.group }.distinct()
@@ -88,21 +86,23 @@ class AddPairAlertViewModel(
 
     private fun initOnCodeChange(
         newTarget: CurrencyCode? = null,
-        newBase: CurrencyCode? = null
+        newBase: CurrencyCode? = null,
     ) {
         intent {
             val target = newTarget ?: state.targetCode
             val base = newBase ?: state.baseCode
-            val (_, currentPrice) = convertUseCase(
-                fromCode = target,
-                fromValue = 1.0,
-                toCode = base
-            )
-            val newState = state.copy(
-                currentPrice = currentPrice,
-                targetCode = target,
-                baseCode = base
-            )
+            val (_, currentPrice) =
+                convertUseCase(
+                    fromCode = target,
+                    fromValue = 1.0,
+                    toCode = base,
+                )
+            val newState =
+                state.copy(
+                    currentPrice = currentPrice,
+                    targetCode = target,
+                    baseCode = base,
+                )
             val priceOrPercent = calcNewPriceOrPercent(newState)
 
             reduce {
@@ -112,153 +112,171 @@ class AddPairAlertViewModel(
         }
     }
 
-    fun onPriceOrPercentInputChanged(input: String) = blockingIntent {
-        state.priceOrPercent.fold(
-            ifLeft = { handlePriceChanged(input) },
-            ifRight = { handlePercentChanged(input) }
-        )
-        checkFinishEnabled()
-    }
-
-    fun onPriceOrPercentChanged(priceNotPercent: Boolean) = intent {
-        reduce {
-            val newState = state.copy(
-                priceOrPercent = if (priceNotPercent)
-                    Either.Left("")
-                else
-                    Either.Right("")
+    fun onPriceOrPercentInputChanged(input: String) =
+        blockingIntent {
+            state.priceOrPercent.fold(
+                ifLeft = { handlePriceChanged(input) },
+                ifRight = { handlePercentChanged(input) },
             )
-            val newPriceOrPercent = calcNewPriceOrPercent(newState)
-            newState.copy(priceOrPercent = newPriceOrPercent)
+            checkFinishEnabled()
         }
-        checkAboveNotBelow()
-    }
 
-    fun onIncreaseToggle() = intent {
-        if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft())
-            return@intent
-
-        val newPriceOrPercent = state.priceOrPercent.mapLeft {
-            if (it.startsWith("-"))
-                it.replace("-", "")
-            else
-                "-$it"
-        }.map {
-            if (it.startsWith("-"))
-                it.replace("-", "")
-            else
-                "-$it"
-        }
-        reduce { state.copy(priceOrPercent = newPriceOrPercent) }
-        checkAboveNotBelow()
-    }
-
-    fun onOneTimeChanged(oneTimeNotRecurrent: Boolean) = intent {
-        reduce {
-            val newState = state.copy(oneTimeNotRecurrent = oneTimeNotRecurrent)
-            val newPriceOrPercent = calcNewPriceOrPercent(newState)
-            newState.copy(priceOrPercent = newPriceOrPercent)
-        }
-        checkAboveNotBelow()
-    }
-
-    fun onSaveClick() = intent {
-        val targetPrice = state.priceOrPercent.fold(
-            ifLeft = { price ->
-                if (state.oneTimeNotRecurrent)
-                    price.toDoubleSafe()
-                else
-                    (state.currentPrice + price.toDoubleSafe())
-            },
-            ifRight = { percent -> (state.currentPrice * (1.0 + percent.toDoubleSafe() / 100)) },
-        )
-
-        val percent = state.priceOrPercent.getOrNull()?.toDoubleSafe()
-
-        val id = if (state.editExisting) pairAlertId!! else 0
-
-        val pairAlert = PairAlert(
-            id = id,
-            targetCode = state.targetCode,
-            baseCode = state.baseCode,
-            targetPrice = targetPrice,
-            startPrice = state.currentPrice,
-            percent = percent,
-            oneTimeNotRecurrent = state.oneTimeNotRecurrent,
-            enabled = true,
-            lastDateTriggered = null,
-            group = state.group
-        )
-        pairAlertRepo.insert(pairAlert)
-        codeUseStatRepo.codesUsed(pairAlert.baseCode, pairAlert.targetCode)
-        postSideEffect(AddPairAlertScreenEffect.NotifyPairAdded(pairAlert))
-        postSideEffect(AddPairAlertScreenEffect.NavigateBack)
-    }
-
-    fun onGroupSelect(group: String?) = intent {
-        reduce { state.copy(group = group) }
-    }
-
-    private fun handlePriceChanged(input: String) = blockingIntent {
-        val newPrice = state.priceOrPercent
-            .mapLeft { oldPrice ->
-                if (state.oneTimeNotRecurrent) {
-                    CurrUtils.validateInput(
-                        oldPrice,
-                        input
+    fun onPriceOrPercentChanged(priceNotPercent: Boolean) =
+        intent {
+            reduce {
+                val newState =
+                    state.copy(
+                        priceOrPercent =
+                            if (priceNotPercent)
+                                Either.Left("")
+                            else
+                                Either.Right(""),
                     )
-                } else {
-                    CurrUtils.validateInputWithMinusChar(
-                        oldPrice,
-                        input
-                    )
-                }
+                val newPriceOrPercent = calcNewPriceOrPercent(newState)
+                newState.copy(priceOrPercent = newPriceOrPercent)
             }
-        reduce {
-            state.copy(
-                priceOrPercent = newPrice,
-            )
+            checkAboveNotBelow()
         }
-        checkAboveNotBelow()
-    }
 
-    private fun handlePercentChanged(input: String) = blockingIntent {
-        val newPercent = state.priceOrPercent
-            .map { oldPercent ->
-                CurrUtils.validateInputWithMinusChar(
-                    oldPercent,
-                    input
+    fun onIncreaseToggle() =
+        intent {
+            if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft())
+                return@intent
+
+            val newPriceOrPercent =
+                state.priceOrPercent.mapLeft {
+                    if (it.startsWith("-"))
+                        it.replace("-", "")
+                    else
+                        "-$it"
+                }.map {
+                    if (it.startsWith("-"))
+                        it.replace("-", "")
+                    else
+                        "-$it"
+                }
+            reduce { state.copy(priceOrPercent = newPriceOrPercent) }
+            checkAboveNotBelow()
+        }
+
+    fun onOneTimeChanged(oneTimeNotRecurrent: Boolean) =
+        intent {
+            reduce {
+                val newState = state.copy(oneTimeNotRecurrent = oneTimeNotRecurrent)
+                val newPriceOrPercent = calcNewPriceOrPercent(newState)
+                newState.copy(priceOrPercent = newPriceOrPercent)
+            }
+            checkAboveNotBelow()
+        }
+
+    fun onSaveClick() =
+        intent {
+            val targetPrice =
+                state.priceOrPercent.fold(
+                    ifLeft = { price ->
+                        if (state.oneTimeNotRecurrent)
+                            price.toDoubleSafe()
+                        else
+                            (state.currentPrice + price.toDoubleSafe())
+                    },
+                    ifRight = {
+                            percent ->
+                        (state.currentPrice * (1.0 + percent.toDoubleSafe() / 100))
+                    },
+                )
+
+            val percent = state.priceOrPercent.getOrNull()?.toDoubleSafe()
+
+            val id = if (state.editExisting) pairAlertId!! else 0
+
+            val pairAlert =
+                PairAlert(
+                    id = id,
+                    targetCode = state.targetCode,
+                    baseCode = state.baseCode,
+                    targetPrice = targetPrice,
+                    startPrice = state.currentPrice,
+                    percent = percent,
+                    oneTimeNotRecurrent = state.oneTimeNotRecurrent,
+                    enabled = true,
+                    lastDateTriggered = null,
+                    group = state.group,
+                )
+            pairAlertRepo.insert(pairAlert)
+            codeUseStatRepo.codesUsed(pairAlert.baseCode, pairAlert.targetCode)
+            postSideEffect(AddPairAlertScreenEffect.NotifyPairAdded(pairAlert))
+            postSideEffect(AddPairAlertScreenEffect.NavigateBack)
+        }
+
+    fun onGroupSelect(group: String?) =
+        intent {
+            reduce { state.copy(group = group) }
+        }
+
+    private fun handlePriceChanged(input: String) =
+        blockingIntent {
+            val newPrice =
+                state.priceOrPercent
+                    .mapLeft { oldPrice ->
+                        if (state.oneTimeNotRecurrent) {
+                            CurrUtils.validateInput(
+                                oldPrice,
+                                input,
+                            )
+                        } else {
+                            CurrUtils.validateInputWithMinusChar(
+                                oldPrice,
+                                input,
+                            )
+                        }
+                    }
+            reduce {
+                state.copy(
+                    priceOrPercent = newPrice,
                 )
             }
-        reduce {
-            state.copy(
-                priceOrPercent = newPercent
-            )
+            checkAboveNotBelow()
         }
-        checkAboveNotBelow()
-    }
 
-    private fun checkAboveNotBelow() = intent {
-        val aboveNotBelow = state.priceOrPercent.fold(
-            ifLeft = { price ->
-                if (state.oneTimeNotRecurrent) {
-                    price.toDoubleSafe() > state.currentPrice
-                } else {
-                    price.toDoubleSafe() > 0
-                }
-            },
-            ifRight = { percent ->
-                percent.toDoubleSafe() > 0
+    private fun handlePercentChanged(input: String) =
+        blockingIntent {
+            val newPercent =
+                state.priceOrPercent
+                    .map { oldPercent ->
+                        CurrUtils.validateInputWithMinusChar(
+                            oldPercent,
+                            input,
+                        )
+                    }
+            reduce {
+                state.copy(
+                    priceOrPercent = newPercent,
+                )
             }
-        )
-        reduce {
-            state.copy(aboveNotBelow = aboveNotBelow)
+            checkAboveNotBelow()
         }
-    }
 
-    private fun calcNewPriceOrPercent(
-        state: AddPairAlertScreenState
-    ): Either<String, String> {
+    private fun checkAboveNotBelow() =
+        intent {
+            val aboveNotBelow =
+                state.priceOrPercent.fold(
+                    ifLeft = { price ->
+                        if (state.oneTimeNotRecurrent) {
+                            price.toDoubleSafe() > state.currentPrice
+                        } else {
+                            price.toDoubleSafe() > 0
+                        }
+                    },
+                    ifRight = { percent ->
+                        percent.toDoubleSafe() > 0
+                    },
+                )
+            reduce {
+                state.copy(aboveNotBelow = aboveNotBelow)
+            }
+        }
+
+    private fun calcNewPriceOrPercent(state: AddPairAlertScreenState): Either<String, String> {
         return state.priceOrPercent
             .mapLeft { price ->
                 if (state.oneTimeNotRecurrent) {
@@ -272,52 +290,58 @@ class AddPairAlertViewModel(
             }
     }
 
-    private fun setupFromExisting() = intent {
-        val pair = pairAlertRepo.getById(pairAlertId!!)!!
+    private fun setupFromExisting() =
+        intent {
+            val pair = pairAlertRepo.getById(pairAlertId!!)!!
 
-        val priceOrPercent = pair.percent?.let { percent ->
-            Either.Right(CurrUtils.roundOff(percent))
-        } ?: let {
-            Either.Left(
-                if (pair.oneTimeNotRecurrent)
-                    CurrUtils.roundOff(pair.targetPrice)
-                else
-                    CurrUtils.roundOff(pair.byPriceStep())
-            )
+            val priceOrPercent =
+                pair.percent?.let { percent ->
+                    Either.Right(CurrUtils.roundOff(percent))
+                } ?: let {
+                    Either.Left(
+                        if (pair.oneTimeNotRecurrent)
+                            CurrUtils.roundOff(pair.targetPrice)
+                        else
+                            CurrUtils.roundOff(pair.byPriceStep()),
+                    )
+                }
+            val (_, currentPrice) =
+                convertUseCase(
+                    fromCode = pair.targetCode,
+                    fromValue = 1.0,
+                    toCode = pair.baseCode,
+                )
+            val state =
+                AddPairAlertScreenState(
+                    targetCode = pair.targetCode,
+                    baseCode = pair.baseCode,
+                    priceOrPercent = priceOrPercent,
+                    currentPrice = currentPrice,
+                    aboveNotBelow = true,
+                    group = pair.group,
+                    oneTimeNotRecurrent = pair.oneTimeNotRecurrent,
+                    editExisting = true,
+                )
+            reduce { state }
         }
-        val (_, currentPrice) = convertUseCase(
-            fromCode = pair.targetCode,
-            fromValue = 1.0,
-            toCode = pair.baseCode
-        )
-        val state = AddPairAlertScreenState(
-            targetCode = pair.targetCode,
-            baseCode = pair.baseCode,
-            priceOrPercent = priceOrPercent,
-            currentPrice = currentPrice,
-            aboveNotBelow = true,
-            group = pair.group,
-            oneTimeNotRecurrent = pair.oneTimeNotRecurrent,
-            editExisting = true
-        )
-        reduce { state }
-    }
 
-    private fun checkFinishEnabled() = intent {
-        var enabled = true
+    private fun checkFinishEnabled() =
+        intent {
+            var enabled = true
 
-        val priceOrPercentNotSuit = state.priceOrPercent.fold(
-            ifLeft = { it.toDoubleSafe() == 0.0 },
-            ifRight = { it.toDoubleSafe() == 0.0 }
-        )
-        if (priceOrPercentNotSuit)
-            enabled = false
+            val priceOrPercentNotSuit =
+                state.priceOrPercent.fold(
+                    ifLeft = { it.toDoubleSafe() == 0.0 },
+                    ifRight = { it.toDoubleSafe() == 0.0 },
+                )
+            if (priceOrPercentNotSuit)
+                enabled = false
 
-        if (state.targetCode == state.baseCode)
-            enabled = false
+            if (state.targetCode == state.baseCode)
+                enabled = false
 
-        reduce { state.copy(finishEnabled = enabled) }
-    }
+            reduce { state.copy(finishEnabled = enabled) }
+        }
 }
 
 class AddPairAlertViewModelFactory @AssistedInject constructor(
@@ -341,8 +365,6 @@ class AddPairAlertViewModelFactory @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(
-            pairAlertId: Long?,
-        ): AddPairAlertViewModelFactory
+        fun create(pairAlertId: Long?): AddPairAlertViewModelFactory
     }
 }

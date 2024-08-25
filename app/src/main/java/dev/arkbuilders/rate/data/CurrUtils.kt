@@ -41,10 +41,11 @@ object CurrUtils {
         if (fractionalPart == 0.0) {
             fractionSize = 0
         }
-        val fractionPattern = if (fractionSize == 0)
-            ""
-        else
-            "." + "#".repeat(fractionSize)
+        val fractionPattern =
+            if (fractionSize == 0)
+                ""
+            else
+                "." + "#".repeat(fractionSize)
 
         val formatSymbols = DecimalFormatSymbols(Locale.ENGLISH)
         formatSymbols.decimalSeparator = '.'
@@ -57,10 +58,11 @@ object CurrUtils {
         val fractionSize =
             if (number > 10) 2 else 8
 
-        val df = DecimalFormat(
-            "#." + "#".repeat(fractionSize),
-            DecimalFormatSymbols(Locale.ENGLISH)
-        )
+        val df =
+            DecimalFormat(
+                "#." + "#".repeat(fractionSize),
+                DecimalFormatSymbols(Locale.ENGLISH),
+            )
         df.roundingMode = RoundingMode.CEILING
         return df.format(number)
     }
@@ -74,8 +76,9 @@ object CurrUtils {
     }
 }
 
-fun String.toDoubleSafe() = when {
-    this == "" -> 0.0
-    this == "-" -> 0.0
-    else -> this.toDouble()
-}
+fun String.toDoubleSafe() =
+    when {
+        this == "" -> 0.0
+        this == "-" -> 0.0
+        else -> this.toDouble()
+    }

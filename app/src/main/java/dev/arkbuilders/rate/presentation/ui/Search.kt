@@ -26,20 +26,22 @@ fun SearchTextField(
     onValueChange: (String) -> Unit = {},
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(44.dp)
-            .border(
-                1.dp,
-                ArkColor.Border,
-                RoundedCornerShape(8.dp)
-            )
-            .clip(RoundedCornerShape(8.dp)),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(44.dp)
+                .border(
+                    1.dp,
+                    ArkColor.Border,
+                    RoundedCornerShape(8.dp),
+                )
+                .clip(RoundedCornerShape(8.dp)),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         BasicTextFieldPlaceholder(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
             value = text,
             onValueChange = onValueChange,
             placeholder = placeHolderText,
@@ -47,7 +49,7 @@ fun SearchTextField(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search),
                     contentDescription = "",
-                    tint = ArkColor.FGQuarterary
+                    tint = ArkColor.FGQuarterary,
                 )
             },
         )

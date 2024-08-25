@@ -5,14 +5,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.PinnedQuickPair
+import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.domain.model.TimestampType
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
-import dev.arkbuilders.rate.domain.repo.PortfolioRepo
-import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.repo.QuickRepo
 import dev.arkbuilders.rate.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
@@ -35,7 +33,7 @@ import java.time.OffsetDateTime
 data class QuickScreenPage(
     val group: String?,
     val pinned: List<PinnedQuickPair>,
-    val notPinned: List<QuickPair>
+    val notPinned: List<QuickPair>,
 )
 
 data class OptionsData(val pair: QuickPair)
@@ -48,12 +46,12 @@ data class QuickScreenState(
     val pages: List<QuickScreenPage> = emptyList(),
     val optionsData: OptionsData? = null,
     val initialized: Boolean = false,
-    val noInternet: Boolean = false
+    val noInternet: Boolean = false,
 )
 
 sealed class QuickScreenEffect {
     data class ShowSnackbarAdded(
-        val visuals: NotifyAddedSnackbarVisuals
+        val visuals: NotifyAddedSnackbarVisuals,
     ) : QuickScreenEffect()
 
     data class ShowRemovedSnackbar(val pair: QuickPair) : QuickScreenEffect()
@@ -86,118 +84,130 @@ class QuickViewModel(
         }
     }
 
-    private fun init() = intent {
-        AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
-            postSideEffect(QuickScreenEffect.ShowSnackbarAdded(visuals))
-        }.launchIn(viewModelScope)
+    private fun init() =
+        intent {
+            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+                postSideEffect(QuickScreenEffect.ShowSnackbarAdded(visuals))
+            }.launchIn(viewModelScope)
 
-        quickRepo.allFlow().drop(1).onEach { quick ->
-            intent {
-                val pages = mapPairsToPages(quick)
+            quickRepo.allFlow().drop(1).onEach { quick ->
+                intent {
+                    val pages = mapPairsToPages(quick)
+                    reduce {
+                        state.copy(
+                            pages = pages,
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+
+            val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
+            calcFrequentCurrUseCase.flow().drop(1).onEach {
+                val frequent =
+                    calcFrequentCurrUseCase.invoke()
+                        .map { currencyRepo.nameByCodeUnsafe(it) }
+                val topResults = getTopResultUseCase()
                 reduce {
                     state.copy(
-                        pages = pages
+                        frequent = frequent,
+                        topResults = topResults,
                     )
                 }
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
 
-        val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
-        calcFrequentCurrUseCase.flow().drop(1).onEach {
-            val frequent = calcFrequentCurrUseCase.invoke()
-                .map { currencyRepo.nameByCodeUnsafe(it) }
+            val frequent =
+                calcFrequentCurrUseCase()
+                    .map { currencyRepo.nameByCodeUnsafe(it) }
             val topResults = getTopResultUseCase()
+            val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
                 state.copy(
+                    currencies = allCurrencies,
                     frequent = frequent,
-                    topResults = topResults
+                    topResults = topResults,
+                    pages = pages,
+                    initialized = true,
                 )
             }
-        }.launchIn(viewModelScope)
-
-        val frequent = calcFrequentCurrUseCase()
-            .map { currencyRepo.nameByCodeUnsafe(it) }
-        val topResults = getTopResultUseCase()
-        val pages = mapPairsToPages(quickRepo.getAll())
-        reduce {
-            state.copy(
-                currencies = allCurrencies,
-                frequent = frequent,
-                topResults = topResults,
-                pages = pages,
-                initialized = true
-            )
         }
-    }
 
-    fun onRefreshClick() = intent {
-        reduce { state.copy(noInternet = false) }
-        if (currencyRepo.isRatesAvailable()) {
-            init()
-        } else {
-            reduce { state.copy(noInternet = true) }
+    fun onRefreshClick() =
+        intent {
+            reduce { state.copy(noInternet = false) }
+            if (currencyRepo.isRatesAvailable()) {
+                init()
+            } else {
+                reduce { state.copy(noInternet = true) }
+            }
         }
-    }
 
-    fun onShowOptions(pair: QuickPair) = intent {
-        reduce { state.copy(optionsData = OptionsData(pair)) }
-    }
-
-    fun onHideOptions() = intent {
-        reduce { state.copy(optionsData = null) }
-    }
-
-    fun onPin(pair: QuickPair) = intent {
-        val newPair = pair.copy(pinnedDate = OffsetDateTime.now())
-        quickRepo.insert(newPair)
-    }
-
-    fun onUnpin(pair: QuickPair) = intent {
-        val newPair = pair.copy(pinnedDate = null)
-        quickRepo.insert(newPair)
-    }
-
-    fun onFilterChanged(filter: String) = blockingIntent {
-        reduce { state.copy(filter = filter) }
-    }
-
-    fun onDelete(pair: QuickPair) = intent {
-        val deleted = quickRepo.delete(pair.id)
-        if (deleted) {
-            postSideEffect(QuickScreenEffect.ShowRemovedSnackbar(pair))
+    fun onShowOptions(pair: QuickPair) =
+        intent {
+            reduce { state.copy(optionsData = OptionsData(pair)) }
         }
-    }
 
-    fun undoDelete(pair: QuickPair) = intent {
-        quickRepo.insert(pair)
-    }
+    fun onHideOptions() =
+        intent {
+            reduce { state.copy(optionsData = null) }
+        }
+
+    fun onPin(pair: QuickPair) =
+        intent {
+            val newPair = pair.copy(pinnedDate = OffsetDateTime.now())
+            quickRepo.insert(newPair)
+        }
+
+    fun onUnpin(pair: QuickPair) =
+        intent {
+            val newPair = pair.copy(pinnedDate = null)
+            quickRepo.insert(newPair)
+        }
+
+    fun onFilterChanged(filter: String) =
+        blockingIntent {
+            reduce { state.copy(filter = filter) }
+        }
+
+    fun onDelete(pair: QuickPair) =
+        intent {
+            val deleted = quickRepo.delete(pair.id)
+            if (deleted) {
+                postSideEffect(QuickScreenEffect.ShowRemovedSnackbar(pair))
+            }
+        }
+
+    fun undoDelete(pair: QuickPair) =
+        intent {
+            quickRepo.insert(pair)
+        }
 
     private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
         val refreshDate = timestampRepo.getTimestamp(TimestampType.FetchRates)
-        val pages = pairs
-            .reversed()
-            .groupBy { it.group }
-            .map { (group, pairs) ->
-                val (pinned, notPinned) = pairs.partition { it.isPinned() }
-                val pinnedMapped = pinned.map { mapPairToPinned(it, refreshDate!!) }
-                val sortedPinned =
-                    pinnedMapped.sortedByDescending { it.pair.pinnedDate }
-                val sortedNotPinned =
-                    notPinned.sortedByDescending { it.calculatedDate }
-                QuickScreenPage(group, sortedPinned, sortedNotPinned)
-            }
+        val pages =
+            pairs
+                .reversed()
+                .groupBy { it.group }
+                .map { (group, pairs) ->
+                    val (pinned, notPinned) = pairs.partition { it.isPinned() }
+                    val pinnedMapped = pinned.map { mapPairToPinned(it, refreshDate!!) }
+                    val sortedPinned =
+                        pinnedMapped.sortedByDescending { it.pair.pinnedDate }
+                    val sortedNotPinned =
+                        notPinned.sortedByDescending { it.calculatedDate }
+                    QuickScreenPage(group, sortedPinned, sortedNotPinned)
+                }
         return pages
     }
 
-
     private suspend fun mapPairToPinned(
         pair: QuickPair,
-        refreshDate: OffsetDateTime
+        refreshDate: OffsetDateTime,
     ): PinnedQuickPair {
-        val actualTo = pair.to.map { to ->
-            val (amount, _) = convertUseCase.invoke(pair.from, pair.amount, to.code)
-            amount
-        }
+        val actualTo =
+            pair.to.map { to ->
+                val (amount, _) = convertUseCase.invoke(pair.from, pair.amount, to.code)
+                amount
+            }
         return PinnedQuickPair(pair, actualTo, refreshDate)
     }
 }
@@ -219,7 +229,7 @@ class QuickViewModelFactory @AssistedInject constructor(
             convertUseCase,
             calcFrequentCurrUseCase,
             getTopResultUseCase,
-            analyticsManager
+            analyticsManager,
         ) as T
     }
 

@@ -40,8 +40,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
@@ -54,19 +54,23 @@ import org.orbitmvi.orbit.compose.collectAsState
 
 @Destination
 @Composable
-fun EditAssetScreen(assetId: Long, navigator: DestinationsNavigator) {
-    val viewModel: EditAssetViewModel = viewModel(
-        factory = DIManager.component.editAssetVMFactory().create(assetId)
-    )
+fun EditAssetScreen(
+    assetId: Long,
+    navigator: DestinationsNavigator,
+) {
+    val viewModel: EditAssetViewModel =
+        viewModel(
+            factory = DIManager.component.editAssetVMFactory().create(assetId),
+        )
     val state by viewModel.collectAsState()
 
     Scaffold(
         topBar = {
             AppTopBarBack(
                 title = stringResource(R.string.asset_detail),
-                navigator = navigator
+                navigator = navigator,
             )
-        }
+        },
     ) {
         Box(modifier = Modifier.padding(it)) {
             if (state.initialized) {
@@ -74,7 +78,7 @@ fun EditAssetScreen(assetId: Long, navigator: DestinationsNavigator) {
                     navigator = navigator,
                     name = state.name,
                     value = state.value,
-                    onValueChange = viewModel::onValueChange
+                    onValueChange = viewModel::onValueChange,
                 )
             } else {
                 LoadingScreen()
@@ -89,7 +93,7 @@ private fun Content(
     navigator: DestinationsNavigator = EmptyDestinationsNavigator,
     name: CurrencyName = CurrencyName("USD", "United States dollar"),
     value: String = "1000.02",
-    onValueChange: (String) -> Unit = {}
+    onValueChange: (String) -> Unit = {},
 ) {
     var showMarketCapitalizationDialog by remember { mutableStateOf(false) }
     var showValueOfCirculatingDialog by remember { mutableStateOf(false) }
@@ -102,93 +106,99 @@ private fun Content(
         InfoValueOfCirculatingDialog { showValueOfCirculatingDialog = false }
     }
 
-
     Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState())
+        modifier =
+            Modifier
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState()),
     ) {
         Text(
             modifier = Modifier.padding(top = 32.dp),
             text = "${name.name} (${name.code})",
             color = ArkColor.TextPrimary,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 24.sp
+            fontSize = 24.sp,
         )
         AppHorDiv(modifier = Modifier.padding(top = 21.dp))
         Row(
             Modifier.padding(top = 32.dp),
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.Top,
         ) {
             BasicTextField(
-                modifier = Modifier
-                    .width(IntrinsicSize.Min)
-                    .align(Alignment.CenterVertically),
+                modifier =
+                    Modifier
+                        .width(IntrinsicSize.Min)
+                        .align(Alignment.CenterVertically),
                 value = value,
                 onValueChange = { onValueChange(it) },
-                textStyle = LocalTextStyle.current.copy(
-                    fontSize = 36.sp,
-                    color = ArkColor.TextPrimary,
-                    fontWeight = FontWeight.SemiBold
-                ),
-                keyboardOptions = KeyboardOptions.Default
-                    .copy(keyboardType = KeyboardType.Number)
+                textStyle =
+                    LocalTextStyle.current.copy(
+                        fontSize = 36.sp,
+                        color = ArkColor.TextPrimary,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                keyboardOptions =
+                    KeyboardOptions.Default
+                        .copy(keyboardType = KeyboardType.Number),
             )
             Text(
-                modifier = Modifier
-                    .padding(start = 2.dp, top = 2.dp)
-                    .align(Alignment.Top),
+                modifier =
+                    Modifier
+                        .padding(start = 2.dp, top = 2.dp)
+                        .align(Alignment.Top),
                 text = CurrUtils.getSymbolOrCode(name.code),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
-                color = ArkColor.TextPrimary
+                color = ArkColor.TextPrimary,
             )
         }
         TextButton(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .height(22.dp),
+            modifier =
+                Modifier
+                    .padding(top = 16.dp)
+                    .height(22.dp),
             colors = ButtonDefaults.textButtonColors(contentColor = ArkColor.BrandUtility),
             onClick = {
                 navigator.navigate(
                     SearchCurrencyScreenDestination(
-                        AppSharedFlowKey.PickBaseCurrency.toString()
-                    )
+                        AppSharedFlowKey.PickBaseCurrency.toString(),
+                    ),
                 )
             },
-            contentPadding = PaddingValues(2.dp)
+            contentPadding = PaddingValues(2.dp),
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_edit),
-                contentDescription = ""
+                contentDescription = "",
             )
             Text(
                 modifier = Modifier.padding(start = 6.dp),
                 text = stringResource(R.string.change_base_currency),
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
             )
         }
 
         AppHorDiv(modifier = Modifier.padding(top = 32.dp))
         Row(
             modifier = Modifier.padding(top = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = stringResource(R.string.market_capitalization),
                 fontWeight = FontWeight.Medium,
-                color = ArkColor.TextTertiary
+                color = ArkColor.TextTertiary,
             )
             IconButton(
-                modifier = Modifier
-                    .padding(start = 4.dp)
-                    .size(20.dp),
-                onClick = { showMarketCapitalizationDialog = true }
+                modifier =
+                    Modifier
+                        .padding(start = 4.dp)
+                        .size(20.dp),
+                onClick = { showMarketCapitalizationDialog = true },
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_info),
                     contentDescription = "",
-                    tint = ArkColor.Primary
+                    tint = ArkColor.Primary,
                 )
             }
         }
@@ -196,28 +206,29 @@ private fun Content(
             modifier = Modifier.padding(top = 8.dp),
             text = stringResource(R.string.n_a),
             fontWeight = FontWeight.SemiBold,
-            color = ArkColor.TextPrimary
+            color = ArkColor.TextPrimary,
         )
         AppHorDiv(modifier = Modifier.padding(top = 24.dp))
         Row(
             modifier = Modifier.padding(top = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = stringResource(R.string.value_of_circulating_currency),
                 fontWeight = FontWeight.Medium,
-                color = ArkColor.TextTertiary
+                color = ArkColor.TextTertiary,
             )
             IconButton(
-                modifier = Modifier
-                    .padding(start = 4.dp)
-                    .size(20.dp),
-                onClick = { showValueOfCirculatingDialog = true }
+                modifier =
+                    Modifier
+                        .padding(start = 4.dp)
+                        .size(20.dp),
+                onClick = { showValueOfCirculatingDialog = true },
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_info),
                     contentDescription = "",
-                    tint = ArkColor.Primary
+                    tint = ArkColor.Primary,
                 )
             }
         }
@@ -225,7 +236,7 @@ private fun Content(
             modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
             text = stringResource(R.string.n_a),
             fontWeight = FontWeight.SemiBold,
-            color = ArkColor.TextPrimary
+            color = ArkColor.TextPrimary,
         )
     }
 }

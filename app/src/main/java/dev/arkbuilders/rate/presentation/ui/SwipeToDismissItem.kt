@@ -25,45 +25,52 @@ import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 // bug: callbacks from swipe called multiply times
 @Composable
-fun AppSwipeToDismiss(content: @Composable () -> Unit, onDelete: () -> Unit) {
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = {
-            if (it == SwipeToDismissBoxValue.EndToStart) {
-                onDelete()
-                true
-            } else
-                false
-        }
-    )
+fun AppSwipeToDismiss(
+    content: @Composable () -> Unit,
+    onDelete: () -> Unit,
+) {
+    val dismissState =
+        rememberSwipeToDismissBoxState(
+            confirmValueChange = {
+                if (it == SwipeToDismissBoxValue.EndToStart) {
+                    onDelete()
+                    true
+                } else {
+                    false
+                }
+            },
+        )
 
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = { DismissBackground(state = dismissState) },
         content = { content() },
-        enableDismissFromStartToEnd = false
+        enableDismissFromStartToEnd = false,
     )
 }
 
 @Composable
 private fun DismissBackground(state: SwipeToDismissBoxState) {
-    val color = when (state.dismissDirection) {
-        SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError200
-        else -> Color.Transparent
-    }
+    val color =
+        when (state.dismissDirection) {
+            SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError200
+            else -> Color.Transparent
+        }
 
     Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(color),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Spacer(modifier = Modifier)
         Icon(
             modifier = Modifier.padding(end = 17.dp),
             painter = painterResource(id = R.drawable.ic_delete),
             contentDescription = "",
-            tint = ArkColor.FGErrorPrimary
+            tint = ArkColor.FGErrorPrimary,
         )
     }
 }

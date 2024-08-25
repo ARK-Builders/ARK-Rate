@@ -1,0 +1,34 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+tab_width = 4
+no-unused-imports = true
+no-wildcard-import = true
+max_line_length = 100
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{kt,kts}]
+ktlint_code_style = ktlint_official
+ktlint_function_naming_ignore_when_annotated_with=Composable
+ktlint_standard_annotation = disabled
+ktlint_ignore_back_ticked_identifier = true
+ktlint_standard = enabled
+ktlint_standard_multiline-if-else = disabled
+
+# Don't allow any wildcard imports
+ij_kotlin_packages_to_use_import_on_demand = unset
+
+# Prevent wildcard imports
+ij_kotlin_name_count_to_use_star_import = 99
+ij_kotlin_name_count_to_use_star_import_for_members = 99
+
+[*.md]
+trim_trailing_whitespace = false
+
+[**/test/**.kt]
+max_line_length=off

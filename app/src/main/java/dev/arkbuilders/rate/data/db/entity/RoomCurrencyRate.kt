@@ -9,5 +9,5 @@ data class RoomCurrencyRate(
     @PrimaryKey
     val code: CurrencyCode,
     val currencyType: String,
-    val rate: Double
+    val rate: Double,
 )
