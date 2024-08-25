@@ -19,14 +19,14 @@ fun AboutScreen(navigator: DestinationsNavigator) {
     Scaffold(
         topBar = {
             AppTopBarBack(title = stringResource(R.string.about), navigator)
-        }
+        },
     ) {
         Box(modifier = Modifier.padding(it)) {
             ArkAbout(
                 appName = stringResource(id = R.string.app_name),
                 appLogoResId = R.drawable.ic_about_logo,
                 versionName = BuildConfig.VERSION_NAME,
-                privacyPolicyUrl = stringResource(R.string.privacy_policy_url)
+                privacyPolicyUrl = stringResource(R.string.privacy_policy_url),
             )
         }
     }
