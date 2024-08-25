@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
+import dev.arkbuilders.rate.data.worker.RatesRefreshWorker
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import timber.log.Timber
@@ -31,6 +32,7 @@ class App : Application(), Configuration.Provider {
 
         initCrashlytics()
         initWorker()
+        initRateRefreshWorker()
     }
 
     private fun initCrashlytics() = CoroutineScope(Dispatchers.IO).launch {
@@ -61,6 +63,28 @@ class App : Application(), Configuration.Provider {
 
         workManager.enqueueUniquePeriodicWork(
             CurrencyMonitorWorker.name,
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
+    }
+
+    private fun initRateRefreshWorker() {
+        val workManager = WorkManager.getInstance(this)
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val workRequest =
+            PeriodicWorkRequest.Builder(
+                RatesRefreshWorker::class.java,
+                15,
+                TimeUnit.MINUTES
+            ).setConstraints(constraints)
+                .build()
+
+        workManager.enqueueUniquePeriodicWork(
+            RatesRefreshWorker.name,
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )

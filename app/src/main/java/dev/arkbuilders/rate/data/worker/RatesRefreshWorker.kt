@@ -1,6 +1,5 @@
 package dev.arkbuilders.rate.data.worker
 
-import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -18,16 +17,18 @@ import dev.arkbuilders.rate.presentation.quick.QuickScreenPage
 import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidget
 import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidgetReceiver
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 import java.time.OffsetDateTime
 
 class RatesRefreshWorker(
+    params: WorkerParameters,
     private val context: Context,
     private val quickRepo: QuickRepo,
     private val convertUseCase: ConvertWithRateUseCase,
-    params: WorkerParameters,
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
+        Timber.d("Refresh rates work executed")
         quickRepo.allFlow().onEach { quick ->
             val pages = mapPairsToPages(quick)
             val quickDisplayPair = pages.first().pinned
@@ -48,8 +49,10 @@ class RatesRefreshWorker(
                     )
                 }
             }
-            QuickPairsWidget().updateAll(context)
+
         }
+        Timber.d("Update all widgets from worker success")
+        QuickPairsWidget().updateAll(context)
         return Result.success()
     }
 
