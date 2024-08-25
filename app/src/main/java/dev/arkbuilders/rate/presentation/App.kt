@@ -1,25 +1,23 @@
 package dev.arkbuilders.rate.presentation
 
 import android.app.Application
-import android.os.Build
-import android.webkit.WebView
 import androidx.work.Configuration
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ListenableWorker
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
-import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import dev.arkbuilders.rate.BuildConfig
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.data.worker.RatesRefreshWorker
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -31,8 +29,8 @@ class App : Application(), Configuration.Provider {
         DIManager.init(this)
 
         initCrashlytics()
-        initWorker()
-        initRateRefreshWorker()
+        initWorker(CurrencyMonitorWorker::class.java, CurrencyMonitorWorker.name)
+        initWorker(RatesRefreshWorker::class.java, RatesRefreshWorker.name)
     }
 
     private fun initCrashlytics() = CoroutineScope(Dispatchers.IO).launch {
@@ -45,8 +43,7 @@ class App : Application(), Configuration.Provider {
         Firebase.crashlytics.setCrashlyticsCollectionEnabled(collect)
     }
 
-
-    private fun initWorker() {
+    private fun initWorker(workerClass: Class<out ListenableWorker?>, workerName: String) {
         val workManager = WorkManager.getInstance(this)
 
         val constraints = Constraints.Builder()
@@ -55,36 +52,14 @@ class App : Application(), Configuration.Provider {
 
         val workRequest =
             PeriodicWorkRequest.Builder(
-                CurrencyMonitorWorker::class.java,
+                workerClass,
                 8L,
                 TimeUnit.HOURS
             ).setConstraints(constraints)
                 .build()
 
         workManager.enqueueUniquePeriodicWork(
-            CurrencyMonitorWorker.name,
-            ExistingPeriodicWorkPolicy.KEEP,
-            workRequest
-        )
-    }
-
-    private fun initRateRefreshWorker() {
-        val workManager = WorkManager.getInstance(this)
-
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-        val workRequest =
-            PeriodicWorkRequest.Builder(
-                RatesRefreshWorker::class.java,
-                15,
-                TimeUnit.MINUTES
-            ).setConstraints(constraints)
-                .build()
-
-        workManager.enqueueUniquePeriodicWork(
-            RatesRefreshWorker.name,
+            workerName,
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
