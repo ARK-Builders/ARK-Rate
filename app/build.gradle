@@ -117,7 +117,7 @@ dependencies {
     implementation 'io.github.oleksandrbalan:tagcloud:1.1.0'
 
     implementation("org.orbit-mvi:orbit-compose:4.6.1")
-    implementation("org.orbit-mvi:orbit-viewmodel:4.6.1")
+    implementation("org.orbit-mvi:orbit-viewmodel:6.1.0")
 
     implementation("io.arrow-kt:arrow-core:1.2.1")
     implementation("io.arrow-kt:arrow-fx-coroutines:1.2.1")
@@ -127,18 +127,18 @@ dependencies {
     implementation("io.github.raamcosta.compose-destinations:animations-core:1.9.62")
     ksp 'io.github.raamcosta.compose-destinations:ksp:1.9.62'
 
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
 
-    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-crashlytics-ktx")
 
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.5.4"
-    debugImplementation "androidx.compose.ui:ui-tooling:1.5.4"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.5.4"
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.6.8"
+    debugImplementation "androidx.compose.ui:ui-tooling:1.6.8"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.6.8"
 }
