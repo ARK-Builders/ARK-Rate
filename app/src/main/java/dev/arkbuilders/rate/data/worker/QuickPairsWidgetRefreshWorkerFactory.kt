@@ -4,25 +4,19 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import dev.arkbuilders.rate.domain.repo.QuickRepo
-import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 
-class RatesRefreshWorkerFactory(
-    private val quickRepo: QuickRepo,
-    private val convertUseCase: ConvertWithRateUseCase,
-) : WorkerFactory() {
+class QuickPairsWidgetRefreshWorkerFactory : WorkerFactory() {
     override fun createWorker(
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters
     ): ListenableWorker? {
         return when (workerClassName) {
-            RatesRefreshWorker::class.java.name -> RatesRefreshWorker(
+            QuickPairsWidgetRefreshWorker::class.java.name -> QuickPairsWidgetRefreshWorker(
                 params = workerParameters,
                 context = appContext,
-                quickRepo = quickRepo,
-                convertUseCase = convertUseCase
             )
+
             else -> null
         }
     }
