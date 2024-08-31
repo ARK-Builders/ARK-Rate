@@ -5,10 +5,6 @@
     <string name="info_dialog_market_capitalization_description">The total market value of a cryptocurrency\'s circulating supply.\n\nIt is analogous to the free-float capitalization in the stock market.\n\nCap = Current Price x Circulating Supply.</string>
     <string name="info_dialog_value_of_circulating_description">Currency in circulation refers to the amount of cash–in the form of paper notes or coins–within a country that is physically used to conduct transactions between consumers and businesses.</string>
 
-    <string name="crash_dialog_description">Sorry, the application crashed. Please send a report to the developers.</string>
-    <string name="crash_dialog_title">Crash</string>
-    <string name="crash_dialog_comment">You can add a comment here:</string>
-
     <string name="bottom_nav_portfolio">Portfolios</string>
     <string name="bottom_nav_alerts">Alerts</string>
     <string name="bottom_nav_quick">Quick</string>
@@ -67,7 +63,6 @@
     <string name="crash_reports">Crash reports</string>
     <string name="all_currencies">All currencies</string>
 
-    <string name="ok">OK</string>
     <string name="oops_something_went_wrong">Oops! Something went wrong</string>
 
 
