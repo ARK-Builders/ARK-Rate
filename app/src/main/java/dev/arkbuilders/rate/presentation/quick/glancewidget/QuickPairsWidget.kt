@@ -44,7 +44,7 @@ class QuickPairsWidget : GlanceAppWidget() {
             val prefs = currentState<Preferences>()
             val quickPairsString = prefs[QuickPairsWidgetReceiver.quickDisplayPairs]
             val quickPairsList = quickPairsString?.let { parseQuickPairs(it) }
-                Column(
+            Column(
                 modifier = GlanceModifier.fillMaxSize().background(Color.White)
                     .padding(horizontal = 12.dp)
             ) {
@@ -52,6 +52,15 @@ class QuickPairsWidget : GlanceAppWidget() {
                     modifier = GlanceModifier.fillMaxWidth().padding(top = 8.dp),
                     verticalAlignment = Alignment.Vertical.CenterVertically,
                 ) {
+
+                    Image(
+                        modifier = GlanceModifier.size(24.dp).padding(4.dp)
+                            .clickable(actionRunCallback<AddNewPairAction>()),
+                        provider = ImageProvider(
+                            R.drawable.ic_about_logo,
+                        ),
+                        contentDescription = null,
+                    )
                     Text(
                         modifier = GlanceModifier.defaultWeight(),
                         text = context.getString(R.string.quick_pinned_pairs),
@@ -61,7 +70,8 @@ class QuickPairsWidget : GlanceAppWidget() {
                         )
                     )
                     Image(
-                        modifier = GlanceModifier.size(24.dp).clickable(actionRunCallback<AddNewPairAction>()),
+                        modifier = GlanceModifier.size(24.dp).padding(4.dp)
+                            .clickable(actionRunCallback<AddNewPairAction>()),
                         provider = ImageProvider(
                             R.drawable.ic_add_circle,
                         ),
