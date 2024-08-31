@@ -12,7 +12,7 @@ import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
-import dev.arkbuilders.rate.data.worker.RatesRefreshWorker
+import dev.arkbuilders.rate.data.worker.QuickPairsWidgetRefreshWorker
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +30,7 @@ class App : Application(), Configuration.Provider {
 
         initCrashlytics()
         initWorker(CurrencyMonitorWorker::class.java, CurrencyMonitorWorker.name)
-        initWorker(RatesRefreshWorker::class.java, RatesRefreshWorker.name)
+        initWorker(QuickPairsWidgetRefreshWorker::class.java, QuickPairsWidgetRefreshWorker.NAME)
     }
 
     private fun initCrashlytics() = CoroutineScope(Dispatchers.IO).launch {
