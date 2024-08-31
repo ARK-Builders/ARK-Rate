@@ -167,7 +167,7 @@ fun QuickScreen(
                 else -> {
                     ctx.sendBroadcast(
                         Intent(ctx, QuickPairsWidgetReceiver::class.java).apply {
-                            action = QuickPairsWidgetReceiver.ratesLatestRefresh
+                            action = QuickPairsWidgetReceiver.PINNED_PAIRS_REFRESH
                         }
                     )
                     Content(

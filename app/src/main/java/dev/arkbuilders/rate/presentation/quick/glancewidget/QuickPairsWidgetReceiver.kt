@@ -38,7 +38,7 @@ class QuickPairsWidgetReceiver(
         val action = intent.action
         Timber.d(action)
         when (action) {
-            AppWidgetManager.ACTION_APPWIDGET_ENABLED,  ratesLatestRefresh ->
+            AppWidgetManager.ACTION_APPWIDGET_ENABLED,  PINNED_PAIRS_REFRESH ->
                 getQuickPairs(context)
             OpenAppAction.OPEN_APP -> {
                 context.startActivity(Intent(context, MainActivity::class.java).apply {
@@ -72,13 +72,13 @@ class QuickPairsWidgetReceiver(
             val glanceIds =
                 GlanceAppWidgetManager(context).getGlanceIds(QuickPairsWidget::class.java)
             for(glanceId in glanceIds) {
-                glanceId.let { it ->
-                    updateAppWidgetState(context, PreferencesGlanceStateDefinition, it) { pref ->
+                glanceId.let { id ->
+                    updateAppWidgetState(context, PreferencesGlanceStateDefinition, id) { pref ->
                         pref.toMutablePreferences().apply {
                             this[quickDisplayPairs] = quickPairs
                         }
                     }
-                    glanceAppWidget.update(context, it)
+                    glanceAppWidget.update(context, id)
                 }
             }
         }.launchIn(coroutineScope)
@@ -110,6 +110,6 @@ class QuickPairsWidgetReceiver(
 
     companion object {
         val quickDisplayPairs = stringPreferencesKey("quick_pair_display")
-        const val ratesLatestRefresh = "RATES_REFRESH"
+        const val PINNED_PAIRS_REFRESH = "PINNED_PAIRS_REFRESH"
     }
 }
