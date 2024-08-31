@@ -14,11 +14,10 @@ class QuickPairsWidgetRefreshWorker(
 
     override suspend fun doWork(): Result {
         Timber.d("Refresh rates work executed")
-        context.sendBroadcast(
-            Intent(context, QuickPairsWidgetReceiver::class.java).apply {
-                action = QuickPairsWidgetReceiver.ratesLatestRefresh
-            }
-        )
+        val intent = Intent(applicationContext, QuickPairsWidgetReceiver::class.java).apply {
+            action = QuickPairsWidgetReceiver.PINNED_PAIRS_REFRESH
+        }
+        applicationContext.sendBroadcast(intent)
         return Result.success()
     }
 
