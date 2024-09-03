@@ -80,5 +80,6 @@ fun String.toDoubleSafe() =
     when {
         this == "" -> 0.0
         this == "-" -> 0.0
+        this == "." -> 0.0
         else -> this.toDouble()
     }
