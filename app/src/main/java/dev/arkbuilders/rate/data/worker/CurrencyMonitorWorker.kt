@@ -13,9 +13,8 @@ class CurrencyMonitorWorker(
     private val context: Context,
     params: WorkerParameters,
     private val handlePairAlertCheckUseCase: HandlePairAlertCheckUseCase,
-    private val timestampRepo: TimestampRepo
+    private val timestampRepo: TimestampRepo,
 ) : CoroutineWorker(context, params) {
-
     override suspend fun doWork(): Result {
         val pairsToNotifyResult = handlePairAlertCheckUseCase()
         pairsToNotifyResult.onLeft {
@@ -29,11 +28,14 @@ class CurrencyMonitorWorker(
         return Result.success()
     }
 
-    private fun notifyPair(pairAlert: PairAlert, curRatio: Double) {
+    private fun notifyPair(
+        pairAlert: PairAlert,
+        curRatio: Double,
+    ) {
         NotificationUtils.showPairAlert(pairAlert, curRatio, context)
     }
 
     companion object {
-        const val name = "CurrencyMonitorWorker"
+        const val NAME = "CurrencyMonitorWorker"
     }
 }

@@ -10,15 +10,17 @@ fun RateSnackbarHost(snackState: SnackbarHostState) {
     SnackbarHost(modifier = Modifier, hostState = snackState) { data ->
         val visuals = data.visuals
         when (visuals) {
-            is NotifyAddedSnackbarVisuals -> NotifyAddedSnackbarContent(
-                visuals,
-                onDismiss = { data.dismiss() }
-            )
+            is NotifyAddedSnackbarVisuals ->
+                NotifyAddedSnackbarContent(
+                    visuals,
+                    onDismiss = { data.dismiss() },
+                )
 
-            is NotifyRemovedSnackbarVisuals -> NotifyRemovedSnackbarContent(
-                visuals,
-                onDismiss = { data.dismiss() }
-            )
+            is NotifyRemovedSnackbarVisuals ->
+                NotifyRemovedSnackbarContent(
+                    visuals,
+                    onDismiss = { data.dismiss() },
+                )
         }
     }
 }

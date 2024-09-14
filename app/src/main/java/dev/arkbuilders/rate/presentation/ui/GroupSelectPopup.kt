@@ -36,62 +36,66 @@ fun GroupSelectPopup(
     Card(
         modifier = Modifier.width(with(LocalDensity.current) { widthPx.toDp() }),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    onNewGroupClick()
-                    onDismiss()
-                },
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onNewGroupClick()
+                        onDismiss()
+                    },
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    top = 16.dp,
-                    bottom = 16.dp
-                ),
+                modifier =
+                    Modifier.padding(
+                        start = 16.dp,
+                        top = 16.dp,
+                        bottom = 16.dp,
+                    ),
                 painter = painterResource(id = R.drawable.ic_group_add),
                 contentDescription = "",
-                tint = ArkColor.FGQuinary
+                tint = ArkColor.FGQuinary,
             )
             Text(
                 modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(R.string.new_group),
                 color = ArkColor.TextPrimary,
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
             )
         }
         HorizontalDivider(color = ArkColor.BorderSecondary)
         groups.forEach {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        onGroupSelect(it)
-                        onDismiss()
-                    },
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onGroupSelect(it)
+                            onDismiss()
+                        },
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 16.dp,
-                        bottom = 16.dp
-                    ),
+                    modifier =
+                        Modifier.padding(
+                            start = 16.dp,
+                            top = 16.dp,
+                            bottom = 16.dp,
+                        ),
                     painter = painterResource(id = R.drawable.ic_group),
                     contentDescription = "",
-                    tint = ArkColor.FGQuinary
+                    tint = ArkColor.FGQuinary,
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
                     text = it,
                     color = ArkColor.TextPrimary,
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
                 )
             }
         }

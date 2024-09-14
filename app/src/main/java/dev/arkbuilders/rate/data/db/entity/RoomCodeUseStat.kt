@@ -10,5 +10,5 @@ data class RoomCodeUseStat(
     @PrimaryKey
     val code: CurrencyCode,
     val count: Long,
-    val lastUsedDate: OffsetDateTime
+    val lastUsedDate: OffsetDateTime,
 )

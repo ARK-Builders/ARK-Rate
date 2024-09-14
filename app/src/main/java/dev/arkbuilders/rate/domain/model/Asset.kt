@@ -8,8 +8,8 @@ data class Asset(
     val id: Long = 0,
     val code: CurrencyCode,
     var value: Double,
-    val group: String? = null
-): Parcelable {
+    val group: String? = null,
+) : Parcelable {
     companion object {
         val EMPTY = Asset(0, "", 0.0)
     }

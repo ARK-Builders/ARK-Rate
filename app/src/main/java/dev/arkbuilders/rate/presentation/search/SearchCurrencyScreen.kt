@@ -7,29 +7,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.presentation.theme.ArkColor
+import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.presentation.ui.ListHeader
@@ -46,10 +37,12 @@ fun SearchCurrencyScreen(
     pos: Int? = null,
     navigator: DestinationsNavigator,
 ) {
-    val viewModel: SearchViewModel = viewModel(
-        factory = DIManager.component.searchVMFactory()
-            .create(appSharedFlowKeyString, pos)
-    )
+    val viewModel: SearchViewModel =
+        viewModel(
+            factory =
+                DIManager.component.searchVMFactory()
+                    .create(appSharedFlowKeyString, pos),
+        )
     val state by viewModel.collectAsState()
 
     viewModel.collectSideEffect { effect ->
@@ -62,9 +55,9 @@ fun SearchCurrencyScreen(
         topBar = {
             AppTopBarBack(
                 title = stringResource(R.string.search_currency),
-                navigator = navigator
+                navigator = navigator,
             )
-        }
+        },
     ) {
         Column(modifier = Modifier.padding(it)) {
             if (state.initialized) {
@@ -74,7 +67,7 @@ fun SearchCurrencyScreen(
                     frequent = state.frequent,
                     all = state.all,
                     topResultsFiltered = state.topResultsFiltered,
-                    onClick = viewModel::onClick
+                    onClick = viewModel::onClick,
                 )
             } else {
                 LoadingScreen()
@@ -84,11 +77,15 @@ fun SearchCurrencyScreen(
 }
 
 @Composable
-private fun Input(input: String, onInputChange: (String) -> Unit) {
+private fun Input(
+    input: String,
+    onInputChange: (String) -> Unit,
+) {
     SearchTextField(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
+        modifier =
+            Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
         text = input,
         onValueChange = { onInputChange(it) },
     )
@@ -101,7 +98,7 @@ private fun Results(
     frequent: List<CurrencyName>,
     all: List<CurrencyName>,
     topResultsFiltered: List<CurrencyName>,
-    onClick: (CurrencyName) -> Unit
+    onClick: (CurrencyName) -> Unit,
 ) {
     when {
         filter.isNotEmpty() -> {
@@ -133,5 +130,3 @@ private fun Results(
         }
     }
 }
-
-

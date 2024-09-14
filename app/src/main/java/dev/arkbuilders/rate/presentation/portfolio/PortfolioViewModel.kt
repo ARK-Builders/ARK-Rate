@@ -37,20 +37,21 @@ data class PortfolioScreenState(
 
 data class PortfolioScreenPage(
     val group: String?,
-    val assets: List<PortfolioDisplayAsset>
+    val assets: List<PortfolioDisplayAsset>,
 )
 
 data class PortfolioDisplayAsset(
     val asset: Asset,
     val baseAmount: Amount,
-    val ratioToBase: Double
+    val ratioToBase: Double,
 )
 
 sealed class PortfolioScreenEffect {
     class ShowSnackbarAdded(
-        val visuals: NotifyAddedSnackbarVisuals
+        val visuals: NotifyAddedSnackbarVisuals,
     ) : PortfolioScreenEffect()
-    data class ShowRemovedSnackbar(val asset: Asset): PortfolioScreenEffect()
+
+    data class ShowRemovedSnackbar(val asset: Asset) : PortfolioScreenEffect()
 }
 
 class PortfolioViewModel(
@@ -58,9 +59,8 @@ class PortfolioViewModel(
     private val currencyRepo: CurrencyRepo,
     private val prefs: Prefs,
     private val convertUseCase: ConvertWithRateUseCase,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<PortfolioScreenState, PortfolioScreenEffect> {
-
     override val container: Container<PortfolioScreenState, PortfolioScreenEffect> =
         container(PortfolioScreenState())
 
@@ -79,74 +79,83 @@ class PortfolioViewModel(
         }
     }
 
-    private fun init() = intent {
-        initPages()
-
-        AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
-            postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(visuals))
-        }.launchIn(viewModelScope)
-
-        prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
+    private fun init() =
+        intent {
             initPages()
-        }.launchIn(viewModelScope)
 
-        assetsRepo.allAssetsFlow().drop(1).onEach {
-            initPages()
-        }.launchIn(viewModelScope)
-    }
+            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+                postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(visuals))
+            }.launchIn(viewModelScope)
 
-    fun onRefreshClick() = intent {
-        reduce { state.copy(noInternet = false) }
-        if (currencyRepo.isRatesAvailable()) {
-            init()
-        } else {
-            reduce { state.copy(noInternet = true) }
+            prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
+                initPages()
+            }.launchIn(viewModelScope)
+
+            assetsRepo.allAssetsFlow().drop(1).onEach {
+                initPages()
+            }.launchIn(viewModelScope)
         }
-    }
 
-    fun onAssetRemove(asset: Asset) = intent {
-        val deleted = assetsRepo.removeAsset(asset.id)
-        if (deleted) {
-            postSideEffect(PortfolioScreenEffect.ShowRemovedSnackbar(asset))
+    fun onRefreshClick() =
+        intent {
+            reduce { state.copy(noInternet = false) }
+            if (currencyRepo.isRatesAvailable()) {
+                init()
+            } else {
+                reduce { state.copy(noInternet = true) }
+            }
         }
-    }
 
-    fun undoDelete(asset: Asset) = intent {
-        assetsRepo.setAsset(asset)
-    }
-
-    fun onFilterChange(filter: String) = blockingIntent {
-        reduce { state.copy(filter = filter) }
-    }
-
-    private fun initPages() = intent {
-        val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
-        val assets = assetsRepo.allAssets().reversed()
-        val groups = assets.groupBy(keySelector = { it.group })
-        val pages = groups.map { (group, assets) ->
-            val displayAssets = assetToPortfolioDisplayAmount(
-                baseCode,
-                assets
-            )
-            PortfolioScreenPage(group, displayAssets)
+    fun onAssetRemove(asset: Asset) =
+        intent {
+            val deleted = assetsRepo.removeAsset(asset.id)
+            if (deleted) {
+                postSideEffect(PortfolioScreenEffect.ShowRemovedSnackbar(asset))
+            }
         }
-        reduce {
-            state.copy(baseCode = baseCode, pages = pages, initialized = true)
+
+    fun undoDelete(asset: Asset) =
+        intent {
+            assetsRepo.setAsset(asset)
         }
-    }
+
+    fun onFilterChange(filter: String) =
+        blockingIntent {
+            reduce { state.copy(filter = filter) }
+        }
+
+    private fun initPages() =
+        intent {
+            val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
+            val assets = assetsRepo.allAssets().reversed()
+            val groups = assets.groupBy(keySelector = { it.group })
+            val pages =
+                groups.map { (group, assets) ->
+                    val displayAssets =
+                        assetToPortfolioDisplayAmount(
+                            baseCode,
+                            assets,
+                        )
+                    PortfolioScreenPage(group, displayAssets)
+                }
+            reduce {
+                state.copy(baseCode = baseCode, pages = pages, initialized = true)
+            }
+        }
 
     private suspend fun assetToPortfolioDisplayAmount(
         baseCode: CurrencyCode,
-        list: List<Asset>
+        list: List<Asset>,
     ): List<PortfolioDisplayAsset> {
         val rates = currencyRepo.getCodeToCurrencyRate().getOrNull()!!
         return list.map { asset ->
-            val (baseAmount, rate) = convertUseCase(
-                asset.code,
-                asset.value,
-                toCode = baseCode,
-                rates
-            )
+            val (baseAmount, rate) =
+                convertUseCase(
+                    asset.code,
+                    asset.value,
+                    toCode = baseCode,
+                    rates,
+                )
             PortfolioDisplayAsset(asset, baseAmount, rate)
         }
     }
@@ -158,7 +167,7 @@ class PortfolioViewModelFactory @Inject constructor(
     private val currencyRepo: CurrencyRepo,
     private val prefs: Prefs,
     private val convertUseCase: ConvertWithRateUseCase,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return PortfolioViewModel(
@@ -166,7 +175,7 @@ class PortfolioViewModelFactory @Inject constructor(
             currencyRepo,
             prefs,
             convertUseCase,
-            analyticsManager
+            analyticsManager,
         ) as T
     }
 }

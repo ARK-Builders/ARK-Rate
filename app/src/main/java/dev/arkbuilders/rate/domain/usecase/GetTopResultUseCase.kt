@@ -12,8 +12,9 @@ class GetTopResultUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(): List<CurrencyName> {
         val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
-        val frequent = calcFrequentCurrUseCase.invoke()
-            .map { currencyRepo.nameByCodeUnsafe(it) }
+        val frequent =
+            calcFrequentCurrUseCase.invoke()
+                .map { currencyRepo.nameByCodeUnsafe(it) }
         return frequent + (allCurrencies - frequent)
     }
 }

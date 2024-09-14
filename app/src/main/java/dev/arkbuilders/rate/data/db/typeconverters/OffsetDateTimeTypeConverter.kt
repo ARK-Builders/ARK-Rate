@@ -6,6 +6,7 @@ import java.time.OffsetDateTime
 class OffsetDateTimeTypeConverter {
     @TypeConverter
     fun fromOffsetDateTime(date: OffsetDateTime): String = date.toString()
+
     @TypeConverter
     fun toOffsetDateTime(date: String): OffsetDateTime = OffsetDateTime.parse(date)
 }

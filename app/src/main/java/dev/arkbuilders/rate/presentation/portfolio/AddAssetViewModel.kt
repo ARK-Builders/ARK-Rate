@@ -4,10 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.domain.model.Asset
-import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.data.toDoubleSafe
 import dev.arkbuilders.rate.domain.model.AmountStr
+import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
@@ -28,7 +27,7 @@ import javax.inject.Singleton
 data class AddAssetState(
     val currencies: List<AmountStr> = listOf(AmountStr("USD", "")),
     val group: String? = null,
-    val availableGroups: List<String> = emptyList()
+    val availableGroups: List<String> = emptyList(),
 )
 
 sealed class AddAssetSideEffect {
@@ -42,9 +41,8 @@ class AddAssetViewModel(
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<AddAssetState, AddAssetSideEffect> {
-
     override val container: Container<AddAssetState, AddAssetSideEffect> =
         container(AddAssetState())
 
@@ -66,10 +64,12 @@ class AddAssetViewModel(
             intent {
                 reduce {
                     state.copy(
-                        currencies = state.currencies + AmountStr(
-                            code,
-                            ""
-                        )
+                        currencies =
+                            state.currencies +
+                                AmountStr(
+                                    code,
+                                    "",
+                                ),
                     )
                 }
             }
@@ -84,20 +84,26 @@ class AddAssetViewModel(
         }
     }
 
-    fun onAssetRemove(removeIndex: Int) = intent {
-        reduce {
-            state.copy(
-                currencies = state.currencies
-                    .filterIndexed { index, _ -> index != removeIndex }
-            )
+    fun onAssetRemove(removeIndex: Int) =
+        intent {
+            reduce {
+                state.copy(
+                    currencies =
+                        state.currencies
+                            .filterIndexed { index, _ -> index != removeIndex },
+                )
+            }
         }
-    }
 
-    fun onGroupSelect(group: String?) = intent {
-        reduce { state.copy(group = group) }
-    }
+    fun onGroupSelect(group: String?) =
+        intent {
+            reduce { state.copy(group = group) }
+        }
 
-    fun onAssetValueChange(pos: Int, input: String) = blockingIntent {
+    fun onAssetValueChange(
+        pos: Int,
+        input: String,
+    ) = blockingIntent {
         reduce {
             val newCurrencies = state.currencies.toMutableList()
             val old = newCurrencies[pos]
@@ -107,19 +113,21 @@ class AddAssetViewModel(
         }
     }
 
-    fun onAddAsset() = intent {
-        val currencies = state.currencies.map {
-            Asset(
-                code = it.code,
-                value = it.value.toDoubleSafe(),
-                group = state.group
-            )
+    fun onAddAsset() =
+        intent {
+            val currencies =
+                state.currencies.map {
+                    Asset(
+                        code = it.code,
+                        value = it.value.toDoubleSafe(),
+                        group = state.group,
+                    )
+                }
+            assetsRepo.setAssetsList(currencies)
+            codeUseStatRepo.codesUsed(*currencies.map { it.code }.toTypedArray())
+            postSideEffect(AddAssetSideEffect.NotifyAssetAdded(currencies))
+            postSideEffect(AddAssetSideEffect.NavigateBack)
         }
-        assetsRepo.setAssetsList(currencies)
-        codeUseStatRepo.codesUsed(*currencies.map { it.code }.toTypedArray())
-        postSideEffect(AddAssetSideEffect.NotifyAssetAdded(currencies))
-        postSideEffect(AddAssetSideEffect.NavigateBack)
-    }
 }
 
 @Singleton
@@ -127,14 +135,14 @@ class AddAssetViewModelFactory @Inject constructor(
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
-    private val analyticsManager: AnalyticsManager
+    private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddAssetViewModel(
             assetsRepo,
             currencyRepo,
             codeUseStatRepo,
-            analyticsManager
+            analyticsManager,
         ) as T
     }
 }

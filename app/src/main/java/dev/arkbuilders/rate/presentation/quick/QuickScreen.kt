@@ -32,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -83,12 +84,11 @@ import java.time.OffsetDateTime
 @RootNavGraph(start = true)
 @Destination
 @Composable
-fun QuickScreen(
-    navigator: DestinationsNavigator,
-) {
-    val viewModel: QuickViewModel = viewModel(
-        factory = DIManager.component.quickVMFactory().create()
-    )
+fun QuickScreen(navigator: DestinationsNavigator) {
+    val viewModel: QuickViewModel =
+        viewModel(
+            factory = DIManager.component.quickVMFactory().create(),
+        )
 
     val state by viewModel.collectAsState()
     val snackState = remember { SnackbarHostState() }
@@ -112,18 +112,20 @@ fun QuickScreen(
                     ctx.getString(
                         R.string.quick_snackbar_new_added_to,
                         effect.pair.from,
-                        effect.pair.to.joinToString { it.code }
+                        effect.pair.to.joinToString { it.code },
                     )
-                val visuals = NotifyRemovedSnackbarVisuals(
-                    title = ctx.getString(R.string.quick_snackbar_removed_title),
-                    description = ctx.getString(
-                        R.string.quick_snackbar_removed_desc,
-                        removed
-                    ),
-                    onUndo = {
-                        viewModel.undoDelete(effect.pair)
-                    }
-                )
+                val visuals =
+                    NotifyRemovedSnackbarVisuals(
+                        title = ctx.getString(R.string.quick_snackbar_removed_title),
+                        description =
+                            ctx.getString(
+                                R.string.quick_snackbar_removed_desc,
+                                removed,
+                            ),
+                        onUndo = {
+                            viewModel.undoDelete(effect.pair)
+                        },
+                    )
                 snackState.showSnackbar(visuals)
             }
         }
@@ -148,21 +150,21 @@ fun QuickScreen(
                 shape = CircleShape,
                 onClick = {
                     navigator.navigate(AddQuickScreenDestination())
-                }
+                },
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
             }
         },
         snackbarHost = {
             RateSnackbarHost(snackState)
-        }
+        },
     ) {
         Box(modifier = Modifier.padding(it)) {
             when {
                 state.noInternet -> NoInternetScreen(viewModel::onRefreshClick)
                 state.initialized.not() -> LoadingScreen()
                 isEmpty -> QuickEmpty(navigator = navigator)
-                else -> {
+                else ->
                     Content(
                         state = state,
                         onFilterChanged = viewModel::onFilterChanged,
@@ -172,9 +174,8 @@ fun QuickScreen(
                         onUnpin = viewModel::onUnpin,
                         onNewCode = {
                             navigator.navigate(AddQuickScreenDestination(newCode = it))
-                        }
+                        },
                     )
-                }
             }
         }
         state.optionsData?.let {
@@ -186,17 +187,17 @@ fun QuickScreen(
                     navigator.navigate(
                         AddQuickScreenDestination(
                             quickPairId = it.id,
-                            reuseNotEdit = false
-                        )
+                            reuseNotEdit = false,
+                        ),
                     )
                 },
                 onReuse = {
                     navigator.navigate(
-                        AddQuickScreenDestination(quickPairId = it.id)
+                        AddQuickScreenDestination(quickPairId = it.id),
                     )
                 },
                 onDelete = viewModel::onDelete,
-                onDismiss = viewModel::onHideOptions
+                onDismiss = viewModel::onHideOptions,
             )
         }
     }
@@ -210,19 +211,19 @@ private fun Content(
     onClick: (QuickPair) -> Unit,
     onPin: (QuickPair) -> Unit,
     onUnpin: (QuickPair) -> Unit,
-    onNewCode: (CurrencyCode) -> Unit
+    onNewCode: (CurrencyCode) -> Unit,
 ) {
     val groups = state.pages.map { it.group }
-
     Column {
         SearchTextField(
-            modifier = Modifier.padding(
-                top = 16.dp,
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 16.dp
-            ),
-            text = state.filter
+            modifier =
+                Modifier.padding(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 16.dp,
+                ),
+            text = state.filter,
         ) {
             onFilterChanged(it)
         }
@@ -230,7 +231,7 @@ private fun Content(
             SearchPage(
                 filter = state.filter,
                 topResults = state.topResults,
-                onNewCode = onNewCode
+                onNewCode = onNewCode,
             )
         } else {
             if (state.pages.size == 1) {
@@ -243,12 +244,12 @@ private fun Content(
                     onClick = onClick,
                     onPin = onPin,
                     onUnpin = onUnpin,
-                    onNewCode = onNewCode
+                    onNewCode = onNewCode,
                 )
             } else {
                 GroupViewPager(
                     modifier = Modifier.padding(top = 20.dp),
-                    groups = groups
+                    groups = groups,
                 ) { index ->
                     GroupPage(
                         frequent = state.frequent,
@@ -259,7 +260,7 @@ private fun Content(
                         onClick = onClick,
                         onPin = onPin,
                         onUnpin = onUnpin,
-                        onNewCode = onNewCode
+                        onNewCode = onNewCode,
                     )
                 }
             }
@@ -277,7 +278,7 @@ private fun GroupPage(
     onPin: (QuickPair) -> Unit,
     onUnpin: (QuickPair) -> Unit,
     onClick: (QuickPair) -> Unit = {},
-    onNewCode: (CurrencyCode) -> Unit
+    onNewCode: (CurrencyCode) -> Unit,
 ) {
     val ctx = LocalContext.current
     LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -291,20 +292,21 @@ private fun GroupPage(
                         QuickItem(
                             from = Amount(it.pair.from, it.pair.amount),
                             to = it.actualTo,
-                            dateText = stringResource(
-                                R.string.quick_last_refreshed,
-                                DateFormatUtils.latestCheckElapsedTime(
-                                    ctx,
-                                    OffsetDateTime.now(),
-                                    it.refreshDate
-                                )
-                            ),
+                            dateText =
+                                stringResource(
+                                    R.string.quick_last_refreshed,
+                                    DateFormatUtils.latestCheckElapsedTime(
+                                        ctx,
+                                        OffsetDateTime.now(),
+                                        it.refreshDate,
+                                    ),
+                                ),
                             onClick = { onClick(it.pair) },
                         )
                     },
                     pair = it.pair,
                     onDelete = { onDelete(it.pair) },
-                    onUnpin = onUnpin
+                    onUnpin = onUnpin,
                 )
                 AppHorDiv16()
             }
@@ -319,10 +321,11 @@ private fun GroupPage(
                         QuickItem(
                             from = Amount(it.from, it.amount),
                             to = it.to,
-                            dateText = stringResource(
-                                R.string.quick_calculated_on,
-                                DateFormatUtils.calculatedOn(it.calculatedDate)
-                            ),
+                            dateText =
+                                stringResource(
+                                    R.string.quick_calculated_on,
+                                    DateFormatUtils.calculatedOn(it.calculatedDate),
+                                ),
                             onClick = { onClick(it) },
                         )
                     },
@@ -354,12 +357,13 @@ private fun GroupPage(
 private fun SearchPage(
     filter: String,
     topResults: List<CurrencyName>,
-    onNewCode: (CurrencyCode) -> Unit
+    onNewCode: (CurrencyCode) -> Unit,
 ) {
-    val filtered = topResults.filter {
-        it.name.contains(filter, ignoreCase = true)
-                || it.code.contains(filter, ignoreCase = true)
-    }
+    val filtered =
+        topResults.filter {
+            it.name.contains(filter, ignoreCase = true) ||
+                it.code.contains(filter, ignoreCase = true)
+        }
     if (filtered.isNotEmpty()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             item {
@@ -386,7 +390,8 @@ private fun QuickItem(
     }
 
     ConstraintLayout(
-        modifier = Modifier
+        modifier =
+        Modifier
             .fillMaxWidth()
             .background(Color.White)
             .clickable {
@@ -395,46 +400,51 @@ private fun QuickItem(
     ) {
         val (icons, content, chevron) = createRefs()
         Row(
-            modifier = Modifier.constrainAs(icons) {
-                top.linkTo(parent.top, margin = 16.dp)
-                start.linkTo(parent.start, margin = 24.dp)
-            },
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier.constrainAs(icons) {
+                    top.linkTo(parent.top, margin = 16.dp)
+                    start.linkTo(parent.start, margin = 24.dp)
+                },
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
-                modifier = Modifier
-                    .size(40.dp)
+                modifier =
+                    Modifier
+                        .size(40.dp),
             ) {
                 CurrIcon(modifier = Modifier.size(40.dp), code = from.code)
             }
             if (!expanded) {
                 Box(
-                    modifier = Modifier
+                    modifier =
+                    Modifier
                         .size(40.dp)
                         .offset((-12).dp)
-                        .border(2.dp, Color.White, CircleShape)
+                        .border(2.dp, Color.White, CircleShape),
                 ) {
                     if (to.size == 1) {
                         CurrIcon(
-                            modifier = Modifier
+                            modifier =
+                            Modifier
                                 .size(38.dp)
                                 .align(Alignment.Center)
                                 .clip(CircleShape)
                                 .background(Color.White),
-                            code = to.first().code
+                            code = to.first().code,
                         )
                     } else {
                         Box(
-                            modifier = Modifier
+                            modifier =
+                            Modifier
                                 .size(40.dp)
-                                .background(ArkColor.BGTertiary, CircleShape)
+                                .background(ArkColor.BGTertiary, CircleShape),
                         ) {
                             Text(
                                 modifier = Modifier.align(Alignment.Center),
                                 text = "+ ${to.size}",
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp,
-                                color = ArkColor.TextTertiary
+                                color = ArkColor.TextTertiary,
                             )
                         }
                     }
@@ -442,56 +452,60 @@ private fun QuickItem(
             }
         }
         Column(
-            modifier = Modifier
+            modifier =
+            Modifier
                 .constrainAs(content) {
                     linkTo(icons.end, chevron.start, bias = 0f)
                     top.linkTo(parent.top, margin = 16.dp)
                     bottom.linkTo(parent.bottom, margin = 16.dp)
                 }
                 .padding(start = if (expanded) 12.dp else 0.dp),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "${from.code} to " +
+                text =
+                    "${from.code} to " +
                         to.joinToString(", ") { it.code },
                 fontWeight = FontWeight.Medium,
-                color = ArkColor.TextPrimary
+                color = ArkColor.TextPrimary,
             )
             if (expanded) {
                 Text(
                     text = "${CurrUtils.prepareToDisplay(from.value)} ${from.code} =",
-                    color = ArkColor.TextTertiary
+                    color = ArkColor.TextTertiary,
                 )
                 to.forEach {
                     Row(
                         modifier = Modifier.padding(top = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         CurrIcon(modifier = Modifier.size(20.dp), code = it.code)
                         Text(
                             modifier = Modifier.padding(start = 8.dp),
                             text = "${CurrUtils.prepareToDisplay(it.value)} ${it.code}",
-                            color = ArkColor.TextTertiary
+                            color = ArkColor.TextTertiary,
                         )
                     }
                 }
             } else {
                 Text(
-                    text = "${CurrUtils.prepareToDisplay(from.value)} ${from.code} = " +
+                    text =
+                        "${CurrUtils.prepareToDisplay(from.value)} ${from.code} = " +
                             "${CurrUtils.prepareToDisplay(to.first().value)} ${to.first().code}",
-                    color = ArkColor.TextTertiary
+                    color = ArkColor.TextTertiary,
                 )
             }
             Text(
                 modifier = Modifier.padding(top = if (expanded) 8.dp else 0.dp),
                 text = dateText,
                 color = ArkColor.TextTertiary,
-                fontSize = 12.sp
+                fontSize = 12.sp,
             )
         }
         if (to.size > 1) {
             Box(
-                modifier = Modifier
+                modifier =
+                Modifier
                     .constrainAs(chevron) {
                         height = Dimension.fillToConstraints
                         top.linkTo(parent.top)
@@ -501,21 +515,21 @@ private fun QuickItem(
                     .clickable {
                         expanded = !expanded
                     }
-                    .padding(start = 13.dp, end = 29.dp, top = 23.dp)
+                    .padding(start = 13.dp, end = 29.dp, top = 23.dp),
             ) {
                 if (expanded) {
                     Icon(
                         modifier = Modifier,
                         painter = painterResource(R.drawable.ic_chevron_up),
                         contentDescription = "",
-                        tint = ArkColor.FGSecondary
+                        tint = ArkColor.FGSecondary,
                     )
                 } else {
                     Icon(
                         modifier = Modifier,
                         painter = painterResource(R.drawable.ic_chevron),
                         contentDescription = "",
-                        tint = ArkColor.FGSecondary
+                        tint = ArkColor.FGSecondary,
                     )
                 }
             }
@@ -539,7 +553,7 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_empty_quick),
@@ -551,7 +565,7 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
                 text = stringResource(R.string.quick_empty_title),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
-                color = ArkColor.TextPrimary
+                color = ArkColor.TextPrimary,
             )
             Text(
                 modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
@@ -559,21 +573,21 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 color = ArkColor.TextTertiary,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             AppButton(
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {
                     navigator.navigate(AddQuickScreenDestination())
-                }
+                },
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_add),
-                    contentDescription = ""
+                    contentDescription = "",
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(R.string.calculate)
+                    text = stringResource(R.string.calculate),
                 )
             }
         }

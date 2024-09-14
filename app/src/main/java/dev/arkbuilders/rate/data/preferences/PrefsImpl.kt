@@ -14,11 +14,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PrefsImpl @Inject constructor(val context: Context): Prefs {
-    private val SHARED_PREFERENCES_KEY = "user_preferences"
+class PrefsImpl @Inject constructor(val context: Context) : Prefs {
+    private val sharedPreferencesKey = "user_preferences"
 
     private val Context.preferencesDatastore by preferencesDataStore(
-        SHARED_PREFERENCES_KEY
+        sharedPreferencesKey,
     )
 
     private val dataStore = context.preferencesDatastore
@@ -28,7 +28,10 @@ class PrefsImpl @Inject constructor(val context: Context): Prefs {
         return dataStore.data.first()[prefKey] ?: key.defaultValue
     }
 
-    override suspend fun <T> set(key: PreferenceKey<T>, value: T) {
+    override suspend fun <T> set(
+        key: PreferenceKey<T>,
+        value: T,
+    ) {
         dataStore.edit { pref ->
             val prefKey = resolveKey(key)
             pref[prefKey] = value
@@ -42,14 +45,14 @@ class PrefsImpl @Inject constructor(val context: Context): Prefs {
         }
 
     private fun <T> resolveKey(key: PreferenceKey<T>): Preferences.Key<T> {
-        val result = when (key) {
-            PreferenceKey.CollectAnalytics -> booleanPreferencesKey("analytics")
+        val result =
+            when (key) {
+                PreferenceKey.CollectAnalytics -> booleanPreferencesKey("analytics")
 
-            PreferenceKey.BaseCurrencyCode -> stringPreferencesKey("baseCurrencyCode")
-            PreferenceKey.CollectCrashReports -> booleanPreferencesKey("crashReports")
-        }
+                PreferenceKey.BaseCurrencyCode -> stringPreferencesKey("baseCurrencyCode")
+                PreferenceKey.CollectCrashReports -> booleanPreferencesKey("crashReports")
+            }
 
         return result as Preferences.Key<T>
     }
-
 }

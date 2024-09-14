@@ -65,14 +65,10 @@ import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import timber.log.Timber
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Destination
 @Composable
-fun PairAlertConditionScreen(
-    navigator: DestinationsNavigator,
-) {
+fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
     val viewModel: PairAlertViewModel =
         viewModel(factory = DIManager.component.pairAlertVMFactory())
 
@@ -88,20 +84,23 @@ fun PairAlertConditionScreen(
                 snackState.showSnackbar(effect.visuals)
 
             is PairAlertEffect.ShowRemovedSnackbar -> {
-                val visuals = NotifyRemovedSnackbarVisuals(
-                    title = ctx.getString(
-                        R.string.alert_snackbar_removed_title,
-                        effect.pair.targetCode
-                    ),
-                    description = ctx.getString(
-                        R.string.alert_snackbar_removed_desc,
-                        effect.pair.targetCode,
-                        effect.pair.baseCode
-                    ),
-                    onUndo = {
-                        viewModel.undoDelete(effect.pair)
-                    }
-                )
+                val visuals =
+                    NotifyRemovedSnackbarVisuals(
+                        title =
+                            ctx.getString(
+                                R.string.alert_snackbar_removed_title,
+                                effect.pair.targetCode,
+                            ),
+                        description =
+                            ctx.getString(
+                                R.string.alert_snackbar_removed_desc,
+                                effect.pair.targetCode,
+                                effect.pair.baseCode,
+                            ),
+                        onUndo = {
+                            viewModel.undoDelete(effect.pair)
+                        },
+                    )
                 snackState.showSnackbar(visuals)
             }
         }
@@ -121,7 +120,7 @@ fun PairAlertConditionScreen(
                 shape = CircleShape,
                 onClick = {
                     navigator.navigate(AddPairAlertScreenDestination())
-                }
+                },
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
             }
@@ -132,21 +131,22 @@ fun PairAlertConditionScreen(
         },
         snackbarHost = {
             RateSnackbarHost(snackState)
-        }
+        },
     ) {
         Box(modifier = Modifier.padding(it)) {
             when {
                 state.noInternet -> NoInternetScreen(viewModel::onRefreshClick)
                 state.initialized.not() -> LoadingScreen()
                 isEmpty -> Empty(navigator)
-                else -> Content(
-                    state,
-                    onDelete = viewModel::onDelete,
-                    onClick = { pair ->
-                        navigator.navigate(AddPairAlertScreenDestination(pair.id))
-                    },
-                    onEnableToggle = viewModel::onEnableToggle
-                )
+                else ->
+                    Content(
+                        state,
+                        onDelete = viewModel::onDelete,
+                        onClick = { pair ->
+                            navigator.navigate(AddPairAlertScreenDestination(pair.id))
+                        },
+                        onEnableToggle = viewModel::onEnableToggle,
+                    )
             }
         }
     }
@@ -157,7 +157,7 @@ private fun Content(
     state: PairAlertScreenState,
     onDelete: (PairAlert) -> Unit,
     onClick: (PairAlert) -> Unit,
-    onEnableToggle: (PairAlert, Boolean) -> Unit
+    onEnableToggle: (PairAlert, Boolean) -> Unit,
 ) {
     Column {
         if (state.pages.size == 1) {
@@ -165,18 +165,18 @@ private fun Content(
                 page = state.pages.first(),
                 onDelete = { onDelete(it) },
                 onClick = onClick,
-                onEnableToggle = onEnableToggle
+                onEnableToggle = onEnableToggle,
             )
         } else {
             GroupViewPager(
                 modifier = Modifier.padding(top = 16.dp),
-                groups = state.pages.map { it.group }
+                groups = state.pages.map { it.group },
             ) { index ->
                 GroupPage(
                     page = state.pages[index],
                     onDelete = { onDelete(it) },
                     onClick = onClick,
-                    onEnableToggle = onEnableToggle
+                    onEnableToggle = onEnableToggle,
                 )
             }
         }
@@ -186,14 +186,15 @@ private fun Content(
 @Preview
 @Composable
 private fun GroupPage(
-    page: PairAlertScreenPage = PairAlertScreenPage(
-        group = "Group 1",
-        created = listOf(previewPairAlert),
-        oneTimeTriggered = listOf(previewPairAlert)
-    ),
+    page: PairAlertScreenPage =
+        PairAlertScreenPage(
+            group = "Group 1",
+            created = listOf(previewPairAlert),
+            oneTimeTriggered = listOf(previewPairAlert),
+        ),
     onDelete: (PairAlert) -> Unit = {},
     onClick: (PairAlert) -> Unit = {},
-    onEnableToggle: (PairAlert, Boolean) -> Unit = { _, _ -> }
+    onEnableToggle: (PairAlert, Boolean) -> Unit = { _, _ -> },
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         if (page.created.isNotEmpty()) {
@@ -201,7 +202,7 @@ private fun GroupPage(
                 Text(
                     modifier = Modifier.padding(start = 16.dp, top = 24.dp),
                     text = "Created",
-                    color = ArkColor.TextTertiary
+                    color = ArkColor.TextTertiary,
                 )
                 AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
             }
@@ -212,10 +213,10 @@ private fun GroupPage(
                             pairAlert = it,
                             oneTimeTriggered = false,
                             onClick = onClick,
-                            onEnableToggle = onEnableToggle
+                            onEnableToggle = onEnableToggle,
                         )
                     },
-                    onDelete = { onDelete(it) }
+                    onDelete = { onDelete(it) },
                 )
                 AppHorDiv16()
             }
@@ -225,7 +226,7 @@ private fun GroupPage(
                 Text(
                     modifier = Modifier.padding(start = 16.dp, top = 25.dp),
                     text = "One-time triggered",
-                    color = ArkColor.TextTertiary
+                    color = ArkColor.TextTertiary,
                 )
                 AppHorDiv16(modifier = Modifier.padding(top = 12.dp))
             }
@@ -236,10 +237,10 @@ private fun GroupPage(
                             pairAlert = it,
                             oneTimeTriggered = true,
                             onClick = onClick,
-                            onEnableToggle = onEnableToggle
+                            onEnableToggle = onEnableToggle,
                         )
                     },
-                    onDelete = { onDelete(it) }
+                    onDelete = { onDelete(it) },
                 )
                 AppHorDiv16()
             }
@@ -252,7 +253,7 @@ private fun PairAlertItem(
     pairAlert: PairAlert,
     oneTimeTriggered: Boolean,
     onClick: (PairAlert) -> Unit,
-    onEnableToggle: (PairAlert, Boolean) -> Unit
+    onEnableToggle: (PairAlert, Boolean) -> Unit,
 ) {
     var currencyName by remember {
         mutableStateOf("")
@@ -262,41 +263,46 @@ private fun PairAlertItem(
         currencyName = currencyRepo.nameByCodeUnsafe(pairAlert.targetCode).name
     }
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .clickable {
-                onClick(pairAlert)
-            }
-            .padding(horizontal = 24.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .clickable {
+                    onClick(pairAlert)
+                }
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         CurrIcon(modifier = Modifier.size(40.dp), code = pairAlert.targetCode)
         Column(
-            modifier = Modifier
-                .padding(start = 12.dp)
-                .weight(1f),
-            verticalArrangement = Arrangement.Center
+            modifier =
+                Modifier
+                    .padding(start = 12.dp)
+                    .weight(1f),
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "$currencyName(${pairAlert.targetCode}) ${if (pairAlert.oneTimeNotRecurrent) "(One-time)" else ""}",
+                text =
+                    "$currencyName(${pairAlert.targetCode}) " +
+                        if (pairAlert.oneTimeNotRecurrent) "(One-time)" else "",
                 fontWeight = FontWeight.Medium,
-                color = ArkColor.TextPrimary
+                color = ArkColor.TextPrimary,
             )
             Text(
-                text = buildString {
-                    append(
-                        "${
-                            if (pairAlert.above())
-                                stringResource(R.string.above_c)
-                            else
-                                stringResource(R.string.below_c)
-                        } "
-                    )
-                    append("${CurrUtils.prepareToDisplay(pairAlert.targetPrice)} ")
-                    append(pairAlert.baseCode)
-                },
-                color = ArkColor.TextTertiary
+                text =
+                    buildString {
+                        append(
+                            "${
+                                if (pairAlert.above())
+                                    stringResource(R.string.above_c)
+                                else
+                                    stringResource(R.string.below_c)
+                            } ",
+                        )
+                        append("${CurrUtils.prepareToDisplay(pairAlert.targetPrice)} ")
+                        append(pairAlert.baseCode)
+                    },
+                color = ArkColor.TextTertiary,
             )
             if (oneTimeTriggered) {
                 val date = pairAlert.lastDateTriggered
@@ -304,11 +310,12 @@ private fun PairAlertItem(
                     ?: Timber.e("Pair alert marked as triggered but lastDateTriggered is null")
                 if (date != null) {
                     Text(
-                        text = stringResource(
-                            R.string.alert_notified_on,
-                            DateFormatUtils.notifiedOn(date),
-                        ),
-                        color = ArkColor.TextTertiary
+                        text =
+                            stringResource(
+                                R.string.alert_notified_on,
+                                DateFormatUtils.notifiedOn(date),
+                            ),
+                        color = ArkColor.TextTertiary,
                     )
                 }
             }
@@ -316,26 +323,25 @@ private fun PairAlertItem(
         Switch(
             checked = pairAlert.enabled,
             onCheckedChange = { onEnableToggle(pairAlert, it) },
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = Color.White,
-                checkedBorderColor = ArkColor.Primary,
-                checkedTrackColor = ArkColor.Primary,
-                uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = ArkColor.BGTertiary,
-                uncheckedBorderColor = ArkColor.BGTertiary
-            )
+            colors =
+                SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedBorderColor = ArkColor.Primary,
+                    checkedTrackColor = ArkColor.Primary,
+                    uncheckedThumbColor = Color.White,
+                    uncheckedTrackColor = ArkColor.BGTertiary,
+                    uncheckedBorderColor = ArkColor.BGTertiary,
+                ),
         )
     }
-
 }
-
 
 @Composable
 private fun Empty(navigator: DestinationsNavigator) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_empty_pair),
@@ -347,7 +353,7 @@ private fun Empty(navigator: DestinationsNavigator) {
                 text = stringResource(R.string.alert_empty_title),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
-                color = ArkColor.TextPrimary
+                color = ArkColor.TextPrimary,
             )
             Text(
                 modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
@@ -355,36 +361,37 @@ private fun Empty(navigator: DestinationsNavigator) {
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
                 color = ArkColor.TextTertiary,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             AppButton(
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {
                     navigator.navigate(AddPairAlertScreenDestination())
-                }
+                },
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_add),
-                    contentDescription = ""
+                    contentDescription = "",
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(R.string.new_alert)
+                    text = stringResource(R.string.new_alert),
                 )
             }
         }
     }
 }
 
-private val previewPairAlert = PairAlert(
-    id = 0,
-    targetCode = "USD",
-    baseCode = "EUR",
-    targetPrice = 2.0,
-    startPrice = 1.0,
-    percent = null,
-    oneTimeNotRecurrent = true,
-    enabled = true,
-    group = "Group 1",
-    lastDateTriggered = null
-)
+private val previewPairAlert =
+    PairAlert(
+        id = 0,
+        targetCode = "USD",
+        baseCode = "EUR",
+        targetPrice = 2.0,
+        startPrice = 1.0,
+        percent = null,
+        oneTimeNotRecurrent = true,
+        enabled = true,
+        group = "Group 1",
+        lastDateTriggered = null,
+    )

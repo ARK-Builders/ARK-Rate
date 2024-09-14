@@ -35,7 +35,6 @@ import org.orbitmvi.orbit.compose.collectAsState
 import java.time.Duration
 import java.time.OffsetDateTime
 
-
 @Destination
 @Composable
 fun SettingsScreen(navigator: DestinationsNavigator) {
@@ -50,7 +49,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
                 state = state,
                 navigator = navigator,
                 onCrashReportsToggle = vm::onCrashReportToggle,
-                onAnalyticsToggle = vm::onAnalyticsToggle
+                onAnalyticsToggle = vm::onAnalyticsToggle,
             )
         }
     }
@@ -61,20 +60,21 @@ private fun Content(
     state: SettingsScreenState,
     navigator: DestinationsNavigator,
     onCrashReportsToggle: (Boolean) -> Unit,
-    onAnalyticsToggle: (Boolean) -> Unit
+    onAnalyticsToggle: (Boolean) -> Unit,
 ) {
     val ctx = LocalContext.current
     Column(
-        modifier = Modifier
-            .padding(vertical = 32.dp)
-            .verticalScroll(rememberScrollState())
+        modifier =
+            Modifier
+                .padding(vertical = 32.dp)
+                .verticalScroll(rememberScrollState()),
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = stringResource(R.string.settings_quick_portfolio_alerts),
             fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp,
-            color = ArkColor.TextPrimary
+            color = ArkColor.TextPrimary,
         )
         val now = OffsetDateTime.now()
 
@@ -84,76 +84,78 @@ private fun Content(
             return ctx.getString(R.string.settings_elapsed_ago, elapsed) + time
         }
 
-
-        val refreshDesc = state.latestRefresh?.let {
-            formatTime(it)
-        } ?: stringResource(R.string.n_a)
-        val pairAlertDesc = state.latestPairAlertCheck?.let {
-            formatTime(it)
-        } ?: stringResource(R.string.n_a)
+        val refreshDesc =
+            state.latestRefresh?.let {
+                formatTime(it)
+            } ?: stringResource(R.string.n_a)
+        val pairAlertDesc =
+            state.latestPairAlertCheck?.let {
+                formatTime(it)
+            } ?: stringResource(R.string.n_a)
         LatestRefresh(
             title = stringResource(R.string.settings_latest_rates_refresh),
-            description = refreshDesc
+            description = refreshDesc,
         )
         LatestRefresh(
             title = stringResource(R.string.settings_latest_alerts_check),
-            description = pairAlertDesc
+            description = pairAlertDesc,
         )
         AppHorDiv16(modifier = Modifier.padding(top = 20.dp))
         if (state.showCrashReports) {
             Row(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
                     text = stringResource(R.string.crash_reports),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 18.sp,
-                    color = ArkColor.TextPrimary
+                    color = ArkColor.TextPrimary,
                 )
                 Switch(
                     checked = state.crashReportsEnabled,
-                    onCheckedChange = { onCrashReportsToggle(it) }
+                    onCheckedChange = { onCrashReportsToggle(it) },
                 )
             }
             AppHorDiv16(modifier = Modifier.padding(top = 20.dp))
         }
         Row(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 modifier = Modifier.weight(1f),
                 text = stringResource(R.string.collect_analytics),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.sp,
-                color = ArkColor.TextPrimary
+                color = ArkColor.TextPrimary,
             )
             Switch(
                 checked = state.analyticsEnabled,
-                onCheckedChange = { onAnalyticsToggle(it) }
+                onCheckedChange = { onAnalyticsToggle(it) },
             )
         }
         AppHorDiv16(modifier = Modifier.padding(top = 20.dp))
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { navigator.navigate(AboutScreenDestination) }
-                .padding(horizontal = 16.dp, vertical = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clickable { navigator.navigate(AboutScreenDestination) }
+                    .padding(horizontal = 16.dp, vertical = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_info),
                 contentDescription = "",
-                tint = ArkColor.TextTertiary
+                tint = ArkColor.TextTertiary,
             )
             Text(
                 modifier = Modifier.padding(start = 6.dp),
                 text = stringResource(R.string.about),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = ArkColor.TextTertiary
+                color = ArkColor.TextTertiary,
             )
         }
         AppHorDiv16(modifier = Modifier)
@@ -161,23 +163,29 @@ private fun Content(
 }
 
 @Composable
-private fun LatestRefresh(title: String, description: String) {
+private fun LatestRefresh(
+    title: String,
+    description: String,
+) {
     Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 20.dp)) {
         Text(
             modifier = Modifier,
             text = title,
             fontWeight = FontWeight.Medium,
-            color = ArkColor.TextSecondary
+            color = ArkColor.TextSecondary,
         )
         Text(
             modifier = Modifier,
             text = description,
-            color = ArkColor.TextTertiary
+            color = ArkColor.TextTertiary,
         )
     }
 }
 
-private fun mapElapsedTime(now: OffsetDateTime, date: OffsetDateTime): String? {
+private fun mapElapsedTime(
+    now: OffsetDateTime,
+    date: OffsetDateTime,
+): String? {
     var dur = Duration.between(date, now)
     val days = dur.toDays()
     if (days > 0)

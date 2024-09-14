@@ -10,7 +10,6 @@ import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidgetRece
 import dev.arkbuilders.rate.presentation.theme.ARKRateTheme
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.statusBarColor = Color.WHITE

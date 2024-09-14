@@ -11,7 +11,7 @@ object DateFormatUtils {
     fun latestCheckElapsedTime(
         ctx: Context,
         now: OffsetDateTime,
-        date: OffsetDateTime
+        date: OffsetDateTime,
     ): String {
         var dur = Duration.between(date, now)
 
@@ -20,7 +20,7 @@ object DateFormatUtils {
             return ctx.resources.getQuantityString(
                 R.plurals.plurals_day,
                 days.toInt(),
-                days.toInt()
+                days.toInt(),
             )
 
         val hours = dur.toHours()
@@ -28,7 +28,7 @@ object DateFormatUtils {
             return ctx.resources.getQuantityString(
                 R.plurals.plurals_hour,
                 hours.toInt(),
-                hours.toInt()
+                hours.toInt(),
             )
         dur = dur.minusHours(hours)
 
@@ -37,7 +37,7 @@ object DateFormatUtils {
             return ctx.resources.getQuantityString(
                 R.plurals.plurals_minute,
                 minutes.toInt(),
-                minutes.toInt()
+                minutes.toInt(),
             )
         dur = dur.minusMinutes(hours)
 
@@ -45,29 +45,25 @@ object DateFormatUtils {
         return ctx.resources.getQuantityString(
             R.plurals.plurals_second,
             seconds.toInt(),
-            seconds.toInt()
+            seconds.toInt(),
         )
     }
 
-    fun latestCheckTime(
-        date: OffsetDateTime
-    ): String {
-        val format = DateTimeFormatter
-            .ofPattern("hh:mm a, dd MMM yyyy", Locale.ENGLISH)
+    fun latestCheckTime(date: OffsetDateTime): String {
+        val format =
+            DateTimeFormatter
+                .ofPattern("hh:mm a, dd MMM yyyy", Locale.ENGLISH)
         return format.format(date)
     }
 
-    fun calculatedOn(
-        date: OffsetDateTime
-    ): String {
-        val format = DateTimeFormatter
-            .ofPattern("dd MMM yyyy", Locale.ENGLISH)
+    fun calculatedOn(date: OffsetDateTime): String {
+        val format =
+            DateTimeFormatter
+                .ofPattern("dd MMM yyyy", Locale.ENGLISH)
         return format.format(date)
     }
 
-    fun notifiedOn(
-        date: OffsetDateTime
-    ): String {
+    fun notifiedOn(date: OffsetDateTime): String {
         val format =
             DateTimeFormatter.ofPattern("MMM dd - hh:mm a", Locale.ENGLISH)
         return format.format(date)

@@ -15,8 +15,8 @@ class AppWorkerFactory @Inject constructor(
         addFactory(
             CurrencyMonitorWorkerFactory(
                 handlePairAlertCheckUseCase,
-                timestampRepo
-            )
+                timestampRepo,
+            ),
         )
         addFactory(
             QuickPairsWidgetRefreshWorkerFactory()

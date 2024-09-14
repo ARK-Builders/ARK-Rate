@@ -25,13 +25,13 @@ fun NoResult() {
                 modifier = Modifier.size(72.dp),
                 painter = painterResource(R.drawable.ic_search_refraction),
                 contentDescription = "",
-                tint = ArkColor.Secondary
+                tint = ArkColor.Secondary,
             )
             Text(
                 text = stringResource(R.string.no_result),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = ArkColor.TextPrimary
+                color = ArkColor.TextPrimary,
             )
         }
     }

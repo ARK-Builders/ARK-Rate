@@ -30,7 +30,6 @@ class CurrencyRepoImpl @Inject constructor(
     private val timestampRepo: TimestampRepo,
     private val networkStatus: NetworkStatus,
 ) : CurrencyRepo {
-
     private val mutex = Mutex()
 
     override suspend fun getCurrencyRate(): Either<Throwable, List<CurrencyRate>> =
@@ -57,43 +56,47 @@ class CurrencyRepoImpl @Inject constructor(
         val fiatNames = fiatDataSource.getCurrencyName()
         val cryptoNames = cryptoDataSource.getCurrencyName()
 
-        val names = localRates.map { rate ->
-            var name = when (rate.type) {
-                CurrencyType.FIAT -> fiatNames[rate.code]
-                CurrencyType.CRYPTO -> cryptoNames[rate.code]
-            }
-            if (name == null)
-                name = CurrencyName(rate.code, "")
+        val names =
+            localRates.map { rate ->
+                var name =
+                    when (rate.type) {
+                        CurrencyType.FIAT -> fiatNames[rate.code]
+                        CurrencyType.CRYPTO -> cryptoNames[rate.code]
+                    }
+                if (name == null)
+                    name = CurrencyName(rate.code, "")
 
-            name
-        }
+                name
+            }
 
         return names.sortedBy { it.code }.right()
     }
 
-    private suspend fun updateRates() = mutex.withLock {
-        val updatedDate = timestampRepo
-            .getTimestamp(TimestampType.FetchRates)
+    private suspend fun updateRates() =
+        mutex.withLock {
+            val updatedDate =
+                timestampRepo
+                    .getTimestamp(TimestampType.FetchRates)
 
-        if ((networkStatus.isOnline() && hasUpdateIntervalPassed(updatedDate)).not()) {
-            return
-        }
+            if ((networkStatus.isOnline() && hasUpdateIntervalPassed(updatedDate)).not()) {
+                return
+            }
 
-        val crypto = cryptoDataSource.fetchRemote()
-        val fiat = fiatDataSource.fetchRemote()
-        if (crypto.isLeft() || fiat.isLeft()) {
-            return
+            val crypto = cryptoDataSource.fetchRemote()
+            val fiat = fiatDataSource.fetchRemote()
+            if (crypto.isLeft() || fiat.isLeft()) {
+                return
+            }
+            localCurrencyDataSource.insert(
+                crypto.getOrNull()!! + fiat.getOrNull()!!,
+            )
+            timestampRepo.rememberTimestamp(TimestampType.FetchRates)
         }
-        localCurrencyDataSource.insert(
-            crypto.getOrNull()!! + fiat.getOrNull()!!
-        )
-        timestampRepo.rememberTimestamp(TimestampType.FetchRates)
-    }
 
     private fun hasUpdateIntervalPassed(updatedDate: OffsetDateTime?) =
         updatedDate == null ||
-                Duration.between(updatedDate, OffsetDateTime.now())
-                    .toMillis() > dayInMillis
+            Duration.between(updatedDate, OffsetDateTime.now())
+                .toMillis() > dayInMillis
 
     private val dayInMillis = TimeUnit.DAYS.toMillis(1)
 }

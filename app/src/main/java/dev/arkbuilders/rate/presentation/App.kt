@@ -22,7 +22,6 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class App : Application(), Configuration.Provider {
-
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
@@ -33,40 +32,47 @@ class App : Application(), Configuration.Provider {
         initWorker(QuickPairsWidgetRefreshWorker::class.java, QuickPairsWidgetRefreshWorker.NAME)
     }
 
-    private fun initCrashlytics() = CoroutineScope(Dispatchers.IO).launch {
-        // Google Play will collect crashes in any case, so we will also send them to Firebase
-        val collect = if (BuildConfig.GOOGLE_PLAY_BUILD)
-            true
-        else
-            DIManager.component.prefs().get(PreferenceKey.CollectCrashReports)
+    private fun initCrashlytics() =
+        CoroutineScope(Dispatchers.IO).launch {
+            // Google Play will collect crashes in any case, so we will also send them to Firebase
+            val collect =
+                if (BuildConfig.GOOGLE_PLAY_BUILD)
+                    true
+                else
+                    DIManager.component.prefs().get(PreferenceKey.CollectCrashReports)
 
-        Firebase.crashlytics.setCrashlyticsCollectionEnabled(collect)
-    }
+            Firebase.crashlytics.setCrashlyticsCollectionEnabled(collect)
+        }
 
-    private fun initWorker(workerClass: Class<out ListenableWorker?>, workerName: String) {
-        val workManager = WorkManager.getInstance(this)
+    private fun initWorker() {
+        private fun initWorker(workerClass: Class<out ListenableWorker?>, workerName: String) {
+            val workManager = WorkManager.getInstance(this)
 
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
+            val constraints =
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
 
-        val workRequest =
-            PeriodicWorkRequest.Builder(
-                workerClass,
-                8L,
-                TimeUnit.HOURS
-            ).setConstraints(constraints)
+            val workRequest =
+                PeriodicWorkRequest.Builder(
+                    workerClass,
+                    8L,
+                    TimeUnit.HOURS,
+                ).setConstraints(constraints)
+                    .build()
+
+            workManager.enqueueUniquePeriodicWork(
+                CurrencyMonitorWorker.NAME,
+                workerName,
+                ExistingPeriodicWorkPolicy.KEEP,
+                workRequest,
+            )
+        }
+
+        override fun getWorkManagerConfiguration() =
+            Configuration.Builder()
+                .setMinimumLoggingLevel(android.util.Log.INFO)
+                .setWorkerFactory(DIManager.component.appWorkerFactory())
                 .build()
-
-        workManager.enqueueUniquePeriodicWork(
-            workerName,
-            ExistingPeriodicWorkPolicy.KEEP,
-            workRequest
-        )
     }
-
-    override fun getWorkManagerConfiguration() = Configuration.Builder()
-        .setMinimumLoggingLevel(android.util.Log.INFO)
-        .setWorkerFactory(DIManager.component.appWorkerFactory())
-        .build()
 }
