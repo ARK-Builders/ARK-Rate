@@ -118,7 +118,7 @@ dependencies {
     implementation 'io.github.oleksandrbalan:tagcloud:1.1.0'
 
     implementation("org.orbit-mvi:orbit-compose:4.6.1")
-    implementation("org.orbit-mvi:orbit-viewmodel:6.1.0")
+    implementation("org.orbit-mvi:orbit-viewmodel:9.0.0")
 
     implementation("io.arrow-kt:arrow-core:1.2.1")
     implementation("io.arrow-kt:arrow-fx-coroutines:1.2.1")
