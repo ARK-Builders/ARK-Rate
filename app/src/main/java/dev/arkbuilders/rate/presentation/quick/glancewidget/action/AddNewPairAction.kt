@@ -11,11 +11,12 @@ class AddNewPairAction : ActionCallback {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
-        parameters: ActionParameters
+        parameters: ActionParameters,
     ) {
-        val intent = Intent(context, QuickPairsWidgetReceiver::class.java).apply {
-            action = ADD_NEW_PAIR
-        }
+        val intent =
+            Intent(context, QuickPairsWidgetReceiver::class.java).apply {
+                action = ADD_NEW_PAIR
+            }
         context.sendBroadcast(intent)
     }
 

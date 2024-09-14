@@ -28,7 +28,7 @@ class App : Application(), Configuration.Provider {
         DIManager.init(this)
 
         initCrashlytics()
-        initWorker(CurrencyMonitorWorker::class.java, CurrencyMonitorWorker.name)
+        initWorker(CurrencyMonitorWorker::class.java, CurrencyMonitorWorker.NAME)
         initWorker(QuickPairsWidgetRefreshWorker::class.java, QuickPairsWidgetRefreshWorker.NAME)
     }
 
@@ -44,35 +44,34 @@ class App : Application(), Configuration.Provider {
             Firebase.crashlytics.setCrashlyticsCollectionEnabled(collect)
         }
 
-    private fun initWorker() {
-        private fun initWorker(workerClass: Class<out ListenableWorker?>, workerName: String) {
-            val workManager = WorkManager.getInstance(this)
-
-            val constraints =
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
-
-            val workRequest =
-                PeriodicWorkRequest.Builder(
-                    workerClass,
-                    8L,
-                    TimeUnit.HOURS,
-                ).setConstraints(constraints)
-                    .build()
-
-            workManager.enqueueUniquePeriodicWork(
-                CurrencyMonitorWorker.NAME,
-                workerName,
-                ExistingPeriodicWorkPolicy.KEEP,
-                workRequest,
-            )
-        }
-
-        override fun getWorkManagerConfiguration() =
-            Configuration.Builder()
-                .setMinimumLoggingLevel(android.util.Log.INFO)
-                .setWorkerFactory(DIManager.component.appWorkerFactory())
+    private fun initWorker(
+        workerClass: Class<out ListenableWorker?>,
+        workerName: String,
+    ) {
+        val workManager = WorkManager.getInstance(this)
+        val constraints =
+            Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
+
+        val workRequest =
+            PeriodicWorkRequest.Builder(
+                workerClass,
+                8L,
+                TimeUnit.HOURS,
+            ).setConstraints(constraints)
+                .build()
+
+        workManager.enqueueUniquePeriodicWork(
+            workerName,
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest,
+        )
     }
+
+    override fun getWorkManagerConfiguration() =
+        Configuration.Builder()
+            .setMinimumLoggingLevel(android.util.Log.INFO)
+            .setWorkerFactory(DIManager.component.appWorkerFactory())
+            .build()
 }

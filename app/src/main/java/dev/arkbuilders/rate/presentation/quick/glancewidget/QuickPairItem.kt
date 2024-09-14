@@ -26,57 +26,64 @@ import dev.arkbuilders.rate.presentation.utils.IconUtils
 @Composable
 fun QuickPairItem(
     quick: PinnedQuickPair,
-    context: Context
+    context: Context,
 ) {
     Row(
         modifier = GlanceModifier.padding(vertical = 2.dp),
     ) {
         Image(
             modifier = GlanceModifier.size(24.dp),
-            provider = ImageProvider(
-                IconUtils.iconForCurrCode(
-                    context,
-                    quick.pair.from
-                )
-            ),
-            contentDescription = null
+            provider =
+                ImageProvider(
+                    IconUtils.iconForCurrCode(
+                        context,
+                        quick.pair.from,
+                    ),
+                ),
+            contentDescription = null,
         )
         Column(
             modifier = GlanceModifier.padding(start = 8.dp),
-            verticalAlignment = Alignment.Vertical.CenterVertically
+            verticalAlignment = Alignment.Vertical.CenterVertically,
         ) {
             Text(
-                text = "${quick.pair.from} to ${quick.pair.to.joinToString(separator = ", ") { it.code }}",
-                style = TextStyle(
-                    color = ColorProvider(ArkColor.TextPrimary),
-                    fontWeight = FontWeight.Medium
-                )
+                text = "${quick.pair.from} to ${quick.pair.to.joinToString(
+                    separator = ", ",
+                ) { it.code }}",
+                style =
+                    TextStyle(
+                        color = ColorProvider(ArkColor.TextPrimary),
+                        fontWeight = FontWeight.Medium,
+                    ),
             )
 
             Text(
                 text = "${CurrUtils.prepareToDisplay(quick.pair.amount)} ${quick.pair.from} = ",
-                style = TextStyle(
-                    color = ColorProvider(ArkColor.TextTertiary),
-                )
+                style =
+                    TextStyle(
+                        color = ColorProvider(ArkColor.TextTertiary),
+                    ),
             )
             for (toAmount in quick.actualTo) {
                 Row(modifier = GlanceModifier.fillMaxWidth()) {
                     Image(
                         modifier = GlanceModifier.size(16.dp),
-                        provider = ImageProvider(
-                            IconUtils.iconForCurrCode(
-                                context,
-                                toAmount.code
-                            )
-                        ),
-                        contentDescription = null
+                        provider =
+                            ImageProvider(
+                                IconUtils.iconForCurrCode(
+                                    context,
+                                    toAmount.code,
+                                ),
+                            ),
+                        contentDescription = null,
                     )
                     Spacer(modifier = GlanceModifier.width(4.dp))
                     Text(
                         text = "${CurrUtils.prepareToDisplay(toAmount.value)} ${toAmount.code}",
-                        style = TextStyle(
-                            color = ColorProvider(ArkColor.TextTertiary),
-                        )
+                        style =
+                            TextStyle(
+                                color = ColorProvider(ArkColor.TextTertiary),
+                            ),
                     )
                 }
             }

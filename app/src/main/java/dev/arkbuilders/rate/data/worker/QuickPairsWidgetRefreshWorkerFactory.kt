@@ -9,13 +9,14 @@ class QuickPairsWidgetRefreshWorkerFactory : WorkerFactory() {
     override fun createWorker(
         appContext: Context,
         workerClassName: String,
-        workerParameters: WorkerParameters
+        workerParameters: WorkerParameters,
     ): ListenableWorker? {
         return when (workerClassName) {
-            QuickPairsWidgetRefreshWorker::class.java.name -> QuickPairsWidgetRefreshWorker(
-                params = workerParameters,
-                context = appContext,
-            )
+            QuickPairsWidgetRefreshWorker::class.java.name ->
+                QuickPairsWidgetRefreshWorker(
+                    params = workerParameters,
+                    context = appContext,
+                )
 
             else -> null
         }

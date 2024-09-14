@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         sendBroadcast(
             Intent(this, QuickPairsWidgetReceiver::class.java).apply {
                 action = QuickPairsWidgetReceiver.PINNED_PAIRS_REFRESH
-            }
+            },
         )
         super.onStop()
     }

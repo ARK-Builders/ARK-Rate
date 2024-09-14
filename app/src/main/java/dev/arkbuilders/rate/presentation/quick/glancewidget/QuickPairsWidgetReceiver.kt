@@ -29,27 +29,34 @@ class QuickPairsWidgetReceiver(
     private val quickRepo: QuickRepo = DIManager.component.quickRepo(),
     private val convertUseCase: ConvertWithRateUseCase = DIManager.component.convertUseCase(),
 ) : GlanceAppWidgetReceiver() {
-
     private val coroutineScope = MainScope()
 
     override val glanceAppWidget: GlanceAppWidget = QuickPairsWidget()
-    override fun onReceive(context: Context, intent: Intent) {
+
+    override fun onReceive(
+        context: Context,
+        intent: Intent,
+    ) {
         super.onReceive(context, intent)
         val action = intent.action
         Timber.d(action)
         when (action) {
-            AppWidgetManager.ACTION_APPWIDGET_ENABLED,  PINNED_PAIRS_REFRESH ->
+            AppWidgetManager.ACTION_APPWIDGET_ENABLED, PINNED_PAIRS_REFRESH ->
                 getQuickPairs(context)
             OpenAppAction.OPEN_APP -> {
-                context.startActivity(Intent(context, MainActivity::class.java).apply {
-                    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                })
+                context.startActivity(
+                    Intent(context, MainActivity::class.java).apply {
+                        setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    },
+                )
             }
             AddNewPairAction.ADD_NEW_PAIR -> {
-                context.startActivity(Intent(context, MainActivity::class.java).apply {
-                    putExtra(AddNewPairAction.ADD_NEW_PAIR, "ADD_NEW_PAIR")
-                    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                })
+                context.startActivity(
+                    Intent(context, MainActivity::class.java).apply {
+                        putExtra(AddNewPairAction.ADD_NEW_PAIR, "ADD_NEW_PAIR")
+                        setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    },
+                )
             }
         }
     }
@@ -57,7 +64,7 @@ class QuickPairsWidgetReceiver(
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
+        appWidgetIds: IntArray,
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         getQuickPairs(context)
@@ -71,7 +78,7 @@ class QuickPairsWidgetReceiver(
             val quickPairs = GsonBuilder().create().toJson(quickDisplayPair)
             val glanceIds =
                 GlanceAppWidgetManager(context).getGlanceIds(QuickPairsWidget::class.java)
-            for(glanceId in glanceIds) {
+            for (glanceId in glanceIds) {
                 glanceId.let { id ->
                     updateAppWidgetState(context, PreferencesGlanceStateDefinition, id) { pref ->
                         pref.toMutablePreferences().apply {
@@ -85,26 +92,26 @@ class QuickPairsWidgetReceiver(
     }
 
     private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
-        val pages = pairs
-            .reversed()
-            .groupBy { it.group }
-            .map { (group, pairs) ->
-                val pinnedQuickPairs = pairs.filter { it.isPinned() }
-                val pinnedMappedQuickPairs = pinnedQuickPairs.map { mapPairToPinned(it) }
-                val sortedPinned =
-                    pinnedMappedQuickPairs.sortedByDescending { it.pair.pinnedDate }
-                QuickScreenPage(group, sortedPinned, listOf())
-            }
+        val pages =
+            pairs
+                .reversed()
+                .groupBy { it.group }
+                .map { (group, pairs) ->
+                    val pinnedQuickPairs = pairs.filter { it.isPinned() }
+                    val pinnedMappedQuickPairs = pinnedQuickPairs.map { mapPairToPinned(it) }
+                    val sortedPinned =
+                        pinnedMappedQuickPairs.sortedByDescending { it.pair.pinnedDate }
+                    QuickScreenPage(group, sortedPinned, listOf())
+                }
         return pages
     }
 
-    private suspend fun mapPairToPinned(
-        pair: QuickPair,
-    ): PinnedQuickPair {
-        val actualTo = pair.to.map { to ->
-            val (amount, _) = convertUseCase.invoke(pair.from, pair.amount, to.code)
-            amount
-        }
+    private suspend fun mapPairToPinned(pair: QuickPair): PinnedQuickPair {
+        val actualTo =
+            pair.to.map { to ->
+                val (amount, _) = convertUseCase.invoke(pair.from, pair.amount, to.code)
+                amount
+            }
         return PinnedQuickPair(pair, actualTo, OffsetDateTime.now())
     }
 

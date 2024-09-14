@@ -11,11 +11,12 @@ class OpenAppAction : ActionCallback {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
-        parameters: ActionParameters
+        parameters: ActionParameters,
     ) {
-        val intent = Intent(context, QuickPairsWidgetReceiver::class.java).apply {
-            action = OPEN_APP
-        }
+        val intent =
+            Intent(context, QuickPairsWidgetReceiver::class.java).apply {
+                action = OPEN_APP
+            }
         context.sendBroadcast(intent)
     }
 

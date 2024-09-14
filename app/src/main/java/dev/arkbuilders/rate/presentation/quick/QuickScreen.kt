@@ -32,7 +32,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -79,7 +78,6 @@ import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.OffsetDateTime
-
 
 @RootNavGraph(start = true)
 @Destination
@@ -391,12 +389,12 @@ private fun QuickItem(
 
     ConstraintLayout(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .clickable {
-                onClick()
-            },
+            Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .clickable {
+                    onClick()
+                },
     ) {
         val (icons, content, chevron) = createRefs()
         Row(
@@ -417,27 +415,27 @@ private fun QuickItem(
             if (!expanded) {
                 Box(
                     modifier =
-                    Modifier
-                        .size(40.dp)
-                        .offset((-12).dp)
-                        .border(2.dp, Color.White, CircleShape),
+                        Modifier
+                            .size(40.dp)
+                            .offset((-12).dp)
+                            .border(2.dp, Color.White, CircleShape),
                 ) {
                     if (to.size == 1) {
                         CurrIcon(
                             modifier =
-                            Modifier
-                                .size(38.dp)
-                                .align(Alignment.Center)
-                                .clip(CircleShape)
-                                .background(Color.White),
+                                Modifier
+                                    .size(38.dp)
+                                    .align(Alignment.Center)
+                                    .clip(CircleShape)
+                                    .background(Color.White),
                             code = to.first().code,
                         )
                     } else {
                         Box(
                             modifier =
-                            Modifier
-                                .size(40.dp)
-                                .background(ArkColor.BGTertiary, CircleShape),
+                                Modifier
+                                    .size(40.dp)
+                                    .background(ArkColor.BGTertiary, CircleShape),
                         ) {
                             Text(
                                 modifier = Modifier.align(Alignment.Center),
@@ -453,13 +451,13 @@ private fun QuickItem(
         }
         Column(
             modifier =
-            Modifier
-                .constrainAs(content) {
-                    linkTo(icons.end, chevron.start, bias = 0f)
-                    top.linkTo(parent.top, margin = 16.dp)
-                    bottom.linkTo(parent.bottom, margin = 16.dp)
-                }
-                .padding(start = if (expanded) 12.dp else 0.dp),
+                Modifier
+                    .constrainAs(content) {
+                        linkTo(icons.end, chevron.start, bias = 0f)
+                        top.linkTo(parent.top, margin = 16.dp)
+                        bottom.linkTo(parent.bottom, margin = 16.dp)
+                    }
+                    .padding(start = if (expanded) 12.dp else 0.dp),
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
@@ -505,17 +503,17 @@ private fun QuickItem(
         if (to.size > 1) {
             Box(
                 modifier =
-                Modifier
-                    .constrainAs(chevron) {
-                        height = Dimension.fillToConstraints
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom)
-                    }
-                    .clickable {
-                        expanded = !expanded
-                    }
-                    .padding(start = 13.dp, end = 29.dp, top = 23.dp),
+                    Modifier
+                        .constrainAs(chevron) {
+                            height = Dimension.fillToConstraints
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                        }
+                        .clickable {
+                            expanded = !expanded
+                        }
+                        .padding(start = 13.dp, end = 29.dp, top = 23.dp),
             ) {
                 if (expanded) {
                     Icon(
@@ -593,8 +591,10 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
         }
     }
 }
-fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}
+
+fun Context.findActivity(): Activity? =
+    when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
+    }

@@ -11,12 +11,12 @@ class QuickPairsWidgetRefreshWorker(
     params: WorkerParameters,
     private val context: Context,
 ) : CoroutineWorker(context, params) {
-
     override suspend fun doWork(): Result {
         Timber.d("Refresh rates work executed")
-        val intent = Intent(applicationContext, QuickPairsWidgetReceiver::class.java).apply {
-            action = QuickPairsWidgetReceiver.PINNED_PAIRS_REFRESH
-        }
+        val intent =
+            Intent(applicationContext, QuickPairsWidgetReceiver::class.java).apply {
+                action = QuickPairsWidgetReceiver.PINNED_PAIRS_REFRESH
+            }
         applicationContext.sendBroadcast(intent)
         return Result.success()
     }

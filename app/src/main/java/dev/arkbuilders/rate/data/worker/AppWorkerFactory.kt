@@ -19,7 +19,7 @@ class AppWorkerFactory @Inject constructor(
             ),
         )
         addFactory(
-            QuickPairsWidgetRefreshWorkerFactory()
+            QuickPairsWidgetRefreshWorkerFactory(),
         )
     }
 }

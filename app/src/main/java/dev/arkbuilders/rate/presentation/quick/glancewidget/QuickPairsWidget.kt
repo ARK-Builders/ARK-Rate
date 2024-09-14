@@ -38,53 +38,62 @@ import dev.arkbuilders.rate.presentation.quick.glancewidget.action.OpenAppAction
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 class QuickPairsWidget : GlanceAppWidget() {
-
-    override suspend fun provideGlance(context: Context, id: GlanceId) {
+    override suspend fun provideGlance(
+        context: Context,
+        id: GlanceId,
+    ) {
         provideContent {
             val prefs = currentState<Preferences>()
             val quickPairsString = prefs[QuickPairsWidgetReceiver.quickDisplayPairs]
             val quickPairsList = quickPairsString?.let { parseQuickPairs(it) }
             Column(
-                modifier = GlanceModifier.fillMaxSize().background(Color.White)
-                    .padding(horizontal = 12.dp)
+                modifier =
+                    GlanceModifier.fillMaxSize().background(Color.White)
+                        .padding(horizontal = 12.dp),
             ) {
                 Row(
                     modifier = GlanceModifier.fillMaxWidth().padding(top = 8.dp),
                     verticalAlignment = Alignment.Vertical.CenterVertically,
                 ) {
-
                     Image(
-                        modifier = GlanceModifier.size(24.dp).padding(4.dp)
-                            .clickable(actionRunCallback<AddNewPairAction>()),
-                        provider = ImageProvider(
-                            R.drawable.ic_about_logo,
-                        ),
+                        modifier =
+                            GlanceModifier.size(24.dp).padding(4.dp)
+                                .clickable(actionRunCallback<AddNewPairAction>()),
+                        provider =
+                            ImageProvider(
+                                R.drawable.ic_about_logo,
+                            ),
                         contentDescription = null,
                     )
                     Text(
                         modifier = GlanceModifier.defaultWeight(),
                         text = context.getString(R.string.quick_pinned_pairs),
-                        style = TextStyle(
-                            color = ColorProvider(ArkColor.TextTertiary),
-                            fontWeight = FontWeight.Medium
-                        )
+                        style =
+                            TextStyle(
+                                color = ColorProvider(ArkColor.TextTertiary),
+                                fontWeight = FontWeight.Medium,
+                            ),
                     )
                     Image(
-                        modifier = GlanceModifier.size(24.dp).padding(4.dp)
-                            .clickable(actionRunCallback<AddNewPairAction>()),
-                        provider = ImageProvider(
-                            R.drawable.ic_add_circle,
-                        ),
+                        modifier =
+                            GlanceModifier.size(24.dp).padding(4.dp)
+                                .clickable(actionRunCallback<AddNewPairAction>()),
+                        provider =
+                            ImageProvider(
+                                R.drawable.ic_add_circle,
+                            ),
                         contentDescription = null,
                     )
                     Text(
-                        modifier = GlanceModifier
-                            .clickable(actionRunCallback<OpenAppAction>()),
+                        modifier =
+                            GlanceModifier
+                                .clickable(actionRunCallback<OpenAppAction>()),
                         text = context.getString(R.string.quick_open_app),
-                        style = TextStyle(
-                            color = ColorProvider(ArkColor.Primary),
-                            fontWeight = FontWeight.Medium
-                        )
+                        style =
+                            TextStyle(
+                                color = ColorProvider(ArkColor.Primary),
+                                fontWeight = FontWeight.Medium,
+                            ),
                     )
                 }
                 LazyColumn(modifier = GlanceModifier.fillMaxHeight()) {
@@ -93,12 +102,13 @@ class QuickPairsWidget : GlanceAppWidget() {
                             Column {
                                 QuickPairItem(
                                     quick = quick,
-                                    context = context
+                                    context = context,
                                 )
                                 Spacer(
-                                    modifier = GlanceModifier.fillMaxWidth().height(1.dp)
-                                        .background(Color.Gray.copy(alpha = 0.2f))
-                                        .padding(vertical = 2.dp)
+                                    modifier =
+                                        GlanceModifier.fillMaxWidth().height(1.dp)
+                                            .background(Color.Gray.copy(alpha = 0.2f))
+                                            .padding(vertical = 2.dp),
                                 )
                             }
                         }
