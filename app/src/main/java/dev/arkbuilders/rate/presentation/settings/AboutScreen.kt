@@ -1,6 +1,5 @@
 package dev.arkbuilders.rate.presentation.settings
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -21,13 +20,12 @@ fun AboutScreen(navigator: DestinationsNavigator) {
             AppTopBarBack(title = stringResource(R.string.about), navigator)
         },
     ) {
-        Box(modifier = Modifier.padding(it)) {
-            ArkAbout(
-                appName = stringResource(id = R.string.app_name),
-                appLogoResId = R.drawable.ic_about_logo,
-                versionName = BuildConfig.VERSION_NAME,
-                privacyPolicyUrl = stringResource(R.string.privacy_policy_url),
-            )
-        }
+        ArkAbout(
+            modifier = Modifier.padding(it),
+            appName = stringResource(id = R.string.app_name),
+            appLogoResId = R.drawable.ic_about_logo,
+            versionName = BuildConfig.VERSION_NAME,
+            privacyPolicyUrl = stringResource(R.string.privacy_policy_url),
+        )
     }
 }
