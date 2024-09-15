@@ -34,7 +34,9 @@ import com.google.gson.GsonBuilder
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction
+import dev.arkbuilders.rate.presentation.quick.glancewidget.action.NextPageAction
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.OpenAppAction
+import dev.arkbuilders.rate.presentation.quick.glancewidget.action.PreviousPageAction
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 class QuickPairsWidget : GlanceAppWidget() {
@@ -46,6 +48,7 @@ class QuickPairsWidget : GlanceAppWidget() {
             val prefs = currentState<Preferences>()
             val quickPairsString = prefs[QuickPairsWidgetReceiver.quickDisplayPairs]
             val quickPairsList = quickPairsString?.let { parseQuickPairs(it) }
+            val pageName = prefs[QuickPairsWidgetReceiver.currentPageName]
             Column(
                 modifier =
                     GlanceModifier.fillMaxSize().background(Color.White)
@@ -59,10 +62,7 @@ class QuickPairsWidget : GlanceAppWidget() {
                         modifier =
                             GlanceModifier.size(24.dp).padding(4.dp)
                                 .clickable(actionRunCallback<AddNewPairAction>()),
-                        provider =
-                            ImageProvider(
-                                R.drawable.ic_about_logo,
-                            ),
+                        provider = ImageProvider(R.drawable.ic_about_logo),
                         contentDescription = null,
                     )
                     Text(
@@ -73,6 +73,30 @@ class QuickPairsWidget : GlanceAppWidget() {
                                 color = ColorProvider(ArkColor.TextTertiary),
                                 fontWeight = FontWeight.Medium,
                             ),
+                    )
+                    Text(
+                        modifier = GlanceModifier.defaultWeight(),
+                        text = pageName.toString(),
+                        style =
+                            TextStyle(
+                                color = ColorProvider(ArkColor.TextTertiary),
+                                fontWeight = FontWeight.Medium,
+                            ),
+                    )
+                    Image(
+                        modifier =
+                            GlanceModifier.size(24.dp).padding(4.dp)
+                                .clickable(actionRunCallback<PreviousPageAction>()),
+                        provider = ImageProvider(R.drawable.ic_chevron_left),
+                        contentDescription = null,
+                    )
+
+                    Image(
+                        modifier =
+                        GlanceModifier.size(24.dp).padding(4.dp)
+                            .clickable(actionRunCallback<NextPageAction>()),
+                        provider = ImageProvider(R.drawable.ic_chevron_right),
+                        contentDescription = null,
                     )
                     Image(
                         modifier =
@@ -106,7 +130,9 @@ class QuickPairsWidget : GlanceAppWidget() {
                                 )
                                 Spacer(
                                     modifier =
-                                        GlanceModifier.fillMaxWidth().height(1.dp)
+                                        GlanceModifier
+                                            .fillMaxWidth()
+                                            .height(1.dp)
                                             .background(Color.Gray.copy(alpha = 0.2f))
                                             .padding(vertical = 2.dp),
                                 )
