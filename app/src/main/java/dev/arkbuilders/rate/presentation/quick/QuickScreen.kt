@@ -1,8 +1,5 @@
 package dev.arkbuilders.rate.presentation.quick
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -75,6 +72,7 @@ import dev.arkbuilders.rate.presentation.ui.QuickSwipeItem
 import dev.arkbuilders.rate.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
+import dev.arkbuilders.rate.presentation.utils.findActivity
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.OffsetDateTime
@@ -591,10 +589,3 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
         }
     }
 }
-
-fun Context.findActivity(): Activity? =
-    when (this) {
-        is Activity -> this
-        is ContextWrapper -> baseContext.findActivity()
-        else -> null
-    }

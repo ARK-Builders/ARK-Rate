@@ -1,6 +1,8 @@
 package dev.arkbuilders.rate.presentation.utils
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
@@ -40,3 +42,10 @@ fun Context.openEmail(
         }
     }
 }
+
+fun Context.findActivity(): Activity? =
+    when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
+    }
