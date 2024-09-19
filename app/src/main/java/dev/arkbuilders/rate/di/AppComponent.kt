@@ -16,6 +16,7 @@ import dev.arkbuilders.rate.domain.repo.NetworkStatus
 import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
+import dev.arkbuilders.rate.domain.usecase.GetSortedPinnedQuickPairsUseCase
 import dev.arkbuilders.rate.presentation.pairalert.AddPairAlertViewModelFactory
 import dev.arkbuilders.rate.presentation.pairalert.PairAlertViewModelFactory
 import dev.arkbuilders.rate.presentation.portfolio.AddAssetViewModelFactory
@@ -71,6 +72,8 @@ interface AppComponent {
     fun inject(currencyMonitorWorker: CurrencyMonitorWorker)
 
     fun calcFrequentCurrUseCase(): CalcFrequentCurrUseCase
+
+    fun getSortedPinnedQuickPairsUseCase(): GetSortedPinnedQuickPairsUseCase
 
     @Component.Factory
     interface Factory {

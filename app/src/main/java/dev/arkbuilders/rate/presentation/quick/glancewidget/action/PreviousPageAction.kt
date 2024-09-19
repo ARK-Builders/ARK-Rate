@@ -1,27 +1,35 @@
 package dev.arkbuilders.rate.presentation.quick.glancewidget.action
 
 import android.content.Context
-import android.content.Intent
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
-import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidgetReceiver
+import androidx.glance.appwidget.state.updateAppWidgetState
+import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidget
+import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidgetReceiver.Companion.currentGroupKey
 
 class PreviousPageAction : ActionCallback {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
-        parameters: ActionParameters
+        parameters: ActionParameters,
     ) {
-
-        val intent =
-            Intent(context, QuickPairsWidgetReceiver::class.java).apply {
-                action = PREVIOUS_PAGE
+        val quickRepo = DIManager.component.quickRepo()
+        val allGroups = quickRepo.getAllGroups()
+        updateAppWidgetState(context, glanceId) { prefs ->
+            val currentIndex = allGroups.indexOf(prefs[currentGroupKey])
+            var newIndex = if (currentIndex == -1) 0 else currentIndex - 1
+            if (newIndex < 0) {
+                newIndex = allGroups.lastIndex
             }
-        context.sendBroadcast(intent)
-    }
-
-    companion object {
-        const val PREVIOUS_PAGE = "PREVIOUS_PAGE_ACTION"
+            val newGroup = allGroups[newIndex]
+            newGroup?.let {
+                prefs[currentGroupKey] = newGroup
+            } ?: let {
+                prefs.remove(currentGroupKey)
+            }
+        }
+        QuickPairsWidget().update(context, glanceId)
     }
 }
