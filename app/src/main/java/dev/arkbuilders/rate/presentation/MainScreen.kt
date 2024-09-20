@@ -19,23 +19,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
+import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.utils.startDestination
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PortfolioScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.SettingsScreenDestination
+import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction.Companion.ADD_NEW_PAIR
 import dev.arkbuilders.rate.presentation.ui.AnimatedRateBottomNavigation
 import dev.arkbuilders.rate.presentation.ui.ConnectivityOfflineSnackbar
 import dev.arkbuilders.rate.presentation.ui.ConnectivityOfflineSnackbarVisuals
 import dev.arkbuilders.rate.presentation.ui.ConnectivityOnlineSnackbar
 import dev.arkbuilders.rate.presentation.ui.ConnectivityOnlineSnackbarVisuals
+import dev.arkbuilders.rate.presentation.utils.findActivity
 import dev.arkbuilders.rate.presentation.utils.keyboardAsState
 import kotlinx.coroutines.flow.drop
 
@@ -47,7 +52,17 @@ fun MainScreen() {
         )
     val navController = engine.rememberNavController()
     val snackState = remember { SnackbarHostState() }
+    val ctx = LocalContext.current
 
+    LaunchedEffect(key1 = Unit) {
+        val activity = ctx.findActivity()
+        val intent = activity?.intent
+        val createNewPair = intent?.getStringExtra(ADD_NEW_PAIR) ?: ""
+        if (createNewPair.isNotEmpty()) {
+            navController.navigate(AddQuickScreenDestination())
+            intent?.removeExtra(ADD_NEW_PAIR)
+        }
+    }
     LaunchedEffect(key1 = Unit) {
         DIManager.component.networkStatus().onlineStatus
             .drop(1)
