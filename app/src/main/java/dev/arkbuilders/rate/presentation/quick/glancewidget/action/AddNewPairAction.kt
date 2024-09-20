@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
-import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidgetReceiver
+import dev.arkbuilders.rate.presentation.MainActivity
 
 class AddNewPairAction : ActionCallback {
     override suspend fun onAction(
@@ -13,11 +13,12 @@ class AddNewPairAction : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters,
     ) {
-        val intent =
-            Intent(context, QuickPairsWidgetReceiver::class.java).apply {
-                action = ADD_NEW_PAIR
-            }
-        context.sendBroadcast(intent)
+        context.startActivity(
+            Intent(context, MainActivity::class.java).apply {
+                putExtra(ADD_NEW_PAIR, "ADD_NEW_PAIR")
+                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            },
+        )
     }
 
     companion object {
