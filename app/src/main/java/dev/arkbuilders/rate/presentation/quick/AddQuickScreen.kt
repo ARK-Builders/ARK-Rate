@@ -77,6 +77,7 @@ fun AddQuickScreen(
     quickPairId: Long? = null,
     newCode: CurrencyCode? = null,
     reuseNotEdit: Boolean = true,
+    group: String? = null,
     navigator: DestinationsNavigator,
 ) {
     val ctx = LocalContext.current
@@ -84,7 +85,7 @@ fun AddQuickScreen(
         viewModel(
             factory =
                 DIManager.component.addQuickVMFactory()
-                    .create(quickPairId, newCode, reuseNotEdit),
+                    .create(quickPairId, newCode, reuseNotEdit, group),
         )
 
     val state by viewModel.collectAsState()
