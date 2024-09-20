@@ -18,7 +18,6 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.time.Duration
 import java.time.OffsetDateTime
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -96,7 +95,7 @@ class CurrencyRepoImpl @Inject constructor(
     private fun hasUpdateIntervalPassed(updatedDate: OffsetDateTime?) =
         updatedDate == null ||
             Duration.between(updatedDate, OffsetDateTime.now())
-                .toMillis() > dayInMillis
+                .toMillis() > updateInterval
 
-    private val dayInMillis = TimeUnit.DAYS.toMillis(1)
+    private val updateInterval = Duration.ofHours(2).toMillis()
 }
