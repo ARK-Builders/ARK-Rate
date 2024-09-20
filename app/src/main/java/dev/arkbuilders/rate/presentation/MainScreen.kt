@@ -35,6 +35,7 @@ import dev.arkbuilders.rate.presentation.destinations.PortfolioScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.SettingsScreenDestination
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction.Companion.ADD_NEW_PAIR
+import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction.Companion.ADD_NEW_PAIR_GROUP_KEY
 import dev.arkbuilders.rate.presentation.ui.AnimatedRateBottomNavigation
 import dev.arkbuilders.rate.presentation.ui.ConnectivityOfflineSnackbar
 import dev.arkbuilders.rate.presentation.ui.ConnectivityOfflineSnackbarVisuals
@@ -59,7 +60,9 @@ fun MainScreen() {
         val intent = activity?.intent
         val createNewPair = intent?.getStringExtra(ADD_NEW_PAIR) ?: ""
         if (createNewPair.isNotEmpty()) {
-            navController.navigate(AddQuickScreenDestination())
+            val group = intent?.getStringExtra(ADD_NEW_PAIR_GROUP_KEY)
+            navController.navigate(AddQuickScreenDestination(group = group))
+            intent?.removeExtra(ADD_NEW_PAIR_GROUP_KEY)
             intent?.removeExtra(ADD_NEW_PAIR)
         }
     }

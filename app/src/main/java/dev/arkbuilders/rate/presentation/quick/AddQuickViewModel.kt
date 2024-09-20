@@ -47,6 +47,7 @@ class AddQuickViewModel(
     private val quickPairId: Long?,
     private val newCode: CurrencyCode?,
     private val reuseNotEdit: Boolean,
+    private val group: String?,
     private val quickRepo: QuickRepo,
     private val convertUseCase: ConvertWithRateUseCase,
     private val codeUseStatRepo: CodeUseStatRepo,
@@ -105,7 +106,7 @@ class AddQuickViewModel(
                     newCode?.let {
                         listOf(AmountStr(newCode, ""))
                     } ?: state.currencies
-                state.copy(currencies = currencies, availableGroups = groups)
+                state.copy(currencies = currencies, availableGroups = groups, group = group)
             }
         }
     }
@@ -201,8 +202,9 @@ class AddQuickViewModel(
 
 class AddQuickViewModelFactory @AssistedInject constructor(
     @Assisted private val quickPairId: Long?,
-    @Assisted private val newCode: CurrencyCode?,
+    @Assisted("newCode") private val newCode: CurrencyCode?,
     @Assisted private val reuseNotEdit: Boolean,
+    @Assisted("group") private val group: String?,
     private val quickRepo: QuickRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase,
@@ -213,6 +215,7 @@ class AddQuickViewModelFactory @AssistedInject constructor(
             quickPairId,
             newCode,
             reuseNotEdit,
+            group,
             quickRepo,
             convertUseCase,
             codeUseStatRepo,
@@ -224,8 +227,9 @@ class AddQuickViewModelFactory @AssistedInject constructor(
     interface Factory {
         fun create(
             quickPairId: Long?,
-            newCode: CurrencyCode?,
+            @Assisted("newCode") newCode: CurrencyCode?,
             reuseNotEdit: Boolean,
+            @Assisted("group") group: String?,
         ): AddQuickViewModelFactory
     }
 }
