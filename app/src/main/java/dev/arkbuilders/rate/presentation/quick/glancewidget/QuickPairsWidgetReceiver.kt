@@ -7,9 +7,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import dev.arkbuilders.rate.presentation.MainActivity
-import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction
-import dev.arkbuilders.rate.presentation.quick.glancewidget.action.OpenAppAction
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -29,23 +26,6 @@ class QuickPairsWidgetReceiver : GlanceAppWidgetReceiver() {
         when (action) {
             AppWidgetManager.ACTION_APPWIDGET_ENABLED, PINNED_PAIRS_REFRESH ->
                 updateAll(context)
-
-            OpenAppAction.OPEN_APP -> {
-                context.startActivity(
-                    Intent(context, MainActivity::class.java).apply {
-                        setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    },
-                )
-            }
-
-            AddNewPairAction.ADD_NEW_PAIR -> {
-                context.startActivity(
-                    Intent(context, MainActivity::class.java).apply {
-                        putExtra(AddNewPairAction.ADD_NEW_PAIR, "ADD_NEW_PAIR")
-                        setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    },
-                )
-            }
         }
     }
 
