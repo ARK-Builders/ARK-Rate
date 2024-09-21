@@ -4,10 +4,7 @@ import android.content.Context
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
-import androidx.glance.appwidget.state.updateAppWidgetState
-import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidget
-import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidgetReceiver.Companion.currentGroupKey
+import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidgetReceiver
 
 class NextPageAction : ActionCallback {
     override suspend fun onAction(
@@ -15,21 +12,16 @@ class NextPageAction : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters,
     ) {
-        val quickRepo = DIManager.component.quickRepo()
-        val allGroups = quickRepo.getAllGroups()
-        updateAppWidgetState(context, glanceId) { prefs ->
-            val currentIndex = allGroups.indexOf(prefs[currentGroupKey])
-            var newIndex = if (currentIndex == -1) 0 else currentIndex + 1
-            if (newIndex > allGroups.lastIndex) {
-                newIndex = 0
-            }
-            val newGroup = allGroups[newIndex]
-            newGroup?.let {
-                prefs[currentGroupKey] = newGroup
-            } ?: let {
-                prefs.remove(currentGroupKey)
-            }
-        }
-        QuickPairsWidget().update(context, glanceId)
+        QuickPairsWidgetReceiver.updateWidgetNewGroup(
+            context = context,
+            glanceId = glanceId,
+            findNewIndex = { currentIndex, lastIndex ->
+                var newIndex = currentIndex?.let { it + 1 } ?: 0
+                if (newIndex > lastIndex) {
+                    newIndex = 0
+                }
+                newIndex
+            },
+        )
     }
 }
