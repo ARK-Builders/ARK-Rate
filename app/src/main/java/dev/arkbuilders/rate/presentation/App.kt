@@ -14,6 +14,7 @@ import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.data.worker.QuickPairsWidgetRefreshWorker
 import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.domain.AppConfig
 import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +58,7 @@ class App : Application(), Configuration.Provider {
         val workRequest =
             PeriodicWorkRequest.Builder(
                 workerClass,
-                8L,
+                AppConfig.CURRENCY_RATES_UPDATE_INTERVAL_HOURS,
                 TimeUnit.HOURS,
             ).setConstraints(constraints)
                 .build()

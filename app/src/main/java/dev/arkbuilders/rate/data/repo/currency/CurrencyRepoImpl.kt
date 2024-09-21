@@ -3,6 +3,7 @@ package dev.arkbuilders.rate.data.repo.currency
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
+import dev.arkbuilders.rate.domain.AppConfig
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.CurrencyRate
 import dev.arkbuilders.rate.domain.model.CurrencyType
@@ -97,5 +98,6 @@ class CurrencyRepoImpl @Inject constructor(
             Duration.between(updatedDate, OffsetDateTime.now())
                 .toMillis() > updateInterval
 
-    private val updateInterval = Duration.ofHours(2).toMillis()
+    private val updateInterval =
+        Duration.ofHours(AppConfig.CURRENCY_RATES_UPDATE_INTERVAL_HOURS).toMillis()
 }
