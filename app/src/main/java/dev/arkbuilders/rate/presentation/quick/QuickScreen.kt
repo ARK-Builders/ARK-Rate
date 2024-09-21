@@ -1,11 +1,8 @@
-@file:OptIn(
-    ExperimentalComposeUiApi::class,
-    ExperimentalFoundationApi::class,
-)
-
 package dev.arkbuilders.rate.presentation.quick
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,12 +26,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -61,6 +58,7 @@ import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.domain.model.QuickPair
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
+import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction.Companion.ADD_NEW_PAIR
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
@@ -93,7 +91,15 @@ fun QuickScreen(navigator: DestinationsNavigator) {
     val state by viewModel.collectAsState()
     val snackState = remember { SnackbarHostState() }
     val ctx = LocalContext.current
-
+    LaunchedEffect(key1 = Unit) {
+        val activity = ctx.findActivity()
+        val intent = activity?.intent
+        val createNewPair = intent?.getStringExtra(ADD_NEW_PAIR) ?: ""
+        if (createNewPair.isNotEmpty()) {
+            navigator.navigate(AddQuickScreenDestination())
+            intent?.removeExtra(ADD_NEW_PAIR)
+        }
+    }
     viewModel.collectSideEffect { effect ->
         when (effect) {
             is QuickScreenEffect.ShowSnackbarAdded ->
@@ -585,3 +591,10 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
         }
     }
 }
+
+fun Context.findActivity(): Activity? =
+    when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
+    }

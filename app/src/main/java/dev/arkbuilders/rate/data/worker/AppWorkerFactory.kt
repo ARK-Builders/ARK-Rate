@@ -18,5 +18,8 @@ class AppWorkerFactory @Inject constructor(
                 timestampRepo,
             ),
         )
+        addFactory(
+            QuickPairsWidgetRefreshWorkerFactory(),
+        )
     }
 }

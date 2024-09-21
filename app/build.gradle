@@ -104,6 +104,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     implementation "com.google.dagger:dagger:2.50"
+    implementation 'androidx.glance:glance-appwidget:1.1.0'
     ksp "com.google.dagger:dagger-compiler:2.50"
 
     implementation "androidx.room:room-runtime:2.6.1"
