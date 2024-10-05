@@ -30,22 +30,27 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.google.gson.GsonBuilder
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.domain.model.PinnedQuickPair
+import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction
+import dev.arkbuilders.rate.presentation.quick.glancewidget.action.NextPageAction
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.OpenAppAction
+import dev.arkbuilders.rate.presentation.quick.glancewidget.action.PreviousPageAction
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 class QuickPairsWidget : GlanceAppWidget() {
+    private val getPinnedUseCase = DIManager.component.getSortedPinnedQuickPairsUseCase()
+
     override suspend fun provideGlance(
         context: Context,
         id: GlanceId,
     ) {
+        val pinned = getPinnedUseCase.invoke()
         provideContent {
             val prefs = currentState<Preferences>()
-            val quickPairsString = prefs[QuickPairsWidgetReceiver.quickDisplayPairs]
-            val quickPairsList = quickPairsString?.let { parseQuickPairs(it) }
+            val group = prefs[QuickPairsWidgetReceiver.currentGroupKey]
+            val quickPairsList = pinned.filter { it.pair.group == group }
+            val displayGroup = group ?: context.getString(R.string.group_default_name)
             Column(
                 modifier =
                     GlanceModifier.fillMaxSize().background(Color.White)
@@ -59,10 +64,7 @@ class QuickPairsWidget : GlanceAppWidget() {
                         modifier =
                             GlanceModifier.size(24.dp).padding(4.dp)
                                 .clickable(actionRunCallback<AddNewPairAction>()),
-                        provider =
-                            ImageProvider(
-                                R.drawable.ic_about_logo,
-                            ),
+                        provider = ImageProvider(R.drawable.ic_about_logo),
                         contentDescription = null,
                     )
                     Text(
@@ -73,6 +75,30 @@ class QuickPairsWidget : GlanceAppWidget() {
                                 color = ColorProvider(ArkColor.TextTertiary),
                                 fontWeight = FontWeight.Medium,
                             ),
+                    )
+                    Text(
+                        modifier = GlanceModifier.defaultWeight(),
+                        text = displayGroup,
+                        style =
+                            TextStyle(
+                                color = ColorProvider(ArkColor.TextTertiary),
+                                fontWeight = FontWeight.Medium,
+                            ),
+                    )
+                    Image(
+                        modifier =
+                            GlanceModifier.size(24.dp).padding(4.dp)
+                                .clickable(actionRunCallback<PreviousPageAction>()),
+                        provider = ImageProvider(R.drawable.ic_chevron_left),
+                        contentDescription = null,
+                    )
+
+                    Image(
+                        modifier =
+                            GlanceModifier.size(24.dp).padding(4.dp)
+                                .clickable(actionRunCallback<NextPageAction>()),
+                        provider = ImageProvider(R.drawable.ic_chevron_right),
+                        contentDescription = null,
                     )
                     Image(
                         modifier =
@@ -97,29 +123,24 @@ class QuickPairsWidget : GlanceAppWidget() {
                     )
                 }
                 LazyColumn(modifier = GlanceModifier.fillMaxHeight()) {
-                    quickPairsList?.let { pairs ->
-                        items(pairs) { quick ->
-                            Column {
-                                QuickPairItem(
-                                    quick = quick,
-                                    context = context,
-                                )
-                                Spacer(
-                                    modifier =
-                                        GlanceModifier.fillMaxWidth().height(1.dp)
-                                            .background(Color.Gray.copy(alpha = 0.2f))
-                                            .padding(vertical = 2.dp),
-                                )
-                            }
+                    items(quickPairsList) { quick ->
+                        Column {
+                            QuickPairItem(
+                                quick = quick,
+                                context = context,
+                            )
+                            Spacer(
+                                modifier =
+                                    GlanceModifier
+                                        .fillMaxWidth()
+                                        .height(1.dp)
+                                        .background(Color.Gray.copy(alpha = 0.2f))
+                                        .padding(vertical = 2.dp),
+                            )
                         }
                     }
                 }
             }
         }
-    }
-
-    private fun parseQuickPairs(quickPairsString: String): List<PinnedQuickPair> {
-        val gson = GsonBuilder().create()
-        return gson.fromJson(quickPairsString, Array<PinnedQuickPair>::class.java).toList()
     }
 }

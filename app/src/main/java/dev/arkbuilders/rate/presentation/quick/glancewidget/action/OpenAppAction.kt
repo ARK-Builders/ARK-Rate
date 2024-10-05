@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
-import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidgetReceiver
+import dev.arkbuilders.rate.presentation.MainActivity
 
 class OpenAppAction : ActionCallback {
     override suspend fun onAction(
@@ -13,14 +13,10 @@ class OpenAppAction : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters,
     ) {
-        val intent =
-            Intent(context, QuickPairsWidgetReceiver::class.java).apply {
-                action = OPEN_APP
-            }
-        context.sendBroadcast(intent)
-    }
-
-    companion object {
-        const val OPEN_APP = "QUICK_PAIRS_WIDGET_OPEN_APP"
+        context.startActivity(
+            Intent(context, MainActivity::class.java).apply {
+                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            },
+        )
     }
 }
