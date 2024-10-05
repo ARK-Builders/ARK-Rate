@@ -3,6 +3,7 @@ package dev.arkbuilders.rate.data.repo.currency
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
+import dev.arkbuilders.rate.domain.AppConfig
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.CurrencyRate
 import dev.arkbuilders.rate.domain.model.CurrencyType
@@ -18,7 +19,6 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.time.Duration
 import java.time.OffsetDateTime
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -96,7 +96,8 @@ class CurrencyRepoImpl @Inject constructor(
     private fun hasUpdateIntervalPassed(updatedDate: OffsetDateTime?) =
         updatedDate == null ||
             Duration.between(updatedDate, OffsetDateTime.now())
-                .toMillis() > dayInMillis
+                .toMillis() > updateInterval
 
-    private val dayInMillis = TimeUnit.DAYS.toMillis(1)
+    private val updateInterval =
+        Duration.ofHours(AppConfig.CURRENCY_RATES_UPDATE_INTERVAL_HOURS).toMillis()
 }
