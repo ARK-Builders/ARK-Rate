@@ -32,7 +32,7 @@ class CalcFrequentCurrUseCase @Inject constructor(
     private fun mapToSortRating(list: List<CodeUseStat>): List<Pair<CurrencyCode, Double>> {
         val now = OffsetDateTime.now()
         return list.map { stat ->
-            val daysPassed = Duration.between(now, stat.lastUsedDate).toDays()
+            val daysPassed = Duration.between(stat.lastUsedDate, now).toDays()
             val timeFactor = daysPassed * 0.5
             stat.code to stat.count.toDouble() - timeFactor
         }.toList()
