@@ -2,6 +2,10 @@
 
 package dev.arkbuilders.rate.presentation.pairalert
 
+import android.Manifest
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -69,17 +73,41 @@ import timber.log.Timber
 @Destination
 @Composable
 fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
+    val ctx = LocalContext.current
+    val notificationPermissionLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { isGranted ->
+            if (isGranted.not()) {
+                Toast.makeText(
+                    ctx,
+                    ctx.getString(R.string.alert_post_notification_permission_explanation),
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+        }
+
     val viewModel: PairAlertViewModel =
         viewModel(factory = DIManager.component.pairAlertVMFactory())
 
     val state by viewModel.collectAsState()
     val snackState = remember { SnackbarHostState() }
-    val ctx = LocalContext.current
 
     val isEmpty = state.pages.isEmpty()
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
+            is PairAlertEffect.NavigateToAdd ->
+                navigator.navigate(
+                    AddPairAlertScreenDestination(
+                        pairAlertId = effect.pairId,
+                    ),
+                )
+
+            PairAlertEffect.AskNotificationPermission -> {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+
             is PairAlertEffect.ShowSnackbarAdded ->
                 snackState.showSnackbar(effect.visuals)
 
@@ -118,9 +146,7 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
                 contentColor = Color.White,
                 containerColor = ArkColor.Secondary,
                 shape = CircleShape,
-                onClick = {
-                    navigator.navigate(AddPairAlertScreenDestination())
-                },
+                onClick = viewModel::onNewPair,
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
             }
@@ -137,13 +163,13 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
             when {
                 state.noInternet -> NoInternetScreen(viewModel::onRefreshClick)
                 state.initialized.not() -> LoadingScreen()
-                isEmpty -> Empty(navigator)
+                isEmpty -> Empty(navigator, onNewPair = viewModel::onNewPair)
                 else ->
                     Content(
                         state,
                         onDelete = viewModel::onDelete,
                         onClick = { pair ->
-                            navigator.navigate(AddPairAlertScreenDestination(pair.id))
+                            viewModel.onNewPair(pair.id)
                         },
                         onEnableToggle = viewModel::onEnableToggle,
                     )
@@ -337,7 +363,10 @@ private fun PairAlertItem(
 }
 
 @Composable
-private fun Empty(navigator: DestinationsNavigator) {
+private fun Empty(
+    navigator: DestinationsNavigator,
+    onNewPair: () -> Unit,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.align(Alignment.Center),
@@ -365,9 +394,7 @@ private fun Empty(navigator: DestinationsNavigator) {
             )
             AppButton(
                 modifier = Modifier.padding(top = 24.dp),
-                onClick = {
-                    navigator.navigate(AddPairAlertScreenDestination())
-                },
+                onClick = { onNewPair() },
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_add),

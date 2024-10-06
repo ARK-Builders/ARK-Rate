@@ -3,6 +3,7 @@ package dev.arkbuilders.rate.presentation.pairalert
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dev.arkbuilders.rate.data.permission.NotificationPermissionHelper
 import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
@@ -33,6 +34,10 @@ data class PairAlertScreenState(
 )
 
 sealed class PairAlertEffect {
+    data class NavigateToAdd(val pairId: Long? = null) : PairAlertEffect()
+
+    data object AskNotificationPermission : PairAlertEffect()
+
     data class ShowSnackbarAdded(
         val visuals: NotifyAddedSnackbarVisuals,
     ) : PairAlertEffect()
@@ -44,6 +49,7 @@ class PairAlertViewModel(
     private val pairAlertRepo: PairAlertRepo,
     private val currencyRepo: CurrencyRepo,
     private val analyticsManager: AnalyticsManager,
+    private val notificationPermissionHelper: NotificationPermissionHelper,
 ) : ViewModel(), ContainerHost<PairAlertScreenState, PairAlertEffect> {
     override val container: Container<PairAlertScreenState, PairAlertEffect> =
         container(
@@ -91,6 +97,15 @@ class PairAlertViewModel(
             }.launchIn(viewModelScope)
         }
 
+    fun onNewPair(pairId: Long? = null) =
+        intent {
+            if (notificationPermissionHelper.isGranted()) {
+                postSideEffect(PairAlertEffect.NavigateToAdd(pairId))
+            } else {
+                postSideEffect(PairAlertEffect.AskNotificationPermission)
+            }
+        }
+
     fun onRefreshClick() =
         intent {
             reduce { state.copy(noInternet = false) }
@@ -127,12 +142,14 @@ class PairAlertViewModelFactory @Inject constructor(
     private val pairAlertRepo: PairAlertRepo,
     private val currencyRepo: CurrencyRepo,
     private val analyticsManager: AnalyticsManager,
+    private val notificationPermissionHelper: NotificationPermissionHelper,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return PairAlertViewModel(
             pairAlertRepo,
             currencyRepo,
             analyticsManager,
+            notificationPermissionHelper,
         ) as T
     }
 }
