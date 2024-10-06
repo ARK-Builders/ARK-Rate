@@ -111,7 +111,7 @@ private fun DismissBackground(
 ) {
     val color =
         when (state.dismissDirection) {
-            SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError200
+            SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError500
             else -> if (isPinned) ArkColor.FGQuarterary else ArkColor.Secondary
         }
 
@@ -150,11 +150,11 @@ private fun DismissBackground(
         }
         Spacer(modifier = Modifier)
         if (state.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
-            Icon(
+            Text(
                 modifier = Modifier.padding(end = 17.dp),
-                painter = painterResource(id = R.drawable.ic_delete),
-                contentDescription = "",
-                tint = ArkColor.FGErrorPrimary,
+                text = stringResource(R.string.delete),
+                fontWeight = FontWeight.Medium,
+                color = Color.White,
             )
         }
     }
