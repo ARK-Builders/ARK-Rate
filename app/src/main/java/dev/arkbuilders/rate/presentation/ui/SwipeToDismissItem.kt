@@ -13,12 +13,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.presentation.theme.ArkColor
@@ -53,7 +56,7 @@ fun AppSwipeToDismiss(
 private fun DismissBackground(state: SwipeToDismissBoxState) {
     val color =
         when (state.dismissDirection) {
-            SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError200
+            SwipeToDismissBoxValue.EndToStart -> ArkColor.UtilityError500
             else -> Color.Transparent
         }
 
@@ -66,11 +69,19 @@ private fun DismissBackground(state: SwipeToDismissBoxState) {
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Spacer(modifier = Modifier)
-        Icon(
-            modifier = Modifier.padding(end = 17.dp),
-            painter = painterResource(id = R.drawable.ic_delete),
-            contentDescription = "",
-            tint = ArkColor.FGErrorPrimary,
-        )
+        Row {
+            Text(
+                modifier = Modifier.padding(end = 4.dp),
+                text = stringResource(R.string.delete),
+                fontWeight = FontWeight.Medium,
+                color = Color.White,
+            )
+            Icon(
+                modifier = Modifier.padding(end = 17.dp),
+                painter = painterResource(id = R.drawable.ic_delete),
+                contentDescription = "",
+                tint = Color.White,
+            )
+        }
     }
 }

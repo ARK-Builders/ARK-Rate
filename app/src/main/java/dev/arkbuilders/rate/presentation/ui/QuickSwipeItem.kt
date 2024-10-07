@@ -150,12 +150,20 @@ private fun DismissBackground(
         }
         Spacer(modifier = Modifier)
         if (state.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
-            Text(
-                modifier = Modifier.padding(end = 17.dp),
-                text = stringResource(R.string.delete),
-                fontWeight = FontWeight.Medium,
-                color = Color.White,
-            )
+            Row {
+                Text(
+                    modifier = Modifier.padding(end = 4.dp),
+                    text = stringResource(R.string.delete),
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White,
+                )
+                Icon(
+                    modifier = Modifier.padding(end = 17.dp),
+                    painter = painterResource(id = R.drawable.ic_delete),
+                    contentDescription = "",
+                    tint = Color.White,
+                )
+            }
         }
     }
 }
