@@ -2,6 +2,7 @@ package dev.arkbuilders.rate.data
 
 import android.icu.util.Currency
 import dev.arkbuilders.rate.domain.model.CurrencyCode
+import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -34,11 +35,11 @@ object CurrUtils {
         return newInput.replace(leadingZeros, "")
     }
 
-    fun prepareToDisplay(value: Double): String {
-        var fractionSize = if (value > 10) 2 else 8
+    fun prepareToDisplay(value: BigDecimal): String {
+        var fractionSize = if (value.toDouble() > 10) 2 else 8
 
-        val fractionalPart = value.toLong() - value
-        if (fractionalPart == 0.0) {
+        val fractionalPart = value.remainder(BigDecimal.ONE)
+        if (fractionalPart == BigDecimal.ZERO) {
             fractionSize = 0
         }
         val fractionPattern =
@@ -54,9 +55,9 @@ object CurrUtils {
         return numberFormatter.format(value)
     }
 
-    fun roundOff(number: Double): String {
+    fun roundOff(number: BigDecimal): String {
         val fractionSize =
-            if (number > 10) 2 else 8
+            if (number.toDouble() > 10) 2 else 8
 
         val df =
             DecimalFormat(
@@ -75,6 +76,16 @@ object CurrUtils {
         }
     }
 }
+
+fun BigDecimal.divideArk(divisor: BigDecimal) = this.divide(divisor, 50, RoundingMode.HALF_EVEN)
+
+fun String.toBigDecimalArk() =
+    when {
+        this == "" -> BigDecimal.ZERO
+        this == "-" -> BigDecimal.ZERO
+        this == "." -> BigDecimal.ZERO
+        else -> this.toBigDecimal()
+    }
 
 fun String.toDoubleSafe() =
     when {

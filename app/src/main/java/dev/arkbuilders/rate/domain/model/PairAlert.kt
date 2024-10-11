@@ -1,13 +1,14 @@
 package dev.arkbuilders.rate.domain.model
 
+import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 data class PairAlert(
     val id: Long,
     val targetCode: CurrencyCode,
     val baseCode: CurrencyCode,
-    val targetPrice: Double,
-    val startPrice: Double,
+    val targetPrice: BigDecimal,
+    val startPrice: BigDecimal,
     val percent: Double?,
     val oneTimeNotRecurrent: Boolean,
     val enabled: Boolean,

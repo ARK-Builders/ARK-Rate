@@ -7,7 +7,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.data.toBigDecimalArk
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
@@ -58,11 +58,11 @@ class EditAssetViewModel(
             val name = currencyRepo.nameByCodeUnsafe(asset!!.code)
 
             inputFlow.debounce(PERSIST_AMOUNT_DEBOUNCE).onEach {
-                assetsRepo.setAsset(asset.copy(value = it.toDoubleSafe()))
+                assetsRepo.setAsset(asset.copy(value = it.toBigDecimalArk()))
             }.launchIn(viewModelScope)
 
             reduce {
-                state.copy(asset, name, asset.value.toString(), initialized = true)
+                state.copy(asset, name, asset.value.toPlainString(), initialized = true)
             }
         }
 

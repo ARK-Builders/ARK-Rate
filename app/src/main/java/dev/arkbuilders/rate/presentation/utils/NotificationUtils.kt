@@ -19,7 +19,6 @@ import dev.arkbuilders.rate.presentation.MainActivity
 object NotificationUtils {
     fun showPairAlert(
         pairAlert: PairAlert,
-        curRatio: Double,
         ctx: Context,
     ) {
         val pair = pairAlert
@@ -39,7 +38,7 @@ object NotificationUtils {
                         R.string.alert_notification_desc,
                         pair.targetCode,
                         aboveOrBelow,
-                        pair.targetPrice.toString(),
+                        pair.targetPrice.toPlainString(),
                         pair.baseCode,
                     ),
                 )

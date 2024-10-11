@@ -8,6 +8,7 @@ import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.domain.model.CurrencyRate
 import dev.arkbuilders.rate.domain.model.CurrencyType
+import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,7 +21,13 @@ class CryptoCurrencyDataSource @Inject constructor(
     override suspend fun fetchRemote(): Either<Throwable, List<CurrencyRate>> {
         return try {
             cryptoAPI.getCryptoRates()
-                .map { CurrencyRate(currencyType, it.symbol.uppercase(), it.current_price) }
+                .map {
+                    CurrencyRate(
+                        currencyType,
+                        it.symbol.uppercase(),
+                        BigDecimal.valueOf(it.current_price),
+                    )
+                }
                 .right()
         } catch (e: Exception) {
             e.left()

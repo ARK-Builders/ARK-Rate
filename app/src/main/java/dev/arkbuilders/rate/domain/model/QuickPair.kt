@@ -1,11 +1,12 @@
 package dev.arkbuilders.rate.domain.model
 
+import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 data class QuickPair(
     val id: Long,
     val from: CurrencyCode,
-    val amount: Double,
+    val amount: BigDecimal,
     val to: List<Amount>,
     val calculatedDate: OffsetDateTime,
     val pinnedDate: OffsetDateTime?,

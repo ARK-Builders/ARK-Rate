@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.data.toBigDecimalArk
 import dev.arkbuilders.rate.domain.model.AmountStr
 import dev.arkbuilders.rate.domain.model.Asset
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
@@ -119,7 +119,7 @@ class AddAssetViewModel(
                 state.currencies.map {
                     Asset(
                         code = it.code,
-                        value = it.value.toDoubleSafe(),
+                        value = it.value.toBigDecimalArk(),
                         group = state.group,
                     )
                 }
