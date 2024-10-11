@@ -60,6 +60,14 @@ class PairAlertViewModel(
         analyticsManager.trackScreen("PairAlertScreen")
 
         intent {
+            if (pairAlertRepo.getAll().isNotEmpty() &&
+                notificationPermissionHelper.isGranted().not()
+            ) {
+                postSideEffect(PairAlertEffect.AskNotificationPermission)
+            }
+        }
+
+        intent {
             if (currencyRepo.isRatesAvailable().not()) {
                 reduce {
                     state.copy(noInternet = true)
