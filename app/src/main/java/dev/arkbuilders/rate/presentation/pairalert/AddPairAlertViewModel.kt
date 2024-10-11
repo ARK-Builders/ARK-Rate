@@ -10,7 +10,7 @@ import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.data.divideArk
 import dev.arkbuilders.rate.data.toBigDecimalArk
-import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.data.toDoubleArk
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
@@ -189,7 +189,7 @@ class AddPairAlertViewModel(
                     },
                 )
 
-            val percent = state.priceOrPercent.getOrNull()?.toDoubleSafe()
+            val percent = state.priceOrPercent.getOrNull()?.toDoubleArk()
 
             val id = if (state.editExisting) pairAlertId!! else 0
 
@@ -268,11 +268,11 @@ class AddPairAlertViewModel(
                         if (state.oneTimeNotRecurrent) {
                             price.toBigDecimalArk() > state.currentPrice
                         } else {
-                            price.toDoubleSafe() > 0
+                            price.toDoubleArk() > 0
                         }
                     },
                     ifRight = { percent ->
-                        percent.toDoubleSafe() > 0
+                        percent.toDoubleArk() > 0
                     },
                 )
             reduce {
@@ -334,8 +334,8 @@ class AddPairAlertViewModel(
 
             val priceOrPercentNotSuit =
                 state.priceOrPercent.fold(
-                    ifLeft = { it.toDoubleSafe() == 0.0 },
-                    ifRight = { it.toDoubleSafe() == 0.0 },
+                    ifLeft = { it.toDoubleArk() == 0.0 },
+                    ifRight = { it.toDoubleArk() == 0.0 },
                 )
             if (priceOrPercentNotSuit)
                 enabled = false

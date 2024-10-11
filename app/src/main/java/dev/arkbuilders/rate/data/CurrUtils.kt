@@ -87,7 +87,7 @@ fun String.toBigDecimalArk() =
         else -> this.toBigDecimal()
     }
 
-fun String.toDoubleSafe() =
+fun String.toDoubleArk() =
     when {
         this == "" -> 0.0
         this == "-" -> 0.0

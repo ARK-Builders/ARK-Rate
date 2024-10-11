@@ -8,7 +8,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.data.toBigDecimalArk
-import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.data.toDoubleArk
 import dev.arkbuilders.rate.domain.model.AmountStr
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.QuickPair
@@ -189,7 +189,7 @@ class AddQuickViewModel(
 
             var finishEnabled = true
 
-            if (from.value.toDoubleSafe() == 0.0)
+            if (from.value.toDoubleArk() == 0.0)
                 finishEnabled = false
 
             if (to.isEmpty())
