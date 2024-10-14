@@ -10,9 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: Development
     env:
-      ACRA_LOGIN: ${{ secrets.ACRARIUM_BASIC_AUTH_LOGIN }}
-      ACRA_PASS: ${{ secrets.ACRARIUM_BASIC_AUTH_PASSWORD }}
-      ACRA_URI: ${{ secrets.ACRARIUM_URI }}
       BRANCH_NAME: ${{ github.ref_name }}
     steps:
     - uses: actions/checkout@v4
@@ -42,5 +39,5 @@ jobs:
     - name: Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "./app/build/outputs/apk/release/*.apk"
+        artifacts: "./app/build/outputs/apk/*/release/*.apk"
         token: ${{ secrets.GITHUB_TOKEN }}
