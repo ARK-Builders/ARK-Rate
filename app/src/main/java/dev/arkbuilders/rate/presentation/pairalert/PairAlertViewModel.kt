@@ -31,12 +31,15 @@ data class PairAlertScreenState(
     val pages: List<PairAlertScreenPage> = emptyList(),
     val initialized: Boolean = false,
     val noInternet: Boolean = false,
+    val askNotificationPermissionPairId: Long? = null,
 )
 
 sealed class PairAlertEffect {
     data class NavigateToAdd(val pairId: Long? = null) : PairAlertEffect()
 
-    data object AskNotificationPermission : PairAlertEffect()
+    data object AskNotificationPermissionOnScreenOpen : PairAlertEffect()
+
+    data object AskNotificationPermissionOnNewPair : PairAlertEffect()
 
     data class ShowSnackbarAdded(
         val visuals: NotifyAddedSnackbarVisuals,
@@ -63,7 +66,7 @@ class PairAlertViewModel(
             if (pairAlertRepo.getAll().isNotEmpty() &&
                 notificationPermissionHelper.isGranted().not()
             ) {
-                postSideEffect(PairAlertEffect.AskNotificationPermission)
+                postSideEffect(PairAlertEffect.AskNotificationPermissionOnScreenOpen)
             }
         }
 
@@ -110,7 +113,18 @@ class PairAlertViewModel(
             if (notificationPermissionHelper.isGranted()) {
                 postSideEffect(PairAlertEffect.NavigateToAdd(pairId))
             } else {
-                postSideEffect(PairAlertEffect.AskNotificationPermission)
+                reduce {
+                    state.copy(askNotificationPermissionPairId = pairId)
+                }
+                postSideEffect(PairAlertEffect.AskNotificationPermissionOnNewPair)
+            }
+        }
+
+    fun onNotificationPermissionGrantedOnNewPair() =
+        intent {
+            postSideEffect(PairAlertEffect.NavigateToAdd(state.askNotificationPermissionPairId))
+            reduce {
+                state.copy(askNotificationPermissionPairId = null)
             }
         }
 
