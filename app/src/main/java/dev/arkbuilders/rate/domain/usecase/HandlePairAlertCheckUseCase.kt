@@ -4,12 +4,14 @@ import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
+import dev.arkbuilders.rate.data.divideArk
 import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyRate
 import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PairAlertRepo
+import java.math.BigDecimal
 import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,7 +23,7 @@ class HandlePairAlertCheckUseCase @Inject constructor(
     private val convertUseCase: ConvertWithRateUseCase,
 ) {
     // PairAlert to current rate
-    suspend operator fun invoke(): Either<Throwable, List<Pair<PairAlert, Double>>> {
+    suspend operator fun invoke(): Either<Throwable, List<Pair<PairAlert, BigDecimal>>> {
         val rates =
             currencyRepo.getCodeToCurrencyRate().getOrElse {
                 return it.left()
@@ -59,7 +61,10 @@ class HandlePairAlertCheckUseCase @Inject constructor(
     private suspend fun handleRecurrentPair(pairAlert: PairAlert) {
         val updatedTargetPrice =
             pairAlert.percent?.let { percent ->
-                (1 + percent / 100) * pairAlert.targetPrice
+                val percentFactor =
+                    BigDecimal.ONE +
+                        BigDecimal.valueOf(percent).divideArk(BigDecimal.valueOf(100))
+                pairAlert.targetPrice * percentFactor
             } ?: let {
                 val diff = (pairAlert.targetPrice - pairAlert.startPrice)
                 pairAlert.targetPrice + diff
@@ -76,10 +81,10 @@ class HandlePairAlertCheckUseCase @Inject constructor(
     private suspend fun isConditionMet(
         rates: Map<CurrencyCode, CurrencyRate>,
         pairAlert: PairAlert,
-    ): Pair<Boolean, Double> {
+    ): Pair<Boolean, BigDecimal> {
         val (_, rate) =
             convertUseCase.invoke(
-                Amount(pairAlert.baseCode, 1.0),
+                Amount(pairAlert.baseCode, BigDecimal.ONE),
                 pairAlert.targetCode,
                 rates,
             )

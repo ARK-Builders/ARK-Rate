@@ -525,8 +525,8 @@ private fun QuickItem(
 @Composable
 private fun PreviewItem() {
     QuickItem(
-        from = Amount("BTC", 1.0),
-        to = listOf(Amount("USD", 30.0)),
+        from = Amount("BTC", 1.0.toBigDecimal()),
+        to = listOf(Amount("USD", 30.0.toBigDecimal())),
         dateText = "Calculated on",
         onClick = {},
     )

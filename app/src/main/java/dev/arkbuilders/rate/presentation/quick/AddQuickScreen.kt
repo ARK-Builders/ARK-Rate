@@ -53,7 +53,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.data.toBigDecimalArk
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
@@ -421,7 +421,7 @@ private fun ToResult(
             } else {
                 Text(
                     modifier = Modifier.padding(start = 12.dp),
-                    text = CurrUtils.prepareToDisplay(amount.toDoubleSafe()),
+                    text = CurrUtils.prepareToDisplay(amount.toBigDecimalArk()),
                     color = ArkColor.TextPrimary,
                     fontSize = 16.sp,
                 )

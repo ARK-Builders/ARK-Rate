@@ -62,6 +62,7 @@ import dev.arkbuilders.rate.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.presentation.ui.SearchTextField
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import java.math.BigDecimal
 
 @Destination
 @Composable
@@ -145,9 +146,9 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
 
 private val previewPortfolioAmount =
     PortfolioDisplayAsset(
-        Asset(code = "EUR", value = 1100.2),
-        Amount(code = "USD", value = 1200.0),
-        ratioToBase = 1.1,
+        Asset(code = "EUR", value = 1100.2.toBigDecimal()),
+        Amount(code = "USD", value = 1200.0.toBigDecimal()),
+        ratioToBase = 1.1.toBigDecimal(),
     )
 
 private val previewState =
@@ -220,7 +221,7 @@ private fun GroupPage(
     onDelete: (Asset) -> Unit,
 ) {
     val total =
-        amounts.fold(0.0) { acc, amount ->
+        amounts.fold(BigDecimal.ZERO) { acc, amount ->
             acc + amount.baseAmount.value
         }
     val filtered =

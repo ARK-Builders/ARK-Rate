@@ -8,7 +8,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.data.divideArk
+import dev.arkbuilders.rate.data.toBigDecimalArk
+import dev.arkbuilders.rate.data.toDoubleArk
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
@@ -26,12 +28,13 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import java.math.BigDecimal
 
 data class AddPairAlertScreenState(
     val targetCode: CurrencyCode = "BTC",
     val baseCode: CurrencyCode = "USD",
     val priceOrPercent: Either<String, String> = Either.Left(""),
-    val currentPrice: Double = 0.0,
+    val currentPrice: BigDecimal = BigDecimal.ZERO,
     val aboveNotBelow: Boolean = true,
     val group: String? = null,
     val oneTimeNotRecurrent: Boolean = true,
@@ -94,7 +97,6 @@ class AddPairAlertViewModel(
             val (_, currentPrice) =
                 convertUseCase(
                     fromCode = target,
-                    fromValue = 1.0,
                     toCode = base,
                 )
             val newState =
@@ -175,17 +177,19 @@ class AddPairAlertViewModel(
                 state.priceOrPercent.fold(
                     ifLeft = { price ->
                         if (state.oneTimeNotRecurrent)
-                            price.toDoubleSafe()
+                            price.toBigDecimalArk()
                         else
-                            (state.currentPrice + price.toDoubleSafe())
+                            (state.currentPrice + price.toBigDecimalArk())
                     },
-                    ifRight = {
-                            percent ->
-                        (state.currentPrice * (1.0 + percent.toDoubleSafe() / 100))
+                    ifRight = { percent ->
+                        val percentFactor =
+                            BigDecimal.ONE +
+                                percent.toBigDecimalArk().divideArk(BigDecimal.valueOf(100))
+                        state.currentPrice * percentFactor
                     },
                 )
 
-            val percent = state.priceOrPercent.getOrNull()?.toDoubleSafe()
+            val percent = state.priceOrPercent.getOrNull()?.toDoubleArk()
 
             val id = if (state.editExisting) pairAlertId!! else 0
 
@@ -262,13 +266,13 @@ class AddPairAlertViewModel(
                 state.priceOrPercent.fold(
                     ifLeft = { price ->
                         if (state.oneTimeNotRecurrent) {
-                            price.toDoubleSafe() > state.currentPrice
+                            price.toBigDecimalArk() > state.currentPrice
                         } else {
-                            price.toDoubleSafe() > 0
+                            price.toDoubleArk() > 0
                         }
                     },
                     ifRight = { percent ->
-                        percent.toDoubleSafe() > 0
+                        percent.toDoubleArk() > 0
                     },
                 )
             reduce {
@@ -280,9 +284,9 @@ class AddPairAlertViewModel(
         return state.priceOrPercent
             .mapLeft { price ->
                 if (state.oneTimeNotRecurrent) {
-                    CurrUtils.roundOff(state.currentPrice * 1.1)
+                    CurrUtils.roundOff(state.currentPrice * INITIAL_ONE_TIME_SCALE)
                 } else {
-                    CurrUtils.roundOff(state.currentPrice / 10)
+                    CurrUtils.roundOff(state.currentPrice / INITIAL_RECURRENT_SCALE)
                 }
             }
             .map { percent ->
@@ -296,7 +300,7 @@ class AddPairAlertViewModel(
 
             val priceOrPercent =
                 pair.percent?.let { percent ->
-                    Either.Right(CurrUtils.roundOff(percent))
+                    Either.Right(CurrUtils.roundOff(percent.toBigDecimal()))
                 } ?: let {
                     Either.Left(
                         if (pair.oneTimeNotRecurrent)
@@ -308,7 +312,6 @@ class AddPairAlertViewModel(
             val (_, currentPrice) =
                 convertUseCase(
                     fromCode = pair.targetCode,
-                    fromValue = 1.0,
                     toCode = pair.baseCode,
                 )
             val state =
@@ -331,8 +334,8 @@ class AddPairAlertViewModel(
 
             val priceOrPercentNotSuit =
                 state.priceOrPercent.fold(
-                    ifLeft = { it.toDoubleSafe() == 0.0 },
-                    ifRight = { it.toDoubleSafe() == 0.0 },
+                    ifLeft = { it.toDoubleArk() == 0.0 },
+                    ifRight = { it.toDoubleArk() == 0.0 },
                 )
             if (priceOrPercentNotSuit)
                 enabled = false
@@ -342,6 +345,11 @@ class AddPairAlertViewModel(
 
             reduce { state.copy(finishEnabled = enabled) }
         }
+
+    companion object {
+        private val INITIAL_ONE_TIME_SCALE = BigDecimal.valueOf(1.1)
+        private val INITIAL_RECURRENT_SCALE = BigDecimal.valueOf(10)
+    }
 }
 
 class AddPairAlertViewModelFactory @AssistedInject constructor(

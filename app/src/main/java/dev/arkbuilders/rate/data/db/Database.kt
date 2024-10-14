@@ -14,6 +14,7 @@ import dev.arkbuilders.rate.data.db.entity.RoomCurrencyRate
 import dev.arkbuilders.rate.data.db.entity.RoomFetchTimestamp
 import dev.arkbuilders.rate.data.db.entity.RoomPairAlert
 import dev.arkbuilders.rate.data.db.entity.RoomQuickPair
+import dev.arkbuilders.rate.data.db.typeconverters.BigDecimalTypeConverter
 import dev.arkbuilders.rate.data.db.typeconverters.ListAmountTypeConverter
 import dev.arkbuilders.rate.data.db.typeconverters.OffsetDateTimeTypeConverter
 
@@ -26,10 +27,14 @@ import dev.arkbuilders.rate.data.db.typeconverters.OffsetDateTimeTypeConverter
         RoomQuickPair::class,
         RoomCodeUseStat::class,
     ],
-    version = 13,
+    version = 14,
     exportSchema = true,
 )
-@TypeConverters(ListAmountTypeConverter::class, OffsetDateTimeTypeConverter::class)
+@TypeConverters(
+    BigDecimalTypeConverter::class,
+    ListAmountTypeConverter::class,
+    OffsetDateTimeTypeConverter::class,
+)
 abstract class Database : RoomDatabase() {
     abstract fun assetsDao(): PortfolioDao
 

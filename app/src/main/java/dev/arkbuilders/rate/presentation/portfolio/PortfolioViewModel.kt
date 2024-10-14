@@ -24,6 +24,7 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -43,7 +44,7 @@ data class PortfolioScreenPage(
 data class PortfolioDisplayAsset(
     val asset: Asset,
     val baseAmount: Amount,
-    val ratioToBase: Double,
+    val ratioToBase: BigDecimal,
 )
 
 sealed class PortfolioScreenEffect {

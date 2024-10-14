@@ -7,11 +7,12 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.toDoubleSafe
+import dev.arkbuilders.rate.data.toBigDecimalArk
+import dev.arkbuilders.rate.data.toDoubleArk
 import dev.arkbuilders.rate.domain.model.AmountStr
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.QuickPair
-import dev.arkbuilders.rate.domain.model.toDAmount
+import dev.arkbuilders.rate.domain.model.toAmount
 import dev.arkbuilders.rate.domain.model.toStrAmount
 import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
@@ -87,7 +88,7 @@ class AddQuickViewModel(
                     listOf(
                         AmountStr(
                             quickPair.from,
-                            quickPair.amount.toString(),
+                            quickPair.amount.toPlainString(),
                         ),
                     ) + quickPair.to.map { AmountStr(it.code, "") }
                 val calc = calcToResult(currencies)
@@ -151,8 +152,8 @@ class AddQuickViewModel(
                 QuickPair(
                     id = id,
                     from = from.code,
-                    amount = from.value.toDouble(),
-                    to = state.currencies.drop(1).map { it.toDAmount() },
+                    amount = from.value.toBigDecimalArk(),
+                    to = state.currencies.drop(1).map { it.toAmount() },
                     calculatedDate = OffsetDateTime.now(),
                     pinnedDate = null,
                     group = state.group,
@@ -174,7 +175,7 @@ class AddQuickViewModel(
                 if (from.value == "") {
                     it.copy(value = "")
                 } else {
-                    val (amount, _) = convertUseCase.invoke(from.toDAmount(), it.code)
+                    val (amount, _) = convertUseCase.invoke(from.toAmount(), it.code)
                     amount.toStrAmount()
                 }
             }
@@ -188,7 +189,7 @@ class AddQuickViewModel(
 
             var finishEnabled = true
 
-            if (from.value.toDoubleSafe() == 0.0)
+            if (from.value.toDoubleArk() == 0.0)
                 finishEnabled = false
 
             if (to.isEmpty())

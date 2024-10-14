@@ -8,6 +8,7 @@ import dev.arkbuilders.rate.domain.model.TimestampType
 import dev.arkbuilders.rate.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.domain.usecase.HandlePairAlertCheckUseCase
 import dev.arkbuilders.rate.presentation.utils.NotificationUtils
+import java.math.BigDecimal
 
 class CurrencyMonitorWorker(
     private val context: Context,
@@ -30,9 +31,9 @@ class CurrencyMonitorWorker(
 
     private fun notifyPair(
         pairAlert: PairAlert,
-        curRatio: Double,
+        curRatio: BigDecimal,
     ) {
-        NotificationUtils.showPairAlert(pairAlert, curRatio, context)
+        NotificationUtils.showPairAlert(pairAlert, context)
     }
 
     companion object {

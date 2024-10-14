@@ -1,9 +1,11 @@
 package dev.arkbuilders.rate.domain.usecase
 
+import dev.arkbuilders.rate.data.divideArk
 import dev.arkbuilders.rate.domain.model.Amount
 import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.model.CurrencyRate
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
+import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,15 +21,16 @@ class ConvertWithRateUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         fromCode: CurrencyCode,
-        fromValue: Double,
+        fromValue: BigDecimal = BigDecimal.ONE,
         toCode: CurrencyCode,
         _rates: Map<CurrencyCode, CurrencyRate>? = null,
-    ): Pair<Amount, Double> {
+    ): Pair<Amount, BigDecimal> {
         val rates = _rates ?: currencyRepo.getCodeToCurrencyRate().getOrNull()!!
-        val toRate =
-            rates[fromCode]!!.rate / rates[toCode]!!.rate
+        val fromRate = rates[fromCode]!!.rate
+        val toRate = rates[toCode]!!.rate
+        val rate = fromRate.divideArk(toRate)
 
-        return Amount(toCode, fromValue * toRate) to toRate
+        return Amount(toCode, fromValue * rate) to rate
     }
 
     suspend operator fun invoke(
