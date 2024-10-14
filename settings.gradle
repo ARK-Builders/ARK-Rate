@@ -28,3 +28,4 @@ rootProject.name = "arkrate"
 include ':app'
 include ':fiaticons'
 include ':cryptoicons'
+include ':ratewatch'
