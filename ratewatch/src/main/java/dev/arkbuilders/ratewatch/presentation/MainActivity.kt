@@ -25,7 +25,12 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import dev.arkbuilders.ratewatch.R
+import dev.arkbuilders.ratewatch.domain.model.Amount
+import dev.arkbuilders.ratewatch.domain.model.PinnedQuickPair
+import dev.arkbuilders.ratewatch.domain.model.QuickPair
+import dev.arkbuilders.ratewatch.presentation.quickpairs.QuickPairItem
 import dev.arkbuilders.ratewatch.presentation.theme.ArkrateTheme
+import java.time.OffsetDateTime
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +39,21 @@ class MainActivity : ComponentActivity() {
 
         setTheme(android.R.style.Theme_DeviceDefault)
         setContent {
-            WearApp("Android")
+            QuickPairItem(
+                quick = PinnedQuickPair(
+                    pair = QuickPair(
+                        id = 1,
+                        from = "BTC",
+                        amount = 1.2,
+                        to = listOf(Amount("USD", 12.0)),
+                        calculatedDate = OffsetDateTime.now(),
+                        pinnedDate = null,
+                        group = null
+                    ),
+                    actualTo = listOf(Amount("USD", 12.0)),
+                    refreshDate = OffsetDateTime.now(),
+                )
+            )
         }
     }
 }
