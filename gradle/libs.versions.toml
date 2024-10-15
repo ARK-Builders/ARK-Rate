@@ -1,0 +1,71 @@
+[versions]
+about = "0.1.1"
+activityCompose = "1.9.2"
+animationsCore = "1.9.62"
+arrowFxCoroutines = "1.2.1"
+arrowCore = "1.2.1"
+constraintlayoutCompose = "1.0.1"
+converterGson = "2.9.0"
+dagger = "2.50"
+datastorePreferences = "1.1.1"
+espressoCore = "3.6.1"
+firebaseBom = "33.1.2"
+glanceAppwidget = "1.1.0"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+lifecycleRuntimeKtx = "2.8.6"
+loggingInterceptor = "4.12.0"
+material3 = "1.2.1"
+navigationComposeVersion = "2.8.2"
+orbitCompose = "4.6.1"
+orbitViewmodel = "6.1.0"
+qrgenerator = "1.0.1"
+retrofit = "2.11.0"
+roomRuntime = "2.6.1"
+tagcloud = "1.1.0"
+timber = "5.0.1"
+uiToolingPreview = "1.6.8"
+workRuntimeKtx = "2.8.1"
+
+[libraries]
+about = { module = "dev.arkbuilders.components:about", version.ref = "about" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceAppwidget" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "uiToolingPreview" }
+androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "uiToolingPreview" }
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiToolingPreview" }
+androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiToolingPreview" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+animations-core = { module = "io.github.raamcosta.compose-destinations:animations-core", version.ref = "animationsCore" }
+arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrowFxCoroutines" }
+arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrowCore" }
+constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version = "" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx", version = "" }
+
+junit = { module = "junit:junit", version.ref = "junit" }
+ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "animationsCore" }
+logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
+material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
+orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbitCompose" }
+orbit-viewmodel = { module = "org.orbit-mvi:orbit-viewmodel", version.ref = "orbitViewmodel" }
+qrgenerator = { module = "com.github.androidmads:QRGenerator", version.ref = "qrgenerator" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+tagcloud = { module = "io.github.oleksandrbalan:tagcloud", version.ref = "tagcloud" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
+
+[plugins]

@@ -105,55 +105,57 @@ dependencies {
     implementation(project(":fiaticons"))
     implementation(project(":cryptoicons"))
 
-    implementation("dev.arkbuilders.components:about:0.1.1")
-    implementation("androidx.compose.ui:ui:1.6.8")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("androidx.compose.material3:material3:1.2.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.8")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
-    implementation("androidx.activity:activity-compose:1.9.1")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation(libs.about)
+    implementation(libs.androidx.ui)
 
-    implementation("com.google.dagger:dagger:2.50")
-    implementation("androidx.glance:glance-appwidget:1.1.0")
-    ksp("com.google.dagger:dagger-compiler:2.50")
+    implementation(libs.navigation.compose)
+    implementation(libs.material3)
+    implementation(libs.ui.tooling.preview)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.constraintlayout.compose)
 
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+    implementation(libs.dagger)
+    implementation(libs.androidx.glance.appwidget)
+    ksp(libs.dagger.compiler)
 
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
-    implementation("com.jakewharton.timber:timber:5.0.1")
+    implementation(libs.androidx.datastore.preferences)
 
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
-    implementation("io.github.oleksandrbalan:tagcloud:1.1.0")
+    implementation(libs.timber)
 
-    implementation("org.orbit-mvi:orbit-compose:4.6.1")
-    implementation("org.orbit-mvi:orbit-viewmodel:6.1.0")
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.tagcloud)
 
-    implementation("io.arrow-kt:arrow-core:1.2.1")
-    implementation("io.arrow-kt:arrow-fx-coroutines:1.2.1")
+    implementation(libs.orbit.compose)
+    implementation(libs.orbit.viewmodel)
 
-    implementation("com.github.androidmads:QRGenerator:1.0.1")
+    implementation(libs.arrow.core)
+    implementation(libs.arrow.fx.coroutines)
 
-    implementation("io.github.raamcosta.compose-destinations:animations-core:1.9.62")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.9.62")
+    implementation(libs.qrgenerator)
 
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation(libs.animations.core)
+    ksp(libs.ksp)
 
-    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
-    implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.8")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.8")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.8")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
 
 ktlint {
