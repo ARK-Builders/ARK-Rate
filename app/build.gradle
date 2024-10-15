@@ -19,14 +19,6 @@ android {
         versionName "1.2.0"
         setProperty("archivesBaseName", "ark-rate")
 
-        def login = System.getenv("ACRA_LOGIN") ?: ""
-        def password = System.getenv("ACRA_PASS") ?: ""
-        def uri = System.getenv("ACRA_URI") ?: ""
-        buildConfigField "String", "ACRA_LOGIN", "\"$login\""
-        buildConfigField "String", "ACRA_PASS", "\"$password\""
-        buildConfigField "String", "ACRA_URI", "\"$uri\""
-        buildConfigField "boolean", "GOOGLE_PLAY_BUILD", "false"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -67,6 +59,20 @@ android {
             ]
         }
     }
+    
+    flavorDimensions = ["publishTarget"]
+    productFlavors {
+        github {
+            dimension "publishTarget"
+            buildConfigField "boolean", "GOOGLE_PLAY_BUILD", "false"
+        }
+
+        googleplay {
+            dimension "publishTarget"
+            buildConfigField "boolean", "GOOGLE_PLAY_BUILD", "true"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17

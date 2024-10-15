@@ -7,9 +7,6 @@ on:
     branches: [ main ]
 
 env:
-  ACRA_LOGIN: ${{ secrets.ACRARIUM_BASIC_AUTH_LOGIN }}
-  ACRA_PASS: ${{ secrets.ACRARIUM_BASIC_AUTH_PASSWORD }}
-  ACRA_URI: ${{ secrets.ACRARIUM_URI }}
   BRANCH_NAME: ${{ github.ref_name }}
 
 
@@ -77,14 +74,23 @@ jobs:
         echo "${{ secrets.GOOGLE_ENCRYPTED }}" > google-services.asc
         gpg -d --passphrase "${{ secrets.GOOGLE_PASSWORD }}" --batch google-services.asc > app/google-services.json
 
-    - name: Build release APK
-      run: ./gradlew assembleRelease
+    - name: Build release Github APK
+      run: ./gradlew assembleGithub
 
-    - name: Upload release APK
+    - name: Build release GooglePlay APK
+      run: ./gradlew assembleGoogleplay
+
+    - name: Upload Github APK
       uses: actions/upload-artifact@v4
       with:
-        name: ark-rate
-        path: ./app/build/outputs/apk/release/ark-rate-release.apk
+        name: ark-rate-github
+        path: ./app/build/outputs/apk/github/release/ark-rate-github-release.apk
+
+    - name: Upload GooglePlay APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: ark-rate-googleplay
+        path: ./app/build/outputs/apk/googleplay/release/ark-rate-googleplay-release.apk
 
   lint:
     needs: build
