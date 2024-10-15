@@ -49,8 +49,13 @@ android {
             ]
         }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            postprocessing {
+                removeUnusedCode true
+                removeUnusedResources true
+                obfuscate false
+                optimizeCode true
+                proguardFiles 'proguard-rules.pro'
+            }
             signingConfig signingConfigs.testRelease
 
             manifestPlaceholders = [
@@ -59,7 +64,7 @@ android {
             ]
         }
     }
-    
+
     flavorDimensions = ["publishTarget"]
     productFlavors {
         github {
