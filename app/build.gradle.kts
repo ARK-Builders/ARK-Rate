@@ -138,7 +138,7 @@ dependencies {
     implementation("com.github.androidmads:QRGenerator:1.0.1")
 
     implementation("io.github.raamcosta.compose-destinations:animations-core:1.9.62")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.9.62")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.11.7")
 
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
