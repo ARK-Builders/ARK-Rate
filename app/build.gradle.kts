@@ -105,12 +105,12 @@ dependencies {
     implementation(project(":fiaticons"))
     implementation(project(":cryptoicons"))
 
-    implementation(libs.about)
+    implementation(libs.ark.about)
     implementation(libs.androidx.ui)
 
     implementation(libs.navigation.compose)
     implementation(libs.material3)
-    implementation(libs.ui.tooling.preview)
+    implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.constraintlayout.compose)
@@ -138,8 +138,8 @@ dependencies {
 
     implementation(libs.qrgenerator)
 
-    implementation(libs.animations.core)
-    ksp(libs.ksp)
+    implementation(libs.compose.destinations.animations)
+    ksp(libs.compose.destinations.compiler)
 
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
