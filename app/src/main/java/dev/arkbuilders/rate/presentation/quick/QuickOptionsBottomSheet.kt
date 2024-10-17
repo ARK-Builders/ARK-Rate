@@ -107,11 +107,11 @@ private fun Content(
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
+                    onDismiss()
                     if (pair.isPinned())
                         onUnpin(pair)
                     else
                         onPin(pair)
-                    onDismiss()
                 },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, ArkColor.Border),
@@ -137,8 +137,8 @@ private fun Content(
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    onEdit(pair)
                     onDismiss()
+                    onEdit(pair)
                 },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, ArkColor.Border),
@@ -160,8 +160,8 @@ private fun Content(
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    onReuse(pair)
                     onDismiss()
+                    onReuse(pair)
                 },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, ArkColor.Border),
@@ -183,8 +183,8 @@ private fun Content(
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    onDelete(pair)
                     onDismiss()
+                    onDelete(pair)
                 },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, ArkColor.BorderError),
