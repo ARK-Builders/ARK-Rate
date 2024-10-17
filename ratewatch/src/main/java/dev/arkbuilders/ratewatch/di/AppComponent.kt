@@ -15,6 +15,7 @@ import dev.arkbuilders.ratewatch.domain.repo.Prefs
 import dev.arkbuilders.ratewatch.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.ratewatch.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.ratewatch.domain.usecase.GetSortedPinnedQuickPairsUseCase
+import dev.arkbuilders.ratewatch.presentation.quickpairs.QuickPairsViewModel
 import javax.inject.Singleton
 
 @Singleton
@@ -41,6 +42,9 @@ interface AppComponent {
     fun calcFrequentCurrUseCase(): CalcFrequentCurrUseCase
 
     fun getSortedPinnedQuickPairsUseCase(): GetSortedPinnedQuickPairsUseCase
+
+
+    fun quickPairsVMFactory(): QuickPairsViewModel.QuickPairsViewModelFactory.Factory
 
     @Component.Factory
     interface Factory {

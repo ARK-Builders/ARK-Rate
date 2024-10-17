@@ -9,6 +9,7 @@ package dev.arkbuilders.ratewatch.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,35 +26,34 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import dev.arkbuilders.ratewatch.R
-import dev.arkbuilders.ratewatch.domain.model.Amount
-import dev.arkbuilders.ratewatch.domain.model.PinnedQuickPair
-import dev.arkbuilders.ratewatch.domain.model.QuickPair
-import dev.arkbuilders.ratewatch.presentation.quickpairs.QuickPairItem
+import dev.arkbuilders.ratewatch.presentation.quickpairs.QuickPairsScreen
+import dev.arkbuilders.ratewatch.presentation.quickpairs.QuickPairsViewModel
 import dev.arkbuilders.ratewatch.presentation.theme.ArkrateTheme
-import java.time.OffsetDateTime
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        setTheme(android.R.style.Theme_DeviceDefault)
+        setTheme(android.R.style.Theme_DeviceDefault_Light)
         setContent {
-            QuickPairItem(
-                quick = PinnedQuickPair(
-                    pair = QuickPair(
-                        id = 1,
-                        from = "BTC",
-                        amount = 1.2,
-                        to = listOf(Amount("USD", 12.0)),
-                        calculatedDate = OffsetDateTime.now(),
-                        pinnedDate = null,
-                        group = null
-                    ),
-                    actualTo = listOf(Amount("USD", 12.0)),
-                    refreshDate = OffsetDateTime.now(),
-                )
+            QuickPairsScreen(
             )
+//            QuickPairItem(
+//                quick = PinnedQuickPair(
+//                    pair = QuickPair(
+//                        id = 1,
+//                        from = "BTC",
+//                        amount = 1.2,
+//                        to = listOf(Amount("USD", 12.0)),
+//                        calculatedDate = OffsetDateTime.now(),
+//                        pinnedDate = null,
+//                        group = null
+//                    ),
+//                    actualTo = listOf(Amount("USD", 12.0)),
+//                    refreshDate = OffsetDateTime.now(),
+//                )
+//            )
         }
     }
 }

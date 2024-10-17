@@ -51,7 +51,11 @@ android {
 }
 
 dependencies {
-//    implementation(project(":app"))
+    implementation(project(":cryptoicons"))
+    implementation(project(":fiaticons"))
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
 
     implementation("com.google.android.gms:play-services-wearable:18.2.0")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
