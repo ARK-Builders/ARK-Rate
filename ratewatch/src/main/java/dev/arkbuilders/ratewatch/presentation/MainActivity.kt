@@ -25,11 +25,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
+import dagger.hilt.android.AndroidEntryPoint
 import dev.arkbuilders.ratewatch.R
+import dev.arkbuilders.ratewatch.domain.model.Amount
+import dev.arkbuilders.ratewatch.domain.model.PinnedQuickPair
+import dev.arkbuilders.ratewatch.domain.model.QuickPair
+import dev.arkbuilders.ratewatch.presentation.quickpairs.QuickPairItem
 import dev.arkbuilders.ratewatch.presentation.quickpairs.QuickPairsScreen
 import dev.arkbuilders.ratewatch.presentation.quickpairs.QuickPairsViewModel
 import dev.arkbuilders.ratewatch.presentation.theme.ArkrateTheme
+import java.time.OffsetDateTime
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
