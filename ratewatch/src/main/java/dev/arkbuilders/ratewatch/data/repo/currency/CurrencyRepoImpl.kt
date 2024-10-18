@@ -9,7 +9,6 @@ import dev.arkbuilders.ratewatch.domain.model.CurrencyRate
 import dev.arkbuilders.ratewatch.domain.model.CurrencyType
 import dev.arkbuilders.ratewatch.domain.model.TimestampType
 import dev.arkbuilders.ratewatch.domain.repo.CurrencyRepo
-import dev.arkbuilders.ratewatch.domain.repo.NetworkStatus
 import dev.arkbuilders.ratewatch.domain.repo.TimestampRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -28,7 +27,6 @@ class CurrencyRepoImpl @Inject constructor(
     private val cryptoDataSource: CryptoCurrencyDataSource,
     private val localCurrencyDataSource: LocalCurrencyDataSource,
     private val timestampRepo: TimestampRepo,
-    private val networkStatus: NetworkStatus,
 ) : CurrencyRepo {
     private val mutex = Mutex()
 
@@ -50,8 +48,8 @@ class CurrencyRepoImpl @Inject constructor(
 
     override suspend fun getCurrencyName(): Either<Throwable, List<CurrencyName>> {
         val localRates = localCurrencyDataSource.getAll()
-        if (localRates.isEmpty())
-            return IllegalStateException("Local rates are empty").left()
+//        if (localRates.isNotEmpty())
+//            return IllegalStateException("Local rates are empty").left()
 
         val fiatNames = fiatDataSource.getCurrencyName()
         val cryptoNames = cryptoDataSource.getCurrencyName()
@@ -77,10 +75,6 @@ class CurrencyRepoImpl @Inject constructor(
             val updatedDate =
                 timestampRepo
                     .getTimestamp(TimestampType.FetchRates)
-
-            if ((networkStatus.isOnline() && hasUpdateIntervalPassed(updatedDate)).not()) {
-                return
-            }
 
             val crypto = cryptoDataSource.fetchRemote()
             val fiat = fiatDataSource.fetchRemote()

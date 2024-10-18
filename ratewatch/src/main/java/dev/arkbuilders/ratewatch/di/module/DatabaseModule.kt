@@ -4,12 +4,15 @@ import android.app.Application
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import dev.arkbuilders.ratewatch.data.db.Database
 import dev.arkbuilders.ratewatch.data.db.Database.Companion.DB_NAME
 import javax.inject.Singleton
 
 @Module
-class DBModule {
+@InstallIn(SingletonComponent::class)
+object DatabaseModule {
     @Singleton
     @Provides
     fun database(app: Application): Database {
@@ -19,20 +22,26 @@ class DBModule {
     }
 
     @Provides
+    @Singleton
     fun assetsDao(db: Database) = db.assetsDao()
 
     @Provides
+    @Singleton
     fun quickDao(db: Database) = db.quickDao()
 
     @Provides
+    @Singleton
     fun rateDao(db: Database) = db.rateDao()
 
     @Provides
+    @Singleton
     fun pairAlertDao(db: Database) = db.pairAlertDao()
 
     @Provides
+    @Singleton
     fun fetchTimestampDao(db: Database) = db.fetchTimestampDao()
 
     @Provides
+    @Singleton
     fun codeUseStatDao(db: Database) = db.codeUseStatDao()
 }

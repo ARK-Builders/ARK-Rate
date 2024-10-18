@@ -3,6 +3,8 @@ package dev.arkbuilders.ratewatch.di.module
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import dev.arkbuilders.ratewatch.data.network.OkHttpClientBuilder
 import dev.arkbuilders.ratewatch.data.network.api.CryptoAPI
 import dev.arkbuilders.ratewatch.data.network.api.FiatAPI
@@ -11,7 +13,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-class ApiModule {
+@InstallIn(SingletonComponent::class)
+object RemoteModule {
     @Singleton
     @Provides
     fun cryptoAPI(clientBuilder: OkHttpClientBuilder): CryptoAPI {

@@ -9,9 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.OffsetDateTime
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class CodeUseStatRepoImpl @Inject constructor(
     private val dao: CodeUseStatDao,
 ) : CodeUseStatRepo {

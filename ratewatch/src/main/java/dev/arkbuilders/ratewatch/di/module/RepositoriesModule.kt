@@ -2,8 +2,8 @@ package dev.arkbuilders.ratewatch.di.module
 
 import dagger.Binds
 import dagger.Module
-import dev.arkbuilders.ratewatch.data.network.NetworkStatusImpl
-import dev.arkbuilders.ratewatch.data.preferences.PrefsImpl
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import dev.arkbuilders.ratewatch.data.repo.CodeUseStatRepoImpl
 import dev.arkbuilders.ratewatch.data.repo.PairAlertRepoImpl
 import dev.arkbuilders.ratewatch.data.repo.PortfolioRepoImpl
@@ -12,15 +12,14 @@ import dev.arkbuilders.ratewatch.data.repo.TimestampRepoImpl
 import dev.arkbuilders.ratewatch.data.repo.currency.CurrencyRepoImpl
 import dev.arkbuilders.ratewatch.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.ratewatch.domain.repo.CurrencyRepo
-import dev.arkbuilders.ratewatch.domain.repo.NetworkStatus
 import dev.arkbuilders.ratewatch.domain.repo.PairAlertRepo
 import dev.arkbuilders.ratewatch.domain.repo.PortfolioRepo
-import dev.arkbuilders.ratewatch.domain.repo.Prefs
 import dev.arkbuilders.ratewatch.domain.repo.QuickRepo
 import dev.arkbuilders.ratewatch.domain.repo.TimestampRepo
 
 @Module
-abstract class RepoModule {
+@InstallIn(SingletonComponent::class)
+abstract class RepositoriesModule {
     @Binds
     abstract fun currencyRepo(repo: CurrencyRepoImpl): CurrencyRepo
 
@@ -34,14 +33,8 @@ abstract class RepoModule {
     abstract fun quickRepo(repo: QuickRepoImpl): QuickRepo
 
     @Binds
-    abstract fun prefs(prefs: PrefsImpl): Prefs
-
-    @Binds
     abstract fun codeUseStatRepo(codeUseStatRepoImpl: CodeUseStatRepoImpl): CodeUseStatRepo
 
     @Binds
     abstract fun timestampRepo(timestampRepoImpl: TimestampRepoImpl): TimestampRepo
-
-    @Binds
-    abstract fun networkStatus(networkStatusImpl: NetworkStatusImpl): NetworkStatus
 }

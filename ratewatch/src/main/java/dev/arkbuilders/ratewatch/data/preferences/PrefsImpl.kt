@@ -11,10 +11,8 @@ import dev.arkbuilders.ratewatch.domain.repo.Prefs
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class PrefsImpl @Inject constructor(val context: Context) : Prefs {
+class PrefsImpl @Inject constructor( val context: Context) : Prefs {
     private val sharedPreferencesKey = "user_preferences"
 
     private val Context.preferencesDatastore by preferencesDataStore(

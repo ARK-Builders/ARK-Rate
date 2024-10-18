@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class PairAlertRepoImpl @Inject constructor(
     private val dao: PairAlertDao,
 ) : PairAlertRepo {

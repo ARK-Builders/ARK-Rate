@@ -7,8 +7,6 @@ import dev.arkbuilders.ratewatch.domain.repo.QuickRepo
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
-
-@Singleton
 class QuickRepoImpl @Inject constructor(val dao: QuickPairDao) : QuickRepo {
     override suspend fun insert(quick: QuickPair) = dao.insert(quick.toRoom())
 

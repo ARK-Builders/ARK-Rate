@@ -1,10 +1,8 @@
 package dev.arkbuilders.ratewatch.presentation.quickpairs
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.arkbuilders.ratewatch.domain.model.PinnedQuickPair
 import dev.arkbuilders.ratewatch.domain.model.QuickPair
 import dev.arkbuilders.ratewatch.domain.model.QuickScreenPage
@@ -15,6 +13,8 @@ import dev.arkbuilders.ratewatch.domain.repo.TimestampRepo
 import dev.arkbuilders.ratewatch.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.ratewatch.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.ratewatch.domain.usecase.GetTopResultUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
 import javax.inject.Inject
 
+@HiltViewModel
 class QuickPairsViewModel @Inject constructor(
     private val currencyRepo: CurrencyRepo,
     private val quickRepo: QuickRepo,
@@ -31,15 +32,13 @@ class QuickPairsViewModel @Inject constructor(
     private val getTopResultUseCase: GetTopResultUseCase,
 ) : ViewModel() {
 
+    public val status: StateFlow<Boolean> = MutableStateFlow(false)
+
+
     init {
-        initQuickPairs()
+        initialise()
     }
-
-    private fun initQuickPairs() {
-
-        quickRepo.allFlow().drop(1).onEach { quick ->
-            val pages = mapPairsToPages(quick)
-        }.launchIn(viewModelScope)
+    private fun initialise() {
         viewModelScope.launch {
             val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
             calcFrequentCurrUseCase.flow().drop(1).onEach {
@@ -47,16 +46,22 @@ class QuickPairsViewModel @Inject constructor(
                     calcFrequentCurrUseCase.invoke()
                         .map { currencyRepo.nameByCodeUnsafe(it) }
                 val topResults = getTopResultUseCase()
-
             }.launchIn(viewModelScope)
 
             val frequent =
                 calcFrequentCurrUseCase()
                     .map { currencyRepo.nameByCodeUnsafe(it) }
-            val topResults = getTopResultUseCase()
             val pages = mapPairsToPages(quickRepo.getAll())
+
         }
+        quickRepo.allFlow().drop(1).onEach { quick ->
+            val pages = mapPairsToPages(quick)
+
+        }.launchIn(viewModelScope)
+
+
     }
+
 
     private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
         val refreshDate = timestampRepo.getTimestamp(TimestampType.FetchRates)
@@ -87,29 +92,5 @@ class QuickPairsViewModel @Inject constructor(
             }
         return PinnedQuickPair(pair, actualTo, refreshDate)
     }
-
-    class QuickPairsViewModelFactory @AssistedInject constructor(
-        private val quickRepo: QuickRepo,
-        private val currencyRepo: CurrencyRepo,
-        private val timestampRepo: TimestampRepo,
-        private val convertUseCase: ConvertWithRateUseCase,
-        private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
-        private val getTopResultUseCase: GetTopResultUseCase,
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return QuickPairsViewModel(
-                currencyRepo,
-                quickRepo,
-                timestampRepo,
-                convertUseCase,
-                calcFrequentCurrUseCase,
-                getTopResultUseCase,
-            ) as T
-        }
-
-        @AssistedFactory
-        interface Factory {
-            fun create(): QuickPairsViewModelFactory
-        }
-    }
 }
+

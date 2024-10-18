@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.map
 import java.time.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
-
-@Singleton
 class TimestampRepoImpl @Inject constructor(private val dao: TimestampDao) :
     TimestampRepo {
         override suspend fun rememberTimestamp(type: TimestampType) =
