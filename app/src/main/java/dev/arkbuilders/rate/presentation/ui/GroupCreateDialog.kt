@@ -76,7 +76,7 @@ fun GroupCreateDialogContent(
                 Modifier
                     .padding(end = 12.dp, top = 12.dp)
                     .align(Alignment.TopEnd),
-            onClick = {},
+            onClick = { onDismiss() },
         ) {
             Icon(
                 modifier = Modifier,
