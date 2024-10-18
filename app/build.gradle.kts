@@ -53,7 +53,6 @@ android {
         release {
             postprocessing {
                 isRemoveUnusedCode = true
-                isRemoveUnusedResources = true
                 isObfuscate = false
                 isOptimizeCode = true
                 proguardFiles("proguard-rules.pro")
