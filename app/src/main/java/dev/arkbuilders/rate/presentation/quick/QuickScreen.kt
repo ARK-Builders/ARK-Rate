@@ -17,15 +17,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,10 +73,12 @@ import dev.arkbuilders.rate.presentation.ui.QuickSwipeItem
 import dev.arkbuilders.rate.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.OffsetDateTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RootNavGraph(start = true)
 @Destination
 @Composable
@@ -117,6 +122,9 @@ fun QuickScreen(navigator: DestinationsNavigator) {
 
     val isEmpty = state.pages.isEmpty()
 
+    val scope = rememberCoroutineScope()
+    val bottomSheetState = rememberModalBottomSheetState()
+
     Scaffold(
         floatingActionButton = {
             if (state.initialized.not())
@@ -153,7 +161,9 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                         state = state,
                         onFilterChanged = viewModel::onFilterChanged,
                         onDelete = viewModel::onDelete,
-                        onClick = viewModel::onShowOptions,
+                        onClick = {
+                            viewModel.onShowOptions(it)
+                        },
                         onPin = viewModel::onPin,
                         onUnpin = viewModel::onUnpin,
                         onNewCode = {
@@ -164,6 +174,7 @@ fun QuickScreen(navigator: DestinationsNavigator) {
         }
         state.optionsData?.let {
             QuickOptionsBottomSheet(
+                bottomSheetState,
                 pair = it.pair,
                 onPin = viewModel::onPin,
                 onUnpin = viewModel::onUnpin,
@@ -181,7 +192,15 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                     )
                 },
                 onDelete = viewModel::onDelete,
-                onDismiss = viewModel::onHideOptions,
+                onDismiss = {
+                    scope.launch {
+                        bottomSheetState.hide()
+                    }.invokeOnCompletion {
+                        if (!bottomSheetState.isVisible) {
+                            viewModel.onHideOptions()
+                        }
+                    }
+                },
             )
         }
     }

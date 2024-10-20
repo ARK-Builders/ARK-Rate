@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,6 +35,7 @@ import kotlin.math.abs
 
 @Composable
 fun QuickOptionsBottomSheet(
+    sheetState: SheetState,
     pair: QuickPair,
     onPin: (QuickPair) -> Unit,
     onUnpin: (QuickPair) -> Unit,
@@ -45,6 +47,7 @@ fun QuickOptionsBottomSheet(
     ModalBottomSheet(
         modifier = Modifier,
         onDismissRequest = { onDismiss() },
+        sheetState = sheetState,
         dragHandle = null,
         containerColor = Color.White,
         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
