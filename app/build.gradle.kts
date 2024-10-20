@@ -49,12 +49,14 @@ android {
                 ),
             )
         }
+
         release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            postprocessing {
+                isRemoveUnusedCode = true
+                isObfuscate = false
+                isOptimizeCode = true
+                proguardFiles("proguard-rules.pro")
+            }
             signingConfig = signingConfigs.getByName("testRelease")
 
             addManifestPlaceholders(
