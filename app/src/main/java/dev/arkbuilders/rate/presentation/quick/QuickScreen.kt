@@ -195,10 +195,7 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                 onDismiss = {
                     scope.launch {
                         bottomSheetState.hide()
-                    }.invokeOnCompletion {
-                        if (!bottomSheetState.isVisible) {
-                            viewModel.onHideOptions()
-                        }
+                        viewModel.onHideOptions()
                     }
                 },
             )
