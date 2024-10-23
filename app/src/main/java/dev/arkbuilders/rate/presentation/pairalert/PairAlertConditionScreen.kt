@@ -3,6 +3,7 @@
 package dev.arkbuilders.rate.presentation.pairalert
 
 import android.Manifest
+import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -73,22 +74,16 @@ import timber.log.Timber
 @Destination
 @Composable
 fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
-    val ctx = LocalContext.current
-    val notificationPermissionLauncher =
-        rememberLauncherForActivityResult(
-            ActivityResultContracts.RequestPermission(),
-        ) { isGranted ->
-            if (isGranted.not()) {
-                Toast.makeText(
-                    ctx,
-                    ctx.getString(R.string.alert_post_notification_permission_explanation),
-                    Toast.LENGTH_SHORT,
-                ).show()
-            }
-        }
-
     val viewModel: PairAlertViewModel =
         viewModel(factory = DIManager.component.pairAlertVMFactory())
+
+    val ctx = LocalContext.current
+    val onScreenOpenNotificationPermissionLauncher = rememberNotificationPermissionLauncher(ctx)
+    val onNewPairNotificationPermissionLauncher =
+        rememberNotificationPermissionLauncher(
+            ctx = ctx,
+            onGranted = viewModel::onNotificationPermissionGrantedOnNewPair,
+        )
 
     val state by viewModel.collectAsState()
     val snackState = remember { SnackbarHostState() }
@@ -104,8 +99,14 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
                     ),
                 )
 
-            PairAlertEffect.AskNotificationPermission -> {
-                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            PairAlertEffect.AskNotificationPermissionOnScreenOpen -> {
+                onScreenOpenNotificationPermissionLauncher
+                    .launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+
+            PairAlertEffect.AskNotificationPermissionOnNewPair -> {
+                onNewPairNotificationPermissionLauncher
+                    .launch(Manifest.permission.POST_NOTIFICATIONS)
             }
 
             is PairAlertEffect.ShowSnackbarAdded ->
@@ -406,6 +407,24 @@ private fun Empty(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun rememberNotificationPermissionLauncher(
+    ctx: Context,
+    onGranted: (() -> Unit)? = null,
+) = rememberLauncherForActivityResult(
+    ActivityResultContracts.RequestPermission(),
+) { isGranted ->
+    if (isGranted) {
+        onGranted?.invoke()
+    } else {
+        Toast.makeText(
+            ctx,
+            ctx.getString(R.string.alert_post_notification_permission_explanation),
+            Toast.LENGTH_SHORT,
+        ).show()
     }
 }
 
