@@ -78,9 +78,9 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
         viewModel(factory = DIManager.component.pairAlertVMFactory())
 
     val ctx = LocalContext.current
-    val onScreenOpenNotificationPermissionLauncher = rememberNotificationPermissionOnScreenOpen(ctx)
+    val onScreenOpenNotificationPermissionLauncher = rememberNotificationPermissionLauncher(ctx)
     val onNewPairNotificationPermissionLauncher =
-        rememberNotificationPermissionOnNewPair(
+        rememberNotificationPermissionLauncher(
             ctx = ctx,
             onGranted = viewModel::onNotificationPermissionGrantedOnNewPair,
         )
@@ -411,35 +411,22 @@ private fun Empty(
 }
 
 @Composable
-private fun rememberNotificationPermissionOnScreenOpen(ctx: Context) =
-    rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { isGranted ->
-        if (isGranted.not()) {
-            toastNotificationPermissionExplanation(ctx)
-        }
-    }
-
-@Composable
-private fun rememberNotificationPermissionOnNewPair(
+private fun rememberNotificationPermissionLauncher(
     ctx: Context,
-    onGranted: () -> Unit,
+    onGranted: (() -> Unit)? = null,
 ) = rememberLauncherForActivityResult(
     ActivityResultContracts.RequestPermission(),
 ) { isGranted ->
     if (isGranted) {
-        onGranted()
+        onGranted?.invoke()
     } else {
-        toastNotificationPermissionExplanation(ctx)
+        Toast.makeText(
+            ctx,
+            ctx.getString(R.string.alert_post_notification_permission_explanation),
+            Toast.LENGTH_SHORT,
+        ).show()
     }
 }
-
-private fun toastNotificationPermissionExplanation(ctx: Context) =
-    Toast.makeText(
-        ctx,
-        ctx.getString(R.string.alert_post_notification_permission_explanation),
-        Toast.LENGTH_SHORT,
-    ).show()
 
 private val previewPairAlert =
     PairAlert(
