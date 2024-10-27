@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
@@ -62,6 +61,7 @@ import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
+import dev.arkbuilders.rate.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
@@ -392,7 +392,7 @@ private fun EditCondition(
 ) {
     val ctx = LocalContext.current
     Column(
-        modifier = Modifier.padding(top = 48.dp),
+        modifier = Modifier.padding(top = 48.dp, start = 16.dp, end = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
@@ -469,16 +469,7 @@ private fun EditCondition(
                     .padding(top = 24.dp),
             horizontalArrangement = Arrangement.Center,
         ) {
-            if (!state.oneTimeNotRecurrent) {
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = stringResource(R.string.every),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary,
-                )
-            }
-            BasicTextField(
+            ArkBasicTextField(
                 modifier =
                     Modifier
                         .width(IntrinsicSize.Min)
@@ -499,25 +490,38 @@ private fun EditCondition(
                 keyboardOptions =
                     KeyboardOptions.Default
                         .copy(keyboardType = KeyboardType.Number),
+                prefix = {
+                    if (!state.oneTimeNotRecurrent) {
+                        Text(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            text = stringResource(R.string.every),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = ArkColor.TextPrimary,
+                        )
+                    }
+                },
+                suffix = {
+                    if (state.priceOrPercent.isLeft()) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Top),
+                            text = CurrUtils.getSymbolOrCode(state.baseCode),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = ArkColor.TextPrimary,
+                        )
+                    }
+                    if (state.priceOrPercent.isRight()) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Top),
+                            text = "%",
+                            fontSize = 36.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = ArkColor.TextPrimary,
+                        )
+                    }
+                },
             )
-            if (state.priceOrPercent.isLeft()) {
-                Text(
-                    modifier = Modifier.align(Alignment.Top),
-                    text = CurrUtils.getSymbolOrCode(state.baseCode),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary,
-                )
-            }
-            if (state.priceOrPercent.isRight()) {
-                Text(
-                    modifier = Modifier.align(Alignment.Top),
-                    text = "%",
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ArkColor.TextPrimary,
-                )
-            }
         }
         Row(
             modifier = Modifier.padding(top = 24.dp),

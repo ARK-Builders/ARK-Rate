@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalFoundationApi::class)
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 
 package dev.arkbuilders.rate.presentation.portfolio
 
@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -54,6 +55,8 @@ import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
 import dev.arkbuilders.rate.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.presentation.ui.GroupViewPager
+import dev.arkbuilders.rate.presentation.ui.LargeNumberText
+import dev.arkbuilders.rate.presentation.ui.LargeNumberTooltipBox
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.presentation.ui.NoInternetScreen
 import dev.arkbuilders.rate.presentation.ui.NoResult
@@ -239,16 +242,27 @@ private fun GroupPage(
                         color = ArkColor.TextTertiary,
                         fontWeight = FontWeight.Medium,
                     )
-                    Row(modifier = Modifier.padding(top = 8.dp)) {
+                    Row(
+                        modifier =
+                            Modifier
+                                .padding(top = 8.dp, start = 24.dp, end = 24.dp),
+                    ) {
+                        LargeNumberTooltipBox(number = total, code = baseCode) {
+                            LargeNumberText(
+                                number = total,
+                                color = ArkColor.TextPrimary,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 36.sp,
+                            )
+                        }
                         Text(
-                            modifier = Modifier,
-                            text = CurrUtils.prepareToDisplay(total),
-                            color = ArkColor.TextPrimary,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 36.sp,
-                        )
-                        Text(
-                            modifier = Modifier.padding(start = 2.dp, top = 2.dp),
+                            modifier =
+                                Modifier
+                                    .padding(
+                                        start = 2.dp,
+                                        top = 2.dp,
+                                    )
+                                    .weight(1f, fill = false),
                             text = CurrUtils.getSymbolOrCode(baseCode),
                             color = ArkColor.TextPrimary,
                             fontWeight = FontWeight.SemiBold,
@@ -298,30 +312,48 @@ private fun CurrencyItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
+                    modifier = Modifier.padding(end = 8.dp),
                     text = amount.asset.code,
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextPrimary,
                 )
-                Text(
-                    text = "${CurrUtils.prepareToDisplay(
-                        amount.baseAmount.value,
-                    )} ${amount.baseAmount.code}",
-                    fontWeight = FontWeight.Medium,
-                    color = ArkColor.TextPrimary,
-                )
+                LargeNumberTooltipBox(
+                    modifier = Modifier.weight(1f),
+                    number = amount.baseAmount.value,
+                    code = amount.baseAmount.code,
+                ) {
+                    LargeNumberText(
+                        number = amount.baseAmount.value,
+                        code = amount.baseAmount.code,
+                        fontWeight = FontWeight.Medium,
+                        color = ArkColor.TextPrimary,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.End,
+                    )
+                }
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
+                    modifier = Modifier.padding(end = 8.dp),
                     text = CurrUtils.prepareToDisplay(amount.ratioToBase),
                     color = ArkColor.TextTertiary,
                 )
-                Text(
-                    text = "${CurrUtils.prepareToDisplay(amount.asset.value)} ${amount.asset.code}",
-                    color = ArkColor.TextTertiary,
-                )
+                LargeNumberTooltipBox(
+                    modifier = Modifier.weight(1f),
+                    number = amount.asset.value,
+                    code = amount.asset.code,
+                ) {
+                    LargeNumberText(
+                        number = amount.asset.value,
+                        code = amount.asset.code,
+                        color = ArkColor.TextTertiary,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.End,
+                    )
+                }
             }
         }
     }

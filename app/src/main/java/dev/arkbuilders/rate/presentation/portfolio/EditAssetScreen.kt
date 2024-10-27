@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package dev.arkbuilders.rate.presentation.portfolio
 
 import androidx.compose.foundation.layout.Box
@@ -10,10 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -47,6 +49,7 @@ import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
+import dev.arkbuilders.rate.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.presentation.ui.InfoMarketCapitalizationDialog
 import dev.arkbuilders.rate.presentation.ui.InfoValueOfCirculatingDialog
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
@@ -112,9 +115,15 @@ private fun Content(
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState()),
     ) {
+        val title =
+            if (name.name.isNotEmpty()) {
+                "${name.name} (${name.code})"
+            } else {
+                name.code
+            }
         Text(
             modifier = Modifier.padding(top = 32.dp),
-            text = "${name.name} (${name.code})",
+            text = title,
             color = ArkColor.TextPrimary,
             fontWeight = FontWeight.SemiBold,
             fontSize = 24.sp,
@@ -124,7 +133,7 @@ private fun Content(
             Modifier.padding(top = 32.dp),
             verticalAlignment = Alignment.Top,
         ) {
-            BasicTextField(
+            ArkBasicTextField(
                 modifier =
                     Modifier
                         .width(IntrinsicSize.Min)
@@ -140,16 +149,17 @@ private fun Content(
                 keyboardOptions =
                     KeyboardOptions.Default
                         .copy(keyboardType = KeyboardType.Number),
-            )
-            Text(
-                modifier =
-                    Modifier
-                        .padding(start = 2.dp, top = 2.dp)
-                        .align(Alignment.Top),
-                text = CurrUtils.getSymbolOrCode(name.code),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                color = ArkColor.TextPrimary,
+                suffix = {
+                    Text(
+                        modifier =
+                            Modifier
+                                .padding(start = 2.dp, top = 2.dp),
+                        text = CurrUtils.getSymbolOrCode(name.code),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = ArkColor.TextPrimary,
+                    )
+                },
             )
         }
         TextButton(
