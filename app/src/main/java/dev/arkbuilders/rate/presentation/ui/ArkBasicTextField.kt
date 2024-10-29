@@ -4,7 +4,6 @@ package dev.arkbuilders.rate.presentation.ui
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,7 +28,7 @@ fun ArkBasicTextField(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     BasicTextField(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         value = value,
         onValueChange = { onValueChange(it) },
         textStyle = textStyle,

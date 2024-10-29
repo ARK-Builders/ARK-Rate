@@ -358,7 +358,7 @@ private fun FromInput(
                 )
             }
             ArkBasicTextField(
-                modifier = Modifier.padding(start = 12.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                 value = amount,
                 onValueChange = { onAmountChanged(it) },
                 keyboardOptions =

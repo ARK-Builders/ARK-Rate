@@ -311,7 +311,7 @@ fun InputCurrency(
                 )
             }
             ArkBasicTextField(
-                modifier = Modifier.padding(start = 12.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                 value = amount.value,
                 onValueChange = { onAssetValueChanged(pos, it) },
                 textStyle =
