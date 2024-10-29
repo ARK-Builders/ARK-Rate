@@ -24,8 +24,6 @@ fun ArkBasicTextField(
     onValueChange: (String) -> Unit,
     textStyle: TextStyle = TextStyle.Default,
     placeholder: (@Composable () -> Unit)? = null,
-    prefix: (@Composable () -> Unit)? = null,
-    suffix: (@Composable () -> Unit)? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
@@ -56,8 +54,6 @@ fun ArkBasicTextField(
             visualTransformation = VisualTransformation.None,
             interactionSource = interactionSource,
             placeholder = placeholder,
-            prefix = prefix,
-            suffix = suffix,
         )
     }
 }
