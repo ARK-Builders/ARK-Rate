@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.presentation.destinations.Destination
-import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PortfolioScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.SettingsScreenDestination
@@ -44,13 +43,6 @@ sealed class BottomNavItem(
         R.drawable.ic_nav_portfolio_disabled,
         R.drawable.ic_nav_portfolio_enabled,
         PortfolioScreenDestination.route,
-    )
-
-    data object PairAlert : BottomNavItem(
-        R.string.bottom_nav_alerts,
-        R.drawable.ic_nav_alerts_disabled,
-        R.drawable.ic_nav_alerts_enabled,
-        PairAlertConditionScreenDestination.route,
     )
 
     data object Quick : BottomNavItem(
@@ -95,7 +87,6 @@ fun RateBottomNavigation(
         listOf(
             BottomNavItem.Quick,
             BottomNavItem.Assets,
-            BottomNavItem.PairAlert,
             BottomNavItem.Settings,
         )
     Column {
