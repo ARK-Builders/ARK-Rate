@@ -455,9 +455,14 @@ private fun QuickItem(
             modifier =
                 Modifier
                     .constrainAs(content) {
-                        linkTo(icons.end, chevron.start, bias = 0f)
+                        start.linkTo(icons.end)
+                        if (to.size > 1)
+                            end.linkTo(chevron.start)
+                        else
+                            end.linkTo(parent.end, margin = 24.dp)
                         top.linkTo(parent.top, margin = 16.dp)
                         bottom.linkTo(parent.bottom, margin = 16.dp)
+                        width = Dimension.fillToConstraints
                     }
                     .padding(start = if (expanded) 12.dp else 0.dp),
             verticalArrangement = Arrangement.Center,

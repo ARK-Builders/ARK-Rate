@@ -5,6 +5,7 @@ package dev.arkbuilders.rate.presentation.quick
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,6 +40,7 @@ import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,7 +66,7 @@ import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.presentation.ui.BasicTextFieldPlaceholder
+import dev.arkbuilders.rate.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
@@ -355,14 +357,25 @@ private fun FromInput(
                     tint = ArkColor.FGQuinary,
                 )
             }
-            BasicTextFieldPlaceholder(
-                modifier = Modifier.padding(start = 12.dp),
+            ArkBasicTextField(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                 value = amount,
                 onValueChange = { onAmountChanged(it) },
-                placeholder = stringResource(R.string.input_value),
                 keyboardOptions =
                     KeyboardOptions.Default
                         .copy(keyboardType = KeyboardType.Number),
+                textStyle =
+                    TextStyle.Default.copy(
+                        color = ArkColor.TextPrimary,
+                        fontSize = 16.sp,
+                    ),
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.input_value),
+                        color = ArkColor.TextPlaceHolder,
+                        fontSize = 16.sp,
+                    )
+                },
             )
         }
     }
@@ -420,7 +433,10 @@ private fun ToResult(
                 )
             } else {
                 Text(
-                    modifier = Modifier.padding(start = 12.dp),
+                    modifier =
+                        Modifier
+                            .padding(start = 12.dp)
+                            .horizontalScroll(rememberScrollState()),
                     text = CurrUtils.prepareToDisplay(amount.toBigDecimalArk()),
                     color = ArkColor.TextPrimary,
                     fontSize = 16.sp,

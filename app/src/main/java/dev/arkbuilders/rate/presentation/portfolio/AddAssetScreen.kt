@@ -36,6 +36,7 @@ import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,7 +60,7 @@ import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.presentation.ui.BasicTextFieldPlaceholder
+import dev.arkbuilders.rate.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
@@ -309,14 +310,25 @@ fun InputCurrency(
                     tint = ArkColor.FGQuinary,
                 )
             }
-            BasicTextFieldPlaceholder(
-                modifier = Modifier.padding(start = 12.dp),
+            ArkBasicTextField(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                 value = amount.value,
                 onValueChange = { onAssetValueChanged(pos, it) },
-                placeholder = stringResource(R.string.input_value),
+                textStyle =
+                    TextStyle.Default.copy(
+                        color = ArkColor.TextPrimary,
+                        fontSize = 16.sp,
+                    ),
                 keyboardOptions =
                     KeyboardOptions.Default
                         .copy(keyboardType = KeyboardType.Number),
+                placeholder = {
+                    Text(
+                        text = stringResource(R.string.input_value),
+                        color = ArkColor.TextPlaceHolder,
+                        fontSize = 16.sp,
+                    )
+                },
             )
         }
 
