@@ -84,7 +84,7 @@ class PortfolioViewModel(
         intent {
             initPages()
 
-            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+            AppSharedFlow.ShowAddedSnackbarPortfolio.flow.onEach { visuals ->
                 postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(visuals))
             }.launchIn(viewModelScope)
 
