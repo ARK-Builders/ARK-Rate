@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.domain.model.QuickPair
+import dev.arkbuilders.rate.core.domain.model.QuickPair
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import kotlin.math.abs
 

@@ -7,11 +7,11 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import dev.arkbuilders.rate.BuildConfig
-import dev.arkbuilders.rate.data.preferences.PrefsImpl
-import dev.arkbuilders.rate.domain.model.TimestampType
-import dev.arkbuilders.rate.domain.repo.AnalyticsManager
-import dev.arkbuilders.rate.domain.repo.PreferenceKey
-import dev.arkbuilders.rate.domain.repo.TimestampRepo
+import dev.arkbuilders.rate.core.domain.model.TimestampType
+import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
+import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
+import dev.arkbuilders.rate.core.domain.repo.Prefs
+import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -35,7 +35,7 @@ data class SettingsScreenState(
 sealed class SettingsScreenEffect()
 
 class SettingsViewModel(
-    private val prefs: PrefsImpl,
+    private val prefs: Prefs,
     private val timestampRepo: TimestampRepo,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<SettingsScreenState, SettingsScreenEffect> {
@@ -98,7 +98,7 @@ class SettingsViewModel(
 
 @Singleton
 class SettingsViewModelFactory @Inject constructor(
-    private val prefs: PrefsImpl,
+    private val prefs: Prefs,
     private val timestampRepo: TimestampRepo,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {

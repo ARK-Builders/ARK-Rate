@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.domain.model.QuickPair
+import dev.arkbuilders.rate.core.domain.model.QuickPair
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 // bug: callbacks from swipe called multiply times

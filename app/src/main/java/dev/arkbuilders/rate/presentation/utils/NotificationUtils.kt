@@ -13,8 +13,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.domain.model.PairAlert
+import dev.arkbuilders.rate.core.domain.CurrUtils
+import dev.arkbuilders.rate.core.domain.model.PairAlert
 import dev.arkbuilders.rate.presentation.MainActivity
 
 object NotificationUtils {

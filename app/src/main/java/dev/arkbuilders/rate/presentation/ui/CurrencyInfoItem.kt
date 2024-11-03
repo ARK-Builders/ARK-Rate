@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.arkbuilders.rate.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 @Composable

@@ -18,8 +18,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.divideArk
+import dev.arkbuilders.rate.core.domain.CurrUtils
+import dev.arkbuilders.rate.core.domain.divideArk
 import java.math.BigDecimal
 
 @Composable

@@ -3,11 +3,11 @@ package dev.arkbuilders.rate.presentation.pairalert
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dev.arkbuilders.rate.data.permission.NotificationPermissionHelper
-import dev.arkbuilders.rate.domain.model.PairAlert
-import dev.arkbuilders.rate.domain.repo.AnalyticsManager
-import dev.arkbuilders.rate.domain.repo.CurrencyRepo
-import dev.arkbuilders.rate.domain.repo.PairAlertRepo
+import dev.arkbuilders.rate.core.data.permission.NotificationPermissionHelper
+import dev.arkbuilders.rate.core.domain.model.PairAlert
+import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
+import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.core.domain.repo.PairAlertRepo
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.launchIn

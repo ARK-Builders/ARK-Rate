@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.domain.model.CurrencyName
-import dev.arkbuilders.rate.domain.repo.AnalyticsManager
-import dev.arkbuilders.rate.domain.repo.CurrencyRepo
-import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
-import dev.arkbuilders.rate.domain.usecase.GetTopResultUseCase
+import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
+import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
+import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import org.orbitmvi.orbit.Container

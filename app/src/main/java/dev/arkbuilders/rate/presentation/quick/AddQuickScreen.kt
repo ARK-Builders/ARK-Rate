@@ -54,10 +54,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.data.toBigDecimalArk
+import dev.arkbuilders.rate.core.domain.CurrUtils
+import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow

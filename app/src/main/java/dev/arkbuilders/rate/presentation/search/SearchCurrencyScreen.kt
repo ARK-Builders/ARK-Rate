@@ -18,8 +18,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.core.domain.model.CurrencyName
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.domain.model.CurrencyName
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem

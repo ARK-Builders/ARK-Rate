@@ -11,11 +11,11 @@ import androidx.work.WorkManager
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import dev.arkbuilders.rate.BuildConfig
-import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
-import dev.arkbuilders.rate.data.worker.QuickPairsWidgetRefreshWorker
+import dev.arkbuilders.rate.core.data.worker.CurrencyMonitorWorker
+import dev.arkbuilders.rate.core.data.worker.QuickPairsWidgetRefreshWorker
+import dev.arkbuilders.rate.core.domain.AppConfig
+import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.domain.AppConfig
-import dev.arkbuilders.rate.domain.repo.PreferenceKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

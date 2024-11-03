@@ -1,6 +1,6 @@
 package dev.arkbuilders.rate.presentation.shared
 
-import dev.arkbuilders.rate.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.MutableSharedFlow
 

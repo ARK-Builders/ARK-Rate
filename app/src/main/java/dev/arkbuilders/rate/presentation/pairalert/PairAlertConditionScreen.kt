@@ -53,9 +53,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.data.CurrUtils
+import dev.arkbuilders.rate.core.domain.CurrUtils
+import dev.arkbuilders.rate.core.domain.model.PairAlert
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.domain.model.PairAlert
 import dev.arkbuilders.rate.presentation.destinations.AddPairAlertScreenDestination
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton

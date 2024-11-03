@@ -4,19 +4,17 @@ import android.app.Application
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import dev.arkbuilders.rate.data.repo.PortfolioRepoImpl
-import dev.arkbuilders.rate.data.repo.QuickRepoImpl
-import dev.arkbuilders.rate.data.repo.currency.CurrencyRepoImpl
-import dev.arkbuilders.rate.data.worker.AppWorkerFactory
-import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
-import dev.arkbuilders.rate.di.module.ApiModule
-import dev.arkbuilders.rate.di.module.DBModule
-import dev.arkbuilders.rate.di.module.RepoModule
-import dev.arkbuilders.rate.domain.repo.NetworkStatus
-import dev.arkbuilders.rate.domain.repo.Prefs
-import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
-import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
-import dev.arkbuilders.rate.domain.usecase.GetSortedPinnedQuickPairsUseCase
+import dev.arkbuilders.rate.core.data.di.modules.CoreDataModule
+import dev.arkbuilders.rate.core.data.repo.PortfolioRepoImpl
+import dev.arkbuilders.rate.core.data.repo.QuickRepoImpl
+import dev.arkbuilders.rate.core.data.repo.currency.CurrencyRepoImpl
+import dev.arkbuilders.rate.core.data.worker.AppWorkerFactory
+import dev.arkbuilders.rate.core.data.worker.CurrencyMonitorWorker
+import dev.arkbuilders.rate.core.domain.repo.NetworkStatus
+import dev.arkbuilders.rate.core.domain.repo.Prefs
+import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
+import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
+import dev.arkbuilders.rate.core.domain.usecase.GetSortedPinnedQuickPairsUseCase
 import dev.arkbuilders.rate.presentation.pairalert.AddPairAlertViewModelFactory
 import dev.arkbuilders.rate.presentation.pairalert.PairAlertViewModelFactory
 import dev.arkbuilders.rate.presentation.portfolio.AddAssetViewModelFactory
@@ -31,9 +29,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        ApiModule::class,
-        DBModule::class,
-        RepoModule::class,
+        CoreDataModule::class,
     ],
 )
 interface AppComponent {

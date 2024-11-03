@@ -18,8 +18,8 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import dev.arkbuilders.rate.data.CurrUtils
-import dev.arkbuilders.rate.domain.model.PinnedQuickPair
+import dev.arkbuilders.rate.core.domain.CurrUtils
+import dev.arkbuilders.rate.core.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.utils.IconUtils
 
