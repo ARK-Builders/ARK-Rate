@@ -11,6 +11,7 @@ import dev.arkbuilders.rate.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
+import dev.arkbuilders.rate.domain.usecase.AddNewAssetsUseCase
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -42,6 +43,7 @@ class AddAssetViewModel(
     private val currencyRepo: CurrencyRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val analyticsManager: AnalyticsManager,
+    private val addNewAssetsUseCase: AddNewAssetsUseCase,
 ) : ViewModel(), ContainerHost<AddAssetState, AddAssetSideEffect> {
     override val container: Container<AddAssetState, AddAssetSideEffect> =
         container(AddAssetState())
@@ -123,7 +125,7 @@ class AddAssetViewModel(
                         group = state.group,
                     )
                 }
-            assetsRepo.setAssetsList(currencies)
+            addNewAssetsUseCase(currencies)
             codeUseStatRepo.codesUsed(*currencies.map { it.code }.toTypedArray())
             postSideEffect(AddAssetSideEffect.NotifyAssetAdded(currencies))
             postSideEffect(AddAssetSideEffect.NavigateBack)
@@ -136,6 +138,7 @@ class AddAssetViewModelFactory @Inject constructor(
     private val currencyRepo: CurrencyRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val analyticsManager: AnalyticsManager,
+    private val addNewAssetsUseCase: AddNewAssetsUseCase,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddAssetViewModel(
@@ -143,6 +146,7 @@ class AddAssetViewModelFactory @Inject constructor(
             currencyRepo,
             codeUseStatRepo,
             analyticsManager,
+            addNewAssetsUseCase,
         ) as T
     }
 }

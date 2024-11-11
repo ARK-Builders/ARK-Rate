@@ -3,6 +3,7 @@ package dev.arkbuilders.rate.data.repo
 import dev.arkbuilders.rate.data.db.dao.PortfolioDao
 import dev.arkbuilders.rate.data.db.entity.RoomAsset
 import dev.arkbuilders.rate.domain.model.Asset
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -23,19 +24,12 @@ class PortfolioRepoImpl @Inject constructor(
 
     override suspend fun getById(id: Long) = dao.getById(id)?.toAsset()
 
-    override suspend fun setAsset(asset: Asset) {
-        val roomAsset =
-            dao.getAllByCode(asset.code).find {
-                it.group == asset.group
-            }?.toAsset()
-        val mergedAsset =
-            roomAsset?.let {
-                roomAsset.copy(value = asset.value + roomAsset.value)
-            } ?: asset
-        dao.insert(mergedAsset.toRoom())
-    }
+    override suspend fun getAllByCode(code: CurrencyCode) =
+        dao.getAllByCode(code).map { it.toAsset() }
 
-    override suspend fun setAssetsList(list: List<Asset>) = list.forEach { setAsset(it) }
+    override suspend fun setAsset(asset: Asset) = dao.insert(asset.toRoom())
+
+    override suspend fun setAssetsList(list: List<Asset>) = dao.insertList(list.map { it.toRoom() })
 
     override suspend fun removeAsset(id: Long) = dao.delete(id) > 0
 }

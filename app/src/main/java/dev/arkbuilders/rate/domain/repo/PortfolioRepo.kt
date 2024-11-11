@@ -1,6 +1,7 @@
 package dev.arkbuilders.rate.domain.repo
 
 import dev.arkbuilders.rate.domain.model.Asset
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import kotlinx.coroutines.flow.Flow
 
 interface PortfolioRepo {
@@ -9,6 +10,8 @@ interface PortfolioRepo {
     fun allAssetsFlow(): Flow<List<Asset>>
 
     suspend fun getById(id: Long): Asset?
+
+    suspend fun getAllByCode(code: CurrencyCode): List<Asset>
 
     suspend fun setAsset(asset: Asset)
 

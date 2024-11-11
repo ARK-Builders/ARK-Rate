@@ -1,6 +1,8 @@
 package dev.arkbuilders.rate.data.db.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import dev.arkbuilders.rate.data.db.entity.RoomAsset
@@ -11,6 +13,9 @@ import kotlinx.coroutines.flow.Flow
 interface PortfolioDao {
     @Upsert
     suspend fun insert(asset: RoomAsset)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertList(list: List<RoomAsset>)
 
     @Query("SELECT * FROM RoomAsset")
     suspend fun getAll(): List<RoomAsset>
