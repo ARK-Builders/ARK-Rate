@@ -23,9 +23,19 @@ class PortfolioRepoImpl @Inject constructor(
 
     override suspend fun getById(id: Long) = dao.getById(id)?.toAsset()
 
-    override suspend fun setAsset(asset: Asset) = dao.insert(asset.toRoom())
+    override suspend fun setAsset(asset: Asset) {
+        val roomAsset =
+            dao.getAllByCode(asset.code).find {
+                it.group == asset.group
+            }?.toAsset()
+        val mergedAsset =
+            roomAsset?.let {
+                roomAsset.copy(value = asset.value + roomAsset.value)
+            } ?: asset
+        dao.insert(mergedAsset.toRoom())
+    }
 
-    override suspend fun setAssetsList(list: List<Asset>) = dao.insertList(list.map { it.toRoom() })
+    override suspend fun setAssetsList(list: List<Asset>) = list.forEach { setAsset(it) }
 
     override suspend fun removeAsset(id: Long) = dao.delete(id) > 0
 }
