@@ -55,20 +55,20 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.PairAlert
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
+import dev.arkbuilders.rate.core.presentation.ui.AppButton
+import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv16
+import dev.arkbuilders.rate.core.presentation.ui.AppSwipeToDismiss
+import dev.arkbuilders.rate.core.presentation.ui.AppTopBarCenterTitle
+import dev.arkbuilders.rate.core.presentation.ui.CurrIcon
+import dev.arkbuilders.rate.core.presentation.ui.GroupViewPager
+import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
+import dev.arkbuilders.rate.core.presentation.ui.NoInternetScreen
+import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
+import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddPairAlertScreenDestination
-import dev.arkbuilders.rate.presentation.theme.ArkColor
-import dev.arkbuilders.rate.presentation.ui.AppButton
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
-import dev.arkbuilders.rate.presentation.ui.AppSwipeToDismiss
-import dev.arkbuilders.rate.presentation.ui.AppTopBarCenterTitle
-import dev.arkbuilders.rate.presentation.ui.CurrIcon
-import dev.arkbuilders.rate.presentation.ui.GroupViewPager
-import dev.arkbuilders.rate.presentation.ui.LoadingScreen
-import dev.arkbuilders.rate.presentation.ui.NoInternetScreen
-import dev.arkbuilders.rate.presentation.ui.NotifyRemovedSnackbarVisuals
-import dev.arkbuilders.rate.presentation.ui.RateSnackbarHost
-import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import timber.log.Timber
@@ -315,7 +315,7 @@ private fun PairAlertItem(
                     "$currencyName(${pairAlert.targetCode}) " +
                         if (pairAlert.oneTimeNotRecurrent) "(One-time)" else "",
                 fontWeight = FontWeight.Medium,
-                color = ArkColor.TextPrimary,
+                color = dev.arkbuilders.rate.core.presentation.theme.ArkColor.TextPrimary,
             )
             Text(
                 text =
@@ -386,7 +386,7 @@ private fun Empty(
                 text = stringResource(R.string.alert_empty_title),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
-                color = ArkColor.TextPrimary,
+                color = dev.arkbuilders.rate.core.presentation.theme.ArkColor.TextPrimary,
             )
             Text(
                 modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),

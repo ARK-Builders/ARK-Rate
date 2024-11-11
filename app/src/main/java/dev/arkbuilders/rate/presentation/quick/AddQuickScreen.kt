@@ -57,21 +57,22 @@ import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
+import dev.arkbuilders.rate.core.presentation.ui.AppButton
+import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv16
+import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
+import dev.arkbuilders.rate.core.presentation.ui.ArkBasicTextField
+import dev.arkbuilders.rate.core.presentation.ui.GroupCreateDialog
+import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
+import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
-import dev.arkbuilders.rate.presentation.theme.ArkColor
-import dev.arkbuilders.rate.presentation.ui.AppButton
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
-import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.presentation.ui.ArkBasicTextField
-import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
-import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
-import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import dev.arkbuilders.rate.core.presentation.R as CoreR
 
 @Composable
 @Destination
@@ -124,7 +125,7 @@ fun AddQuickScreen(
                     R.string.quick_edit_pair
             AppTopBarBack(
                 title = stringResource(title),
-                navigator = navigator,
+                onBackClick = { navigator.popBackStack() },
             )
         },
     ) {
@@ -228,7 +229,7 @@ private fun Content(
                 title =
                     state.group?.let { state.group }
                         ?: stringResource(R.string.add_group),
-                icon = painterResource(id = R.drawable.ic_group),
+                icon = painterResource(id = CoreR.drawable.ic_group),
             )
             if (showGroupsPopup) {
                 Box(
@@ -459,7 +460,7 @@ private fun ToResult(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_delete),
+                painter = painterResource(id = CoreR.drawable.ic_delete),
                 contentDescription = "",
                 tint = ArkColor.FGSecondary,
             )

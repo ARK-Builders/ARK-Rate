@@ -49,19 +49,20 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.core.domain.CurrUtils
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
+import dev.arkbuilders.rate.core.presentation.ui.AppButton
+import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
+import dev.arkbuilders.rate.core.presentation.ui.ArkLargeTextField
+import dev.arkbuilders.rate.core.presentation.ui.GroupCreateDialog
+import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
+import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
-import dev.arkbuilders.rate.presentation.theme.ArkColor
-import dev.arkbuilders.rate.presentation.ui.AppButton
-import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.presentation.ui.ArkLargeTextField
-import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
-import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
-import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import dev.arkbuilders.rate.core.presentation.R as CoreR
 
 @Destination
 @Composable
@@ -116,7 +117,7 @@ fun AddPairAlertScreen(
                         stringResource(R.string.alert_edit_alert)
                     else
                         stringResource(R.string.add_new_alert),
-                navigator = navigator,
+                onBackClick = { navigator.popBackStack() },
             )
         },
     ) {
@@ -168,7 +169,7 @@ private fun Content(
                 title =
                     state.group?.let { state.group }
                         ?: stringResource(R.string.add_group),
-                icon = painterResource(id = R.drawable.ic_group),
+                icon = painterResource(id = CoreR.drawable.ic_group),
             )
             if (showGroupsPopup) {
                 Box(
@@ -313,7 +314,7 @@ private fun DropDownBtn(
                 .height(36.dp)
                 .border(
                     1.dp,
-                    ArkColor.Border,
+                    dev.arkbuilders.rate.core.presentation.theme.ArkColor.Border,
                     RoundedCornerShape(8.dp),
                 )
                 .clip(RoundedCornerShape(8.dp))
@@ -324,13 +325,13 @@ private fun DropDownBtn(
             modifier = Modifier.padding(start = 12.dp),
             text = title,
             fontWeight = FontWeight.SemiBold,
-            color = ArkColor.FGSecondary,
+            color = dev.arkbuilders.rate.core.presentation.theme.ArkColor.FGSecondary,
         )
         Icon(
             modifier = Modifier.padding(start = 8.dp, end = 15.dp),
             painter = painterResource(id = R.drawable.ic_chevron),
             contentDescription = "",
-            tint = ArkColor.FGSecondary,
+            tint = dev.arkbuilders.rate.core.presentation.theme.ArkColor.FGSecondary,
         )
     }
 }
@@ -348,7 +349,7 @@ fun DropDownWithIcon(
                 .height(44.dp)
                 .border(
                     1.dp,
-                    ArkColor.Border,
+                    dev.arkbuilders.rate.core.presentation.theme.ArkColor.Border,
                     RoundedCornerShape(8.dp),
                 )
                 .clip(RoundedCornerShape(8.dp))
@@ -359,7 +360,7 @@ fun DropDownWithIcon(
             modifier = Modifier.padding(start = 16.dp),
             painter = icon,
             contentDescription = "",
-            tint = ArkColor.FGSecondary,
+            tint = dev.arkbuilders.rate.core.presentation.theme.ArkColor.FGSecondary,
         )
         Text(
             modifier =
@@ -368,13 +369,13 @@ fun DropDownWithIcon(
                     .weight(1f),
             text = title,
             fontSize = 16.sp,
-            color = ArkColor.TextPlaceHolder,
+            color = dev.arkbuilders.rate.core.presentation.theme.ArkColor.TextPlaceHolder,
         )
         Icon(
             modifier = Modifier.padding(end = 20.dp),
             painter = painterResource(id = R.drawable.ic_chevron),
             contentDescription = "",
-            tint = ArkColor.FGSecondary,
+            tint = dev.arkbuilders.rate.core.presentation.theme.ArkColor.FGSecondary,
         )
     }
 }
@@ -437,9 +438,9 @@ private fun EditCondition(
                     contentDescription = "",
                     tint =
                         if (state.aboveNotBelow)
-                            ArkColor.PairAlertInc
+                            dev.arkbuilders.rate.core.presentation.theme.ArkColor.PairAlertInc
                         else
-                            ArkColor.PairAlertDec,
+                            dev.arkbuilders.rate.core.presentation.theme.ArkColor.PairAlertDec,
                 )
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
@@ -450,9 +451,9 @@ private fun EditCondition(
                             ctx.getString(R.string.below),
                     color =
                         if (state.aboveNotBelow)
-                            ArkColor.PairAlertInc
+                            dev.arkbuilders.rate.core.presentation.theme.ArkColor.PairAlertInc
                         else
-                            ArkColor.PairAlertDec,
+                            dev.arkbuilders.rate.core.presentation.theme.ArkColor.PairAlertDec,
                 )
             }
         }

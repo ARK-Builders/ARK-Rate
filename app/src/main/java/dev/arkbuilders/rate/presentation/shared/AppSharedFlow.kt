@@ -1,7 +1,7 @@
 package dev.arkbuilders.rate.presentation.shared
 
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
-import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {

@@ -10,14 +10,17 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.components.about.presentation.ArkAbout
 import dev.arkbuilders.rate.BuildConfig
 import dev.arkbuilders.rate.R
-import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
+import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
 
 @Destination
 @Composable
 fun AboutScreen(navigator: DestinationsNavigator) {
     Scaffold(
         topBar = {
-            AppTopBarBack(title = stringResource(R.string.about), navigator)
+            AppTopBarBack(
+                title = stringResource(R.string.about),
+                onBackClick = { navigator.popBackStack() },
+            )
         },
     ) {
         ArkAbout(

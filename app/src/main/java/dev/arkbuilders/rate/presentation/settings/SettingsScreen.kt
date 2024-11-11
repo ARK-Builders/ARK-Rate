@@ -26,11 +26,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
+import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv16
+import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AboutScreenDestination
-import dev.arkbuilders.rate.presentation.theme.ArkColor
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv16
-import dev.arkbuilders.rate.presentation.utils.DateFormatUtils
 import org.orbitmvi.orbit.compose.collectAsState
 import java.time.Duration
 import java.time.OffsetDateTime
@@ -148,14 +148,14 @@ private fun Content(
             Icon(
                 painter = painterResource(R.drawable.ic_info),
                 contentDescription = "",
-                tint = ArkColor.TextTertiary,
+                tint = dev.arkbuilders.rate.core.presentation.theme.ArkColor.TextTertiary,
             )
             Text(
                 modifier = Modifier.padding(start = 6.dp),
                 text = stringResource(R.string.about),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = ArkColor.TextTertiary,
+                color = dev.arkbuilders.rate.core.presentation.theme.ArkColor.TextTertiary,
             )
         }
         AppHorDiv16(modifier = Modifier)
@@ -172,12 +172,12 @@ private fun LatestRefresh(
             modifier = Modifier,
             text = title,
             fontWeight = FontWeight.Medium,
-            color = ArkColor.TextSecondary,
+            color = dev.arkbuilders.rate.core.presentation.theme.ArkColor.TextSecondary,
         )
         Text(
             modifier = Modifier,
             text = description,
-            color = ArkColor.TextTertiary,
+            color = dev.arkbuilders.rate.core.presentation.theme.ArkColor.TextTertiary,
         )
     }
 }

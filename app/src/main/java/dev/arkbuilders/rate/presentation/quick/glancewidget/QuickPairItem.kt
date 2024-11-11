@@ -20,8 +20,8 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.PinnedQuickPair
-import dev.arkbuilders.rate.presentation.theme.ArkColor
-import dev.arkbuilders.rate.presentation.utils.IconUtils
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
+import dev.arkbuilders.rate.core.presentation.utils.IconUtils
 
 @Composable
 fun QuickPairItem(

@@ -19,14 +19,14 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
+import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
+import dev.arkbuilders.rate.core.presentation.ui.CurrencyInfoItem
+import dev.arkbuilders.rate.core.presentation.ui.ListHeader
+import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
+import dev.arkbuilders.rate.core.presentation.ui.NoResult
+import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv
-import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.presentation.ui.CurrencyInfoItem
-import dev.arkbuilders.rate.presentation.ui.ListHeader
-import dev.arkbuilders.rate.presentation.ui.LoadingScreen
-import dev.arkbuilders.rate.presentation.ui.NoResult
-import dev.arkbuilders.rate.presentation.ui.SearchTextField
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -55,7 +55,7 @@ fun SearchCurrencyScreen(
         topBar = {
             AppTopBarBack(
                 title = stringResource(R.string.search_currency),
-                navigator = navigator,
+                onBackClick = { navigator.popBackStack() },
             )
         },
     ) {

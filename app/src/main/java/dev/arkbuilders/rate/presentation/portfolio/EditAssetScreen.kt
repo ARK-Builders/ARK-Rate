@@ -38,16 +38,16 @@ import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
+import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
+import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
+import dev.arkbuilders.rate.core.presentation.ui.ArkLargeTextField
+import dev.arkbuilders.rate.core.presentation.ui.InfoMarketCapitalizationDialog
+import dev.arkbuilders.rate.core.presentation.ui.InfoValueOfCirculatingDialog
+import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
-import dev.arkbuilders.rate.presentation.theme.ArkColor
-import dev.arkbuilders.rate.presentation.ui.AppHorDiv
-import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.presentation.ui.ArkLargeTextField
-import dev.arkbuilders.rate.presentation.ui.InfoMarketCapitalizationDialog
-import dev.arkbuilders.rate.presentation.ui.InfoValueOfCirculatingDialog
-import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Destination
@@ -66,7 +66,7 @@ fun EditAssetScreen(
         topBar = {
             AppTopBarBack(
                 title = stringResource(R.string.asset_detail),
-                navigator = navigator,
+                onBackClick = { navigator.popBackStack() },
             )
         },
     ) {

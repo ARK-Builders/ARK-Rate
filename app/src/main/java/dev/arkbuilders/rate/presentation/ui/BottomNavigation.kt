@@ -26,12 +26,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.destinations.Destination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PortfolioScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.SettingsScreenDestination
-import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 sealed class BottomNavItem(
     @StringRes val title: Int,

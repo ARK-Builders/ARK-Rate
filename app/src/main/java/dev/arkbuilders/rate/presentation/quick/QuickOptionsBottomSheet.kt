@@ -30,8 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.core.domain.model.QuickPair
-import dev.arkbuilders.rate.presentation.theme.ArkColor
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import kotlin.math.abs
+import dev.arkbuilders.rate.core.presentation.R as CoreR
 
 @Composable
 fun QuickOptionsBottomSheet(
@@ -95,7 +96,7 @@ private fun Content(
         ) {
             Icon(
                 modifier = Modifier,
-                painter = painterResource(id = R.drawable.ic_close),
+                painter = painterResource(id = CoreR.drawable.ic_close),
                 contentDescription = "",
                 tint = ArkColor.FGQuinary,
             )
@@ -121,7 +122,7 @@ private fun Content(
             ) {
                 Icon(
                     modifier = Modifier,
-                    painter = painterResource(id = R.drawable.ic_pin),
+                    painter = painterResource(id = CoreR.drawable.ic_pin),
                     contentDescription = "",
                     tint = ArkColor.TextSecondary,
                 )
@@ -194,7 +195,7 @@ private fun Content(
             ) {
                 Icon(
                     modifier = Modifier,
-                    painter = painterResource(id = R.drawable.ic_delete),
+                    painter = painterResource(id = CoreR.drawable.ic_delete),
                     contentDescription = "",
                     tint = ArkColor.TextError,
                 )

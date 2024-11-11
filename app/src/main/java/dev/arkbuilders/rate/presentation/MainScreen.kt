@@ -28,6 +28,12 @@ import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultA
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.utils.startDestination
+import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbar
+import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbar
+import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.utils.findActivity
+import dev.arkbuilders.rate.core.presentation.utils.keyboardAsState
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
@@ -37,12 +43,6 @@ import dev.arkbuilders.rate.presentation.destinations.SettingsScreenDestination
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction.Companion.ADD_NEW_PAIR
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction.Companion.ADD_NEW_PAIR_GROUP_KEY
 import dev.arkbuilders.rate.presentation.ui.AnimatedRateBottomNavigation
-import dev.arkbuilders.rate.presentation.ui.ConnectivityOfflineSnackbar
-import dev.arkbuilders.rate.presentation.ui.ConnectivityOfflineSnackbarVisuals
-import dev.arkbuilders.rate.presentation.ui.ConnectivityOnlineSnackbar
-import dev.arkbuilders.rate.presentation.ui.ConnectivityOnlineSnackbarVisuals
-import dev.arkbuilders.rate.presentation.utils.findActivity
-import dev.arkbuilders.rate.presentation.utils.keyboardAsState
 import kotlinx.coroutines.flow.drop
 
 @Composable

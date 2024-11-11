@@ -31,12 +31,12 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import dev.arkbuilders.rate.R
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.NextPageAction
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.OpenAppAction
 import dev.arkbuilders.rate.presentation.quick.glancewidget.action.PreviousPageAction
-import dev.arkbuilders.rate.presentation.theme.ArkColor
 
 class QuickPairsWidget : GlanceAppWidget() {
     private val getPinnedUseCase = DIManager.component.getSortedPinnedQuickPairsUseCase()
@@ -117,7 +117,10 @@ class QuickPairsWidget : GlanceAppWidget() {
                         text = context.getString(R.string.quick_open_app),
                         style =
                             TextStyle(
-                                color = ColorProvider(ArkColor.Primary),
+                                color =
+                                    ColorProvider(
+                                        ArkColor.Primary,
+                                    ),
                                 fontWeight = FontWeight.Medium,
                             ),
                     )

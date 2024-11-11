@@ -1,0 +1,151 @@
+<resources>
+    <string name="app_name">ARK Rate</string>
+    <string name="app_name_debug">ARK Rate [Debug]</string>
+
+    <string name="info_dialog_market_capitalization_description">The total market value of a cryptocurrency\'s circulating supply.\n\nIt is analogous to the free-float capitalization in the stock market.\n\nCap = Current Price x Circulating Supply.</string>
+    <string name="info_dialog_value_of_circulating_description">Currency in circulation refers to the amount of cash–in the form of paper notes or coins–within a country that is physically used to conduct transactions between consumers and businesses.</string>
+
+    <string name="bottom_nav_portfolio">Portfolios</string>
+    <string name="bottom_nav_alerts">Alerts</string>
+    <string name="bottom_nav_quick">Quick</string>
+    <string name="bottom_nav_settings">Settings</string>
+
+    <string name="quick_empty_title">Ready for calculation!</string>
+    <string name="quick_empty_desc">Select your currencies and enter an amount to start converting. Your exchange results will appear here.</string>
+    <string name="quick_add_new_calculation">Add new calculation</string>
+    <string name="quick_edit_pair">Edit pair</string>
+    <string name="quick_last_refreshed">Last refreshed %1$s ago</string>
+    <string name="quick_calculations">Calculations</string>
+    <string name="quick_calculated_on">Calculated on %1$s</string>
+    <string name="quick_snackbar_new_title">New calculation has been created</string>
+    <string name="quick_snackbar_new_desc">"You added %1$s calculation "</string>
+    <string name="quick_snackbar_removed_title">The calculation has been deleted</string>
+    <string name="quick_snackbar_removed_desc">You deleted %1$s calculation</string>
+    <string name="quick_snackbar_new_added_to">%1$s to %2$s</string>
+    <string name="quick_open_app">Open app</string>
+
+
+    <string name="asset_detail">Asset detail</string>
+    <string name="portfolio_empty_title">Your Portfolio is Empty</string>
+    <string name="portfolio_empty_desc">Add currencies manually to track and compare. Your portfolio helps you monitor and manage your favorite or frequently used currencies.</string>
+    <string name="portfolio_total_assets">Total Assets</string>
+    <string name="portfolio_snackbar_new_title">New Asset has been added</string>
+    <string name="portfolio_snackbar_new_desc">You added %1$s to your portfolio</string>
+    <string name="portfolio_snackbar_removed_title">The asset has been deleted</string>
+    <string name="portfolio_snackbar_removed_desc">You deleted %1$s from you portfolio</string>
+
+
+    <string name="alerts">Alerts</string>
+    <string name="alert_edit_alert">Edit alert</string>
+    <string name="alert_notified_on">Notified on %1$s</string>
+    <string name="alert_empty_title">No Alerts at the Moment</string>
+    <string name="alert_empty_desc">Stay updated! We\'ll post any important notifications or changes in exchange rates here.</string>
+    <string name="new_alert">New Alert</string>
+    <string name="alert_post_notification_permission_explanation">Application requires permission to post pair alert notifications.</string>
+    <string name="alert_snackbar_new_title">Alert for %1$s has been created</string>
+    <string name="alert_snackbar_new_desc">You’ll get notified when %1$s price is %2$s %3$s %4$s</string>
+    <string name="alert_snackbar_removed_title">Alert for %1$s has been deleted</string>
+    <string name="alert_snackbar_removed_desc">You deleted %1$s to %2$s alert</string>
+    <string name="add_new_alert">Add new alert</string>
+    <string name="create_alert">Create Alert</string>
+    <string name="alert_current_price">Current price = %1$s</string>
+
+    <string name="settings_quick_portfolio_alerts">Quick/Portfolio/Alerts</string>
+    <string name="settings_elapsed_ago">"%1$s ago · "</string>
+    <string name="settings_latest_rates_refresh">Latest rates refresh</string>
+    <string name="settings_latest_alerts_check">Latest alerts check</string>
+
+    <string name="group_create_group">Create Group</string>
+    <string name="group_please_enter_a_name_for_this_group">Please enter a name for this group.</string>
+    <string name="group_name">Group name</string>
+    <string name="e_g_group_1">e.g. Group 1</string>
+    <string name="group_default_name">Default</string>
+    <string name="new_group">New group</string>
+
+    <string name="crash_reports">Crash reports</string>
+    <string name="all_currencies">All currencies</string>
+
+    <string name="oops_something_went_wrong">Oops! Something went wrong</string>
+
+
+    <string name="privacy_policy_url" translatable="false">https://www.ark-builders.dev/apps/rate/privacy-policy</string>
+    <string name="privacy_policy">Privacy policy</string>
+
+    <string name="calculate">Calculate</string>
+    <string name="add_group">Add group</string>
+    <string name="save">Save</string>
+    <string name="input_value">Input value</string>
+    <string name="result">Result</string>
+    <string name="new_currency">New Currency</string>
+    <string name="add_new_asset">Add new asset</string>
+    <string name="change_base_currency">Change base currency</string>
+    <string name="market_capitalization">Market Capitalization</string>
+    <string name="n_a">N/A</string>
+    <string name="value_of_circulating_currency">Value of Circulating Currency</string>
+    <string name="above">above</string>
+    <string name="below">below</string>
+    <string name="above_c">Above</string>
+    <string name="below_c">Below</string>
+    <string name="by_price">By price</string>
+    <string name="by_percent">By percent</string>
+    <string name="when_">When</string>
+    <string name="price_is">price is</string>
+    <string name="every">"every "</string>
+    <string name="every_c">Every</string>
+    <string name="one_time">One-Time</string>
+    <string name="recurrent">Recurrent</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_result">No result</string>
+    <string name="search">Search</string>
+    <string name="copy">Copy</string>
+
+
+    <string name="about">About</string>
+    <string name="about_download_qr_image">Download QR Image</string>
+    <string name="about_wallet_copied">Wallet copied!</string>
+    <string name="ark_support_email">support@ark-builders.dev</string>
+    <string name="about_send_email_part_1">"Send us the transaction id by email "</string>
+    <string name="about_send_email_part_2">" to receive premium support. We’ll make our best to help you with any issue you encounter while using our Software."</string>
+    <string name="about_btc_wallet">bc1qx8n9r4uwpgrhgnamt2uew53lmrxd8tuevp7lv5</string>
+    <string name="about_eth_wallet">0x9765C5aC38175BFbd2dC7a840b63e50762B80a1b</string>
+    <string name="about_donate_eth">Donate using Ethereum</string>
+    <string name="about_donate_btc">Donate using Bitcoin</string>
+    <string name="ark_website_url">https://www.ark-builders.dev/</string>
+    <string name="ark_tg_url" translatable="false">https://t.me/ark_builders</string>
+    <string name="ark_contribute_url" translatable="false">https://www.ark-builders.dev/contribute/?tab=goodFirstIssue</string>
+    <string name="about_ark_buy_coffee_url" translatable="false">https://buymeacoffee.com/arkbuilders</string>
+    <string name="about_ark_patreon_url" translatable="false">https://www.patreon.com/ARKBuilders</string>
+    <string name="ark_discord_url" translatable="false">https://discord.gg/tPUJTxud</string>
+    <string name="about_discover_issues_to_work_on">Discover issues to work on</string>
+    <string name="about_see_open_bounties">See open bounties</string>
+    <string name="about_buy_as_a_coffee">Buy us a coffee</string>
+    <string name="about_donate_on_patreon">Donate on Patreon</string>
+    <string name="about_donate_using_eth">Donate using ETH</string>
+    <string name="about_donate_using_btc">Donate using BTC</string>
+    <string name="about_we_greatly_appreciate_every_bit_of_support">We greatly appreciate every bit of support!</string>
+    <string name="about_support_us">Support us</string>
+    <string name="alert_notification_title">ARK Rate Price Alert</string>
+    <string name="alert_notification_desc">%1$s is now %2$s %3$s %4$s</string>
+    <string name="collect_analytics">Collect analytics</string>
+    <string name="search_currency">Search a currency</string>
+    <string name="new_asset">New Asset</string>
+    <string name="undo">Undo</string>
+    <string name="frequent_currencies">Frequent currencies</string>
+    <string name="top_results">Top results</string>
+    <string name="unpin">Unpin</string>
+    <string name="pin">Pin</string>
+    <string name="quick_pinned_pairs">Pinned pairs</string>
+    <string name="delete">Delete</string>
+    <string name="re_use">Re-use</string>
+    <string name="edit">Edit</string>
+    <string name="options">Options</string>
+    <string name="oops_request_time_out">Oops, request time out!</string>
+    <string name="check_connection_and_refresh">Please check your connection and refresh the page to try again.</string>
+    <string name="refresh">Refresh</string>
+    <string name="online">Online</string>
+    <string name="your_connection_is_back">Your connection is back.</string>
+    <string name="offline">Offline</string>
+    <string name="your_network_is_offline">Your network is offline.</string>
+
+</resources>

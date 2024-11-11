@@ -6,8 +6,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
+import dev.arkbuilders.rate.core.presentation.theme.ARKRateTheme
 import dev.arkbuilders.rate.presentation.quick.glancewidget.QuickPairsWidgetReceiver
-import dev.arkbuilders.rate.presentation.theme.ARKRateTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

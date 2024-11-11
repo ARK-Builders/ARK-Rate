@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "dev.arkbuilders.rate"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "dev.arkbuilders.rate"
-        minSdk = 26
-        targetSdk = 34
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.compileSdk.get().toInt()
         versionCode = 3
         versionName = "1.2.0"
         setProperty("archivesBaseName", "ark-rate")
@@ -94,7 +94,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     packaging {
         resources {
@@ -106,6 +106,7 @@ android {
 dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
+    implementation(project(":core:presentation"))
     implementation(project(":fiaticons"))
     implementation(project(":cryptoicons"))
 
