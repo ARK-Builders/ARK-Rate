@@ -101,7 +101,7 @@ fun AddAssetScreen(navigator: DestinationsNavigator) {
     Scaffold(
         topBar = {
             AppTopBarBack(
-                title = stringResource(R.string.add_new_asset),
+                title = stringResource(R.string.portfolio_add_new_assets),
                 navigator = navigator,
             )
         },
@@ -189,7 +189,7 @@ private fun Content(
                             bottom = 10.dp,
                             end = 18.dp,
                         ),
-                    text = stringResource(R.string.new_currency),
+                    text = stringResource(R.string.portfolio_new_asset),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
                 )
@@ -205,7 +205,7 @@ private fun Content(
                 onClick = { showGroupsPopup = true },
                 title =
                     state.group?.let { state.group }
-                        ?: stringResource(R.string.add_group),
+                        ?: stringResource(R.string.portfolio_default_placeholder),
                 icon = painterResource(id = R.drawable.ic_group),
             )
             if (showGroupsPopup) {
@@ -243,7 +243,7 @@ private fun Content(
                     onAddAsset()
                 },
             ) {
-                Text(text = stringResource(R.string.add_new_asset))
+                Text(text = stringResource(R.string.portfolio_add_new_assets))
             }
         }
     }

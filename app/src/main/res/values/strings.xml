@@ -26,10 +26,14 @@
 
 
     <string name="asset_detail">Asset detail</string>
-    <string name="portfolio_empty_title">Your Portfolio is Empty</string>
+    <string name="portfolio_empty_title">Your portfolio is empty</string>
     <string name="portfolio_empty_desc">Add currencies manually to track and compare. Your portfolio helps you monitor and manage your favorite or frequently used currencies.</string>
-    <string name="portfolio_total_assets">Total Assets</string>
-    <string name="portfolio_snackbar_new_title">New Asset has been added</string>
+    <string name="portfolio_empty_new_assets">New assets</string>
+    <string name="portfolio_default_placeholder">Default portfolio</string>
+    <string name="portfolio_total_assets">Total assets</string>
+    <string name="portfolio_add_new_assets">Add new assets</string>
+    <string name="portfolio_new_asset">New asset</string>
+    <string name="portfolio_snackbar_new_title">New asset has been added</string>
     <string name="portfolio_snackbar_new_desc">You added %1$s to your portfolio</string>
     <string name="portfolio_snackbar_removed_title">The asset has been deleted</string>
     <string name="portfolio_snackbar_removed_desc">You deleted %1$s from you portfolio</string>
@@ -76,8 +80,7 @@
     <string name="save">Save</string>
     <string name="input_value">Input value</string>
     <string name="result">Result</string>
-    <string name="new_currency">New Currency</string>
-    <string name="add_new_asset">Add new asset</string>
+    <string name="new_currency">New currency</string>
     <string name="change_base_currency">Change base currency</string>
     <string name="market_capitalization">Market Capitalization</string>
     <string name="n_a">N/A</string>
@@ -129,7 +132,6 @@
     <string name="alert_notification_desc">%1$s is now %2$s %3$s %4$s</string>
     <string name="collect_analytics">Collect analytics</string>
     <string name="search_currency">Search a currency</string>
-    <string name="new_asset">New Asset</string>
     <string name="undo">Undo</string>
     <string name="frequent_currencies">Frequent currencies</string>
     <string name="top_results">Top results</string>
