@@ -61,8 +61,6 @@ import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.presentation.ui.DropDownWithIcon
-import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
-import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -151,7 +149,7 @@ private fun Content(
     var addGroupBtnWidth by remember { mutableStateOf(0) }
 
     if (showNewGroupDialog) {
-        GroupCreateDialog(onDismiss = { showNewGroupDialog = false }) {
+        PortfolioCreateDialog(onDismiss = { showNewGroupDialog = false }) {
             onGroupSelect(it)
         }
     }
@@ -205,7 +203,7 @@ private fun Content(
                 onClick = { showGroupsPopup = true },
                 title =
                     state.group?.let { state.group }
-                        ?: stringResource(R.string.portfolio_default_placeholder),
+                        ?: stringResource(R.string.portfolio_default_portfolio),
                 icon = painterResource(id = R.drawable.ic_group),
             )
             if (showGroupsPopup) {
@@ -221,8 +219,8 @@ private fun Content(
                         properties = PopupProperties(),
                         onDismissRequest = { showGroupsPopup = false },
                     ) {
-                        GroupSelectPopup(
-                            groups = state.availableGroups,
+                        PortfolioSelectPopup(
+                            portfolios = state.availableGroups,
                             widthPx = addGroupBtnWidth,
                             onGroupSelect = { onGroupSelect(it) },
                             onNewGroupClick = { showNewGroupDialog = true },
