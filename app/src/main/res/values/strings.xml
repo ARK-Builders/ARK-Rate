@@ -102,29 +102,6 @@
 
 
     <string name="about">About</string>
-    <string name="about_download_qr_image">Download QR Image</string>
-    <string name="about_wallet_copied">Wallet copied!</string>
-    <string name="ark_support_email">support@ark-builders.dev</string>
-    <string name="about_send_email_part_1">"Send us the transaction id by email "</string>
-    <string name="about_send_email_part_2">" to receive premium support. We’ll make our best to help you with any issue you encounter while using our Software."</string>
-    <string name="about_btc_wallet">bc1qx8n9r4uwpgrhgnamt2uew53lmrxd8tuevp7lv5</string>
-    <string name="about_eth_wallet">0x9765C5aC38175BFbd2dC7a840b63e50762B80a1b</string>
-    <string name="about_donate_eth">Donate using Ethereum</string>
-    <string name="about_donate_btc">Donate using Bitcoin</string>
-    <string name="ark_website_url">https://www.ark-builders.dev/</string>
-    <string name="ark_tg_url" translatable="false">https://t.me/ark_builders</string>
-    <string name="ark_contribute_url" translatable="false">https://www.ark-builders.dev/contribute/?tab=goodFirstIssue</string>
-    <string name="about_ark_buy_coffee_url" translatable="false">https://buymeacoffee.com/arkbuilders</string>
-    <string name="about_ark_patreon_url" translatable="false">https://www.patreon.com/ARKBuilders</string>
-    <string name="ark_discord_url" translatable="false">https://discord.gg/tPUJTxud</string>
-    <string name="about_discover_issues_to_work_on">Discover issues to work on</string>
-    <string name="about_see_open_bounties">See open bounties</string>
-    <string name="about_buy_as_a_coffee">Buy us a coffee</string>
-    <string name="about_donate_on_patreon">Donate on Patreon</string>
-    <string name="about_donate_using_eth">Donate using ETH</string>
-    <string name="about_donate_using_btc">Donate using BTC</string>
-    <string name="about_we_greatly_appreciate_every_bit_of_support">We greatly appreciate every bit of support!</string>
-    <string name="about_support_us">Support us</string>
     <string name="alert_notification_title">ARK Rate Price Alert</string>
     <string name="alert_notification_desc">%1$s is now %2$s %3$s %4$s</string>
     <string name="collect_analytics">Collect analytics</string>
