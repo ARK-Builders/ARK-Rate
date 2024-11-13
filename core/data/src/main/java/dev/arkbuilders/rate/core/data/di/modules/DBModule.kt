@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
-import dev.arkbuilders.rate.core.data.db.Database
-import dev.arkbuilders.rate.core.data.db.Database.Companion.DB_NAME
+import dev.arkbuilders.rate.core.db.Database
+import dev.arkbuilders.rate.core.db.Database.Companion.DB_NAME
 import javax.inject.Singleton
 
 @Module

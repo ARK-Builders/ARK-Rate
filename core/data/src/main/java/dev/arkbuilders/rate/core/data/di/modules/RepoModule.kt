@@ -3,11 +3,11 @@ package dev.arkbuilders.rate.core.data.di.modules
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import dev.arkbuilders.rate.core.data.db.dao.CodeUseStatDao
-import dev.arkbuilders.rate.core.data.db.dao.PairAlertDao
-import dev.arkbuilders.rate.core.data.db.dao.PortfolioDao
-import dev.arkbuilders.rate.core.data.db.dao.QuickPairDao
-import dev.arkbuilders.rate.core.data.db.dao.TimestampDao
+import dev.arkbuilders.rate.core.db.dao.CodeUseStatDao
+import dev.arkbuilders.rate.core.db.dao.PairAlertDao
+import dev.arkbuilders.rate.core.db.dao.PortfolioDao
+import dev.arkbuilders.rate.core.db.dao.QuickPairDao
+import dev.arkbuilders.rate.core.db.dao.TimestampDao
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
@@ -52,15 +52,15 @@ class RepoModule {
 
     @Singleton
     @Provides
-    fun pairAlertRepo(pairAlertDao: PairAlertDao): PairAlertRepo = PairAlertRepoImpl(pairAlertDao)
+    fun pairAlertRepo(pairAlertDao: dev.arkbuilders.rate.core.db.dao.PairAlertDao): PairAlertRepo = PairAlertRepoImpl(pairAlertDao)
 
     @Singleton
     @Provides
-    fun portfolioRepo(portfolioDao: PortfolioDao): PortfolioRepo = PortfolioRepoImpl(portfolioDao)
+    fun portfolioRepo(portfolioDao: dev.arkbuilders.rate.core.db.dao.PortfolioDao): PortfolioRepo = PortfolioRepoImpl(portfolioDao)
 
     @Singleton
     @Provides
-    fun quickRepo(quickPairDao: QuickPairDao): QuickRepo = QuickRepoImpl(quickPairDao)
+    fun quickRepo(quickPairDao: dev.arkbuilders.rate.core.db.dao.QuickPairDao): QuickRepo = QuickRepoImpl(quickPairDao)
 
     @Singleton
     @Provides
@@ -69,7 +69,7 @@ class RepoModule {
     @Singleton
     @Provides
     fun codeUseStatRepo(
-        codeUseStatDao: CodeUseStatDao
+        codeUseStatDao: dev.arkbuilders.rate.core.db.dao.CodeUseStatDao
     ): CodeUseStatRepo = CodeUseStatRepoImpl(codeUseStatDao)
 
     @Singleton
@@ -78,7 +78,7 @@ class RepoModule {
 
     @Singleton
     @Provides
-    fun timestampRepo(timestampDao: TimestampDao): TimestampRepo = TimestampRepoImpl(timestampDao)
+    fun timestampRepo(timestampDao: dev.arkbuilders.rate.core.db.dao.TimestampDao): TimestampRepo = TimestampRepoImpl(timestampDao)
 
     @Singleton
     @Provides

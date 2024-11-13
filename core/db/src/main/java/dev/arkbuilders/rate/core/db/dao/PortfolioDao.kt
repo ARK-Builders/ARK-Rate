@@ -1,11 +1,11 @@
-package dev.arkbuilders.rate.core.data.db.dao
+package dev.arkbuilders.rate.core.db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
-import dev.arkbuilders.rate.core.data.db.entity.RoomAsset
+import dev.arkbuilders.rate.core.db.entity.RoomAsset
 import kotlinx.coroutines.flow.Flow
 
 @Dao

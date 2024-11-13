@@ -1,9 +1,9 @@
-package dev.arkbuilders.rate.core.data.db.dao
+package dev.arkbuilders.rate.core.db.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import dev.arkbuilders.rate.core.data.db.entity.RoomCurrencyRate
+import dev.arkbuilders.rate.core.db.entity.RoomCurrencyRate
 
 @Dao
 interface CurrencyRateDao {

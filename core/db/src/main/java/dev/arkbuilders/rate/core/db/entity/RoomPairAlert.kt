@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.core.data.db.entity
+package dev.arkbuilders.rate.core.db.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

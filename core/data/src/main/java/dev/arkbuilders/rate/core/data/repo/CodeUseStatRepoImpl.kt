@@ -1,7 +1,7 @@
 package dev.arkbuilders.rate.core.data.repo
 
-import dev.arkbuilders.rate.core.data.db.dao.CodeUseStatDao
-import dev.arkbuilders.rate.core.data.db.entity.RoomCodeUseStat
+import dev.arkbuilders.rate.core.db.dao.CodeUseStatDao
+import dev.arkbuilders.rate.core.db.entity.RoomCodeUseStat
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.stats.CodeUseStat
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
@@ -33,4 +33,5 @@ class CodeUseStatRepoImpl(
 
 private fun RoomCodeUseStat.toCodeUseStat() = CodeUseStat(code, count, lastUsedDate)
 
-private fun CodeUseStat.toRoom() = RoomCodeUseStat(code, count, lastUsedDate)
+private fun CodeUseStat.toRoom() =
+    RoomCodeUseStat(code, count, lastUsedDate)

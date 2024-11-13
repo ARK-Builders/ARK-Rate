@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.arkbuilders.rate.core.data"
+    namespace = "dev.arkbuilders.rate.core.db"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -13,6 +13,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
     }
 
     buildTypes {
@@ -34,33 +38,13 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:domain"))
-    implementation(project(":core:db"))
-
     implementation(libs.androidx.core.ktx)
-
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.work.runtime.ktx)
-
-    implementation(libs.dagger)
-    ksp(libs.dagger.compiler)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
-    implementation(libs.timber)
-
-    implementation(libs.arrow.core)
-    implementation(libs.arrow.fx.coroutines)
-
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.logging.interceptor)
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
-
+    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

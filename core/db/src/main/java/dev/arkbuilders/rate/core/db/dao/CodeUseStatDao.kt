@@ -1,10 +1,10 @@
-package dev.arkbuilders.rate.core.data.db.dao
+package dev.arkbuilders.rate.core.db.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
-import dev.arkbuilders.rate.core.data.db.entity.RoomCodeUseStat
+import dev.arkbuilders.rate.core.db.entity.RoomCodeUseStat
 import kotlinx.coroutines.flow.Flow
 
 @Dao

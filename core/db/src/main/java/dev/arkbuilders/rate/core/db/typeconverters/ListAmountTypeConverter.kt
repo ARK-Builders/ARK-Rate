@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.core.data.db.typeconverters
+package dev.arkbuilders.rate.core.db.typeconverters
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

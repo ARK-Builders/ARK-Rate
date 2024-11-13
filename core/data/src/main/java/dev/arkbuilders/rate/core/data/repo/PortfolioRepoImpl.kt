@@ -1,7 +1,7 @@
 package dev.arkbuilders.rate.core.data.repo
 
-import dev.arkbuilders.rate.core.data.db.dao.PortfolioDao
-import dev.arkbuilders.rate.core.data.db.entity.RoomAsset
+import dev.arkbuilders.rate.core.db.dao.PortfolioDao
+import dev.arkbuilders.rate.core.db.entity.RoomAsset
 import dev.arkbuilders.rate.core.domain.model.Asset
 import dev.arkbuilders.rate.core.domain.repo.PortfolioRepo
 import kotlinx.coroutines.flow.Flow

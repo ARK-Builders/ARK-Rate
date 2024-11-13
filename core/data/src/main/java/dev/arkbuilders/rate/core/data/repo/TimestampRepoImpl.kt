@@ -1,7 +1,7 @@
 package dev.arkbuilders.rate.core.data.repo
 
-import dev.arkbuilders.rate.core.data.db.dao.TimestampDao
-import dev.arkbuilders.rate.core.data.db.entity.RoomFetchTimestamp
+import dev.arkbuilders.rate.core.db.dao.TimestampDao
+import dev.arkbuilders.rate.core.db.entity.RoomFetchTimestamp
 import dev.arkbuilders.rate.core.domain.model.TimestampType
 import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +13,12 @@ import javax.inject.Singleton
 @Singleton
 class TimestampRepoImpl @Inject constructor(private val dao: TimestampDao) : TimestampRepo {
     override suspend fun rememberTimestamp(type: TimestampType) =
-        dao.insert(RoomFetchTimestamp(type.name, OffsetDateTime.now()))
+        dao.insert(
+            RoomFetchTimestamp(
+                type.name,
+                OffsetDateTime.now()
+            )
+        )
 
     override suspend fun getTimestamp(type: TimestampType) =
         dao.getTimestamp(

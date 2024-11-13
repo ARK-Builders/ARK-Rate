@@ -1,7 +1,7 @@
 package dev.arkbuilders.rate.core.data.repo
 
-import dev.arkbuilders.rate.core.data.db.dao.PairAlertDao
-import dev.arkbuilders.rate.core.data.db.entity.RoomPairAlert
+import dev.arkbuilders.rate.core.db.dao.PairAlertDao
+import dev.arkbuilders.rate.core.db.entity.RoomPairAlert
 import dev.arkbuilders.rate.core.domain.model.PairAlert
 import dev.arkbuilders.rate.core.domain.repo.PairAlertRepo
 import kotlinx.coroutines.flow.map

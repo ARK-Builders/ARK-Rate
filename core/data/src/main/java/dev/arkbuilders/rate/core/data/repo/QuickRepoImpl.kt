@@ -1,7 +1,7 @@
 package dev.arkbuilders.rate.core.data.repo
 
-import dev.arkbuilders.rate.core.data.db.dao.QuickPairDao
-import dev.arkbuilders.rate.core.data.db.entity.RoomQuickPair
+import dev.arkbuilders.rate.core.db.dao.QuickPairDao
+import dev.arkbuilders.rate.core.db.entity.RoomQuickPair
 import dev.arkbuilders.rate.core.domain.model.QuickPair
 import dev.arkbuilders.rate.core.domain.repo.QuickRepo
 import kotlinx.coroutines.flow.map
@@ -22,7 +22,15 @@ class QuickRepoImpl @Inject constructor(val dao: QuickPairDao) : QuickRepo {
 }
 
 private fun QuickPair.toRoom() =
-    RoomQuickPair(id, from, amount, to, calculatedDate, pinnedDate, group)
+    RoomQuickPair(
+        id,
+        from,
+        amount,
+        to,
+        calculatedDate,
+        pinnedDate,
+        group
+    )
 
 private fun RoomQuickPair.toQuickPair() =
     QuickPair(id, from, amount, to, calculatedDate, pinnedDate, group)
