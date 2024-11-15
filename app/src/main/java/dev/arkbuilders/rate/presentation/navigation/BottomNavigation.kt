@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.arkbuilders.rate.R
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
+import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.feature.pairalert.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.PortfolioScreenDestination
@@ -40,28 +40,28 @@ sealed class BottomNavItem(
     val route: String,
 ) {
     data object Assets : BottomNavItem(
-        R.string.bottom_nav_portfolio,
+        CoreRString.bottom_nav_portfolio,
         CoreRDrawable.ic_nav_portfolio_disabled,
         CoreRDrawable.ic_nav_portfolio_enabled,
         PortfolioScreenDestination.route,
     )
 
     data object PairAlert : BottomNavItem(
-        R.string.bottom_nav_alerts,
+        CoreRString.bottom_nav_alerts,
         CoreRDrawable.ic_nav_alerts_disabled,
         CoreRDrawable.ic_nav_alerts_enabled,
         PairAlertConditionScreenDestination.route,
     )
 
     data object Quick : BottomNavItem(
-        R.string.bottom_nav_quick,
+        CoreRString.bottom_nav_quick,
         CoreRDrawable.ic_nav_quick_disabled,
         CoreRDrawable.ic_nav_quick_enabled,
         QuickScreenDestination.route,
     )
 
     data object Settings : BottomNavItem(
-        R.string.bottom_nav_settings,
+        CoreRString.bottom_nav_settings,
         CoreRDrawable.ic_nav_settings_disabled,
         CoreRDrawable.ic_nav_settings_enabled,
         SettingsScreenDestination.route,
