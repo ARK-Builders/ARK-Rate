@@ -38,7 +38,10 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:domain"))
+
     implementation(libs.androidx.core.ktx)
+    implementation(libs.gson)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

@@ -104,15 +104,22 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:di"))
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
     implementation(project(":core:presentation"))
+    implementation(project(":feature:quick"))
+    implementation(project(":feature:quickwidget"))
+    implementation(project(":feature:portfolio"))
+    implementation(project(":feature:pairalert"))
+    implementation(project(":feature:search"))
+    implementation(project(":feature:settings"))
     implementation(project(":fiaticons"))
     implementation(project(":cryptoicons"))
 
     implementation(libs.ark.about)
-    implementation(libs.androidx.ui)
 
+    implementation(libs.androidx.ui)
     implementation(libs.navigation.compose)
     implementation(libs.material3)
     implementation(libs.androidx.ui.tooling.preview)
@@ -120,8 +127,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.constraintlayout.compose)
 
-    implementation(libs.dagger)
     implementation(libs.androidx.glance.appwidget)
+
+    implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 
     implementation(libs.androidx.room.runtime)

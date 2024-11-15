@@ -41,6 +41,8 @@ android {
 dependencies {
     implementation(project(":core:domain"))
 
+    implementation(libs.compose.destinations.animations)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.ui)
     implementation(libs.navigation.compose)

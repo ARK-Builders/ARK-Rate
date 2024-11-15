@@ -11,22 +11,37 @@ import androidx.work.WorkManager
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import dev.arkbuilders.rate.BuildConfig
-import dev.arkbuilders.rate.core.data.worker.CurrencyMonitorWorker
-import dev.arkbuilders.rate.core.data.worker.QuickPairsWidgetRefreshWorker
+import dev.arkbuilders.rate.core.di.CoreComponent
+import dev.arkbuilders.rate.core.di.CoreComponentProvider
+import dev.arkbuilders.rate.core.di.DaggerCoreComponent
 import dev.arkbuilders.rate.core.domain.AppConfig
+import dev.arkbuilders.rate.core.domain.BuildConfigFields
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
-import dev.arkbuilders.rate.di.DIManager
+import dev.arkbuilders.rate.feature.pairalert.data.worker.CurrencyMonitorWorker
+import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponentHolder
+import dev.arkbuilders.rate.feature.quickwidget.worker.QuickPairsWidgetRefreshWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-class App : Application(), Configuration.Provider {
+class App : Application(), Configuration.Provider, CoreComponentProvider {
+    lateinit var coreComponent: CoreComponent
+
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
-        DIManager.init(this)
+        coreComponent = DaggerCoreComponent.factory().create(this, applicationContext)
+        coreComponent.buildConfigFieldsProvider().init(
+            BuildConfigFields(
+                buildType = BuildConfig.BUILD_TYPE,
+                versionCode = BuildConfig.VERSION_CODE,
+                versionName = BuildConfig.VERSION_NAME,
+                isGooglePlayBuild = BuildConfig.GOOGLE_PLAY_BUILD,
+            ),
+        )
+        instance = this
 
         initCrashlytics()
         initWorker(CurrencyMonitorWorker::class.java, CurrencyMonitorWorker.NAME)
@@ -40,7 +55,7 @@ class App : Application(), Configuration.Provider {
                 if (BuildConfig.GOOGLE_PLAY_BUILD)
                     true
                 else
-                    DIManager.component.prefs().get(PreferenceKey.CollectCrashReports)
+                    coreComponent.prefs().get(PreferenceKey.CollectCrashReports)
 
             Firebase.crashlytics.setCrashlyticsCollectionEnabled(collect)
         }
@@ -73,6 +88,18 @@ class App : Application(), Configuration.Provider {
     override fun getWorkManagerConfiguration() =
         Configuration.Builder()
             .setMinimumLoggingLevel(android.util.Log.INFO)
-            .setWorkerFactory(DIManager.component.appWorkerFactory())
+            .setWorkerFactory(buildAppWorkerFactory())
             .build()
+
+    override fun provideCoreComponent() = coreComponent
+
+    private fun buildAppWorkerFactory() =
+        AppWorkerFactory(
+            PairAlertComponentHolder.provide(this).handlePairAlertCheckUseCase(),
+            coreComponent.timestampRepo(),
+        )
+
+    companion object {
+        lateinit var instance: App
+    }
 }

@@ -1,5 +1,4 @@
 @file:OptIn(
-    ExperimentalMaterialNavigationApi::class,
     ExperimentalAnimationApi::class,
 )
 
@@ -22,28 +21,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
-import com.ramcosta.composedestinations.navigation.navigate
-import com.ramcosta.composedestinations.utils.startDestination
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbar
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbar
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.utils.findActivity
 import dev.arkbuilders.rate.core.presentation.utils.keyboardAsState
-import dev.arkbuilders.rate.di.DIManager
-import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
-import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
-import dev.arkbuilders.rate.presentation.destinations.PortfolioScreenDestination
-import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
-import dev.arkbuilders.rate.presentation.destinations.SettingsScreenDestination
-import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction.Companion.ADD_NEW_PAIR
-import dev.arkbuilders.rate.presentation.quick.glancewidget.action.AddNewPairAction.Companion.ADD_NEW_PAIR_GROUP_KEY
-import dev.arkbuilders.rate.presentation.ui.AnimatedRateBottomNavigation
+import dev.arkbuilders.rate.feature.pairalert.presentation.destinations.PairAlertConditionScreenDestination
+import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.PortfolioScreenDestination
+import dev.arkbuilders.rate.feature.quick.presentation.destinations.AddQuickScreenDestination
+import dev.arkbuilders.rate.feature.quick.presentation.destinations.QuickScreenDestination
+import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR
+import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR_GROUP_KEY
+import dev.arkbuilders.rate.feature.settings.presentation.destinations.SettingsScreenDestination
+import dev.arkbuilders.rate.presentation.navigation.AnimatedRateBottomNavigation
+import dev.arkbuilders.rate.presentation.navigation.NavGraphs
 import kotlinx.coroutines.flow.drop
+import timber.log.Timber
 
 @Composable
 fun MainScreen() {
@@ -67,7 +64,7 @@ fun MainScreen() {
         }
     }
     LaunchedEffect(key1 = Unit) {
-        DIManager.component.networkStatus().onlineStatus
+        App.instance.coreComponent.networkStatus().onlineStatus
             .drop(1)
             .collect { online ->
                 val visuals =
@@ -83,16 +80,15 @@ fun MainScreen() {
     val bottomBarVisible = rememberSaveable { mutableStateOf(false) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val destination =
-        navController.appCurrentDestinationAsState().value
-            ?: NavGraphs.root.startAppDestination
+    val currentRoute = navBackStackEntry?.destination?.route ?: NavGraphs.root.startRoute.route
 
+    Timber.d("ALLO $currentRoute")
     bottomBarVisible.value =
-        when (navBackStackEntry?.destination?.route) {
-            QuickScreenDestination.route -> true
-            PortfolioScreenDestination.route -> true
-            PairAlertConditionScreenDestination.route -> true
-            SettingsScreenDestination.route -> true
+        when {
+            currentRoute.startsWith(QuickScreenDestination.route) -> true
+            currentRoute.startsWith(PortfolioScreenDestination.route) -> true
+            currentRoute.startsWith(PairAlertConditionScreenDestination.route) -> true
+            currentRoute.startsWith(SettingsScreenDestination.route) -> true
             else -> false
         }
 
@@ -119,7 +115,7 @@ fun MainScreen() {
         },
         bottomBar = {
             AnimatedRateBottomNavigation(
-                currentDestination = destination,
+                currentRoute = currentRoute,
                 onBottomBarItemClick = {
                     navController.navigate(it) {
                         // Pop up to the start destination of the graph to
@@ -144,7 +140,6 @@ fun MainScreen() {
             navController = navController,
             navGraph = NavGraphs.root,
             modifier = Modifier.padding(it),
-            startRoute = QuickScreenDestination.startDestination,
         )
     }
 }
