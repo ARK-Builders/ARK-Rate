@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
-    id("kotlin-kapt")
 }
 
 android {
@@ -65,7 +64,7 @@ dependencies {
     implementation(libs.timber)
 
     implementation(libs.dagger)
-    kapt(libs.dagger.compiler)
+    ksp(libs.dagger.compiler)
 
     implementation(libs.orbit.compose)
     implementation(libs.orbit.viewmodel)
