@@ -3,14 +3,14 @@ package dev.arkbuilders.rate.feature.pairalert.presentation.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
-import dev.arkbuilders.rate.feature.pairalert.domain.repo.PairAlertRepo
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.feature.pairalert.data.permission.NotificationPermissionHelper
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertScope
+import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
+import dev.arkbuilders.rate.feature.pairalert.domain.repo.PairAlertRepo
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container

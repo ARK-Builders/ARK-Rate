@@ -18,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.model.CurrencyName
 import dev.arkbuilders.rate.core.presentation.CoreRString
@@ -38,15 +37,17 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SearchCurrencyScreen(
     appSharedFlowKeyString: String,
     pos: Int? = null,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
 ) {
     val ctx = LocalContext.current
-    val component = remember {
-        SearchComponentHolder.provide(ctx)
-    }
+    val component =
+        remember {
+            SearchComponentHolder.provide(ctx)
+        }
     val viewModel: SearchViewModel =
         viewModel(
-            factory = component.searchVMFactory()
+            factory =
+                component.searchVMFactory()
                     .create(appSharedFlowKeyString, pos),
         )
     val state by viewModel.collectAsState()

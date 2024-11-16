@@ -7,7 +7,6 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertScope
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @PairAlertScope
 class NotificationPermissionHelper @Inject constructor(

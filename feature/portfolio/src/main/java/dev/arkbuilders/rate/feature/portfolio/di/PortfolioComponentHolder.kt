@@ -10,8 +10,9 @@ object PortfolioComponentHolder {
         component ?: let {
             val app = ctx.applicationContext
             val coreComponent = (app as CoreComponentProvider).provideCoreComponent()
-            component = DaggerPortfolioComponent.builder().coreComponent(coreComponent)
-                .portfolioModule(PortfolioModule()).build()
+            component =
+                DaggerPortfolioComponent.builder().coreComponent(coreComponent)
+                    .portfolioModule(PortfolioModule()).build()
         }
         return component!!
     }

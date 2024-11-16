@@ -45,7 +45,6 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
@@ -70,12 +69,13 @@ import dev.arkbuilders.rate.core.presentation.R as CoreR
 @Composable
 fun AddPairAlertScreen(
     pairAlertId: Long? = null,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
 ) {
     val ctx = LocalContext.current
-    val component = remember {
-        PairAlertComponentHolder.provide(ctx)
-    }
+    val component =
+        remember {
+            PairAlertComponentHolder.provide(ctx)
+        }
     val viewModel: AddPairAlertViewModel =
         viewModel(
             factory = component.addPairAlertVMFactory().create(pairAlertId),
@@ -96,18 +96,18 @@ fun AddPairAlertScreen(
                 val visuals =
                     NotifyAddedSnackbarVisuals(
                         title =
-                        ctx.getString(
-                            CoreRString.alert_snackbar_new_title,
-                            pair.targetCode,
-                        ),
+                            ctx.getString(
+                                CoreRString.alert_snackbar_new_title,
+                                pair.targetCode,
+                            ),
                         description =
-                        ctx.getString(
-                            CoreRString.alert_snackbar_new_desc,
-                            pair.targetCode,
-                            aboveOrBelow,
-                            CurrUtils.prepareToDisplay(pair.targetPrice),
-                            pair.baseCode,
-                        ),
+                            ctx.getString(
+                                CoreRString.alert_snackbar_new_desc,
+                                pair.targetCode,
+                                aboveOrBelow,
+                                CurrUtils.prepareToDisplay(pair.targetPrice),
+                                pair.baseCode,
+                            ),
                     )
                 AppSharedFlow.ShowAddedSnackbarPairAlert.flow.emit(visuals)
             }
@@ -118,10 +118,10 @@ fun AddPairAlertScreen(
         topBar = {
             AppTopBarBack(
                 title =
-                if (state.editExisting)
-                    stringResource(CoreRString.alert_edit_alert)
-                else
-                    stringResource(CoreRString.add_new_alert),
+                    if (state.editExisting)
+                        stringResource(CoreRString.alert_edit_alert)
+                    else
+                        stringResource(CoreRString.add_new_alert),
                 onBackClick = { navigator.popBackStack() },
             )
         },
@@ -151,9 +151,9 @@ private fun Content(
     Column {
         Column(
             modifier =
-            Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState()),
+                Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
         ) {
             PriceOrPercent(state, viewModel::onPriceOrPercentChanged)
             EditCondition(state, viewModel, navigator)
@@ -164,25 +164,25 @@ private fun Content(
             )
             DropDownWithIcon(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp, start = 16.dp, end = 16.dp)
-                    .onPlaced {
-                        addGroupBtnWidth = it.size.width
-                    },
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp, start = 16.dp, end = 16.dp)
+                        .onPlaced {
+                            addGroupBtnWidth = it.size.width
+                        },
                 onClick = { showGroupsPopup = !showGroupsPopup },
                 title =
-                state.group?.let { state.group }
-                    ?: stringResource(CoreRString.add_group),
+                    state.group?.let { state.group }
+                        ?: stringResource(CoreRString.add_group),
                 icon = painterResource(id = CoreR.drawable.ic_group),
             )
             if (showGroupsPopup) {
                 Box(
                     modifier =
-                    Modifier.padding(
-                        start = 16.dp,
-                        top = 4.dp,
-                    ),
+                        Modifier.padding(
+                            start = 16.dp,
+                            top = 4.dp,
+                        ),
                 ) {
                     Popup(
                         offset = IntOffset(0, 0),
@@ -204,18 +204,18 @@ private fun Content(
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
             AppButton(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                 onClick = { viewModel.onSaveClick() },
                 enabled = state.finishEnabled,
             ) {
                 Text(
                     text =
-                    if (state.editExisting)
-                        stringResource(CoreRString.save)
-                    else
-                        stringResource(CoreRString.create_alert),
+                        if (state.editExisting)
+                            stringResource(CoreRString.save)
+                        else
+                            stringResource(CoreRString.create_alert),
                 )
             }
         }
@@ -229,17 +229,17 @@ private fun PriceOrPercent(
 ) {
     SegmentBtnBg(
         modifier =
-        Modifier.padding(
-            start = 16.dp,
-            end = 16.dp,
-            top = 16.dp,
-        ),
+            Modifier.padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 16.dp,
+            ),
     ) {
         SegmentBtn(
             modifier =
-            Modifier
-                .padding(6.dp)
-                .weight(1f),
+                Modifier
+                    .padding(6.dp)
+                    .weight(1f),
             title = stringResource(CoreRString.by_price),
             enabled = state.priceOrPercent.isLeft(),
         ) {
@@ -247,9 +247,9 @@ private fun PriceOrPercent(
         }
         SegmentBtn(
             modifier =
-            Modifier
-                .padding(6.dp)
-                .weight(1f),
+                Modifier
+                    .padding(6.dp)
+                    .weight(1f),
             title = stringResource(CoreRString.by_percent),
             enabled = state.priceOrPercent.isRight(),
         ) {
@@ -265,9 +265,9 @@ private fun SegmentBtnBg(
 ) {
     Row(
         modifier =
-        modifier
-            .background(ArkColor.BGSecondaryAlt)
-            .border(1.dp, ArkColor.BorderSecondary, RoundedCornerShape(12.dp)),
+            modifier
+                .background(ArkColor.BGSecondaryAlt)
+                .border(1.dp, ArkColor.BorderSecondary, RoundedCornerShape(12.dp)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
@@ -287,18 +287,18 @@ private fun SegmentBtn(
         shape = RoundedCornerShape(6.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = if (enabled) 1.dp else 0.dp),
         colors =
-        CardDefaults.cardColors(
-            containerColor = if (enabled) Color.White else ArkColor.BGSecondaryAlt,
-        ),
+            CardDefaults.cardColors(
+                containerColor = if (enabled) Color.White else ArkColor.BGSecondaryAlt,
+            ),
         onClick = {
             onClick()
         },
     ) {
         Text(
             modifier =
-            Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(vertical = 10.dp),
+                Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 10.dp),
             text = title,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
@@ -315,15 +315,15 @@ private fun DropDownBtn(
 ) {
     Row(
         modifier =
-        modifier
-            .height(36.dp)
-            .border(
-                1.dp,
-                ArkColor.Border,
-                RoundedCornerShape(8.dp),
-            )
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { onClick() },
+            modifier
+                .height(36.dp)
+                .border(
+                    1.dp,
+                    ArkColor.Border,
+                    RoundedCornerShape(8.dp),
+                )
+                .clip(RoundedCornerShape(8.dp))
+                .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -353,9 +353,10 @@ private fun EditCondition(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
@@ -368,7 +369,7 @@ private fun EditCondition(
                 title = state.targetCode,
             ) {
                 navigator.navigate(
-                    SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertTarget.name)
+                    SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertTarget.name),
                 )
             }
             Text(
@@ -378,54 +379,54 @@ private fun EditCondition(
             )
             Row(
                 modifier =
-                Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .run {
-                        if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft())
-                            this
-                        else
-                            clickable { viewModel.onIncreaseToggle() }
-                    },
+                    Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .run {
+                            if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft())
+                                this
+                            else
+                                clickable { viewModel.onIncreaseToggle() }
+                        },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     modifier = Modifier.padding(start = 8.dp),
                     painter =
-                    painterResource(
-                        id =
-                        if (state.aboveNotBelow)
-                            CoreRDrawable.ic_pair_alert_inc
-                        else
-                            CoreRDrawable.ic_pair_alert_dec,
-                    ),
+                        painterResource(
+                            id =
+                                if (state.aboveNotBelow)
+                                    CoreRDrawable.ic_pair_alert_inc
+                                else
+                                    CoreRDrawable.ic_pair_alert_dec,
+                        ),
                     contentDescription = "",
                     tint =
-                    if (state.aboveNotBelow)
-                        ArkColor.PairAlertInc
-                    else
-                        ArkColor.PairAlertDec,
+                        if (state.aboveNotBelow)
+                            ArkColor.PairAlertInc
+                        else
+                            ArkColor.PairAlertDec,
                 )
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
                     text =
-                    if (state.aboveNotBelow)
-                        ctx.getString(CoreRString.above)
-                    else
-                        ctx.getString(CoreRString.below),
+                        if (state.aboveNotBelow)
+                            ctx.getString(CoreRString.above)
+                        else
+                            ctx.getString(CoreRString.below),
                     color =
-                    if (state.aboveNotBelow)
-                        ArkColor.PairAlertInc
-                    else
-                        ArkColor.PairAlertDec,
+                        if (state.aboveNotBelow)
+                            ArkColor.PairAlertInc
+                        else
+                            ArkColor.PairAlertDec,
                 )
             }
         }
 
         Row(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp),
             horizontalArrangement = Arrangement.Center,
         ) {
             if (!state.oneTimeNotRecurrent) {
@@ -439,14 +440,14 @@ private fun EditCondition(
             }
             ArkLargeTextField(
                 modifier =
-                Modifier
-                    .weight(1f, fill = false)
-                    .align(Alignment.CenterVertically),
+                    Modifier
+                        .weight(1f, fill = false)
+                        .align(Alignment.CenterVertically),
                 value =
-                state.priceOrPercent.fold(
-                    ifLeft = { it },
-                    ifRight = { it },
-                ),
+                    state.priceOrPercent.fold(
+                        ifLeft = { it },
+                        ifRight = { it },
+                    ),
                 onValueChange = { viewModel.onPriceOrPercentInputChanged(it) },
             )
             if (state.priceOrPercent.isLeft()) {
@@ -469,17 +470,18 @@ private fun EditCondition(
             }
         }
         Row(
-            modifier = Modifier
-                .padding(top = 24.dp)
-                .horizontalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .padding(top = 24.dp)
+                    .horizontalScroll(rememberScrollState()),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text =
-                stringResource(
-                    CoreRString.alert_current_price,
-                    CurrUtils.prepareToDisplay(state.currentPrice),
-                ),
+                    stringResource(
+                        CoreRString.alert_current_price,
+                        CurrUtils.prepareToDisplay(state.currentPrice),
+                    ),
                 color = ArkColor.TextTertiary,
             )
             DropDownBtn(
@@ -487,7 +489,7 @@ private fun EditCondition(
                 title = state.baseCode,
             ) {
                 navigator.navigate(
-                    SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertBase.name)
+                    SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertBase.name),
                 )
             }
         }
@@ -502,17 +504,17 @@ private fun OneTimeOrRecurrent(
 ) {
     SegmentBtnBg(
         modifier =
-        Modifier.padding(
-            top = 32.dp,
-            start = 16.dp,
-            end = 16.dp,
-        ),
+            Modifier.padding(
+                top = 32.dp,
+                start = 16.dp,
+                end = 16.dp,
+            ),
     ) {
         SegmentBtn(
             modifier =
-            Modifier
-                .padding(6.dp)
-                .weight(1f),
+                Modifier
+                    .padding(6.dp)
+                    .weight(1f),
             title = stringResource(CoreRString.one_time),
             enabled = oneTimeNotRecurrent,
         ) {
@@ -520,14 +522,14 @@ private fun OneTimeOrRecurrent(
         }
         SegmentBtn(
             modifier =
-            Modifier
-                .padding(6.dp)
-                .weight(1f),
+                Modifier
+                    .padding(6.dp)
+                    .weight(1f),
             title =
-            if (byPrice)
-                stringResource(CoreRString.every_c)
-            else
-                stringResource(CoreRString.recurrent),
+                if (byPrice)
+                    stringResource(CoreRString.every_c)
+                else
+                    stringResource(CoreRString.recurrent),
             enabled = !oneTimeNotRecurrent,
         ) {
             onOneTimeChanged(false)

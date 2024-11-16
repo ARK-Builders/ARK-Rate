@@ -24,7 +24,6 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import java.time.OffsetDateTime
 import javax.inject.Inject
-import javax.inject.Singleton
 
 data class SettingsScreenState(
     val latestRefresh: OffsetDateTime? = null,
@@ -111,7 +110,7 @@ class SettingsViewModelFactory @Inject constructor(
             prefs,
             timestampRepo,
             analyticsManager,
-            buildConfigFieldsProvider.provide()
+            buildConfigFieldsProvider.provide(),
         ) as T
     }
 }

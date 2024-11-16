@@ -4,10 +4,11 @@ data class BuildConfigFields(
     val buildType: String,
     val versionCode: Int,
     val versionName: String,
-    val isGooglePlayBuild: Boolean
+    val isGooglePlayBuild: Boolean,
 )
 
 interface BuildConfigFieldsProvider {
     fun init(fields: BuildConfigFields)
+
     fun provide(): BuildConfigFields
 }

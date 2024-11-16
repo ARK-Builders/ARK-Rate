@@ -10,6 +10,8 @@ import dev.arkbuilders.rate.feature.settings.presentation.SettingsViewModelFacto
 @Component(dependencies = [CoreComponent::class])
 interface SettingsComponent {
     fun settingsVMFactory(): SettingsViewModelFactory
+
     fun buildConfigFieldsProvider(): BuildConfigFieldsProvider
+
     fun timestampRepo(): TimestampRepo
 }

@@ -3,7 +3,7 @@ package dev.arkbuilders.rate.core.data.repo
 import dev.arkbuilders.rate.core.domain.BuildConfigFields
 import dev.arkbuilders.rate.core.domain.BuildConfigFieldsProvider
 
-class BuildConfigFieldsProviderImpl: BuildConfigFieldsProvider {
+class BuildConfigFieldsProviderImpl : BuildConfigFieldsProvider {
     private var fields: BuildConfigFields? = null
 
     @Synchronized

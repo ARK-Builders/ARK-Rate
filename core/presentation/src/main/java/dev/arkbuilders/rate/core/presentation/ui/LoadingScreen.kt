@@ -39,7 +39,10 @@ import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 @Composable
 fun LoadingScreen() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        InstaSpinner(size = 60.dp, color = dev.arkbuilders.rate.core.presentation.theme.ArkColor.Secondary)
+        InstaSpinner(
+            size = 60.dp,
+            color = dev.arkbuilders.rate.core.presentation.theme.ArkColor.Secondary,
+        )
     }
 }
 

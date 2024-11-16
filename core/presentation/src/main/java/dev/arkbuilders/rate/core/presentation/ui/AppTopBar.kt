@@ -19,14 +19,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.R
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
 @Preview(showBackground = true)
 @Composable
 fun AppTopBarBack(
     title: String = "Title",
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
 ) {
     Column {
         TopAppBar(

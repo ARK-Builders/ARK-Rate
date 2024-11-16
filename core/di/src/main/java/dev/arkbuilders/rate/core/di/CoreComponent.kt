@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import dev.arkbuilders.rate.core.data.repo.currency.CurrencyRepoImpl
 import dev.arkbuilders.rate.core.db.dao.PairAlertDao
 import dev.arkbuilders.rate.core.db.dao.PortfolioDao
 import dev.arkbuilders.rate.core.db.dao.QuickPairDao
@@ -27,7 +26,6 @@ import javax.inject.Singleton
     ],
 )
 interface CoreComponent {
-
     fun quickDao(): QuickPairDao
 
     fun portfolioDao(): PortfolioDao

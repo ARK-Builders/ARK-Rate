@@ -33,5 +33,4 @@ class CodeUseStatRepoImpl(
 
 private fun RoomCodeUseStat.toCodeUseStat() = CodeUseStat(code, count, lastUsedDate)
 
-private fun CodeUseStat.toRoom() =
-    RoomCodeUseStat(code, count, lastUsedDate)
+private fun CodeUseStat.toRoom() = RoomCodeUseStat(code, count, lastUsedDate)

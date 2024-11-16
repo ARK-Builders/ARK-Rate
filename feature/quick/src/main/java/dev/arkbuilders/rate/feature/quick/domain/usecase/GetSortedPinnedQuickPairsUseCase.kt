@@ -27,7 +27,7 @@ class GetSortedPinnedQuickPairsUseCase(
         return PinnedQuickPair(
             pair,
             actualTo,
-            OffsetDateTime.now()
+            OffsetDateTime.now(),
         )
     }
 }

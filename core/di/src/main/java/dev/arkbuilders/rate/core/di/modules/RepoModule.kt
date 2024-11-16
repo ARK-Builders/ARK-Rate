@@ -3,12 +3,6 @@ package dev.arkbuilders.rate.core.di.modules
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
-import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
-import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
-import dev.arkbuilders.rate.core.domain.repo.NetworkStatus
-import dev.arkbuilders.rate.core.domain.repo.Prefs
-import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.core.data.network.NetworkStatusImpl
 import dev.arkbuilders.rate.core.data.preferences.PrefsImpl
 import dev.arkbuilders.rate.core.data.repo.AnalyticsManagerImpl
@@ -22,11 +16,16 @@ import dev.arkbuilders.rate.core.data.repo.currency.LocalCurrencyDataSource
 import dev.arkbuilders.rate.core.db.dao.CodeUseStatDao
 import dev.arkbuilders.rate.core.db.dao.TimestampDao
 import dev.arkbuilders.rate.core.domain.BuildConfigFieldsProvider
+import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
+import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
+import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.core.domain.repo.NetworkStatus
+import dev.arkbuilders.rate.core.domain.repo.Prefs
+import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
 import javax.inject.Singleton
 
 @Module
 class RepoModule {
-
     @Singleton
     @Provides
     fun currencyRepo(
@@ -34,14 +33,15 @@ class RepoModule {
         cryptoCurrencyDataSource: CryptoCurrencyDataSource,
         localCurrencyDataSource: LocalCurrencyDataSource,
         timestampRepo: TimestampRepo,
-        networkStatus: NetworkStatus
-    ): CurrencyRepo = CurrencyRepoImpl(
-        fiatCurrencyDataSource,
-        cryptoCurrencyDataSource,
-        localCurrencyDataSource,
-        timestampRepo,
-        networkStatus
-    )
+        networkStatus: NetworkStatus,
+    ): CurrencyRepo =
+        CurrencyRepoImpl(
+            fiatCurrencyDataSource,
+            cryptoCurrencyDataSource,
+            localCurrencyDataSource,
+            timestampRepo,
+            networkStatus,
+        )
 
     @Singleton
     @Provides
@@ -49,9 +49,8 @@ class RepoModule {
 
     @Singleton
     @Provides
-    fun codeUseStatRepo(
-        codeUseStatDao: CodeUseStatDao
-    ): CodeUseStatRepo = CodeUseStatRepoImpl(codeUseStatDao)
+    fun codeUseStatRepo(codeUseStatDao: CodeUseStatDao): CodeUseStatRepo =
+        CodeUseStatRepoImpl(codeUseStatDao)
 
     @Singleton
     @Provides

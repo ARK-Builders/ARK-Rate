@@ -43,7 +43,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.Amount
-import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
@@ -62,6 +61,7 @@ import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
+import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.AddAssetScreenDestination
 import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.EditAssetScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
@@ -72,9 +72,10 @@ import java.math.BigDecimal
 @Composable
 fun PortfolioScreen(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current
-    val component = remember {
-        PortfolioComponentHolder.provide(ctx)
-    }
+    val component =
+        remember {
+            PortfolioComponentHolder.provide(ctx)
+        }
 
     val viewModel: PortfolioViewModel =
         viewModel(factory = component.assetsVMFactory())
@@ -95,10 +96,10 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                     NotifyRemovedSnackbarVisuals(
                         title = ctx.getString(CoreRString.portfolio_snackbar_removed_title),
                         description =
-                        ctx.getString(
-                            CoreRString.portfolio_snackbar_removed_desc,
-                            removed,
-                        ),
+                            ctx.getString(
+                                CoreRString.portfolio_snackbar_removed_desc,
+                                removed,
+                            ),
                         onUndo = {
                             viewModel.undoDelete(effect.asset)
                         },
@@ -163,16 +164,16 @@ private val previewPortfolioAmount =
 private val previewState =
     PortfolioScreenState(
         pages =
-        listOf(
-            PortfolioScreenPage(
-                "Group1",
-                listOf(previewPortfolioAmount, previewPortfolioAmount),
+            listOf(
+                PortfolioScreenPage(
+                    "Group1",
+                    listOf(previewPortfolioAmount, previewPortfolioAmount),
+                ),
+                PortfolioScreenPage(
+                    "Group2",
+                    listOf(previewPortfolioAmount, previewPortfolioAmount),
+                ),
             ),
-            PortfolioScreenPage(
-                "Group2",
-                listOf(previewPortfolioAmount, previewPortfolioAmount),
-            ),
-        ),
     )
 
 @Preview(showBackground = true)
@@ -187,12 +188,12 @@ private fun Content(
     Column {
         SearchTextField(
             modifier =
-            Modifier.padding(
-                top = 16.dp,
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 16.dp,
-            ),
+                Modifier.padding(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 16.dp,
+                ),
             text = state.filter,
             onValueChange = onFilterChange,
         )
@@ -250,8 +251,8 @@ private fun GroupPage(
                     )
                     Row(
                         modifier =
-                        Modifier
-                            .padding(top = 8.dp, start = 24.dp, end = 24.dp),
+                            Modifier
+                                .padding(top = 8.dp, start = 24.dp, end = 24.dp),
                     ) {
                         LargeNumberTooltipBox(number = total, code = baseCode) {
                             LargeNumberText(
@@ -263,12 +264,12 @@ private fun GroupPage(
                         }
                         Text(
                             modifier =
-                            Modifier
-                                .padding(
-                                    start = 2.dp,
-                                    top = 2.dp,
-                                )
-                                .weight(1f, fill = false),
+                                Modifier
+                                    .padding(
+                                        start = 2.dp,
+                                        top = 2.dp,
+                                    )
+                                    .weight(1f, fill = false),
                             text = CurrUtils.getSymbolOrCode(baseCode),
                             color = ArkColor.TextPrimary,
                             fontWeight = FontWeight.SemiBold,
@@ -299,13 +300,13 @@ private fun CurrencyItem(
 ) {
     Row(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .clickable {
-                onClick(amount)
-            }
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .clickable {
+                    onClick(amount)
+                }
+                .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CurrIcon(modifier = Modifier.size(40.dp), code = amount.asset.code)

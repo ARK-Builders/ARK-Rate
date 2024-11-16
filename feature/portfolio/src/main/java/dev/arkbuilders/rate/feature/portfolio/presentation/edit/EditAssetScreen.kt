@@ -54,12 +54,13 @@ import org.orbitmvi.orbit.compose.collectAsState
 @Composable
 fun EditAssetScreen(
     assetId: Long,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
 ) {
     val ctx = LocalContext.current
-    val component = remember {
-        PortfolioComponentHolder.provide(ctx)
-    }
+    val component =
+        remember {
+            PortfolioComponentHolder.provide(ctx)
+        }
 
     val viewModel: EditAssetViewModel =
         viewModel(
@@ -110,9 +111,9 @@ private fun Content(
 
     Column(
         modifier =
-        Modifier
-            .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState()),
+            Modifier
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState()),
     ) {
         val title =
             if (name.name.isNotEmpty()) {
@@ -134,17 +135,17 @@ private fun Content(
         ) {
             ArkLargeTextField(
                 modifier =
-                Modifier
-                    .weight(1f, fill = false)
-                    .align(Alignment.CenterVertically),
+                    Modifier
+                        .weight(1f, fill = false)
+                        .align(Alignment.CenterVertically),
                 value = value,
                 onValueChange = { onValueChange(it) },
             )
             Text(
                 modifier =
-                Modifier
-                    .padding(start = 2.dp, top = 2.dp)
-                    .align(Alignment.Top),
+                    Modifier
+                        .padding(start = 2.dp, top = 2.dp)
+                        .align(Alignment.Top),
                 text = CurrUtils.getSymbolOrCode(name.code),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
@@ -153,13 +154,13 @@ private fun Content(
         }
         TextButton(
             modifier =
-            Modifier
-                .padding(top = 16.dp)
-                .height(22.dp),
+                Modifier
+                    .padding(top = 16.dp)
+                    .height(22.dp),
             colors = ButtonDefaults.textButtonColors(contentColor = ArkColor.BrandUtility),
             onClick = {
                 navigator.navigate(
-                    SearchCurrencyScreenDestination(AppSharedFlowKey.PickBaseCurrency.toString())
+                    SearchCurrencyScreenDestination(AppSharedFlowKey.PickBaseCurrency.toString()),
                 )
             },
             contentPadding = PaddingValues(2.dp),
@@ -187,9 +188,9 @@ private fun Content(
             )
             IconButton(
                 modifier =
-                Modifier
-                    .padding(start = 4.dp)
-                    .size(20.dp),
+                    Modifier
+                        .padding(start = 4.dp)
+                        .size(20.dp),
                 onClick = { showMarketCapitalizationDialog = true },
             ) {
                 Icon(
@@ -217,9 +218,9 @@ private fun Content(
             )
             IconButton(
                 modifier =
-                Modifier
-                    .padding(start = 4.dp)
-                    .size(20.dp),
+                    Modifier
+                        .padding(start = 4.dp)
+                        .size(20.dp),
                 onClick = { showValueOfCirculatingDialog = true },
             ) {
                 Icon(

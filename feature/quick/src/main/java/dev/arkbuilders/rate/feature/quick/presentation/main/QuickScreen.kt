@@ -51,8 +51,6 @@ import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.Amount
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.CurrencyName
-import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
-import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -66,14 +64,16 @@ import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.core.presentation.ui.NoInternetScreen
 import dev.arkbuilders.rate.core.presentation.ui.NoResult
 import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
-import dev.arkbuilders.rate.feature.quick.presentation.ui.PinnedQuickSwipeItem
-import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickSwipeItem
 import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
+import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
+import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import dev.arkbuilders.rate.feature.quick.presentation.destinations.AddQuickScreenDestination
+import dev.arkbuilders.rate.feature.quick.presentation.ui.PinnedQuickSwipeItem
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickOptionsBottomSheet
+import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickSwipeItem
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -82,14 +82,12 @@ import java.time.OffsetDateTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
-fun QuickScreen(
-    navigator: DestinationsNavigator
-) {
-
+fun QuickScreen(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current
-    val component = remember {
-        QuickComponentHolder.provide(ctx)
-    }
+    val component =
+        remember {
+            QuickComponentHolder.provide(ctx)
+        }
     val viewModel: QuickViewModel =
         viewModel(
             factory = component.quickVMFactory().create(),
@@ -113,10 +111,10 @@ fun QuickScreen(
                     NotifyRemovedSnackbarVisuals(
                         title = ctx.getString(CoreRString.quick_snackbar_removed_title),
                         description =
-                        ctx.getString(
-                            CoreRString.quick_snackbar_removed_desc,
-                            removed,
-                        ),
+                            ctx.getString(
+                                CoreRString.quick_snackbar_removed_desc,
+                                removed,
+                            ),
                         onUndo = {
                             viewModel.undoDelete(effect.pair)
                         },
@@ -224,12 +222,12 @@ private fun Content(
     Column {
         SearchTextField(
             modifier =
-            Modifier.padding(
-                top = 16.dp,
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 16.dp,
-            ),
+                Modifier.padding(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 16.dp,
+                ),
             text = state.filter,
         ) {
             onFilterChanged(it)
@@ -300,14 +298,14 @@ private fun GroupPage(
                             from = Amount(it.pair.from, it.pair.amount),
                             to = it.actualTo,
                             dateText =
-                            stringResource(
-                                CoreRString.quick_last_refreshed,
-                                DateFormatUtils.latestCheckElapsedTime(
-                                    ctx,
-                                    OffsetDateTime.now(),
-                                    it.refreshDate,
+                                stringResource(
+                                    CoreRString.quick_last_refreshed,
+                                    DateFormatUtils.latestCheckElapsedTime(
+                                        ctx,
+                                        OffsetDateTime.now(),
+                                        it.refreshDate,
+                                    ),
                                 ),
-                            ),
                             onClick = { onClick(it.pair) },
                         )
                     },
@@ -329,10 +327,10 @@ private fun GroupPage(
                             from = Amount(it.from, it.amount),
                             to = it.to,
                             dateText =
-                            stringResource(
-                                CoreRString.quick_calculated_on,
-                                DateFormatUtils.calculatedOn(it.calculatedDate),
-                            ),
+                                stringResource(
+                                    CoreRString.quick_calculated_on,
+                                    DateFormatUtils.calculatedOn(it.calculatedDate),
+                                ),
                             onClick = { onClick(it) },
                         )
                     },
@@ -398,53 +396,53 @@ private fun QuickItem(
 
     ConstraintLayout(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .clickable {
-                onClick()
-            },
+            Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .clickable {
+                    onClick()
+                },
     ) {
         val (icons, content, chevron) = createRefs()
         Row(
             modifier =
-            Modifier.constrainAs(icons) {
-                top.linkTo(parent.top, margin = 16.dp)
-                start.linkTo(parent.start, margin = 24.dp)
-            },
+                Modifier.constrainAs(icons) {
+                    top.linkTo(parent.top, margin = 16.dp)
+                    start.linkTo(parent.start, margin = 24.dp)
+                },
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 modifier =
-                Modifier
-                    .size(40.dp),
+                    Modifier
+                        .size(40.dp),
             ) {
                 CurrIcon(modifier = Modifier.size(40.dp), code = from.code)
             }
             if (!expanded) {
                 Box(
                     modifier =
-                    Modifier
-                        .size(40.dp)
-                        .offset((-12).dp)
-                        .border(2.dp, Color.White, CircleShape),
+                        Modifier
+                            .size(40.dp)
+                            .offset((-12).dp)
+                            .border(2.dp, Color.White, CircleShape),
                 ) {
                     if (to.size == 1) {
                         CurrIcon(
                             modifier =
-                            Modifier
-                                .size(38.dp)
-                                .align(Alignment.Center)
-                                .clip(CircleShape)
-                                .background(Color.White),
+                                Modifier
+                                    .size(38.dp)
+                                    .align(Alignment.Center)
+                                    .clip(CircleShape)
+                                    .background(Color.White),
                             code = to.first().code,
                         )
                     } else {
                         Box(
                             modifier =
-                            Modifier
-                                .size(40.dp)
-                                .background(ArkColor.BGTertiary, CircleShape),
+                                Modifier
+                                    .size(40.dp)
+                                    .background(ArkColor.BGTertiary, CircleShape),
                         ) {
                             Text(
                                 modifier = Modifier.align(Alignment.Center),
@@ -460,24 +458,24 @@ private fun QuickItem(
         }
         Column(
             modifier =
-            Modifier
-                .constrainAs(content) {
-                    start.linkTo(icons.end)
-                    if (to.size > 1)
-                        end.linkTo(chevron.start)
-                    else
-                        end.linkTo(parent.end, margin = 24.dp)
-                    top.linkTo(parent.top, margin = 16.dp)
-                    bottom.linkTo(parent.bottom, margin = 16.dp)
-                    width = Dimension.fillToConstraints
-                }
-                .padding(start = if (expanded) 12.dp else 0.dp),
+                Modifier
+                    .constrainAs(content) {
+                        start.linkTo(icons.end)
+                        if (to.size > 1)
+                            end.linkTo(chevron.start)
+                        else
+                            end.linkTo(parent.end, margin = 24.dp)
+                        top.linkTo(parent.top, margin = 16.dp)
+                        bottom.linkTo(parent.bottom, margin = 16.dp)
+                        width = Dimension.fillToConstraints
+                    }
+                    .padding(start = if (expanded) 12.dp else 0.dp),
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text =
-                "${from.code} to " +
-                    to.joinToString(", ") { it.code },
+                    "${from.code} to " +
+                        to.joinToString(", ") { it.code },
                 fontWeight = FontWeight.Medium,
                 color = ArkColor.TextPrimary,
             )
@@ -502,8 +500,8 @@ private fun QuickItem(
             } else {
                 Text(
                     text =
-                    "${CurrUtils.prepareToDisplay(from.value)} ${from.code} = " +
-                        "${CurrUtils.prepareToDisplay(to.first().value)} ${to.first().code}",
+                        "${CurrUtils.prepareToDisplay(from.value)} ${from.code} = " +
+                            "${CurrUtils.prepareToDisplay(to.first().value)} ${to.first().code}",
                     color = ArkColor.TextTertiary,
                 )
             }
@@ -517,17 +515,17 @@ private fun QuickItem(
         if (to.size > 1) {
             Box(
                 modifier =
-                Modifier
-                    .constrainAs(chevron) {
-                        height = Dimension.fillToConstraints
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom)
-                    }
-                    .clickable {
-                        expanded = !expanded
-                    }
-                    .padding(start = 13.dp, end = 29.dp, top = 23.dp),
+                    Modifier
+                        .constrainAs(chevron) {
+                            height = Dimension.fillToConstraints
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                        }
+                        .clickable {
+                            expanded = !expanded
+                        }
+                        .padding(start = 13.dp, end = 29.dp, top = 23.dp),
             ) {
                 if (expanded) {
                     Icon(

@@ -10,16 +10,18 @@ import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.CurrencyRate
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
+import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
+import dev.arkbuilders.rate.feature.pairalert.domain.repo.PairAlertRepo
 import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 class HandlePairAlertCheckUseCase(
     private val currencyRepo: CurrencyRepo,
-    private val pairAlertRepo: dev.arkbuilders.rate.feature.pairalert.domain.repo.PairAlertRepo,
+    private val pairAlertRepo: PairAlertRepo,
     private val convertUseCase: ConvertWithRateUseCase,
 ) {
     // PairAlert to current rate
-    suspend operator fun invoke(): Either<Throwable, List<Pair<dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert, BigDecimal>>> {
+    suspend operator fun invoke(): Either<Throwable, List<Pair<PairAlert, BigDecimal>>> {
         val rates =
             currencyRepo.getCodeToCurrencyRate().getOrElse {
                 return it.left()
@@ -45,7 +47,7 @@ class HandlePairAlertCheckUseCase(
         return pairsToNotify.right()
     }
 
-    private suspend fun handleOneTimePair(pairAlert: dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert) {
+    private suspend fun handleOneTimePair(pairAlert: PairAlert) {
         pairAlertRepo.insert(
             pairAlert.copy(
                 enabled = false,
@@ -54,7 +56,7 @@ class HandlePairAlertCheckUseCase(
         )
     }
 
-    private suspend fun handleRecurrentPair(pairAlert: dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert) {
+    private suspend fun handleRecurrentPair(pairAlert: PairAlert) {
         val updatedTargetPrice =
             pairAlert.percent?.let { percent ->
                 val percentFactor =
@@ -76,7 +78,7 @@ class HandlePairAlertCheckUseCase(
 
     private suspend fun isConditionMet(
         rates: Map<CurrencyCode, CurrencyRate>,
-        pairAlert: dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert,
+        pairAlert: PairAlert,
     ): Pair<Boolean, BigDecimal> {
         val (_, rate) =
             convertUseCase.invoke(

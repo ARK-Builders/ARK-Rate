@@ -10,8 +10,9 @@ object QuickComponentHolder {
         component ?: let {
             val app = ctx.applicationContext
             val coreComponent = (app as CoreComponentProvider).provideCoreComponent()
-            component = DaggerQuickComponent.builder().coreComponent(coreComponent)
-                .quickModule(QuickModule()).build()
+            component =
+                DaggerQuickComponent.builder().coreComponent(coreComponent)
+                    .quickModule(QuickModule()).build()
         }
         return component!!
     }

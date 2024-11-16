@@ -41,9 +41,10 @@ import java.time.OffsetDateTime
 @Composable
 fun SettingsScreen(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current
-    val component = remember {
-        SettingsComponentHolder.provide(ctx)
-    }
+    val component =
+        remember {
+            SettingsComponentHolder.provide(ctx)
+        }
     val vm: SettingsViewModel =
         viewModel(factory = component.settingsVMFactory())
 

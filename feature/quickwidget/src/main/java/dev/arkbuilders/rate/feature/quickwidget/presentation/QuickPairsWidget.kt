@@ -33,11 +33,11 @@ import androidx.glance.unit.ColorProvider
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
+import dev.arkbuilders.rate.feature.quickwidget.di.QuickWidgetComponentHolder
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.NextPageAction
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.OpenAppAction
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.PreviousPageAction
-import dev.arkbuilders.rate.feature.quickwidget.di.QuickWidgetComponentHolder
 
 class QuickPairsWidget : GlanceAppWidget() {
     override suspend fun provideGlance(
@@ -54,8 +54,8 @@ class QuickPairsWidget : GlanceAppWidget() {
             val displayGroup = group ?: context.getString(CoreRString.group_default_name)
             Column(
                 modifier =
-                GlanceModifier.fillMaxSize().background(Color.White)
-                    .padding(horizontal = 12.dp),
+                    GlanceModifier.fillMaxSize().background(Color.White)
+                        .padding(horizontal = 12.dp),
             ) {
                 Row(
                     modifier = GlanceModifier.fillMaxWidth().padding(top = 8.dp),
@@ -63,8 +63,8 @@ class QuickPairsWidget : GlanceAppWidget() {
                 ) {
                     Image(
                         modifier =
-                        GlanceModifier.size(24.dp).padding(4.dp)
-                            .clickable(actionRunCallback<AddNewPairAction>()),
+                            GlanceModifier.size(24.dp).padding(4.dp)
+                                .clickable(actionRunCallback<AddNewPairAction>()),
                         provider = ImageProvider(CoreRDrawable.ic_about_logo),
                         contentDescription = null,
                     )
@@ -72,58 +72,58 @@ class QuickPairsWidget : GlanceAppWidget() {
                         modifier = GlanceModifier.defaultWeight(),
                         text = context.getString(CoreRString.quick_pinned_pairs),
                         style =
-                        TextStyle(
-                            color = ColorProvider(ArkColor.TextTertiary),
-                            fontWeight = FontWeight.Medium,
-                        ),
+                            TextStyle(
+                                color = ColorProvider(ArkColor.TextTertiary),
+                                fontWeight = FontWeight.Medium,
+                            ),
                     )
                     Text(
                         modifier = GlanceModifier.defaultWeight(),
                         text = displayGroup,
                         style =
-                        TextStyle(
-                            color = ColorProvider(ArkColor.TextTertiary),
-                            fontWeight = FontWeight.Medium,
-                        ),
+                            TextStyle(
+                                color = ColorProvider(ArkColor.TextTertiary),
+                                fontWeight = FontWeight.Medium,
+                            ),
                     )
                     Image(
                         modifier =
-                        GlanceModifier.size(24.dp).padding(4.dp)
-                            .clickable(actionRunCallback<PreviousPageAction>()),
+                            GlanceModifier.size(24.dp).padding(4.dp)
+                                .clickable(actionRunCallback<PreviousPageAction>()),
                         provider = ImageProvider(CoreRDrawable.ic_chevron_left),
                         contentDescription = null,
                     )
 
                     Image(
                         modifier =
-                        GlanceModifier.size(24.dp).padding(4.dp)
-                            .clickable(actionRunCallback<NextPageAction>()),
+                            GlanceModifier.size(24.dp).padding(4.dp)
+                                .clickable(actionRunCallback<NextPageAction>()),
                         provider = ImageProvider(CoreRDrawable.ic_chevron_right),
                         contentDescription = null,
                     )
                     Image(
                         modifier =
-                        GlanceModifier.size(24.dp).padding(4.dp)
-                            .clickable(actionRunCallback<AddNewPairAction>()),
+                            GlanceModifier.size(24.dp).padding(4.dp)
+                                .clickable(actionRunCallback<AddNewPairAction>()),
                         provider =
-                        ImageProvider(
-                            CoreRDrawable.ic_add_circle,
-                        ),
+                            ImageProvider(
+                                CoreRDrawable.ic_add_circle,
+                            ),
                         contentDescription = null,
                     )
                     Text(
                         modifier =
-                        GlanceModifier
-                            .clickable(actionRunCallback<OpenAppAction>()),
+                            GlanceModifier
+                                .clickable(actionRunCallback<OpenAppAction>()),
                         text = context.getString(CoreRString.quick_open_app),
                         style =
-                        TextStyle(
-                            color =
-                            ColorProvider(
-                                ArkColor.Primary,
+                            TextStyle(
+                                color =
+                                    ColorProvider(
+                                        ArkColor.Primary,
+                                    ),
+                                fontWeight = FontWeight.Medium,
                             ),
-                            fontWeight = FontWeight.Medium,
-                        ),
                     )
                 }
                 LazyColumn(modifier = GlanceModifier.fillMaxHeight()) {
@@ -135,11 +135,11 @@ class QuickPairsWidget : GlanceAppWidget() {
                             )
                             Spacer(
                                 modifier =
-                                GlanceModifier
-                                    .fillMaxWidth()
-                                    .height(1.dp)
-                                    .background(Color.Gray.copy(alpha = 0.2f))
-                                    .padding(vertical = 2.dp),
+                                    GlanceModifier
+                                        .fillMaxWidth()
+                                        .height(1.dp)
+                                        .background(Color.Gray.copy(alpha = 0.2f))
+                                        .padding(vertical = 2.dp),
                             )
                         }
                     }

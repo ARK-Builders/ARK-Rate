@@ -11,7 +11,7 @@ import dev.arkbuilders.rate.core.di.modules.UseCaseModule
         ApiModule::class,
         DBModule::class,
         RepoModule::class,
-        UseCaseModule::class
-    ]
+        UseCaseModule::class,
+    ],
 )
 class CoreDataModule

@@ -10,7 +10,7 @@ import java.time.OffsetDateTime
 
 private const val FREQUENT_LIMIT = 5
 
-class CalcFrequentCurrUseCase (
+class CalcFrequentCurrUseCase(
     private val codeUseStatRepo: CodeUseStatRepo,
 ) {
     suspend operator fun invoke(stats: List<CodeUseStat>? = null): List<CurrencyCode> {

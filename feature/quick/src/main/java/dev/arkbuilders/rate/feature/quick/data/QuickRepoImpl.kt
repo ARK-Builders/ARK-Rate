@@ -29,7 +29,7 @@ private fun QuickPair.toRoom() =
         to,
         calculatedDate,
         pinnedDate,
-        group
+        group,
     )
 
 private fun RoomQuickPair.toQuickPair() =

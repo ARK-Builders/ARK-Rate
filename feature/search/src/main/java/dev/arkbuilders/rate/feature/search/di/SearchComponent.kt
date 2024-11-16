@@ -10,6 +10,8 @@ import dev.arkbuilders.rate.feature.search.presentation.SearchViewModelFactory
 @Component(dependencies = [CoreComponent::class])
 interface SearchComponent {
     fun getTopResultUseCase(): GetTopResultUseCase
+
     fun analyticsManager(): AnalyticsManager
+
     fun searchVMFactory(): SearchViewModelFactory.Factory
 }

@@ -10,8 +10,9 @@ object PairAlertComponentHolder {
         component ?: let {
             val app = ctx.applicationContext
             val coreComponent = (app as CoreComponentProvider).provideCoreComponent()
-            component = DaggerPairAlertComponent.builder().coreComponent(coreComponent)
-                .pairAlertModule(PairAlertModule()).build()
+            component =
+                DaggerPairAlertComponent.builder().coreComponent(coreComponent)
+                    .pairAlertModule(PairAlertModule()).build()
         }
         return component!!
     }

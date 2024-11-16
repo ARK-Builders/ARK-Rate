@@ -24,6 +24,6 @@ class UseCaseModule {
     @Provides
     fun getTopResultUseCase(
         currencyRepo: CurrencyRepo,
-        calcFrequentCurrUseCase: CalcFrequentCurrUseCase
+        calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     ) = GetTopResultUseCase(currencyRepo, calcFrequentCurrUseCase)
 }

@@ -46,7 +46,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -55,7 +54,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
-import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppButton
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv16
@@ -70,6 +68,7 @@ import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponent
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponentHolder
+import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
 import dev.arkbuilders.rate.feature.pairalert.presentation.destinations.AddPairAlertScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -79,9 +78,10 @@ import timber.log.Timber
 @Composable
 fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current
-    val component = remember {
-        PairAlertComponentHolder.provide(ctx)
-    }
+    val component =
+        remember {
+            PairAlertComponentHolder.provide(ctx)
+        }
     val viewModel: PairAlertViewModel =
         viewModel(factory = component.pairAlertVMFactory())
 
@@ -374,9 +374,7 @@ private fun PairAlertItem(
 }
 
 @Composable
-private fun Empty(
-    onNewPair: () -> Unit,
-) {
+private fun Empty(onNewPair: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.align(Alignment.Center),

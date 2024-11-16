@@ -16,8 +16,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.R
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
 @Composable
 fun DropDownWithIcon(
@@ -28,15 +28,15 @@ fun DropDownWithIcon(
 ) {
     Row(
         modifier =
-        modifier
-            .height(44.dp)
-            .border(
-                1.dp,
-                ArkColor.Border,
-                RoundedCornerShape(8.dp),
-            )
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { onClick() },
+            modifier
+                .height(44.dp)
+                .border(
+                    1.dp,
+                    ArkColor.Border,
+                    RoundedCornerShape(8.dp),
+                )
+                .clip(RoundedCornerShape(8.dp))
+                .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -47,9 +47,9 @@ fun DropDownWithIcon(
         )
         Text(
             modifier =
-            Modifier
-                .padding(start = 8.dp)
-                .weight(1f),
+                Modifier
+                    .padding(start = 8.dp)
+                    .weight(1f),
             text = title,
             fontSize = 16.sp,
             color = ArkColor.TextPlaceHolder,

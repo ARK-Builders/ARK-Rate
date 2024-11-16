@@ -5,12 +5,14 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dev.arkbuilders.rate.core.domain.model.TimestampType
 import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
+import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
+import dev.arkbuilders.rate.feature.pairalert.domain.usecase.HandlePairAlertCheckUseCase
 import dev.arkbuilders.rate.feature.pairalert.presentation.utils.NotificationUtils
 
 class CurrencyMonitorWorker(
     private val context: Context,
     params: WorkerParameters,
-    private val handlePairAlertCheckUseCase: dev.arkbuilders.rate.feature.pairalert.domain.usecase.HandlePairAlertCheckUseCase,
+    private val handlePairAlertCheckUseCase: HandlePairAlertCheckUseCase,
     private val timestampRepo: TimestampRepo,
 ) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
@@ -26,7 +28,7 @@ class CurrencyMonitorWorker(
         return Result.success()
     }
 
-    private fun notifyPair(pairAlert: dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert) {
+    private fun notifyPair(pairAlert: PairAlert) {
         NotificationUtils.showPairAlert(pairAlert, context)
     }
 

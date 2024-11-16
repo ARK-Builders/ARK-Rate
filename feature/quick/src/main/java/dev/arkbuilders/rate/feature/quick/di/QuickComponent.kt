@@ -11,7 +11,10 @@ import dev.arkbuilders.rate.feature.quick.presentation.main.QuickViewModelFactor
 @Component(dependencies = [CoreComponent::class], modules = [QuickModule::class])
 interface QuickComponent {
     fun addQuickVMFactory(): AddQuickViewModelFactory.Factory
+
     fun quickVMFactory(): QuickViewModelFactory.Factory
+
     fun getPinnedQuickPairUseCase(): GetSortedPinnedQuickPairsUseCase
+
     fun quickRepo(): QuickRepo
 }

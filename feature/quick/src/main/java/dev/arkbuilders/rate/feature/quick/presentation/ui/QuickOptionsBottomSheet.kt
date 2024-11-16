@@ -29,10 +29,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
+import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import kotlin.math.abs
 
 @Composable
@@ -76,7 +76,6 @@ private fun Content(
     onDelete: (QuickPair) -> Unit,
     onDismiss: () -> Unit,
 ) {
-
     Box(modifier = Modifier.verticalScrollDisabled()) {
         Text(
             modifier =
