@@ -23,7 +23,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -75,8 +75,11 @@ dependencies {
     implementation(libs.compose.destinations.animations)
     ksp(libs.compose.destinations.compiler)
 
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+
+tasks.getByPath(":feature:pairalert:preBuild").dependsOn("ktlintCheck")
+
+tasks.getByPath(":feature:pairalert:preBuild").dependsOn("ktlintFormat")

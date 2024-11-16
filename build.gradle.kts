@@ -8,3 +8,14 @@ plugins {
     id("com.google.firebase.crashlytics") version "3.0.1" apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
+
+allprojects {
+    plugins.apply("org.jlleitschuh.gradle.ktlint")
+}
+
+ktlint {
+    android.set(true)
+    outputToConsole.set(true)
+}
+
+tasks.getByPath("ktlintCheck").shouldRunAfter("ktlintFormat")

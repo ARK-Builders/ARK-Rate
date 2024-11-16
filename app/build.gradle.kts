@@ -170,13 +170,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
-ktlint {
-    android.set(true)
-    outputToConsole.set(true)
-}
-
 tasks.getByPath(":app:preBuild").dependsOn("ktlintCheck")
 
 tasks.getByPath(":app:preBuild").dependsOn("ktlintFormat")
-
-tasks.getByPath("ktlintCheck").shouldRunAfter("ktlintFormat")
