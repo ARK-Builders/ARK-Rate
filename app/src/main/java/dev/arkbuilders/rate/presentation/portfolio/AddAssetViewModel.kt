@@ -22,6 +22,7 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -102,15 +103,23 @@ class AddAssetViewModel(
             reduce { state.copy(group = group) }
         }
 
+    // weird bug
+    // onAssetValueChange can be called after onAssetRemove with removed pos and empty input
+    // this only happens if you try to type wrong characters(e.g. whitespace, "-") before deleting
+    // and element being removed is last one in list
     fun onAssetValueChange(
         pos: Int,
         input: String,
     ) = blockingIntent {
+        val newCurrencies = state.currencies.toMutableList()
+        val old =
+            newCurrencies.getOrNull(pos) ?: let {
+                Timber.w("onAssetValueChange called with nonexistent pos")
+                return@blockingIntent
+            }
+        val validatedAmount = CurrUtils.validateInput(old.value, input)
+        newCurrencies[pos] = newCurrencies[pos].copy(value = validatedAmount)
         reduce {
-            val newCurrencies = state.currencies.toMutableList()
-            val old = newCurrencies[pos]
-            val validatedAmount = CurrUtils.validateInput(old.value, input)
-            newCurrencies[pos] = newCurrencies[pos].copy(value = validatedAmount)
             state.copy(currencies = newCurrencies)
         }
     }
