@@ -30,7 +30,6 @@ import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.utils.startDestination
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.presentation.destinations.AddQuickScreenDestination
-import dev.arkbuilders.rate.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.PortfolioScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.presentation.destinations.SettingsScreenDestination
@@ -91,7 +90,6 @@ fun MainScreen() {
         when (navBackStackEntry?.destination?.route) {
             QuickScreenDestination.route -> true
             PortfolioScreenDestination.route -> true
-            PairAlertConditionScreenDestination.route -> true
             SettingsScreenDestination.route -> true
             else -> false
         }

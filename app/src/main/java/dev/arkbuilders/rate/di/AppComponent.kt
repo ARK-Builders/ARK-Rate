@@ -8,7 +8,6 @@ import dev.arkbuilders.rate.data.repo.PortfolioRepoImpl
 import dev.arkbuilders.rate.data.repo.QuickRepoImpl
 import dev.arkbuilders.rate.data.repo.currency.CurrencyRepoImpl
 import dev.arkbuilders.rate.data.worker.AppWorkerFactory
-import dev.arkbuilders.rate.data.worker.CurrencyMonitorWorker
 import dev.arkbuilders.rate.di.module.ApiModule
 import dev.arkbuilders.rate.di.module.DBModule
 import dev.arkbuilders.rate.di.module.RepoModule
@@ -17,8 +16,6 @@ import dev.arkbuilders.rate.domain.repo.Prefs
 import dev.arkbuilders.rate.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.domain.usecase.GetSortedPinnedQuickPairsUseCase
-import dev.arkbuilders.rate.presentation.pairalert.AddPairAlertViewModelFactory
-import dev.arkbuilders.rate.presentation.pairalert.PairAlertViewModelFactory
 import dev.arkbuilders.rate.presentation.portfolio.AddAssetViewModelFactory
 import dev.arkbuilders.rate.presentation.portfolio.EditAssetViewModelFactory
 import dev.arkbuilders.rate.presentation.portfolio.PortfolioViewModelFactory
@@ -43,10 +40,6 @@ interface AppComponent {
 
     fun addQuickVMFactory(): AddQuickViewModelFactory.Factory
 
-    fun pairAlertVMFactory(): PairAlertViewModelFactory
-
-    fun addPairAlertVMFactory(): AddPairAlertViewModelFactory.Factory
-
     fun quickVMFactory(): QuickViewModelFactory.Factory
 
     fun editAssetVMFactory(): EditAssetViewModelFactory.Factory
@@ -68,8 +61,6 @@ interface AppComponent {
     fun quickRepo(): QuickRepoImpl
 
     fun convertUseCase(): ConvertWithRateUseCase
-
-    fun inject(currencyMonitorWorker: CurrencyMonitorWorker)
 
     fun calcFrequentCurrUseCase(): CalcFrequentCurrUseCase
 

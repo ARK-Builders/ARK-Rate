@@ -8,23 +8,25 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,8 +47,6 @@ import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.ArkLargeTextField
-import dev.arkbuilders.rate.presentation.ui.InfoMarketCapitalizationDialog
-import dev.arkbuilders.rate.presentation.ui.InfoValueOfCirculatingDialog
 import dev.arkbuilders.rate.presentation.ui.LoadingScreen
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -93,15 +93,11 @@ private fun Content(
     value: String = "1000.02",
     onValueChange: (String) -> Unit = {},
 ) {
-    var showMarketCapitalizationDialog by remember { mutableStateOf(false) }
-    var showValueOfCirculatingDialog by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    if (showMarketCapitalizationDialog) {
-        InfoMarketCapitalizationDialog { showMarketCapitalizationDialog = false }
-    }
-
-    if (showValueOfCirculatingDialog) {
-        InfoValueOfCirculatingDialog { showValueOfCirculatingDialog = false }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 
     Column(
@@ -132,7 +128,13 @@ private fun Content(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .align(Alignment.CenterVertically),
+                        .align(Alignment.CenterVertically)
+                        .focusRequester(focusRequester)
+                        .onFocusChanged {
+                            if (it.isFocused) {
+                                keyboardController?.show()
+                            }
+                        },
                 value = value,
                 onValueChange = { onValueChange(it) },
             )
@@ -172,66 +174,5 @@ private fun Content(
                 fontWeight = FontWeight.SemiBold,
             )
         }
-
-        AppHorDiv(modifier = Modifier.padding(top = 32.dp))
-        Row(
-            modifier = Modifier.padding(top = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(R.string.market_capitalization),
-                fontWeight = FontWeight.Medium,
-                color = ArkColor.TextTertiary,
-            )
-            IconButton(
-                modifier =
-                    Modifier
-                        .padding(start = 4.dp)
-                        .size(20.dp),
-                onClick = { showMarketCapitalizationDialog = true },
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_info),
-                    contentDescription = "",
-                    tint = ArkColor.Primary,
-                )
-            }
-        }
-        Text(
-            modifier = Modifier.padding(top = 8.dp),
-            text = stringResource(R.string.n_a),
-            fontWeight = FontWeight.SemiBold,
-            color = ArkColor.TextPrimary,
-        )
-        AppHorDiv(modifier = Modifier.padding(top = 24.dp))
-        Row(
-            modifier = Modifier.padding(top = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(R.string.value_of_circulating_currency),
-                fontWeight = FontWeight.Medium,
-                color = ArkColor.TextTertiary,
-            )
-            IconButton(
-                modifier =
-                    Modifier
-                        .padding(start = 4.dp)
-                        .size(20.dp),
-                onClick = { showValueOfCirculatingDialog = true },
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_info),
-                    contentDescription = "",
-                    tint = ArkColor.Primary,
-                )
-            }
-        }
-        Text(
-            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
-            text = stringResource(R.string.n_a),
-            fontWeight = FontWeight.SemiBold,
-            color = ArkColor.TextPrimary,
-        )
     }
 }

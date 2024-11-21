@@ -96,10 +96,6 @@ private fun Content(
             title = stringResource(R.string.settings_latest_rates_refresh),
             description = refreshDesc,
         )
-        LatestRefresh(
-            title = stringResource(R.string.settings_latest_alerts_check),
-            description = pairAlertDesc,
-        )
         AppHorDiv16(modifier = Modifier.padding(top = 20.dp))
         if (state.showCrashReports) {
             Row(

@@ -398,7 +398,7 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(R.string.new_asset),
+                    text = stringResource(R.string.portfolio_empty_new_assets),
                 )
             }
         }

@@ -54,15 +54,13 @@ import dev.arkbuilders.rate.data.CurrUtils
 import dev.arkbuilders.rate.di.DIManager
 import dev.arkbuilders.rate.domain.model.AmountStr
 import dev.arkbuilders.rate.presentation.destinations.SearchCurrencyScreenDestination
-import dev.arkbuilders.rate.presentation.pairalert.DropDownWithIcon
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlow
 import dev.arkbuilders.rate.presentation.shared.AppSharedFlowKey
 import dev.arkbuilders.rate.presentation.theme.ArkColor
 import dev.arkbuilders.rate.presentation.ui.AppButton
 import dev.arkbuilders.rate.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.presentation.ui.ArkBasicTextField
-import dev.arkbuilders.rate.presentation.ui.GroupCreateDialog
-import dev.arkbuilders.rate.presentation.ui.GroupSelectPopup
+import dev.arkbuilders.rate.presentation.ui.DropDownWithIcon
 import dev.arkbuilders.rate.presentation.ui.NotifyAddedSnackbarVisuals
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -101,7 +99,7 @@ fun AddAssetScreen(navigator: DestinationsNavigator) {
     Scaffold(
         topBar = {
             AppTopBarBack(
-                title = stringResource(R.string.add_new_asset),
+                title = stringResource(R.string.portfolio_add_new_assets),
                 navigator = navigator,
             )
         },
@@ -151,7 +149,7 @@ private fun Content(
     var addGroupBtnWidth by remember { mutableStateOf(0) }
 
     if (showNewGroupDialog) {
-        GroupCreateDialog(onDismiss = { showNewGroupDialog = false }) {
+        PortfolioCreateDialog(onDismiss = { showNewGroupDialog = false }) {
             onGroupSelect(it)
         }
     }
@@ -189,7 +187,7 @@ private fun Content(
                             bottom = 10.dp,
                             end = 18.dp,
                         ),
-                    text = stringResource(R.string.new_currency),
+                    text = stringResource(R.string.portfolio_new_asset),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
                 )
@@ -205,7 +203,7 @@ private fun Content(
                 onClick = { showGroupsPopup = true },
                 title =
                     state.group?.let { state.group }
-                        ?: stringResource(R.string.add_group),
+                        ?: stringResource(R.string.portfolio_default_portfolio),
                 icon = painterResource(id = R.drawable.ic_group),
             )
             if (showGroupsPopup) {
@@ -221,8 +219,8 @@ private fun Content(
                         properties = PopupProperties(),
                         onDismissRequest = { showGroupsPopup = false },
                     ) {
-                        GroupSelectPopup(
-                            groups = state.availableGroups,
+                        PortfolioSelectPopup(
+                            portfolios = state.availableGroups,
                             widthPx = addGroupBtnWidth,
                             onGroupSelect = { onGroupSelect(it) },
                             onNewGroupClick = { showNewGroupDialog = true },
@@ -243,7 +241,7 @@ private fun Content(
                     onAddAsset()
                 },
             ) {
-                Text(text = stringResource(R.string.add_new_asset))
+                Text(text = stringResource(R.string.portfolio_add_new_assets))
             }
         }
     }

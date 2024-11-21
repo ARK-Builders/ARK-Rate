@@ -3,6 +3,7 @@ package dev.arkbuilders.rate.data.repo
 import dev.arkbuilders.rate.data.db.dao.PortfolioDao
 import dev.arkbuilders.rate.data.db.entity.RoomAsset
 import dev.arkbuilders.rate.domain.model.Asset
+import dev.arkbuilders.rate.domain.model.CurrencyCode
 import dev.arkbuilders.rate.domain.repo.PortfolioRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,6 +23,9 @@ class PortfolioRepoImpl @Inject constructor(
             .map { list -> list.map { it.toAsset() } }
 
     override suspend fun getById(id: Long) = dao.getById(id)?.toAsset()
+
+    override suspend fun getAllByCode(code: CurrencyCode) =
+        dao.getAllByCode(code).map { it.toAsset() }
 
     override suspend fun setAsset(asset: Asset) = dao.insert(asset.toRoom())
 
