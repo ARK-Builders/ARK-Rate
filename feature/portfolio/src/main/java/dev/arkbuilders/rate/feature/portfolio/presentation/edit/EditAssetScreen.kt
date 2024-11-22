@@ -47,7 +47,7 @@ import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.core.presentation.ui.ArkLargeTextField
+import dev.arkbuilders.rate.core.presentation.ui.ArkCursorLargeTextField
 import dev.arkbuilders.rate.core.presentation.ui.InfoMarketCapitalizationDialog
 import dev.arkbuilders.rate.core.presentation.ui.InfoValueOfCirculatingDialog
 import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
@@ -145,7 +145,7 @@ private fun Content(
             Modifier.padding(top = 32.dp),
             verticalAlignment = Alignment.Top,
         ) {
-            ArkLargeTextField(
+            ArkCursorLargeTextField(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
