@@ -61,8 +61,8 @@ android {
 
             addManifestPlaceholders(
                 mapOf(
-                    "appIcon" to "@mipmap/ic_launcher_debug",
-                    "appLabel" to "@string/app_name_debug",
+                    "appIcon" to "@mipmap/ic_launcher",
+                    "appLabel" to "@string/app_name",
                 ),
             )
         }
