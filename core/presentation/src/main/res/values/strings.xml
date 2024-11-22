@@ -29,10 +29,15 @@
     <string name="portfolio_empty_title">Your portfolio is empty</string>
     <string name="portfolio_empty_desc">Add currencies manually to track and compare. Your portfolio helps you monitor and manage your favorite or frequently used currencies.</string>
     <string name="portfolio_empty_new_assets">New assets</string>
-    <string name="portfolio_default_placeholder">Default portfolio</string>
+    <string name="portfolio_default_portfolio">Default portfolio</string>
     <string name="portfolio_total_assets">Total assets</string>
     <string name="portfolio_add_new_assets">Add new assets</string>
     <string name="portfolio_new_asset">New asset</string>
+    <string name="portfolio_new_portfolio">New portfolio</string>
+    <string name="portfolio_name_dialog_title">Create portfolio</string>
+    <string name="portfolio_name_dialog_desc">Please enter a name for this group.</string>
+    <string name="portfolio_name_dialog_portfolio_name">Portfolio name</string>
+    <string name="portfolio_name_dialog_placeholder">e.g. Portfolio 1</string>
     <string name="portfolio_snackbar_new_title">New asset has been added</string>
     <string name="portfolio_snackbar_new_desc">You added %1$s to your portfolio</string>
     <string name="portfolio_snackbar_removed_title">The asset has been deleted</string>

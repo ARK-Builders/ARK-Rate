@@ -59,10 +59,10 @@ import dev.arkbuilders.rate.core.presentation.ui.AppButton
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.core.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.core.presentation.ui.DropDownWithIcon
-import dev.arkbuilders.rate.core.presentation.ui.GroupCreateDialog
-import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
+import dev.arkbuilders.rate.feature.portfolio.presentation.ui.PortfolioCreateDialog
+import dev.arkbuilders.rate.feature.portfolio.presentation.ui.PortfolioSelectPopup
 import dev.arkbuilders.rate.feature.search.presentation.destinations.SearchCurrencyScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -149,7 +149,7 @@ private fun Content(
     var addGroupBtnWidth by remember { mutableStateOf(0) }
 
     if (showNewGroupDialog) {
-        GroupCreateDialog(onDismiss = { showNewGroupDialog = false }) {
+        PortfolioCreateDialog(onDismiss = { showNewGroupDialog = false }) {
             onGroupSelect(it)
         }
     }
@@ -203,7 +203,7 @@ private fun Content(
                 onClick = { showGroupsPopup = true },
                 title =
                     state.group?.let { state.group }
-                        ?: stringResource(CoreRString.portfolio_default_placeholder),
+                        ?: stringResource(CoreRString.portfolio_default_portfolio),
                 icon = painterResource(id = CoreR.drawable.ic_group),
             )
             if (showGroupsPopup) {
@@ -219,8 +219,8 @@ private fun Content(
                         properties = PopupProperties(),
                         onDismissRequest = { showGroupsPopup = false },
                     ) {
-                        GroupSelectPopup(
-                            groups = state.availableGroups,
+                        PortfolioSelectPopup(
+                            portfolios = state.availableGroups,
                             widthPx = addGroupBtnWidth,
                             onGroupSelect = { onGroupSelect(it) },
                             onNewGroupClick = { showNewGroupDialog = true },
