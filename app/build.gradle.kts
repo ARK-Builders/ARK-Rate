@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "dev.arkbuilders.rate"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "dev.arkbuilders.rate"
-        minSdk = 26
-        targetSdk = 34
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.compileSdk.get().toInt()
         versionCode = 3
         versionName = "1.2.0"
         setProperty("archivesBaseName", "ark-rate")
@@ -94,7 +94,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     packaging {
         resources {
@@ -104,12 +104,22 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:di"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:data"))
+    implementation(project(":core:presentation"))
+    implementation(project(":feature:quick"))
+    implementation(project(":feature:quickwidget"))
+    implementation(project(":feature:portfolio"))
+    implementation(project(":feature:pairalert"))
+    implementation(project(":feature:search"))
+    implementation(project(":feature:settings"))
     implementation(project(":fiaticons"))
     implementation(project(":cryptoicons"))
 
     implementation(libs.ark.about)
-    implementation(libs.androidx.ui)
 
+    implementation(libs.androidx.ui)
     implementation(libs.navigation.compose)
     implementation(libs.material3)
     implementation(libs.androidx.ui.tooling.preview)
@@ -117,8 +127,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.constraintlayout.compose)
 
-    implementation(libs.dagger)
     implementation(libs.androidx.glance.appwidget)
+
+    implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 
     implementation(libs.androidx.room.runtime)
@@ -159,13 +170,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
-ktlint {
-    android.set(true)
-    outputToConsole.set(true)
-}
-
 tasks.getByPath(":app:preBuild").dependsOn("ktlintCheck")
 
 tasks.getByPath(":app:preBuild").dependsOn("ktlintFormat")
-
-tasks.getByPath("ktlintCheck").shouldRunAfter("ktlintFormat")
