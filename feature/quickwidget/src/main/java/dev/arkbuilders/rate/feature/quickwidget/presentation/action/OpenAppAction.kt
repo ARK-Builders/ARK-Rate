@@ -14,7 +14,7 @@ class OpenAppAction : ActionCallback {
     ) {
         context.startActivity(
             Intent().apply {
-                setClassName("dev.arkbuilders.rate.presentation", "MainActivity")
+                setClassName(context, "dev.arkbuilders.rate.presentation.MainActivity")
                 setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             },
         )

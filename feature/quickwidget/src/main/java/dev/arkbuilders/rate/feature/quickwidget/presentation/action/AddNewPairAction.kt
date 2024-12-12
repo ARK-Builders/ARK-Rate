@@ -21,7 +21,7 @@ class AddNewPairAction : ActionCallback {
         }
         context.startActivity(
             Intent().apply {
-                setClassName("dev.arkbuilders.rate.presentation", "MainActivity")
+                setClassName(context, "dev.arkbuilders.rate.presentation.MainActivity")
                 putExtra(ADD_NEW_PAIR, "ADD_NEW_PAIR")
                 putExtra(ADD_NEW_PAIR_GROUP_KEY, group)
                 setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
