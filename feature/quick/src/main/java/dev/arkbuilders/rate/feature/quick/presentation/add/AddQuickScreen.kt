@@ -145,7 +145,7 @@ fun AddQuickScreen(
                 onCodeChange = { index ->
                     navigator.navigate(
                         SearchCurrencyScreenDestination(
-                            AppSharedFlowKey.AddQuickCode.toString(),
+                            AppSharedFlowKey.SetQuickCode.toString(),
                             index,
                         ),
                     )
