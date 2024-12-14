@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "414351467383",
-    "project_id": "ark-builders-test",
-    "storage_bucket": "ark-builders-test.appspot.com"
+    "project_number": "659862496072",
+    "project_id": "ark-rate-test",
+    "storage_bucket": "ark-rate-test.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:414351467383:android:be354cff9341b81e623772",
+        "mobilesdk_app_id": "1:659862496072:android:bd9e57c870395c3802897d",
         "android_client_info": {
           "package_name": "dev.arkbuilders.rate"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCn2k1dAY8sqK4rjsjOd38fOr54FPOAdyY"
+          "current_key": "AIzaSyDYJv31n-7JnZB5FQ1o16zatujTXbfbbpk"
         }
       ],
       "services": {
