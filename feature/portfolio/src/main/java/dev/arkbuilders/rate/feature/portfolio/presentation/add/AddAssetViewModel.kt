@@ -13,6 +13,7 @@ import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioScope
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
+import dev.arkbuilders.rate.feature.portfolio.domain.usecase.AddNewAssetsUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
@@ -22,6 +23,7 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import timber.log.Timber
 import javax.inject.Inject
 
 data class AddAssetState(
@@ -42,6 +44,7 @@ class AddAssetViewModel(
     private val currencyRepo: CurrencyRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val analyticsManager: AnalyticsManager,
+    private val addNewAssetsUseCase: AddNewAssetsUseCase,
 ) : ViewModel(), ContainerHost<AddAssetState, AddAssetSideEffect> {
     override val container: Container<AddAssetState, AddAssetSideEffect> =
         container(AddAssetState())
@@ -100,15 +103,23 @@ class AddAssetViewModel(
             reduce { state.copy(group = group) }
         }
 
+    // weird bug
+    // onAssetValueChange can be called after onAssetRemove with removed pos and empty input
+    // this only happens if you try to type wrong characters(e.g. whitespace, "-") before deleting
+    // and element being removed is last one in list
     fun onAssetValueChange(
         pos: Int,
         input: String,
     ) = blockingIntent {
+        val newCurrencies = state.currencies.toMutableList()
+        val old =
+            newCurrencies.getOrNull(pos) ?: let {
+                Timber.w("onAssetValueChange called with nonexistent pos")
+                return@blockingIntent
+            }
+        val validatedAmount = CurrUtils.validateInput(old.value, input)
+        newCurrencies[pos] = newCurrencies[pos].copy(value = validatedAmount)
         reduce {
-            val newCurrencies = state.currencies.toMutableList()
-            val old = newCurrencies[pos]
-            val validatedAmount = CurrUtils.validateInput(old.value, input)
-            newCurrencies[pos] = newCurrencies[pos].copy(value = validatedAmount)
             state.copy(currencies = newCurrencies)
         }
     }
@@ -123,7 +134,7 @@ class AddAssetViewModel(
                         group = state.group,
                     )
                 }
-            assetsRepo.setAssetsList(currencies)
+            addNewAssetsUseCase(currencies)
             codeUseStatRepo.codesUsed(*currencies.map { it.code }.toTypedArray())
             postSideEffect(AddAssetSideEffect.NotifyAssetAdded(currencies))
             postSideEffect(AddAssetSideEffect.NavigateBack)
@@ -136,6 +147,7 @@ class AddAssetViewModelFactory @Inject constructor(
     private val currencyRepo: CurrencyRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val analyticsManager: AnalyticsManager,
+    private val addNewAssetsUseCase: AddNewAssetsUseCase,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddAssetViewModel(
@@ -143,6 +155,7 @@ class AddAssetViewModelFactory @Inject constructor(
             currencyRepo,
             codeUseStatRepo,
             analyticsManager,
+            addNewAssetsUseCase,
         ) as T
     }
 }

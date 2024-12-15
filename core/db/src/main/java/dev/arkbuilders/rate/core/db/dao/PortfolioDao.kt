@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import dev.arkbuilders.rate.core.db.entity.RoomAsset
+import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -21,6 +22,9 @@ interface PortfolioDao {
 
     @Query("SELECT * FROM RoomAsset WHERE id = :id")
     suspend fun getById(id: Long): RoomAsset?
+
+    @Query("SELECT * FROM RoomAsset WHERE code = :code")
+    suspend fun getAllByCode(code: CurrencyCode): List<RoomAsset>
 
     @Query("SELECT * FROM RoomAsset")
     fun allFlow(): Flow<List<RoomAsset>>

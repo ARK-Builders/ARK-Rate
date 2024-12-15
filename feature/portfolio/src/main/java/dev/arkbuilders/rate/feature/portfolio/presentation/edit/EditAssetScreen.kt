@@ -19,13 +19,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,7 +47,7 @@ import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.core.presentation.ui.ArkLargeTextField
+import dev.arkbuilders.rate.core.presentation.ui.ArkCursorLargeTextField
 import dev.arkbuilders.rate.core.presentation.ui.InfoMarketCapitalizationDialog
 import dev.arkbuilders.rate.core.presentation.ui.InfoValueOfCirculatingDialog
 import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
@@ -101,6 +106,13 @@ private fun Content(
     var showMarketCapitalizationDialog by remember { mutableStateOf(false) }
     var showValueOfCirculatingDialog by remember { mutableStateOf(false) }
 
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     if (showMarketCapitalizationDialog) {
         InfoMarketCapitalizationDialog { showMarketCapitalizationDialog = false }
     }
@@ -133,11 +145,17 @@ private fun Content(
             Modifier.padding(top = 32.dp),
             verticalAlignment = Alignment.Top,
         ) {
-            ArkLargeTextField(
+            ArkCursorLargeTextField(
                 modifier =
                     Modifier
                         .weight(1f, fill = false)
-                        .align(Alignment.CenterVertically),
+                        .align(Alignment.CenterVertically)
+                        .focusRequester(focusRequester)
+                        .onFocusChanged {
+                            if (it.isFocused) {
+                                keyboardController?.show()
+                            }
+                        },
                 value = value,
                 onValueChange = { onValueChange(it) },
             )
