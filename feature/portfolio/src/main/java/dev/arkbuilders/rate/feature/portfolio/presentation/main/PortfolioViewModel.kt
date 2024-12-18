@@ -36,14 +36,7 @@ data class PortfolioScreenState(
     val initialized: Boolean = false,
     val noInternet: Boolean = false,
 ) {
-    private val _pagerState = RatePagerState()
-    val pagerState: RatePagerState
-        get() =
-            _pagerState.apply {
-                setPageCount(pages.size)
-            }
-
-    fun currentGroup() = pages[pagerState.currentPage].group
+    fun currentGroup(index: Int) = pages.getOrNull(index)?.group
 }
 
 data class PortfolioScreenPage(
@@ -76,6 +69,8 @@ class PortfolioViewModel(
 ) : ViewModel(), ContainerHost<PortfolioScreenState, PortfolioScreenEffect> {
     override val container: Container<PortfolioScreenState, PortfolioScreenEffect> =
         container(PortfolioScreenState())
+
+    val pagerState = RatePagerState(updatedPageCount = { container.stateFlow.value.pages.size })
 
     init {
         analyticsManager.trackScreen("PortfolioScreen")

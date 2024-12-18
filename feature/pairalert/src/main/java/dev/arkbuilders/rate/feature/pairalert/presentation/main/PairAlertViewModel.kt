@@ -35,14 +35,7 @@ data class PairAlertScreenState(
     val noInternet: Boolean = false,
     val askNotificationPermissionPairId: Long? = null,
 ) {
-    private val _pagerState = RatePagerState()
-    val pagerState: RatePagerState
-        get() =
-            _pagerState.apply {
-                setPageCount(pages.size)
-            }
-
-    fun currentGroup() = pages.getOrNull(pagerState.currentPage)?.group
+    fun currentGroup(index: Int) = pages.getOrNull(index)?.group
 }
 
 sealed class PairAlertEffect {
@@ -69,6 +62,8 @@ class PairAlertViewModel(
         container(
             PairAlertScreenState(),
         )
+
+    val pagerState = RatePagerState(updatedPageCount = { container.stateFlow.value.pages.size })
 
     init {
         analyticsManager.trackScreen("PairAlertScreen")
@@ -126,7 +121,7 @@ class PairAlertViewModel(
                     PairAlertEffect.NavigateToAdd(
                         AddPairAlertScreenArgs(
                             pairId,
-                            state.currentGroup(),
+                            state.currentGroup(pagerState.currentPage),
                         ),
                     ),
                 )
@@ -144,7 +139,7 @@ class PairAlertViewModel(
                 PairAlertEffect.NavigateToAdd(
                     AddPairAlertScreenArgs(
                         state.askNotificationPermissionPairId,
-                        state.currentGroup(),
+                        state.currentGroup(pagerState.currentPage),
                     ),
                 ),
             )

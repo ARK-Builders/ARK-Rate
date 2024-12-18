@@ -49,14 +49,7 @@ data class QuickScreenState(
     val initialized: Boolean = false,
     val noInternet: Boolean = false,
 ) {
-    private val _pagerState = RatePagerState()
-    val pagerState: RatePagerState
-        get() =
-            _pagerState.apply {
-                setPageCount(pages.size)
-            }
-
-    fun currentGroup() = pages[pagerState.currentPage].group
+    fun currentGroup(index: Int) = pages.getOrNull(index)?.group
 }
 
 sealed class QuickScreenEffect {
@@ -78,6 +71,8 @@ class QuickViewModel(
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
     override val container: Container<QuickScreenState, QuickScreenEffect> =
         container(QuickScreenState())
+
+    val pagerState = RatePagerState(updatedPageCount = { container.stateFlow.value.pages.size })
 
     init {
         analyticsManager.trackScreen("QuickScreen")

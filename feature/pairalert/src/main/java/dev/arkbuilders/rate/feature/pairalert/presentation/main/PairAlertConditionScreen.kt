@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -172,6 +173,7 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
                     Content(
                         component = component,
                         state = state,
+                        pagerState = viewModel.pagerState,
                         onDelete = viewModel::onDelete,
                         onClick = { pair ->
                             viewModel.onNewPair(pair.id)
@@ -187,6 +189,7 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
 private fun Content(
     component: PairAlertComponent,
     state: PairAlertScreenState,
+    pagerState: PagerState,
     onDelete: (PairAlert) -> Unit,
     onClick: (PairAlert) -> Unit,
     onEnableToggle: (PairAlert, Boolean) -> Unit,
@@ -203,7 +206,7 @@ private fun Content(
         } else {
             GroupViewPager(
                 modifier = Modifier.padding(top = 16.dp),
-                pagerState = state.pagerState,
+                pagerState = pagerState,
                 groups = state.pages.map { it.group },
             ) { index ->
                 GroupPage(

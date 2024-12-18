@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -109,7 +110,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
             }
 
             is PortfolioScreenEffect.SelectGroup ->
-                state.pagerState.scrollToPage(effect.groupIndex)
+                viewModel.pagerState.scrollToPage(effect.groupIndex)
         }
     }
 
@@ -129,7 +130,14 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                 shape = CircleShape,
                 onClick = {
                     navigator.navigate(
-                        AddAssetScreenDestination(AddAssetScreenArgs(group = state.currentGroup())),
+                        AddAssetScreenDestination(
+                            AddAssetScreenArgs(
+                                group =
+                                    state.currentGroup(
+                                        viewModel.pagerState.currentPage,
+                                    ),
+                            ),
+                        ),
                     )
                 },
             ) {
@@ -154,6 +162,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                         },
                         onFilterChange = viewModel::onFilterChange,
                         onDelete = viewModel::onAssetRemove,
+                        pagerState = viewModel.pagerState,
                     )
             }
         }
@@ -182,13 +191,13 @@ private val previewState =
             ),
     )
 
-@Preview(showBackground = true)
 @Composable
 private fun Content(
     state: PortfolioScreenState = previewState,
     onClick: (PortfolioDisplayAsset) -> Unit = {},
     onFilterChange: (String) -> Unit = {},
     onDelete: (Asset) -> Unit = {},
+    pagerState: PagerState,
 ) {
     val groups = state.pages.map { it.group }
     Column {
@@ -214,7 +223,7 @@ private fun Content(
         } else {
             GroupViewPager(
                 modifier = Modifier.padding(top = 20.dp),
-                pagerState = state.pagerState,
+                pagerState = pagerState,
                 groups = groups,
             ) { index ->
                 GroupPage(

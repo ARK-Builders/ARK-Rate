@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -147,7 +149,14 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                 shape = CircleShape,
                 onClick = {
                     navigator.navigate(
-                        AddQuickScreenDestination(AddQuickScreenArgs(group = state.currentGroup())),
+                        AddQuickScreenDestination(
+                            AddQuickScreenArgs(
+                                group =
+                                    state.currentGroup(
+                                        viewModel.pagerState.currentPage,
+                                    ),
+                            ),
+                        ),
                     )
                 },
             ) {
@@ -166,6 +175,7 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                 else ->
                     Content(
                         state = state,
+                        pagerState = viewModel.pagerState,
                         onFilterChanged = viewModel::onFilterChanged,
                         onDelete = viewModel::onDelete,
                         onClick = {
@@ -174,15 +184,17 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                         onPin = viewModel::onPin,
                         onUnpin = viewModel::onUnpin,
                         onNewCode = {
-                            navigator
-                                .navigate(
-                                    AddQuickScreenDestination(
-                                        AddQuickScreenArgs(
-                                            newCode = it,
-                                            group = state.currentGroup(),
-                                        ),
+                            navigator.navigate(
+                                AddQuickScreenDestination(
+                                    AddQuickScreenArgs(
+                                        newCode = it,
+                                        group =
+                                            state.currentGroup(
+                                                viewModel.pagerState.currentPage,
+                                            ),
                                     ),
-                                )
+                                ),
+                            )
                         },
                     )
             }
@@ -199,7 +211,7 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                             AddQuickScreenArgs(
                                 quickPairId = it.id,
                                 reuseNotEdit = false,
-                                group = state.currentGroup(),
+                                group = state.currentGroup(viewModel.pagerState.currentPage),
                             ),
                         ),
                     )
@@ -209,7 +221,7 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                         AddQuickScreenDestination(
                             AddQuickScreenArgs(
                                 quickPairId = it.id,
-                                group = state.currentGroup(),
+                                group = state.currentGroup(viewModel.pagerState.currentPage),
                             ),
                         ),
                     )
@@ -229,6 +241,7 @@ fun QuickScreen(navigator: DestinationsNavigator) {
 @Composable
 private fun Content(
     state: QuickScreenState,
+    pagerState: PagerState,
     onFilterChanged: (String) -> Unit,
     onDelete: (QuickPair) -> Unit,
     onClick: (QuickPair) -> Unit,
@@ -272,7 +285,7 @@ private fun Content(
             } else {
                 GroupViewPager(
                     modifier = Modifier.padding(top = 20.dp),
-                    pagerState = state.pagerState,
+                    pagerState = pagerState,
                     groups = groups,
                 ) { index ->
                     GroupPage(
