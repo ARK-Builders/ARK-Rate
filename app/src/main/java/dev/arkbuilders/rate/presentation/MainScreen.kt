@@ -41,7 +41,6 @@ import dev.arkbuilders.rate.feature.settings.presentation.destinations.SettingsS
 import dev.arkbuilders.rate.presentation.navigation.AnimatedRateBottomNavigation
 import dev.arkbuilders.rate.presentation.navigation.NavGraphs
 import kotlinx.coroutines.flow.drop
-import timber.log.Timber
 
 @Composable
 fun MainScreen() {
@@ -83,7 +82,6 @@ fun MainScreen() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: NavGraphs.root.startRoute.route
 
-    Timber.d("ALLO $currentRoute")
     bottomBarVisible.value =
         when {
             currentRoute.startsWith(QuickScreenDestination.route) -> true

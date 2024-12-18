@@ -94,6 +94,7 @@ fun AddAssetScreen(
     viewModel.collectSideEffect { effect ->
         when (effect) {
             AddAssetSideEffect.NavigateBack -> navigator.popBackStack()
+
             is AddAssetSideEffect.NotifyAssetAdded -> {
                 val added =
                     effect.amounts

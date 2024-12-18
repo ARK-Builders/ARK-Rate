@@ -63,6 +63,8 @@ sealed class PortfolioScreenEffect {
     ) : PortfolioScreenEffect()
 
     data class ShowRemovedSnackbar(val asset: Asset) : PortfolioScreenEffect()
+
+    data class SelectGroup(val groupIndex: Int) : PortfolioScreenEffect()
 }
 
 class PortfolioViewModel(
@@ -90,22 +92,32 @@ class PortfolioViewModel(
         }
     }
 
-    private fun init() =
-        intent {
-            initPages()
+    private fun init() {
+        initPages()
 
-            AppSharedFlow.ShowAddedSnackbarPortfolio.flow.onEach { visuals ->
+        AppSharedFlow.SelectGroupPortfolio.flow.onEach { group ->
+            intent {
+                val page = state.pages.find { it.group == group }
+                val index = page?.let { state.pages.indexOf(it) }
+                if (index != null && index != -1)
+                    postSideEffect(PortfolioScreenEffect.SelectGroup(index))
+            }
+        }.launchIn(viewModelScope)
+
+        AppSharedFlow.ShowAddedSnackbarPortfolio.flow.onEach { visuals ->
+            intent {
                 postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
+            }
+        }.launchIn(viewModelScope)
 
-            prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
-                initPages()
-            }.launchIn(viewModelScope)
+        prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
+            initPages()
+        }.launchIn(viewModelScope)
 
-            assetsRepo.allAssetsFlow().drop(1).onEach {
-                initPages()
-            }.launchIn(viewModelScope)
-        }
+        assetsRepo.allAssetsFlow().drop(1).onEach {
+            initPages()
+        }.launchIn(viewModelScope)
+    }
 
     fun onRefreshClick() =
         intent {
@@ -136,7 +148,7 @@ class PortfolioViewModel(
         }
 
     private fun initPages() =
-        intent {
+        blockingIntent {
             val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
             val assets = assetsRepo.allAssets().reversed()
             val groups = assets.groupBy(keySelector = { it.group })

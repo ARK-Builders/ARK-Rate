@@ -30,6 +30,8 @@ sealed class AppSharedFlow<T>(val flow: MutableSharedFlow<T>) {
 
     data object ShowAddedSnackbarPairAlert :
         AppSharedFlow<NotifyAddedSnackbarVisuals>(MutableSharedFlow())
+
+    data object SelectGroupPortfolio : AppSharedFlow<String?>(MutableSharedFlow())
 }
 
 enum class AppSharedFlowKey {

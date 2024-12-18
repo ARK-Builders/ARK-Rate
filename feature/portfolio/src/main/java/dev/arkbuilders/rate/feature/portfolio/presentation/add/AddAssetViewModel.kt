@@ -138,6 +138,7 @@ class AddAssetViewModel(
                 }
             addNewAssetsUseCase(currencies)
             codeUseStatRepo.codesUsed(*currencies.map { it.code }.toTypedArray())
+            AppSharedFlow.SelectGroupPortfolio.flow.emit(state.group)
             postSideEffect(AddAssetSideEffect.NotifyAssetAdded(currencies))
             postSideEffect(AddAssetSideEffect.NavigateBack)
         }

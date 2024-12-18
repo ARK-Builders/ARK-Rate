@@ -107,6 +107,9 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                     )
                 snackState.showSnackbar(visuals)
             }
+
+            is PortfolioScreenEffect.SelectGroup ->
+                state.pagerState.scrollToPage(effect.groupIndex)
         }
     }
 
