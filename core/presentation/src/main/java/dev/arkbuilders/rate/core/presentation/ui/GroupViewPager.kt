@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
@@ -29,11 +28,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun GroupViewPager(
     modifier: Modifier = Modifier,
+    pagerState: RatePagerState,
     groups: List<String?>,
     pageContent: @Composable (index: Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState { groups.size }
     Column(modifier = modifier) {
         Box {
             AppHorDiv(modifier = Modifier.align(Alignment.BottomCenter))

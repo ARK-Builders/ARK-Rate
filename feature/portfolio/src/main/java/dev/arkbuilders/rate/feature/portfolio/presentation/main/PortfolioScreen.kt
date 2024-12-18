@@ -62,6 +62,7 @@ import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
+import dev.arkbuilders.rate.feature.portfolio.presentation.add.AddAssetScreenArgs
 import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.AddAssetScreenDestination
 import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.EditAssetScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
@@ -124,7 +125,9 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                 containerColor = ArkColor.Secondary,
                 shape = CircleShape,
                 onClick = {
-                    navigator.navigate(AddAssetScreenDestination)
+                    navigator.navigate(
+                        AddAssetScreenDestination(AddAssetScreenArgs(group = state.currentGroup())),
+                    )
                 },
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
@@ -208,6 +211,7 @@ private fun Content(
         } else {
             GroupViewPager(
                 modifier = Modifier.padding(top = 20.dp),
+                pagerState = state.pagerState,
                 groups = groups,
             ) { index ->
                 GroupPage(
@@ -396,7 +400,7 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
             AppButton(
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {
-                    navigator.navigate(AddAssetScreenDestination)
+                    navigator.navigate(AddAssetScreenDestination(AddAssetScreenArgs(group = null)))
                 },
             ) {
                 Icon(

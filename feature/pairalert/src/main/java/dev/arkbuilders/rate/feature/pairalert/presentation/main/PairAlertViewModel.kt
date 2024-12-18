@@ -7,10 +7,12 @@ import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.ui.RatePagerState
 import dev.arkbuilders.rate.feature.pairalert.data.permission.NotificationPermissionHelper
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertScope
 import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
 import dev.arkbuilders.rate.feature.pairalert.domain.repo.PairAlertRepo
+import dev.arkbuilders.rate.feature.pairalert.presentation.add.AddPairAlertScreenArgs
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
@@ -32,10 +34,19 @@ data class PairAlertScreenState(
     val initialized: Boolean = false,
     val noInternet: Boolean = false,
     val askNotificationPermissionPairId: Long? = null,
-)
+) {
+    private val _pagerState = RatePagerState()
+    val pagerState: RatePagerState
+        get() =
+            _pagerState.apply {
+                setPageCount(pages.size)
+            }
+
+    fun currentGroup() = pages.getOrNull(pagerState.currentPage)?.group
+}
 
 sealed class PairAlertEffect {
-    data class NavigateToAdd(val pairId: Long? = null) : PairAlertEffect()
+    data class NavigateToAdd(val args: AddPairAlertScreenArgs) : PairAlertEffect()
 
     data object AskNotificationPermissionOnScreenOpen : PairAlertEffect()
 
@@ -111,7 +122,14 @@ class PairAlertViewModel(
     fun onNewPair(pairId: Long? = null) =
         intent {
             if (notificationPermissionHelper.isGranted()) {
-                postSideEffect(PairAlertEffect.NavigateToAdd(pairId))
+                postSideEffect(
+                    PairAlertEffect.NavigateToAdd(
+                        AddPairAlertScreenArgs(
+                            pairId,
+                            state.currentGroup(),
+                        ),
+                    ),
+                )
             } else {
                 reduce {
                     state.copy(askNotificationPermissionPairId = pairId)
@@ -122,7 +140,14 @@ class PairAlertViewModel(
 
     fun onNotificationPermissionGrantedOnNewPair() =
         intent {
-            postSideEffect(PairAlertEffect.NavigateToAdd(state.askNotificationPermissionPairId))
+            postSideEffect(
+                PairAlertEffect.NavigateToAdd(
+                    AddPairAlertScreenArgs(
+                        state.askNotificationPermissionPairId,
+                        state.currentGroup(),
+                    ),
+                ),
+            )
             reduce {
                 state.copy(askNotificationPermissionPairId = null)
             }

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.parcelize) apply false
     id("com.google.gms.google-services") version "4.4.2" apply false
     id("com.google.firebase.crashlytics") version "3.0.1" apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"

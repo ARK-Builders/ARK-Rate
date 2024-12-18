@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.feature.portfolio.presentation.add
 
+import android.os.Parcelable
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -64,20 +65,29 @@ import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
 import dev.arkbuilders.rate.feature.portfolio.presentation.ui.PortfolioCreateDialog
 import dev.arkbuilders.rate.feature.portfolio.presentation.ui.PortfolioSelectPopup
 import dev.arkbuilders.rate.feature.search.presentation.destinations.SearchCurrencyScreenDestination
+import kotlinx.parcelize.Parcelize
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import dev.arkbuilders.rate.core.presentation.R as CoreR
 
+@Parcelize
+data class AddAssetScreenArgs(
+    val group: String?,
+) : Parcelable
+
 @Destination
 @Composable
-fun AddAssetScreen(navigator: DestinationsNavigator) {
+fun AddAssetScreen(
+    args: AddAssetScreenArgs,
+    navigator: DestinationsNavigator,
+) {
     val ctx = LocalContext.current
     val component =
         remember {
             PortfolioComponentHolder.provide(ctx)
         }
     val viewModel: AddAssetViewModel =
-        viewModel(factory = component.addCurrencyVMFactory())
+        viewModel(factory = component.addCurrencyVMFactory().create(args))
 
     val state by viewModel.collectAsState()
 

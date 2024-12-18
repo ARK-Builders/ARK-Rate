@@ -2,6 +2,7 @@
 
 package dev.arkbuilders.rate.feature.quick.presentation.add
 
+import android.os.Parcelable
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -69,16 +70,22 @@ import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
 import dev.arkbuilders.rate.feature.search.presentation.destinations.SearchCurrencyScreenDestination
+import kotlinx.parcelize.Parcelize
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+
+@Parcelize
+data class AddQuickScreenArgs(
+    val quickPairId: Long? = null,
+    val newCode: CurrencyCode? = null,
+    val reuseNotEdit: Boolean = true,
+    val group: String?,
+) : Parcelable
 
 @Composable
 @Destination
 fun AddQuickScreen(
-    quickPairId: Long? = null,
-    newCode: CurrencyCode? = null,
-    reuseNotEdit: Boolean = true,
-    group: String? = null,
+    args: AddQuickScreenArgs,
     navigator: DestinationsNavigator,
 ) {
     val ctx = LocalContext.current
@@ -90,7 +97,7 @@ fun AddQuickScreen(
         viewModel(
             factory =
                 quickComponent.addQuickVMFactory()
-                    .create(quickPairId, newCode, reuseNotEdit, group),
+                    .create(args),
         )
 
     val state by viewModel.collectAsState()
@@ -121,7 +128,7 @@ fun AddQuickScreen(
     Scaffold(
         topBar = {
             val title =
-                if (reuseNotEdit)
+                if (args.reuseNotEdit)
                     R.string.quick_add_new_calculation
                 else
                     R.string.quick_edit_pair

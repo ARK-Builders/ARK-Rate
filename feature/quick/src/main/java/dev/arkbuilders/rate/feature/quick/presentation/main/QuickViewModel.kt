@@ -15,6 +15,7 @@ import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.ui.RatePagerState
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
@@ -47,7 +48,16 @@ data class QuickScreenState(
     val optionsData: OptionsData? = null,
     val initialized: Boolean = false,
     val noInternet: Boolean = false,
-)
+) {
+    private val _pagerState = RatePagerState()
+    val pagerState: RatePagerState
+        get() =
+            _pagerState.apply {
+                setPageCount(pages.size)
+            }
+
+    fun currentGroup() = pages[pagerState.currentPage].group
+}
 
 sealed class QuickScreenEffect {
     data class ShowSnackbarAdded(

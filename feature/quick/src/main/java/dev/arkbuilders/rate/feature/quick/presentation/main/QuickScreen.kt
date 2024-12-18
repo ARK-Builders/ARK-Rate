@@ -70,6 +70,7 @@ import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
+import dev.arkbuilders.rate.feature.quick.presentation.add.AddQuickScreenArgs
 import dev.arkbuilders.rate.feature.quick.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.feature.quick.presentation.ui.PinnedQuickSwipeItem
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickOptionsBottomSheet
@@ -145,7 +146,9 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                 containerColor = ArkColor.Secondary,
                 shape = CircleShape,
                 onClick = {
-                    navigator.navigate(AddQuickScreenDestination())
+                    navigator.navigate(
+                        AddQuickScreenDestination(AddQuickScreenArgs(group = state.currentGroup())),
+                    )
                 },
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
@@ -172,7 +175,14 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                         onUnpin = viewModel::onUnpin,
                         onNewCode = {
                             navigator
-                                .navigate(AddQuickScreenDestination(newCode = it))
+                                .navigate(
+                                    AddQuickScreenDestination(
+                                        AddQuickScreenArgs(
+                                            newCode = it,
+                                            group = state.currentGroup(),
+                                        ),
+                                    ),
+                                )
                         },
                     )
             }
@@ -186,14 +196,22 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                 onEdit = {
                     navigator.navigate(
                         AddQuickScreenDestination(
-                            quickPairId = it.id,
-                            reuseNotEdit = false,
+                            AddQuickScreenArgs(
+                                quickPairId = it.id,
+                                reuseNotEdit = false,
+                                group = state.currentGroup(),
+                            ),
                         ),
                     )
                 },
                 onReuse = {
                     navigator.navigate(
-                        AddQuickScreenDestination(quickPairId = it.id),
+                        AddQuickScreenDestination(
+                            AddQuickScreenArgs(
+                                quickPairId = it.id,
+                                group = state.currentGroup(),
+                            ),
+                        ),
                     )
                 },
                 onDelete = viewModel::onDelete,
@@ -254,6 +272,7 @@ private fun Content(
             } else {
                 GroupViewPager(
                     modifier = Modifier.padding(top = 20.dp),
+                    pagerState = state.pagerState,
                     groups = groups,
                 ) { index ->
                     GroupPage(
@@ -588,7 +607,7 @@ private fun QuickEmpty(navigator: DestinationsNavigator) {
             AppButton(
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {
-                    navigator.navigate(AddQuickScreenDestination())
+                    navigator.navigate(AddQuickScreenDestination(AddQuickScreenArgs(group = null)))
                 },
             ) {
                 Icon(

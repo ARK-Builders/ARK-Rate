@@ -32,6 +32,7 @@ import dev.arkbuilders.rate.core.presentation.utils.findActivity
 import dev.arkbuilders.rate.core.presentation.utils.keyboardAsState
 import dev.arkbuilders.rate.feature.pairalert.presentation.destinations.PairAlertConditionScreenDestination
 import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.PortfolioScreenDestination
+import dev.arkbuilders.rate.feature.quick.presentation.add.AddQuickScreenArgs
 import dev.arkbuilders.rate.feature.quick.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.feature.quick.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR
@@ -58,7 +59,7 @@ fun MainScreen() {
         val createNewPair = intent?.getStringExtra(ADD_NEW_PAIR) ?: ""
         if (createNewPair.isNotEmpty()) {
             val group = intent?.getStringExtra(ADD_NEW_PAIR_GROUP_KEY)
-            navController.navigate(AddQuickScreenDestination(group = group))
+            navController.navigate(AddQuickScreenDestination(AddQuickScreenArgs(group = group)))
             intent?.removeExtra(ADD_NEW_PAIR_GROUP_KEY)
             intent?.removeExtra(ADD_NEW_PAIR)
         }

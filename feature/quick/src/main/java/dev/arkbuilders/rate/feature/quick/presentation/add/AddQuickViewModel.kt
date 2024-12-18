@@ -8,7 +8,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.AmountStr
-import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.toAmount
 import dev.arkbuilders.rate.core.domain.model.toStrAmount
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
@@ -45,10 +44,7 @@ sealed class AddQuickScreenEffect {
 }
 
 class AddQuickViewModel(
-    private val quickPairId: Long?,
-    private val newCode: CurrencyCode?,
-    private val reuseNotEdit: Boolean,
-    private val group: String?,
+    private val args: AddQuickScreenArgs,
     private val quickRepo: QuickRepo,
     private val convertUseCase: ConvertWithRateUseCase,
     private val codeUseStatRepo: CodeUseStatRepo,
@@ -82,7 +78,7 @@ class AddQuickViewModel(
         intent {
             val groups =
                 quickRepo.getAll().mapNotNull { it.group }.distinct()
-            val quickPair = quickPairId?.let { quickRepo.getById(it) }
+            val quickPair = args.quickPairId?.let { quickRepo.getById(it) }
             quickPair?.let {
                 val currencies =
                     listOf(
@@ -95,7 +91,7 @@ class AddQuickViewModel(
 
                 reduce {
                     state.copy(
-                        quickPairId = quickPairId,
+                        quickPairId = args.quickPairId,
                         currencies = calc,
                         group = quickPair.group,
                         availableGroups = groups,
@@ -104,10 +100,10 @@ class AddQuickViewModel(
                 checkFinishEnabled()
             } ?: reduce {
                 val currencies =
-                    newCode?.let {
-                        listOf(AmountStr(newCode, ""))
+                    args.newCode?.let {
+                        listOf(AmountStr(args.newCode, ""))
                     } ?: state.currencies
-                state.copy(currencies = currencies, availableGroups = groups, group = group)
+                state.copy(currencies = currencies, availableGroups = groups, group = args.group)
             }
         }
     }
@@ -142,8 +138,8 @@ class AddQuickViewModel(
         intent {
             val from = state.currencies.first()
             val id =
-                if (quickPairId != null) {
-                    if (reuseNotEdit) 0 else quickPairId
+                if (args.quickPairId != null) {
+                    if (args.reuseNotEdit) 0 else args.quickPairId
                 } else {
                     0
                 }
@@ -202,10 +198,7 @@ class AddQuickViewModel(
 }
 
 class AddQuickViewModelFactory @AssistedInject constructor(
-    @Assisted private val quickPairId: Long?,
-    @Assisted("newCode") private val newCode: CurrencyCode?,
-    @Assisted private val reuseNotEdit: Boolean,
-    @Assisted("group") private val group: String?,
+    @Assisted private val args: AddQuickScreenArgs,
     private val quickRepo: QuickRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase,
@@ -213,10 +206,7 @@ class AddQuickViewModelFactory @AssistedInject constructor(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddQuickViewModel(
-            quickPairId,
-            newCode,
-            reuseNotEdit,
-            group,
+            args,
             quickRepo,
             convertUseCase,
             codeUseStatRepo,
@@ -226,11 +216,6 @@ class AddQuickViewModelFactory @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(
-            quickPairId: Long?,
-            @Assisted("newCode") newCode: CurrencyCode?,
-            reuseNotEdit: Boolean,
-            @Assisted("group") group: String?,
-        ): AddQuickViewModelFactory
+        fun create(args: AddQuickScreenArgs): AddQuickViewModelFactory
     }
 }

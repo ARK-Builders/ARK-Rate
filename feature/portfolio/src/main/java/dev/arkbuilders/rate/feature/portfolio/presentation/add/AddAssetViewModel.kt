@@ -3,6 +3,9 @@ package dev.arkbuilders.rate.feature.portfolio.presentation.add
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.AmountStr
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
@@ -10,7 +13,6 @@ import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
-import dev.arkbuilders.rate.feature.portfolio.di.PortfolioScope
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.feature.portfolio.domain.usecase.AddNewAssetsUseCase
@@ -24,7 +26,6 @@ import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
-import javax.inject.Inject
 
 data class AddAssetState(
     val currencies: List<AmountStr> = listOf(AmountStr("USD", "")),
@@ -40,6 +41,7 @@ sealed class AddAssetSideEffect {
 }
 
 class AddAssetViewModel(
+    private val args: AddAssetScreenArgs,
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
@@ -82,7 +84,7 @@ class AddAssetViewModel(
             val groups =
                 assetsRepo.allAssets().mapNotNull { it.group }.distinct()
             reduce {
-                state.copy(availableGroups = groups)
+                state.copy(availableGroups = groups, group = args.group)
             }
         }
     }
@@ -141,8 +143,8 @@ class AddAssetViewModel(
         }
 }
 
-@PortfolioScope
-class AddAssetViewModelFactory @Inject constructor(
+class AddAssetViewModelFactory @AssistedInject constructor(
+    @Assisted private val args: AddAssetScreenArgs,
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
@@ -151,11 +153,17 @@ class AddAssetViewModelFactory @Inject constructor(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddAssetViewModel(
+            args,
             assetsRepo,
             currencyRepo,
             codeUseStatRepo,
             analyticsManager,
             addNewAssetsUseCase,
         ) as T
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(args: AddAssetScreenArgs): AddAssetViewModelFactory
     }
 }

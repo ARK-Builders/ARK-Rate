@@ -50,7 +50,7 @@ sealed class AddPairAlertScreenEffect {
 }
 
 class AddPairAlertViewModel(
-    private val pairAlertId: Long?,
+    private val args: AddPairAlertScreenArgs,
     private val currencyRepo: CurrencyRepo,
     private val pairAlertRepo: PairAlertRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
@@ -71,12 +71,12 @@ class AddPairAlertViewModel(
             initOnCodeChange(newBase = it)
         }.launchIn(viewModelScope)
 
-        pairAlertId?.let {
+        args.pairAlertId?.let {
             setupFromExisting()
             intent {
                 checkAboveNotBelow()
             }
-        } ?: initOnCodeChange()
+        } ?: initOnCodeChange(firstInit = true)
 
         intent {
             val groups =
@@ -90,6 +90,7 @@ class AddPairAlertViewModel(
     private fun initOnCodeChange(
         newTarget: CurrencyCode? = null,
         newBase: CurrencyCode? = null,
+        firstInit: Boolean = false,
     ) {
         intent {
             val target = newTarget ?: state.targetCode
@@ -104,6 +105,7 @@ class AddPairAlertViewModel(
                     currentPrice = currentPrice,
                     targetCode = target,
                     baseCode = base,
+                    group = if (firstInit) args.group else state.group,
                 )
             val priceOrPercent = calcNewPriceOrPercent(newState)
 
@@ -191,7 +193,7 @@ class AddPairAlertViewModel(
 
             val percent = state.priceOrPercent.getOrNull()?.toDoubleArk()
 
-            val id = if (state.editExisting) pairAlertId!! else 0
+            val id = if (state.editExisting) args.pairAlertId!! else 0
 
             val pairAlert =
                 PairAlert(
@@ -296,7 +298,7 @@ class AddPairAlertViewModel(
 
     private fun setupFromExisting() =
         intent {
-            val pair = pairAlertRepo.getById(pairAlertId!!)!!
+            val pair = pairAlertRepo.getById(args.pairAlertId!!)!!
 
             val priceOrPercent =
                 pair.percent?.let { percent ->
@@ -353,7 +355,7 @@ class AddPairAlertViewModel(
 }
 
 class AddPairAlertViewModelFactory @AssistedInject constructor(
-    @Assisted private val pairAlertId: Long?,
+    @Assisted private val args: AddPairAlertScreenArgs,
     private val currencyRepo: CurrencyRepo,
     private val pairAlertRepo: PairAlertRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
@@ -362,7 +364,7 @@ class AddPairAlertViewModelFactory @AssistedInject constructor(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddPairAlertViewModel(
-            pairAlertId,
+            args,
             currencyRepo,
             pairAlertRepo,
             codeUseStatRepo,
@@ -373,6 +375,6 @@ class AddPairAlertViewModelFactory @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(pairAlertId: Long?): AddPairAlertViewModelFactory
+        fun create(args: AddPairAlertScreenArgs): AddPairAlertViewModelFactory
     }
 }

@@ -12,6 +12,7 @@ import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.ui.RatePagerState
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioScope
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
@@ -34,7 +35,16 @@ data class PortfolioScreenState(
     val pages: List<PortfolioScreenPage> = emptyList(),
     val initialized: Boolean = false,
     val noInternet: Boolean = false,
-)
+) {
+    private val _pagerState = RatePagerState()
+    val pagerState: RatePagerState
+        get() =
+            _pagerState.apply {
+                setPageCount(pages.size)
+            }
+
+    fun currentGroup() = pages[pagerState.currentPage].group
+}
 
 data class PortfolioScreenPage(
     val group: String?,

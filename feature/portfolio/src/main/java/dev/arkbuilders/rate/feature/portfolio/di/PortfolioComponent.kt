@@ -13,7 +13,7 @@ import dev.arkbuilders.rate.feature.portfolio.presentation.main.PortfolioViewMod
 interface PortfolioComponent {
     fun assetsVMFactory(): PortfolioViewModelFactory
 
-    fun addCurrencyVMFactory(): AddAssetViewModelFactory
+    fun addCurrencyVMFactory(): AddAssetViewModelFactory.Factory
 
     fun editAssetVMFactory(): EditAssetViewModelFactory.Factory
 

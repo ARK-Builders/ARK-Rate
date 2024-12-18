@@ -100,11 +100,7 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
     viewModel.collectSideEffect { effect ->
         when (effect) {
             is PairAlertEffect.NavigateToAdd ->
-                navigator.navigate(
-                    AddPairAlertScreenDestination(
-                        pairAlertId = effect.pairId,
-                    ),
-                )
+                navigator.navigate(AddPairAlertScreenDestination(effect.args))
 
             PairAlertEffect.AskNotificationPermissionOnScreenOpen -> {
                 onScreenOpenNotificationPermissionLauncher
@@ -207,6 +203,7 @@ private fun Content(
         } else {
             GroupViewPager(
                 modifier = Modifier.padding(top = 16.dp),
+                pagerState = state.pagerState,
                 groups = state.pages.map { it.group },
             ) { index ->
                 GroupPage(
