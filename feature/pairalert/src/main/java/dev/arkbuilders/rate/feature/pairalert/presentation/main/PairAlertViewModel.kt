@@ -50,6 +50,8 @@ sealed class PairAlertEffect {
     ) : PairAlertEffect()
 
     data class ShowRemovedSnackbar(val pair: PairAlert) : PairAlertEffect()
+
+    data class SelectGroup(val groupIndex: Int) : PairAlertEffect()
 }
 
 class PairAlertViewModel(
@@ -88,13 +90,24 @@ class PairAlertViewModel(
         }
     }
 
-    private fun init() =
-        intent {
-            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
-                postSideEffect(PairAlertEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
+    private fun init() {
+        AppSharedFlow.SelectGroupPairAlert.flow.onEach { group ->
+            intent {
+                val page = state.pages.find { it.group == group }
+                val index = page?.let { state.pages.indexOf(it) }
+                if (index != null && index != -1)
+                    postSideEffect(PairAlertEffect.SelectGroup(index))
+            }
+        }.launchIn(viewModelScope)
 
-            pairAlertRepo.getAllFlow().onEach { all ->
+        AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+            intent {
+                postSideEffect(PairAlertEffect.ShowSnackbarAdded(visuals))
+            }
+        }.launchIn(viewModelScope)
+
+        pairAlertRepo.getAllFlow().onEach { all ->
+            intent {
                 val pages =
                     all.reversed().groupBy { it.group }
                         .map { (group, pairAlertList) ->
@@ -106,13 +119,12 @@ class PairAlertViewModel(
 
                             PairAlertScreenPage(group, created, oneTimeTriggered)
                         }
-                intent {
-                    reduce {
-                        state.copy(pages = pages, initialized = true)
-                    }
+                reduce {
+                    state.copy(pages = pages, initialized = true)
                 }
-            }.launchIn(viewModelScope)
-        }
+            }
+        }.launchIn(viewModelScope)
+    }
 
     fun onNewPair(pairId: Long? = null) =
         intent {

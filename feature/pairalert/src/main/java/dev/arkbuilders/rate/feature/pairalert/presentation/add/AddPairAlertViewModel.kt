@@ -210,6 +210,7 @@ class AddPairAlertViewModel(
                 )
             pairAlertRepo.insert(pairAlert)
             codeUseStatRepo.codesUsed(pairAlert.baseCode, pairAlert.targetCode)
+            AppSharedFlow.SelectGroupPairAlert.flow.emit(state.group)
             postSideEffect(AddPairAlertScreenEffect.NotifyPairAdded(pairAlert))
             postSideEffect(AddPairAlertScreenEffect.NavigateBack)
         }
@@ -316,8 +317,8 @@ class AddPairAlertViewModel(
                     fromCode = pair.targetCode,
                     toCode = pair.baseCode,
                 )
-            val state =
-                AddPairAlertScreenState(
+            reduce {
+                state.copy(
                     targetCode = pair.targetCode,
                     baseCode = pair.baseCode,
                     priceOrPercent = priceOrPercent,
@@ -327,7 +328,7 @@ class AddPairAlertViewModel(
                     oneTimeNotRecurrent = pair.oneTimeNotRecurrent,
                     editExisting = true,
                 )
-            reduce { state }
+            }
         }
 
     private fun checkFinishEnabled() =

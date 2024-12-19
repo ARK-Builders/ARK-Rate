@@ -143,7 +143,7 @@ class PortfolioViewModel(
         }
 
     private fun initPages() =
-        blockingIntent {
+        intent {
             val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
             val assets = assetsRepo.allAssets().reversed()
             val groups = assets.groupBy(keySelector = { it.group })

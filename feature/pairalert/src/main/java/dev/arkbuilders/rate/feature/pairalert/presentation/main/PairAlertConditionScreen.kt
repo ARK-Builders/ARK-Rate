@@ -136,6 +136,8 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
                     )
                 snackState.showSnackbar(visuals)
             }
+
+            is PairAlertEffect.SelectGroup -> viewModel.pagerState.scrollToPage(effect.groupIndex)
         }
     }
 
