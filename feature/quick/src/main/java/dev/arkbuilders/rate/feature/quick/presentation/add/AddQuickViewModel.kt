@@ -159,6 +159,7 @@ class AddQuickViewModel(
                 quick.from,
                 *quick.to.map { it.code }.toTypedArray(),
             )
+            AppSharedFlow.SelectGroupQuick.flow.emit(state.group)
             postSideEffect(AddQuickScreenEffect.NotifyPairAdded(quick))
             postSideEffect(AddQuickScreenEffect.NavigateBack)
         }
