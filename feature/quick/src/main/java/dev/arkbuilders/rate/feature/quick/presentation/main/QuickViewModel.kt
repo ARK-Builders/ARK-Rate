@@ -15,6 +15,7 @@ import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.ui.RatePagerState
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
@@ -47,7 +48,9 @@ data class QuickScreenState(
     val optionsData: OptionsData? = null,
     val initialized: Boolean = false,
     val noInternet: Boolean = false,
-)
+) {
+    fun currentGroup(index: Int) = pages.getOrNull(index)?.group
+}
 
 sealed class QuickScreenEffect {
     data class ShowSnackbarAdded(
@@ -55,6 +58,8 @@ sealed class QuickScreenEffect {
     ) : QuickScreenEffect()
 
     data class ShowRemovedSnackbar(val pair: QuickPair) : QuickScreenEffect()
+
+    data class SelectGroup(val groupIndex: Int) : QuickScreenEffect()
 }
 
 class QuickViewModel(
@@ -68,6 +73,8 @@ class QuickViewModel(
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
     override val container: Container<QuickScreenState, QuickScreenEffect> =
         container(QuickScreenState())
+
+    val pagerState = RatePagerState(updatedPageCount = { container.stateFlow.value.pages.size })
 
     init {
         analyticsManager.trackScreen("QuickScreen")
@@ -84,25 +91,35 @@ class QuickViewModel(
         }
     }
 
-    private fun init() =
-        intent {
-            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+    private fun init() {
+        AppSharedFlow.SelectGroupQuick.flow.onEach { group ->
+            intent {
+                val page = state.pages.find { it.group == group }
+                val index = page?.let { state.pages.indexOf(it) }
+                if (index != null && index != -1)
+                    postSideEffect(QuickScreenEffect.SelectGroup(index))
+            }
+        }.launchIn(viewModelScope)
+
+        AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+            intent {
                 postSideEffect(QuickScreenEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
+            }
+        }.launchIn(viewModelScope)
 
-            quickRepo.allFlow().drop(1).onEach { quick ->
-                intent {
-                    val pages = mapPairsToPages(quick)
-                    reduce {
-                        state.copy(
-                            pages = pages,
-                        )
-                    }
+        quickRepo.allFlow().drop(1).onEach { quick ->
+            intent {
+                val pages = mapPairsToPages(quick)
+                reduce {
+                    state.copy(
+                        pages = pages,
+                    )
                 }
-            }.launchIn(viewModelScope)
+            }
+        }.launchIn(viewModelScope)
 
-            val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
-            calcFrequentCurrUseCase.flow().drop(1).onEach {
+        calcFrequentCurrUseCase.flow().drop(1).onEach {
+            intent {
                 val frequent =
                     calcFrequentCurrUseCase.invoke()
                         .map { currencyRepo.nameByCodeUnsafe(it) }
@@ -113,8 +130,11 @@ class QuickViewModel(
                         topResults = topResults,
                     )
                 }
-            }.launchIn(viewModelScope)
+            }
+        }.launchIn(viewModelScope)
 
+        intent {
+            val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
             val frequent =
                 calcFrequentCurrUseCase()
                     .map { currencyRepo.nameByCodeUnsafe(it) }
@@ -130,6 +150,7 @@ class QuickViewModel(
                 )
             }
         }
+    }
 
     fun onRefreshClick() =
         intent {

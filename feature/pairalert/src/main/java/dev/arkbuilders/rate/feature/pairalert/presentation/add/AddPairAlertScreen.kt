@@ -2,6 +2,7 @@
 
 package dev.arkbuilders.rate.feature.pairalert.presentation.add
 
+import android.os.Parcelable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -61,14 +62,21 @@ import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponentHolder
 import dev.arkbuilders.rate.feature.search.presentation.destinations.SearchCurrencyScreenDestination
+import kotlinx.parcelize.Parcelize
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import dev.arkbuilders.rate.core.presentation.R as CoreR
 
+@Parcelize
+data class AddPairAlertScreenArgs(
+    val pairAlertId: Long? = null,
+    val group: String?,
+) : Parcelable
+
 @Destination
 @Composable
 fun AddPairAlertScreen(
-    pairAlertId: Long? = null,
+    args: AddPairAlertScreenArgs,
     navigator: DestinationsNavigator,
 ) {
     val ctx = LocalContext.current
@@ -78,7 +86,7 @@ fun AddPairAlertScreen(
         }
     val viewModel: AddPairAlertViewModel =
         viewModel(
-            factory = component.addPairAlertVMFactory().create(pairAlertId),
+            factory = component.addPairAlertVMFactory().create(args),
         )
 
     val state by viewModel.collectAsState()

@@ -12,6 +12,7 @@ import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.ui.RatePagerState
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioScope
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
@@ -34,7 +35,9 @@ data class PortfolioScreenState(
     val pages: List<PortfolioScreenPage> = emptyList(),
     val initialized: Boolean = false,
     val noInternet: Boolean = false,
-)
+) {
+    fun currentGroup(index: Int) = pages.getOrNull(index)?.group
+}
 
 data class PortfolioScreenPage(
     val group: String?,
@@ -53,6 +56,8 @@ sealed class PortfolioScreenEffect {
     ) : PortfolioScreenEffect()
 
     data class ShowRemovedSnackbar(val asset: Asset) : PortfolioScreenEffect()
+
+    data class SelectGroup(val groupIndex: Int) : PortfolioScreenEffect()
 }
 
 class PortfolioViewModel(
@@ -64,6 +69,8 @@ class PortfolioViewModel(
 ) : ViewModel(), ContainerHost<PortfolioScreenState, PortfolioScreenEffect> {
     override val container: Container<PortfolioScreenState, PortfolioScreenEffect> =
         container(PortfolioScreenState())
+
+    val pagerState = RatePagerState(updatedPageCount = { container.stateFlow.value.pages.size })
 
     init {
         analyticsManager.trackScreen("PortfolioScreen")
@@ -80,22 +87,32 @@ class PortfolioViewModel(
         }
     }
 
-    private fun init() =
-        intent {
-            initPages()
+    private fun init() {
+        initPages()
 
-            AppSharedFlow.ShowAddedSnackbarPortfolio.flow.onEach { visuals ->
+        AppSharedFlow.SelectGroupPortfolio.flow.onEach { group ->
+            intent {
+                val page = state.pages.find { it.group == group }
+                val index = page?.let { state.pages.indexOf(it) }
+                if (index != null && index != -1)
+                    postSideEffect(PortfolioScreenEffect.SelectGroup(index))
+            }
+        }.launchIn(viewModelScope)
+
+        AppSharedFlow.ShowAddedSnackbarPortfolio.flow.onEach { visuals ->
+            intent {
                 postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
+            }
+        }.launchIn(viewModelScope)
 
-            prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
-                initPages()
-            }.launchIn(viewModelScope)
+        prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
+            initPages()
+        }.launchIn(viewModelScope)
 
-            assetsRepo.allAssetsFlow().drop(1).onEach {
-                initPages()
-            }.launchIn(viewModelScope)
-        }
+        assetsRepo.allAssetsFlow().drop(1).onEach {
+            initPages()
+        }.launchIn(viewModelScope)
+    }
 
     fun onRefreshClick() =
         intent {

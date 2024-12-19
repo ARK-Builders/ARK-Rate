@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -62,6 +63,7 @@ import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
+import dev.arkbuilders.rate.feature.portfolio.presentation.add.AddAssetScreenArgs
 import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.AddAssetScreenDestination
 import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.EditAssetScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
@@ -106,6 +108,9 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                     )
                 snackState.showSnackbar(visuals)
             }
+
+            is PortfolioScreenEffect.SelectGroup ->
+                viewModel.pagerState.scrollToPage(effect.groupIndex)
         }
     }
 
@@ -124,7 +129,16 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                 containerColor = ArkColor.Secondary,
                 shape = CircleShape,
                 onClick = {
-                    navigator.navigate(AddAssetScreenDestination)
+                    navigator.navigate(
+                        AddAssetScreenDestination(
+                            AddAssetScreenArgs(
+                                group =
+                                    state.currentGroup(
+                                        viewModel.pagerState.currentPage,
+                                    ),
+                            ),
+                        ),
+                    )
                 },
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
@@ -148,6 +162,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                         },
                         onFilterChange = viewModel::onFilterChange,
                         onDelete = viewModel::onAssetRemove,
+                        pagerState = viewModel.pagerState,
                     )
             }
         }
@@ -176,13 +191,13 @@ private val previewState =
             ),
     )
 
-@Preview(showBackground = true)
 @Composable
 private fun Content(
     state: PortfolioScreenState = previewState,
     onClick: (PortfolioDisplayAsset) -> Unit = {},
     onFilterChange: (String) -> Unit = {},
     onDelete: (Asset) -> Unit = {},
+    pagerState: PagerState,
 ) {
     val groups = state.pages.map { it.group }
     Column {
@@ -208,6 +223,7 @@ private fun Content(
         } else {
             GroupViewPager(
                 modifier = Modifier.padding(top = 20.dp),
+                pagerState = pagerState,
                 groups = groups,
             ) { index ->
                 GroupPage(
@@ -396,7 +412,7 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
             AppButton(
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {
-                    navigator.navigate(AddAssetScreenDestination)
+                    navigator.navigate(AddAssetScreenDestination(AddAssetScreenArgs(group = null)))
                 },
             ) {
                 Icon(

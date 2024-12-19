@@ -7,10 +7,12 @@ import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.ui.RatePagerState
 import dev.arkbuilders.rate.feature.pairalert.data.permission.NotificationPermissionHelper
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertScope
 import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
 import dev.arkbuilders.rate.feature.pairalert.domain.repo.PairAlertRepo
+import dev.arkbuilders.rate.feature.pairalert.presentation.add.AddPairAlertScreenArgs
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
@@ -32,10 +34,12 @@ data class PairAlertScreenState(
     val initialized: Boolean = false,
     val noInternet: Boolean = false,
     val askNotificationPermissionPairId: Long? = null,
-)
+) {
+    fun currentGroup(index: Int) = pages.getOrNull(index)?.group
+}
 
 sealed class PairAlertEffect {
-    data class NavigateToAdd(val pairId: Long? = null) : PairAlertEffect()
+    data class NavigateToAdd(val args: AddPairAlertScreenArgs) : PairAlertEffect()
 
     data object AskNotificationPermissionOnScreenOpen : PairAlertEffect()
 
@@ -46,6 +50,8 @@ sealed class PairAlertEffect {
     ) : PairAlertEffect()
 
     data class ShowRemovedSnackbar(val pair: PairAlert) : PairAlertEffect()
+
+    data class SelectGroup(val groupIndex: Int) : PairAlertEffect()
 }
 
 class PairAlertViewModel(
@@ -58,6 +64,8 @@ class PairAlertViewModel(
         container(
             PairAlertScreenState(),
         )
+
+    val pagerState = RatePagerState(updatedPageCount = { container.stateFlow.value.pages.size })
 
     init {
         analyticsManager.trackScreen("PairAlertScreen")
@@ -82,13 +90,24 @@ class PairAlertViewModel(
         }
     }
 
-    private fun init() =
-        intent {
-            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
-                postSideEffect(PairAlertEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
+    private fun init() {
+        AppSharedFlow.SelectGroupPairAlert.flow.onEach { group ->
+            intent {
+                val page = state.pages.find { it.group == group }
+                val index = page?.let { state.pages.indexOf(it) }
+                if (index != null && index != -1)
+                    postSideEffect(PairAlertEffect.SelectGroup(index))
+            }
+        }.launchIn(viewModelScope)
 
-            pairAlertRepo.getAllFlow().onEach { all ->
+        AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
+            intent {
+                postSideEffect(PairAlertEffect.ShowSnackbarAdded(visuals))
+            }
+        }.launchIn(viewModelScope)
+
+        pairAlertRepo.getAllFlow().onEach { all ->
+            intent {
                 val pages =
                     all.reversed().groupBy { it.group }
                         .map { (group, pairAlertList) ->
@@ -100,18 +119,24 @@ class PairAlertViewModel(
 
                             PairAlertScreenPage(group, created, oneTimeTriggered)
                         }
-                intent {
-                    reduce {
-                        state.copy(pages = pages, initialized = true)
-                    }
+                reduce {
+                    state.copy(pages = pages, initialized = true)
                 }
-            }.launchIn(viewModelScope)
-        }
+            }
+        }.launchIn(viewModelScope)
+    }
 
     fun onNewPair(pairId: Long? = null) =
         intent {
             if (notificationPermissionHelper.isGranted()) {
-                postSideEffect(PairAlertEffect.NavigateToAdd(pairId))
+                postSideEffect(
+                    PairAlertEffect.NavigateToAdd(
+                        AddPairAlertScreenArgs(
+                            pairId,
+                            state.currentGroup(pagerState.currentPage),
+                        ),
+                    ),
+                )
             } else {
                 reduce {
                     state.copy(askNotificationPermissionPairId = pairId)
@@ -122,7 +147,14 @@ class PairAlertViewModel(
 
     fun onNotificationPermissionGrantedOnNewPair() =
         intent {
-            postSideEffect(PairAlertEffect.NavigateToAdd(state.askNotificationPermissionPairId))
+            postSideEffect(
+                PairAlertEffect.NavigateToAdd(
+                    AddPairAlertScreenArgs(
+                        state.askNotificationPermissionPairId,
+                        state.currentGroup(pagerState.currentPage),
+                    ),
+                ),
+            )
             reduce {
                 state.copy(askNotificationPermissionPairId = null)
             }
