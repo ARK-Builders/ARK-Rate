@@ -37,6 +37,11 @@ workRuntimeKtx = "2.8.1"
 appcompat = "1.7.0"
 material = "1.12.0"
 gson = "2.11.0"
+playServicesWearable = "18.2.0"
+composeBom = "2023.08.00"
+composeMaterial = "1.2.1"
+composeFoundation = "1.2.1"
+coreSplashscreen = "1.0.1"
 
 [libraries]
 ark-about = { module = "dev.arkbuilders.components:about", version.ref = "arkAbout" }
@@ -85,7 +90,13 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
+androidx-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
+androidApplication = { id = "com.android.application", version.ref = "agp" }
