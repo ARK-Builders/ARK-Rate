@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -25,6 +26,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,7 +62,7 @@ import dev.arkbuilders.rate.core.presentation.AppSharedFlowKey
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppButton
-import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv16
+import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.core.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.core.presentation.ui.DropDownWithIcon
@@ -171,6 +173,7 @@ private fun Content(
     onCurrencyRemove: (Int) -> Unit = {},
     onGroupSelect: (String) -> Unit = {},
     onCodeChange: (Int) -> Unit = {},
+    onSwapClick: () -> Unit = {},
     onAddAsset: () -> Unit = {},
 ) {
     var showNewGroupDialog by remember { mutableStateOf(false) }
@@ -190,7 +193,7 @@ private fun Content(
                     .weight(1f)
                     .verticalScroll(rememberScrollState()),
         ) {
-            Currencies(state, onAmountChanged, onCurrencyRemove, onCodeChange)
+            Currencies(state, onAmountChanged, onCurrencyRemove, onCodeChange, onSwapClick)
             Button(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                 shape = RoundedCornerShape(8.dp),
@@ -283,6 +286,7 @@ private fun Currencies(
     onAmountChanged: (String) -> Unit,
     onCurrencyRemove: (Int) -> Unit,
     onCodeChange: (Int) -> Unit,
+    onSwapClick: () -> Unit,
 ) {
     val from = state.currencies.first()
     Text(
@@ -298,7 +302,7 @@ private fun Currencies(
         onAmountChanged = onAmountChanged,
         onCodeChange = onCodeChange,
     )
-    AppHorDiv16(modifier = Modifier.padding(top = 16.dp))
+    SwapBtn(modifier = Modifier.padding(top = 16.dp), onClick = onSwapClick)
     Text(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp),
         text = "To",
@@ -472,5 +476,26 @@ private fun ToResult(
                 tint = ArkColor.FGSecondary,
             )
         }
+    }
+}
+
+@Composable
+private fun SwapBtn(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        AppHorDiv(modifier = Modifier.weight(1f).padding(start = 16.dp, end = 12.dp))
+        OutlinedButton(
+            modifier = Modifier.size(40.dp),
+            shape = CircleShape,
+            border = BorderStroke(1.dp, ArkColor.BorderSecondary),
+            contentPadding = PaddingValues(0.dp),
+            onClick = onClick,
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black),
+        ) {
+            Icon(painter = painterResource(R.drawable.ic_refresh), contentDescription = null)
+        }
+        AppHorDiv(modifier = Modifier.weight(1f).padding(start = 12.dp, end = 16.dp))
     }
 }
