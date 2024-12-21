@@ -167,6 +167,32 @@ class AddQuickViewModel(
             checkFinishEnabled()
         }
 
+    fun onSwapClick() =
+        intent {
+            if (state.currencies.size < 2)
+                return@intent
+
+            val newFrom =
+                state.currencies.last().let { amount ->
+                    if (amount.value.isEmpty())
+                        return@let amount
+
+                    val withoutCommas = amount.value.replace(",", "")
+                    amount.copy(value = CurrUtils.roundOff(withoutCommas.toBigDecimalArk()))
+                }
+            val newList =
+                state.currencies.toMutableList().apply {
+                    removeLast()
+                    add(0, newFrom)
+                }
+
+            val calc = calcToResult(newList)
+
+            reduce {
+                state.copy(currencies = calc)
+            }
+        }
+
     fun onAddQuickPair() =
         intent {
             val from = state.currencies.first()
