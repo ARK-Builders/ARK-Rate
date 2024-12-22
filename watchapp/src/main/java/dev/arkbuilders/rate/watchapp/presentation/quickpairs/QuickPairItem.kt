@@ -41,7 +41,7 @@ import java.time.OffsetDateTime
 @Composable
 fun QuickPairItem(
     modifier: Modifier = Modifier,
-    quick: PinnedQuickPair,
+    quick: QuickPair,
 ) {
     var isExpanded by remember {
         mutableStateOf(true)
@@ -56,9 +56,9 @@ fun QuickPairItem(
         Row(modifier = modifier.align(Alignment.Start)) {
             CurrIcon(
                 modifier = modifier.size(16.dp),
-                code = quick.pair.from
+                code = quick.from
             )
-            if (quick.pair.to.size > 1) {
+            if (quick.to.size > 1) {
                 Box(
                     modifier =
                     modifier
@@ -67,7 +67,7 @@ fun QuickPairItem(
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
-                        text = "+ ${quick.pair.to.size}",
+                        text = "+ ${quick.to.size}",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 8.sp,
                         color = ArkColor.TextTertiary,
@@ -76,7 +76,7 @@ fun QuickPairItem(
             } else {
                 CurrIcon(
                     modifier = modifier.size(16.dp),
-                    code = quick.pair.to.first().code
+                    code = quick.to.first().code
                 )
             }
 
@@ -90,9 +90,9 @@ fun QuickPairItem(
         if (isExpanded) {
             Text(
                 modifier = modifier.fillMaxWidth(),
-                text = "${CurrUtils.prepareToDisplay(quick.pair.amount)} ${quick.pair.from} = ",
+                text = "${CurrUtils.prepareToDisplay(quick.amount)} ${quick.from} = ",
             )
-            quick.pair.to.forEach {
+            quick.to.forEach {
                 Row(
                     modifier = Modifier.padding(top = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -112,8 +112,8 @@ fun QuickPairItem(
         } else {
             Text(
                 modifier = modifier.fillMaxWidth(),
-                text = "${quick.pair.from} to ${
-                    quick.pair.to.joinToString(
+                text = "${quick.from} to ${
+                    quick.to.joinToString(
                         separator = ", ",
                     ) { it.code }
                 }",
@@ -121,8 +121,8 @@ fun QuickPairItem(
             Text(
                 modifier = modifier.fillMaxWidth(),
                 text =
-                "${CurrUtils.prepareToDisplay(quick.pair.amount)} ${quick.pair.from} = " +
-                    "${CurrUtils.prepareToDisplay(quick.pair.to.first().value)} ${quick.pair.to.first().code}",
+                "${CurrUtils.prepareToDisplay(quick.amount)} ${quick.from} = " +
+                    "${CurrUtils.prepareToDisplay(quick.to.first().value)} ${quick.to.first().code}",
             )
         }
     }
@@ -147,21 +147,17 @@ fun CurrIcon(
 @Composable
 fun QuickPairItemPreview() {
     QuickPairItem(
-        quick = PinnedQuickPair(
-            pair = QuickPair(
-                id = 1,
-                from = "BTC",
-                amount = BigDecimal.valueOf(1.2),
-                to = listOf(
-                    Amount("USD", BigDecimal.valueOf(12.0)),
-                    Amount("EUR", BigDecimal.valueOf(12.0))
-                ),
-                calculatedDate = OffsetDateTime.now(),
-                pinnedDate = null,
-                group = null
+        quick = QuickPair(
+            id = 1,
+            from = "BTC",
+            amount = BigDecimal.valueOf(1.2),
+            to = listOf(
+                Amount("USD", BigDecimal.valueOf(12.0)),
+                Amount("EUR", BigDecimal.valueOf(12.0))
             ),
-            actualTo = listOf(Amount("USD", BigDecimal.valueOf(12.0))),
-            refreshDate = OffsetDateTime.now(),
+            calculatedDate = OffsetDateTime.now(),
+            pinnedDate = null,
+            group = null
         )
     )
 }
