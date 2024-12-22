@@ -193,6 +193,19 @@ class AddQuickViewModel(
             }
         }
 
+    fun onPairsSwap(
+        from: Int,
+        to: Int,
+    ) = intent {
+        val new =
+            state.currencies.toMutableList().apply {
+                add(to, removeAt(from))
+            }
+        reduce {
+            state.copy(currencies = new)
+        }
+    }
+
     fun onAddQuickPair() =
         intent {
             val from = state.currencies.first()
