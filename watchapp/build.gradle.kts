@@ -4,12 +4,11 @@ plugins {
 }
 android {
     namespace = "dev.arkbuilders.rate.watchapp"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "dev.arkbuilders.rate.watchapp"
-        minSdk = 29
-        targetSdk = 34
+        minSdk = libs.versions.minSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
         vectorDrawables {

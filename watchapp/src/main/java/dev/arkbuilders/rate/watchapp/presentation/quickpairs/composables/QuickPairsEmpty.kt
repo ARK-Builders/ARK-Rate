@@ -3,6 +3,7 @@ package dev.arkbuilders.rate.watchapp.presentation.quickpairs.composables
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,16 +36,18 @@ fun QuickPairsEmpty(
             tint = Color.Unspecified,
         )
         Text(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = modifier
+                .padding(horizontal = 8.dp)
+                .fillMaxWidth(),
             text = "Empty Here, But Full of Possibilities!",
             fontWeight = FontWeight.SemiBold,
-            fontSize = 20.sp,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center,
         )
         Text(
-            modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
+            modifier = modifier.padding(start = 24.dp, end = 24.dp),
             text = "Calculate currency from Rate App",
-            fontSize = 14.sp,
-            lineHeight = 20.sp,
+            fontSize = 12.sp,
             color = ArkColor.TextTertiary,
             textAlign = TextAlign.Center,
         )
