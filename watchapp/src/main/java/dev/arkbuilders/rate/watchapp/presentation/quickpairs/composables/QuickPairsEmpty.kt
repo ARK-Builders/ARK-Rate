@@ -1,6 +1,5 @@
 package dev.arkbuilders.rate.watchapp.presentation.quickpairs.composables
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,16 +18,13 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Text
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
-import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
 @Composable
 fun QuickPairsEmpty(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
         Icon(
             painter = painterResource(id = CoreRDrawable.ic_empty_quick),
@@ -45,10 +41,10 @@ fun QuickPairsEmpty(
             textAlign = TextAlign.Center,
         )
         Text(
-            modifier = modifier.padding(start = 24.dp, end = 24.dp),
+            modifier = modifier.fillMaxWidth()
+                .padding(horizontal = 8.dp),
             text = "Calculate currency from Rate App",
             fontSize = 12.sp,
-            color = ArkColor.TextTertiary,
             textAlign = TextAlign.Center,
         )
 
@@ -57,6 +53,6 @@ fun QuickPairsEmpty(
 
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
 @Composable
-fun QuickPairItemPreview() {
+fun QuickPairEmptyPreview() {
     QuickPairsEmpty()
 }
