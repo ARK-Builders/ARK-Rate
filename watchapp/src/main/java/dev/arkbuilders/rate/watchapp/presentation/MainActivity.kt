@@ -1,9 +1,3 @@
-/* While this template provides a good starting point for using Wear Compose, you can always
- * take a look at https://github.com/android/wear-os-samples/tree/main/ComposeStarter and
- * https://github.com/android/wear-os-samples/tree/main/ComposeAdvanced to find the most up to date
- * changes to the libraries and their usages.
- */
-
 package dev.arkbuilders.rate.watchapp.presentation
 
 import android.os.Bundle
@@ -22,9 +16,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
+import androidx.wear.compose.material.Vignette
+import androidx.wear.compose.material.VignettePosition
 import dev.arkbuilders.rate.watchapp.R
+import dev.arkbuilders.rate.watchapp.presentation.quickpairs.QuickPairsScreen
 import dev.arkbuilders.rate.watchapp.presentation.theme.ArkrateTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +34,14 @@ class MainActivity : ComponentActivity() {
         setTheme(android.R.style.Theme_DeviceDefault)
 
         setContent {
-            WearApp("Android")
+            Scaffold(
+                vignette = {
+                    Vignette(vignettePosition = VignettePosition.TopAndBottom)
+                }
+            ) {
+                QuickPairsScreen()
+            }
+
         }
     }
 }
