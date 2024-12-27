@@ -85,7 +85,7 @@ private fun Content(
         Text(
             modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp, bottom = 36.dp),
             text = desc,
-            fontSize = 18.sp,
+            fontSize = 14.sp,
             color = ArkColor.TextTertiary,
         )
     }

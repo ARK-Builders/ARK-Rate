@@ -48,8 +48,7 @@ import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.core.presentation.ui.ArkCursorLargeTextField
-import dev.arkbuilders.rate.core.presentation.ui.InfoMarketCapitalizationDialog
-import dev.arkbuilders.rate.core.presentation.ui.InfoValueOfCirculatingDialog
+import dev.arkbuilders.rate.core.presentation.ui.InfoDialog
 import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
 import dev.arkbuilders.rate.feature.search.presentation.destinations.SearchCurrencyScreenDestination
@@ -114,11 +113,19 @@ private fun Content(
     }
 
     if (showMarketCapitalizationDialog) {
-        InfoMarketCapitalizationDialog { showMarketCapitalizationDialog = false }
+        InfoDialog(
+            title = stringResource(id = CoreRString.info_dialog_market_capitalization),
+            desc = stringResource(id = CoreRString.info_dialog_market_capitalization_description),
+            onDismiss = { showMarketCapitalizationDialog = false },
+        )
     }
 
     if (showValueOfCirculatingDialog) {
-        InfoValueOfCirculatingDialog { showValueOfCirculatingDialog = false }
+        InfoDialog(
+            title = stringResource(id = CoreRString.info_dialog_value_of_circulating),
+            desc = stringResource(id = CoreRString.info_dialog_value_of_circulating_description),
+            onDismiss = { showValueOfCirculatingDialog = false },
+        )
     }
 
     Column(
