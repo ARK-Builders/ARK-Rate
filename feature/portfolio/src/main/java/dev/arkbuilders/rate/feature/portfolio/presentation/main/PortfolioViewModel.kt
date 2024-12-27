@@ -53,6 +53,8 @@ sealed class PortfolioScreenEffect {
     ) : PortfolioScreenEffect()
 
     data class ShowRemovedSnackbar(val asset: Asset) : PortfolioScreenEffect()
+
+    data object NavigateBack : PortfolioScreenEffect()
 }
 
 class PortfolioViewModel(
@@ -123,6 +125,17 @@ class PortfolioViewModel(
     fun onFilterChange(filter: String) =
         blockingIntent {
             reduce { state.copy(filter = filter) }
+        }
+
+    fun onBackClick() =
+        intent {
+            if (state.filter.isNotEmpty()) {
+                reduce {
+                    state.copy(filter = "")
+                }
+            } else {
+                postSideEffect(PortfolioScreenEffect.NavigateBack)
+            }
         }
 
     private fun initPages() =

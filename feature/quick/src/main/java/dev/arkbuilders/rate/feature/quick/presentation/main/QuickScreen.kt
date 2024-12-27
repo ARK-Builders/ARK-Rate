@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.feature.quick.presentation.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -67,6 +68,7 @@ import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
+import dev.arkbuilders.rate.core.presentation.utils.findActivity
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
@@ -92,6 +94,10 @@ fun QuickScreen(navigator: DestinationsNavigator) {
         viewModel(
             factory = component.quickVMFactory().create(),
         )
+
+    BackHandler {
+        viewModel.onBackClick()
+    }
 
     val state by viewModel.collectAsState()
     val snackState = remember { SnackbarHostState() }
@@ -121,6 +127,8 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                     )
                 snackState.showSnackbar(visuals)
             }
+
+            QuickScreenEffect.NavigateBack -> ctx.findActivity()?.finish()
         }
     }
 
