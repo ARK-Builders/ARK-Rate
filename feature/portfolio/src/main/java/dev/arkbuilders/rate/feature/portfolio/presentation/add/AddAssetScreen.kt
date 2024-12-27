@@ -100,6 +100,23 @@ fun AddAssetScreen(navigator: DestinationsNavigator) {
                     ),
                 )
             }
+
+            is AddAssetSideEffect.NavigateSearchAdd ->
+                navigator.navigate(
+                    SearchCurrencyScreenDestination(
+                        appSharedFlowKeyString = AppSharedFlowKey.AddAsset.toString(),
+                        prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
+                    ),
+                )
+
+            is AddAssetSideEffect.NavigateSearchSet ->
+                navigator.navigate(
+                    SearchCurrencyScreenDestination(
+                        appSharedFlowKeyString = AppSharedFlowKey.SetAssetCode.name,
+                        pos = effect.index,
+                        prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
+                    ),
+                )
         }
     }
 
@@ -115,18 +132,10 @@ fun AddAssetScreen(navigator: DestinationsNavigator) {
             Content(
                 state = state,
                 onAssetValueChanged = viewModel::onAssetValueChange,
-                onNewCurrencyClick = {
-                    navigator.navigate(
-                        SearchCurrencyScreenDestination(AppSharedFlowKey.AddAsset.toString()),
-                    )
-                },
+                onNewCurrencyClick = viewModel::onAddCode,
                 onAssetRemove = viewModel::onAssetRemove,
                 onGroupSelect = viewModel::onGroupSelect,
-                onCodeChange = {
-                    navigator.navigate(
-                        SearchCurrencyScreenDestination(AppSharedFlowKey.SetAssetCode.name, it),
-                    )
-                },
+                onCodeChange = viewModel::onSetCode,
                 onAddAsset = viewModel::onAddAsset,
             )
         }

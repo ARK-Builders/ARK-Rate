@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.CurrencyName
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
@@ -28,6 +29,7 @@ data class SearchScreenState(
     val topResults: List<CurrencyName> = emptyList(),
     val topResultsFiltered: List<CurrencyName> = emptyList(),
     val initialized: Boolean = false,
+    val showCodeProhibitedDialog: Boolean = false,
 )
 
 sealed class SearchScreenEffect {
@@ -37,6 +39,7 @@ sealed class SearchScreenEffect {
 class SearchViewModel(
     private val appSharedFlowKeyString: String,
     private val pos: Int?,
+    private val prohibitedCodes: List<CurrencyCode>?,
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val getTopResultUseCase: GetTopResultUseCase,
@@ -80,8 +83,22 @@ class SearchViewModel(
 
     fun onClick(name: CurrencyName) =
         intent {
+            prohibitedCodes?.let {
+                if (name.code in prohibitedCodes) {
+                    reduce {
+                        state.copy(showCodeProhibitedDialog = true)
+                    }
+                    return@intent
+                }
+            }
+
             emitResult(name)
             postSideEffect(SearchScreenEffect.NavigateBack)
+        }
+
+    fun onCodeProhibitedDialogDismiss() =
+        intent {
+            reduce { state.copy(showCodeProhibitedDialog = false) }
         }
 
     private suspend fun emitResult(name: CurrencyName) {
@@ -113,6 +130,7 @@ class SearchViewModel(
 class SearchViewModelFactory @AssistedInject constructor(
     @Assisted private val appSharedFlowKeyString: String,
     @Assisted private val pos: Int?,
+    @Assisted private val prohibitedCodes: List<CurrencyCode>?,
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val getTopResultUseCase: GetTopResultUseCase,
@@ -122,6 +140,7 @@ class SearchViewModelFactory @AssistedInject constructor(
         return SearchViewModel(
             appSharedFlowKeyString,
             pos,
+            prohibitedCodes,
             currencyRepo,
             calcFrequentCurrUseCase,
             getTopResultUseCase,
@@ -135,6 +154,7 @@ class SearchViewModelFactory @AssistedInject constructor(
         fun create(
             appSharedFlowKeyString: String,
             pos: Int?,
+            prohibitedCodes: List<CurrencyCode>?,
         ): SearchViewModelFactory
     }
 }

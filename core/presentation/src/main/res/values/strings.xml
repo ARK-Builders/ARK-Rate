@@ -64,6 +64,9 @@
     <string name="settings_latest_rates_refresh">Latest rates refresh</string>
     <string name="settings_latest_alerts_check">Latest alerts check</string>
 
+    <string name="search_currency_already_selected">Currency already selected</string>
+    <string name="search_currency_already_selected_desc">Please choose a different currency. Identical currencies cannot be used together.</string>
+
     <string name="group_create_group">Create Group</string>
     <string name="group_please_enter_a_name_for_this_group">Please enter a name for this group.</string>
     <string name="group_name">Group name</string>
