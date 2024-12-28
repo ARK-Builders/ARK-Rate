@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,24 +21,71 @@ import dev.arkbuilders.rate.watchapp.presentation.addquickpairs.composables.Opti
 
 @Composable
 fun AddQuickPairs(modifier: Modifier = Modifier) {
-    Scaffold(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center
-        ) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        item {
+
+
             Text(
                 modifier = modifier.fillMaxWidth(),
                 text = "Options",
                 textAlign = TextAlign.Center
             )
+        }
+        item {
+
             OptionItem(
-                modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally),
-                icon = painterResource(id = CoreRDrawable.ic_download),
+                modifier = Modifier
+                    .fillMaxWidth(),
+                icon = painterResource(id = CoreRDrawable.ic_update),
+                text = stringResource(id = CoreRString.update),
+                onClick = {},
+            )
+        }
+        item {
+
+            OptionItem(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                icon = painterResource(id = CoreRDrawable.ic_pin),
+                text = stringResource(id = CoreRString.pin),
+                onClick = {},
+            )
+        }
+
+        item {
+
+            OptionItem(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                icon = painterResource(id = CoreRDrawable.ic_edit),
                 text = stringResource(id = CoreRString.edit),
                 onClick = {},
             )
         }
 
+        item {
+            OptionItem(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                icon = painterResource(id = CoreRDrawable.ic_reuse),
+                text = stringResource(id = CoreRString.re_use),
+                onClick = {},
+            )
+        }
+        item {
+            OptionItem(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                icon = painterResource(id = CoreRDrawable.ic_delete),
+                text = stringResource(id = CoreRString.delete),
+                onClick = {},
+                isDeleteButton = true
+            )
+        }
     }
 }
 

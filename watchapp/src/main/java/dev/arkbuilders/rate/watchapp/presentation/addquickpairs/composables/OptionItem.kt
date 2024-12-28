@@ -35,6 +35,7 @@ fun OptionItem(
     icon: Painter,
     text: String,
     onClick: () -> Unit,
+    isDeleteButton: Boolean = false,
 ) {
     OutlinedButton(
         modifier = modifier
@@ -42,11 +43,18 @@ fun OptionItem(
             .padding(8.dp),
         onClick = onClick,
         shape = RoundedCornerShape(20),
-        border = ButtonDefaults.buttonBorder(BorderStroke(1.dp, ArkColor.Border)),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+        border = ButtonDefaults.buttonBorder(
+            borderStroke = BorderStroke(
+                width = 1.dp,
+                color = if (isDeleteButton) Color.Red else ArkColor.Border
+            ),
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = if (isDeleteButton) Color.Red else Color.White),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().align(Alignment.Center),
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -56,7 +64,7 @@ fun OptionItem(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "text",
+                text = text,
                 fontWeight = FontWeight.SemiBold,
             )
         }
