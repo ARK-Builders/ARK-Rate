@@ -13,7 +13,8 @@ import dev.arkbuilders.rate.watchapp.presentation.quickpairs.composables.QuickPa
 @Composable
 fun QuickPairsScreen(
     modifier: Modifier = Modifier,
-    viewModel: QuickPairsViewModel = QuickPairsViewModel()
+    viewModel: QuickPairsViewModel = QuickPairsViewModel(),
+    onNavigateToAdd: () -> Unit
 ) {
     val quickPairsList = viewModel.quickPairs.collectAsState().value
 
@@ -25,7 +26,7 @@ fun QuickPairsScreen(
             contentPadding = PaddingValues(4.dp)
         ) {
             items(quickPairsList.size, key = null) { idx ->
-                QuickPairItem(quick = quickPairsList[idx])
+                QuickPairItem(quick = quickPairsList[idx], onClick = onNavigateToAdd)
             }
         }
     }

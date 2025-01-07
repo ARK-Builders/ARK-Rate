@@ -41,12 +41,13 @@ import java.time.OffsetDateTime
 fun QuickPairItem(
     modifier: Modifier = Modifier,
     quick: QuickPair,
+    onClick: () -> Unit,
 ) {
     var isExpanded by remember {
         mutableStateOf(true)
     }
     Card(
-        onClick = { /*TODO*/ },
+        onClick = onClick,
         modifier = modifier
             .padding(horizontal =  12.dp, vertical = 4.dp)
     ) {
@@ -160,7 +161,8 @@ fun QuickPairItemPreview() {
             calculatedDate = OffsetDateTime.now(),
             pinnedDate = null,
             group = null
-        )
+        ),
+        onClick = {}
     )
 }
 
