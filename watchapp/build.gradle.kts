@@ -52,6 +52,7 @@ dependencies {
     implementation(project(":feature:quick"))
     implementation(project(":core:domain"))
     implementation(project(":core:presentation"))
+    implementation(libs.androidx.compose.material.v140)
 
     implementation(libs.play.services.wearable)
     implementation(platform(libs.androidx.compose.bom))

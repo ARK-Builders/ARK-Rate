@@ -1,10 +1,8 @@
 package dev.arkbuilders.rate.watchapp.presentation.addquickpairs
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,7 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.wear.compose.material.Scaffold
+import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material.Text
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
@@ -21,14 +19,12 @@ import dev.arkbuilders.rate.watchapp.presentation.addquickpairs.composables.Opti
 
 @Composable
 fun AddQuickPairs(modifier: Modifier = Modifier) {
-    LazyColumn(
+    ScalingLazyColumn(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
-
-
             Text(
                 modifier = modifier.fillMaxWidth(),
                 text = "Options",
@@ -36,7 +32,6 @@ fun AddQuickPairs(modifier: Modifier = Modifier) {
             )
         }
         item {
-
             OptionItem(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -46,7 +41,6 @@ fun AddQuickPairs(modifier: Modifier = Modifier) {
             )
         }
         item {
-
             OptionItem(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -57,7 +51,6 @@ fun AddQuickPairs(modifier: Modifier = Modifier) {
         }
 
         item {
-
             OptionItem(
                 modifier = Modifier
                     .fillMaxWidth(),
