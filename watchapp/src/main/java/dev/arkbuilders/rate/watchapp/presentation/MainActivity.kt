@@ -22,8 +22,7 @@ import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
 import dev.arkbuilders.rate.watchapp.R
-import dev.arkbuilders.rate.watchapp.presentation.addquickpairs.AddQuickPairs
-import dev.arkbuilders.rate.watchapp.presentation.quickpairs.QuickPairsScreen
+import dev.arkbuilders.rate.watchapp.presentation.addquickpairs.composables.OptionsMenu
 import dev.arkbuilders.rate.watchapp.presentation.theme.ArkrateTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,7 +39,7 @@ class MainActivity : ComponentActivity() {
                     Vignette(vignettePosition = VignettePosition.TopAndBottom)
                 }
             ) {
-                AddQuickPairs()
+                OptionsMenu()
 //                QuickPairsScreen()
             }
 

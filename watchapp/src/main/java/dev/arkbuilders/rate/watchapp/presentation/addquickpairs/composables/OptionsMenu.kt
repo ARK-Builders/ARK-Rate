@@ -1,4 +1,4 @@
-package dev.arkbuilders.rate.watchapp.presentation.addquickpairs
+package dev.arkbuilders.rate.watchapp.presentation.addquickpairs.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,10 +15,9 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material.Text
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
-import dev.arkbuilders.rate.watchapp.presentation.addquickpairs.composables.OptionItem
 
 @Composable
-fun AddQuickPairs(modifier: Modifier = Modifier) {
+fun OptionsMenu(modifier: Modifier = Modifier) {
     ScalingLazyColumn(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -85,5 +84,5 @@ fun AddQuickPairs(modifier: Modifier = Modifier) {
 @Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
 @Composable
 fun AddQuickPairsPreview() {
-    AddQuickPairs()
+    OptionsMenu()
 }
