@@ -22,12 +22,18 @@ import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
+data class CurrencySearchModel(
+    val code: CurrencyCode,
+    val name: String,
+    val isProhibited: Boolean,
+)
+
 data class SearchScreenState(
-    val frequent: List<CurrencyName> = emptyList(),
-    val all: List<CurrencyName> = emptyList(),
+    val frequent: List<CurrencySearchModel> = emptyList(),
+    val all: List<CurrencySearchModel> = emptyList(),
     val filter: String = "",
-    val topResults: List<CurrencyName> = emptyList(),
-    val topResultsFiltered: List<CurrencyName> = emptyList(),
+    val topResults: List<CurrencySearchModel> = emptyList(),
+    val topResultsFiltered: List<CurrencySearchModel> = emptyList(),
     val initialized: Boolean = false,
     val showCodeProhibitedDialog: Boolean = false,
 )
@@ -53,11 +59,12 @@ class SearchViewModel(
         analyticsManager.trackScreen("SearchScreen")
 
         intent {
-            val all = currencyRepo.getCurrencyNameUnsafe()
+            val all = currencyRepo.getCurrencyNameUnsafe().mapToSearchModel()
             val frequent =
                 calcFrequentCurrUseCase.invoke()
                     .map { currencyRepo.nameByCodeUnsafe(it) }
-            val topResults = getTopResultUseCase()
+                    .mapToSearchModel()
+            val topResults = getTopResultUseCase().mapToSearchModel()
 
             reduce {
                 state.copy(
@@ -81,10 +88,10 @@ class SearchViewModel(
             reduce { state.copy(filter = input, topResultsFiltered = filtered) }
         }
 
-    fun onClick(name: CurrencyName) =
+    fun onClick(model: CurrencySearchModel) =
         intent {
             prohibitedCodes?.let {
-                if (name.code in prohibitedCodes) {
+                if (model.code in prohibitedCodes) {
                     reduce {
                         state.copy(showCodeProhibitedDialog = true)
                     }
@@ -92,7 +99,7 @@ class SearchViewModel(
                 }
             }
 
-            emitResult(name)
+            emitResult(CurrencyName(code = model.code, name = model.name))
             postSideEffect(SearchScreenEffect.NavigateBack)
         }
 
@@ -125,6 +132,12 @@ class SearchViewModel(
                 AppSharedFlow.AddQuickCode.flow.emit(name.code)
         }
     }
+
+    private fun List<CurrencyName>.mapToSearchModel() =
+        map { name ->
+            val isProhibited = prohibitedCodes?.let { name.code in it } ?: false
+            CurrencySearchModel(code = name.code, name = name.name, isProhibited = isProhibited)
+        }
 }
 
 class SearchViewModelFactory @AssistedInject constructor(

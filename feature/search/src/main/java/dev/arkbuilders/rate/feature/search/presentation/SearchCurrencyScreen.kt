@@ -20,11 +20,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.core.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.core.presentation.ui.InfoDialog
 import dev.arkbuilders.rate.core.presentation.ui.ListHeader
 import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
@@ -113,18 +111,18 @@ private fun Input(
 @Composable
 private fun Results(
     filter: String,
-    frequent: List<CurrencyName>,
-    all: List<CurrencyName>,
-    topResultsFiltered: List<CurrencyName>,
-    onClick: (CurrencyName) -> Unit,
+    frequent: List<CurrencySearchModel>,
+    all: List<CurrencySearchModel>,
+    topResultsFiltered: List<CurrencySearchModel>,
+    onClick: (CurrencySearchModel) -> Unit,
 ) {
     when {
         filter.isNotEmpty() -> {
             if (topResultsFiltered.isNotEmpty()) {
                 LazyColumn {
                     item { ListHeader(stringResource(CoreRString.top_results)) }
-                    items(topResultsFiltered) { name ->
-                        CurrencyInfoItem(name) { onClick(it) }
+                    items(topResultsFiltered) { model ->
+                        SearchCurrencyInfoItem(model) { onClick(it) }
                     }
                 }
             } else {
@@ -136,13 +134,13 @@ private fun Results(
             LazyColumn {
                 if (frequent.isNotEmpty()) {
                     item { ListHeader(stringResource(CoreRString.frequent_currencies)) }
-                    items(frequent) { name ->
-                        CurrencyInfoItem(name) { onClick(it) }
+                    items(frequent) { model ->
+                        SearchCurrencyInfoItem(model) { onClick(it) }
                     }
                 }
                 item { ListHeader(stringResource(CoreRString.all_currencies)) }
-                items(all) { name ->
-                    CurrencyInfoItem(name) { onClick(it) }
+                items(all) { model ->
+                    SearchCurrencyInfoItem(model) { onClick(it) }
                 }
             }
         }
