@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ScrollableTabRow
@@ -65,6 +66,7 @@ fun GroupViewPager(
                         selectedContentColor = Color.Transparent,
                     ) {
                         Text(
+                            modifier = Modifier.padding(horizontal = 6.dp),
                             text = group ?: stringResource(R.string.group_default_name),
                             color = if (selected) ArkColor.Teal700 else ArkColor.TextQuarterary,
                             fontWeight = FontWeight.SemiBold,

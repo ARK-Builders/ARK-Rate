@@ -2,6 +2,7 @@
 
 package dev.arkbuilders.rate.feature.portfolio.presentation.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -80,6 +81,10 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
     val viewModel: PortfolioViewModel =
         viewModel(factory = component.assetsVMFactory())
 
+    BackHandler {
+        viewModel.onBackClick()
+    }
+
     val state by viewModel.collectAsState()
     val snackState = remember { SnackbarHostState() }
 
@@ -106,6 +111,8 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                     )
                 snackState.showSnackbar(visuals)
             }
+
+            PortfolioScreenEffect.NavigateBack -> navigator.popBackStack()
         }
     }
 

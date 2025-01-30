@@ -55,6 +55,8 @@ sealed class QuickScreenEffect {
     ) : QuickScreenEffect()
 
     data class ShowRemovedSnackbar(val pair: QuickPair) : QuickScreenEffect()
+
+    data object NavigateBack : QuickScreenEffect()
 }
 
 class QuickViewModel(
@@ -179,6 +181,17 @@ class QuickViewModel(
     fun undoDelete(pair: QuickPair) =
         intent {
             quickRepo.insert(pair)
+        }
+
+    fun onBackClick() =
+        intent {
+            if (state.filter.isNotEmpty()) {
+                reduce {
+                    state.copy(filter = "")
+                }
+            } else {
+                postSideEffect(QuickScreenEffect.NavigateBack)
+            }
         }
 
     private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
