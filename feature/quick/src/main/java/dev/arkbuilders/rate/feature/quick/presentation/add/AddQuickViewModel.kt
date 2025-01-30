@@ -10,7 +10,6 @@ import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.AmountStr
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.toAmount
-import dev.arkbuilders.rate.core.domain.model.toStrAmount
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
@@ -149,24 +148,15 @@ class AddQuickViewModel(
             if (state.currencies.size < 2)
                 return@intent
 
-            val newFrom =
-                state.currencies.last().let { amount ->
-                    if (amount.value.isEmpty())
-                        return@let amount
-
-                    val withoutCommas = amount.value.replace(",", "")
-                    amount.copy(value = CurrUtils.roundOff(withoutCommas.toBigDecimalArk()))
-                }
-            val newList =
+            val newFrom = state.currencies.last()
+            val newCurrencies =
                 state.currencies.toMutableList().apply {
                     removeLast()
                     add(0, newFrom)
                 }
 
-            val calc = calcToResult(newList)
-
             reduce {
-                state.copy(currencies = calc)
+                state.copy(currencies = newCurrencies)
             }
         }
 
@@ -221,7 +211,8 @@ class AddQuickViewModel(
                     it.copy(value = "")
                 } else {
                     val (amount, _) = convertUseCase.invoke(from.toAmount(), it.code)
-                    amount.toStrAmount()
+                    val roundValue = CurrUtils.roundOff(amount.value)
+                    AmountStr(it.code, roundValue)
                 }
             }
         return listOf(from) + new
