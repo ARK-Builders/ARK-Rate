@@ -116,6 +116,23 @@ fun AddQuickScreen(
                     ),
                 )
             }
+
+            is AddQuickScreenEffect.NavigateSearchAdd ->
+                navigator.navigate(
+                    SearchCurrencyScreenDestination(
+                        appSharedFlowKeyString = AppSharedFlowKey.AddQuickCode.toString(),
+                        prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
+                    ),
+                )
+
+            is AddQuickScreenEffect.NavigateSearchSet ->
+                navigator.navigate(
+                    SearchCurrencyScreenDestination(
+                        appSharedFlowKeyString = AppSharedFlowKey.SetQuickCode.toString(),
+                        pos = effect.index,
+                        prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
+                    ),
+                )
         }
     }
     Scaffold(
@@ -135,21 +152,10 @@ fun AddQuickScreen(
             Content(
                 state = state,
                 onAmountChanged = viewModel::onAssetAmountChange,
-                onNewCurrencyClick = {
-                    navigator.navigate(
-                        SearchCurrencyScreenDestination(AppSharedFlowKey.AddQuickCode.toString()),
-                    )
-                },
+                onNewCurrencyClick = viewModel::onAddCode,
                 onCurrencyRemove = viewModel::onCurrencyRemove,
                 onGroupSelect = viewModel::onGroupSelect,
-                onCodeChange = { index ->
-                    navigator.navigate(
-                        SearchCurrencyScreenDestination(
-                            AppSharedFlowKey.SetQuickCode.toString(),
-                            index,
-                        ),
-                    )
-                },
+                onCodeChange = viewModel::onSetCode,
                 onAddAsset = viewModel::onAddQuickPair,
             )
         }

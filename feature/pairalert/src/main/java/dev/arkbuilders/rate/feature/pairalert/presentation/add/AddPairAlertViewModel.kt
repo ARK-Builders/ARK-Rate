@@ -47,6 +47,14 @@ sealed class AddPairAlertScreenEffect {
     data object NavigateBack : AddPairAlertScreenEffect()
 
     class NotifyPairAdded(val pair: PairAlert) : AddPairAlertScreenEffect()
+
+    data class NavigateSearchTarget(
+        val prohibitedCodes: List<CurrencyCode>,
+    ) : AddPairAlertScreenEffect()
+
+    data class NavigateSearchBase(
+        val prohibitedCodes: List<CurrencyCode>,
+    ) : AddPairAlertScreenEffect()
 }
 
 class AddPairAlertViewModel(
@@ -344,6 +352,18 @@ class AddPairAlertViewModel(
                 enabled = false
 
             reduce { state.copy(finishEnabled = enabled) }
+        }
+
+    fun onNavigateSearchBase() =
+        intent {
+            val prohibitedCodes = listOf(state.targetCode)
+            postSideEffect(AddPairAlertScreenEffect.NavigateSearchBase(prohibitedCodes))
+        }
+
+    fun onNavigateSearchTarget() =
+        intent {
+            val prohibitedCodes = listOf(state.baseCode)
+            postSideEffect(AddPairAlertScreenEffect.NavigateSearchTarget(prohibitedCodes))
         }
 
     companion object {

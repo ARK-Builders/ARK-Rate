@@ -42,6 +42,12 @@ sealed class AddQuickScreenEffect {
     data class NotifyPairAdded(val pair: QuickPair) : AddQuickScreenEffect()
 
     data object NavigateBack : AddQuickScreenEffect()
+
+    data class NavigateSearchSet(val index: Int, val prohibitedCodes: List<CurrencyCode>) :
+        AddQuickScreenEffect()
+
+    data class NavigateSearchAdd(val prohibitedCodes: List<CurrencyCode>) :
+        AddQuickScreenEffect()
 }
 
 class AddQuickViewModel(
@@ -198,6 +204,21 @@ class AddQuickViewModel(
             reduce {
                 state.copy(finishEnabled = finishEnabled)
             }
+        }
+
+    fun onSetCode(index: Int) =
+        intent {
+            val prohibitedCodes =
+                state.currencies.map { it.code }.toMutableList().apply {
+                    removeAt(index)
+                }
+            postSideEffect(AddQuickScreenEffect.NavigateSearchSet(index, prohibitedCodes))
+        }
+
+    fun onAddCode() =
+        intent {
+            val prohibitedCodes = state.currencies.map { it.code }
+            postSideEffect(AddQuickScreenEffect.NavigateSearchAdd(prohibitedCodes))
         }
 }
 

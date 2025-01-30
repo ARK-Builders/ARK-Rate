@@ -111,6 +111,22 @@ fun AddPairAlertScreen(
                     )
                 AppSharedFlow.ShowAddedSnackbarPairAlert.flow.emit(visuals)
             }
+
+            is AddPairAlertScreenEffect.NavigateSearchBase ->
+                navigator.navigate(
+                    SearchCurrencyScreenDestination(
+                        appSharedFlowKeyString = AppSharedFlowKey.AddPairAlertBase.name,
+                        prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
+                    ),
+                )
+
+            is AddPairAlertScreenEffect.NavigateSearchTarget ->
+                navigator.navigate(
+                    SearchCurrencyScreenDestination(
+                        appSharedFlowKeyString = AppSharedFlowKey.AddPairAlertTarget.name,
+                        prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
+                    ),
+                )
         }
     }
 
@@ -127,7 +143,17 @@ fun AddPairAlertScreen(
         },
     ) {
         Box(modifier = Modifier.padding(it)) {
-            Content(state, navigator, viewModel)
+            Content(
+                state = state,
+                navigateSearchBase = viewModel::onNavigateSearchBase,
+                navigateSearchTarget = viewModel::onNavigateSearchTarget,
+                onGroupSelect = viewModel::onGroupSelect,
+                onPriceOrPercentChanged = viewModel::onPriceOrPercentChanged,
+                onOneTimeChanged = viewModel::onOneTimeChanged,
+                onPriceOrPercentInputChanged = viewModel::onPriceOrPercentInputChanged,
+                onIncreaseToggle = viewModel::onIncreaseToggle,
+                onSaveClick = viewModel::onSaveClick,
+            )
         }
     }
 }
@@ -135,8 +161,14 @@ fun AddPairAlertScreen(
 @Composable
 private fun Content(
     state: AddPairAlertScreenState,
-    navigator: DestinationsNavigator,
-    viewModel: AddPairAlertViewModel,
+    navigateSearchBase: () -> Unit,
+    navigateSearchTarget: () -> Unit,
+    onGroupSelect: (String) -> Unit,
+    onPriceOrPercentChanged: (Boolean) -> Unit,
+    onOneTimeChanged: (Boolean) -> Unit,
+    onPriceOrPercentInputChanged: (String) -> Unit,
+    onIncreaseToggle: () -> Unit,
+    onSaveClick: () -> Unit,
 ) {
     var showNewGroupDialog by remember { mutableStateOf(false) }
     var showGroupsPopup by remember { mutableStateOf(false) }
@@ -144,7 +176,7 @@ private fun Content(
 
     if (showNewGroupDialog) {
         GroupCreateDialog(onDismiss = { showNewGroupDialog = false }) {
-            viewModel.onGroupSelect(it)
+            onGroupSelect(it)
         }
     }
 
@@ -155,12 +187,18 @@ private fun Content(
                     .weight(1f)
                     .verticalScroll(rememberScrollState()),
         ) {
-            PriceOrPercent(state, viewModel::onPriceOrPercentChanged)
-            EditCondition(state, viewModel, navigator)
+            PriceOrPercent(state, onPriceOrPercentChanged)
+            EditCondition(
+                state = state,
+                navigateSearchBase = navigateSearchBase,
+                navigateSearchTarget = navigateSearchTarget,
+                onPriceOrPercentInputChanged = onPriceOrPercentInputChanged,
+                onIncreaseToggle = onIncreaseToggle,
+            )
             OneTimeOrRecurrent(
                 state.priceOrPercent.isLeft(),
                 state.oneTimeNotRecurrent,
-                viewModel::onOneTimeChanged,
+                onOneTimeChanged,
             )
             DropDownWithIcon(
                 modifier =
@@ -192,7 +230,7 @@ private fun Content(
                         GroupSelectPopup(
                             groups = state.availableGroups,
                             widthPx = addGroupBtnWidth,
-                            onGroupSelect = { viewModel.onGroupSelect(it) },
+                            onGroupSelect = onGroupSelect,
                             onNewGroupClick = { showNewGroupDialog = true },
                             onDismiss = { showGroupsPopup = false },
                         )
@@ -207,7 +245,7 @@ private fun Content(
                     Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                onClick = { viewModel.onSaveClick() },
+                onClick = onSaveClick,
                 enabled = state.finishEnabled,
             ) {
                 Text(
@@ -344,8 +382,10 @@ private fun DropDownBtn(
 @Composable
 private fun EditCondition(
     state: AddPairAlertScreenState,
-    viewModel: AddPairAlertViewModel,
-    navigator: DestinationsNavigator,
+    navigateSearchBase: () -> Unit,
+    navigateSearchTarget: () -> Unit,
+    onPriceOrPercentInputChanged: (String) -> Unit,
+    onIncreaseToggle: () -> Unit,
 ) {
     val ctx = LocalContext.current
     Column(
@@ -368,9 +408,7 @@ private fun EditCondition(
                 modifier = Modifier.padding(start = 8.dp),
                 title = state.targetCode,
             ) {
-                navigator.navigate(
-                    SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertTarget.name),
-                )
+                navigateSearchTarget()
             }
             Text(
                 modifier = Modifier.padding(start = 8.dp),
@@ -385,7 +423,7 @@ private fun EditCondition(
                             if (state.oneTimeNotRecurrent && state.priceOrPercent.isLeft())
                                 this
                             else
-                                clickable { viewModel.onIncreaseToggle() }
+                                clickable { onIncreaseToggle() }
                         },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -448,7 +486,7 @@ private fun EditCondition(
                         ifLeft = { it },
                         ifRight = { it },
                     ),
-                onValueChange = { viewModel.onPriceOrPercentInputChanged(it) },
+                onValueChange = { onPriceOrPercentInputChanged(it) },
             )
             if (state.priceOrPercent.isLeft()) {
                 Text(
@@ -488,9 +526,7 @@ private fun EditCondition(
                 modifier = Modifier.padding(start = 16.dp),
                 title = state.baseCode,
             ) {
-                navigator.navigate(
-                    SearchCurrencyScreenDestination(AppSharedFlowKey.AddPairAlertBase.name),
-                )
+                navigateSearchBase()
             }
         }
     }

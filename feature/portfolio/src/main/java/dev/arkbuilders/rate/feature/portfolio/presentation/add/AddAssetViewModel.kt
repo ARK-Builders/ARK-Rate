@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.AmountStr
+import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
@@ -37,6 +38,11 @@ sealed class AddAssetSideEffect {
         AddAssetSideEffect()
 
     data object NavigateBack : AddAssetSideEffect()
+
+    data class NavigateSearchAdd(val prohibitedCodes: List<CurrencyCode>) : AddAssetSideEffect()
+
+    data class NavigateSearchSet(val index: Int, val prohibitedCodes: List<CurrencyCode>) :
+        AddAssetSideEffect()
 }
 
 class AddAssetViewModel(
@@ -138,6 +144,19 @@ class AddAssetViewModel(
             codeUseStatRepo.codesUsed(*currencies.map { it.code }.toTypedArray())
             postSideEffect(AddAssetSideEffect.NotifyAssetAdded(currencies))
             postSideEffect(AddAssetSideEffect.NavigateBack)
+        }
+
+    fun onSetCode(index: Int) =
+        intent {
+            val prohibitedCodes = state.currencies.map { it.code }.toMutableList()
+            prohibitedCodes.removeAt(index)
+            postSideEffect(AddAssetSideEffect.NavigateSearchSet(index, prohibitedCodes))
+        }
+
+    fun onAddCode() =
+        intent {
+            val prohibitedCodes = state.currencies.map { it.code }
+            postSideEffect(AddAssetSideEffect.NavigateSearchAdd(prohibitedCodes))
         }
 }
 
