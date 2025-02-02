@@ -67,6 +67,7 @@ import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.AppSharedFlowKey
+import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppButton
@@ -340,7 +341,7 @@ private fun LazyListScope.currencies(
     item {
         Text(
             modifier = Modifier.padding(top = 16.dp, start = 52.dp),
-            text = "From",
+            text = stringResource(CoreRString.quick_from),
             fontWeight = FontWeight.Medium,
             color = ArkColor.TextSecondary,
         )
@@ -364,7 +365,7 @@ private fun LazyListScope.currencies(
         SwapBtn(modifier = Modifier.padding(top = 16.dp), onClick = onSwapClick)
         Text(
             modifier = Modifier.padding(top = 16.dp, start = 52.dp),
-            text = "To",
+            text = stringResource(CoreRString.quick_to),
             fontWeight = FontWeight.Medium,
             color = ArkColor.TextSecondary,
         )
@@ -435,7 +436,7 @@ private fun FromInput(
                         ArkColor.Border,
                         RoundedCornerShape(8.dp),
                     )
-                    .clip(RoundedCornerShape(8.dp)),
+                    .background(Color.White, RoundedCornerShape(8.dp)),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
@@ -532,8 +533,7 @@ private fun ToResult(
                         ArkColor.Border,
                         RoundedCornerShape(8.dp),
                     )
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.White),
+                    .background(Color.White, RoundedCornerShape(8.dp)),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
@@ -587,8 +587,7 @@ private fun ToResult(
                         ArkColor.Border,
                         RoundedCornerShape(8.dp),
                     )
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.White)
+                    .background(Color.White, RoundedCornerShape(8.dp))
                     .clickable { onCurrencyRemove() },
             contentAlignment = Alignment.Center,
         ) {
