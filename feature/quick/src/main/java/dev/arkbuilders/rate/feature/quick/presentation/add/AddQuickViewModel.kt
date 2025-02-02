@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.feature.quick.presentation.add
 
+import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -16,6 +17,8 @@ import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.domain.toDoubleArk
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
+import dev.arkbuilders.rate.core.presentation.utils.ReorderHapticFeedback
+import dev.arkbuilders.rate.core.presentation.utils.ReorderHapticFeedbackType
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
 import kotlinx.coroutines.flow.launchIn
@@ -161,16 +164,27 @@ class AddQuickViewModel(
         }
 
     fun onPairsSwap(
-        from: Int,
-        to: Int,
+        haptic: ReorderHapticFeedback,
+        from: LazyListItemInfo,
+        to: LazyListItemInfo,
     ) = intent {
         val new =
-            state.currencies.toMutableList().apply {
-                add(to, removeAt(from))
+            if (to.key == "To") {
+                state.currencies.toMutableList().apply {
+                    add(0, removeAt(1))
+                }
+            } else {
+                val fromIndex = state.currencies.indexOfFirst { it.code == from.key }
+                val toIndex = state.currencies.indexOfFirst { it.code == to.key }
+                state.currencies.toMutableList().apply {
+                    add(toIndex, removeAt(fromIndex))
+                }
             }
+
         reduce {
             state.copy(currencies = new)
         }
+        haptic.performHapticFeedback(ReorderHapticFeedbackType.MOVE)
     }
 
     fun onAddQuickPair() =

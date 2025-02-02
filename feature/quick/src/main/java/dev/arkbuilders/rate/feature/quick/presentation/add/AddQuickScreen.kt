@@ -20,8 +20,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -190,7 +191,11 @@ private fun Content(
     onGroupSelect: (String) -> Unit,
     onCodeChange: (Int) -> Unit,
     onSwapClick: () -> Unit,
-    onPairsSwap: (from: Int, to: Int) -> Unit,
+    onPairsSwap: (
+        haptic: ReorderHapticFeedback,
+        from: LazyListItemInfo,
+        to: LazyListItemInfo,
+    ) -> Unit,
     onAddAsset: () -> Unit,
 ) {
     var showNewGroupDialog by remember { mutableStateOf(false) }
@@ -207,10 +212,7 @@ private fun Content(
     val lazyListState = rememberLazyListState()
     val reorderableLazyColumnState =
         rememberReorderableLazyListState(lazyListState) { from, to ->
-            val fromIndex = state.currencies.indexOfFirst { it.code == from.key }
-            val toIndex = state.currencies.indexOfFirst { it.code == to.key }
-            onPairsSwap(fromIndex, toIndex)
-            haptic.performHapticFeedback(ReorderHapticFeedbackType.MOVE)
+            onPairsSwap(haptic, from, to)
         }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -329,6 +331,8 @@ private fun LazyListScope.currencies(
     val from = state.currencies.first()
     val to = state.currencies.drop(1)
 
+    val workaroundList = listOf(listOf(from), to)
+
     item {
         Text(
             modifier = Modifier.padding(top = 16.dp, start = 52.dp),
@@ -337,47 +341,74 @@ private fun LazyListScope.currencies(
             color = ArkColor.TextSecondary,
         )
     }
-    item(key = from.code) {
-        ReorderableItem(state = reorderableLazyColumnState, key = from.code) {
-            FromInput(
-                code = from.code,
-                amount = from.value,
-                haptic = haptic,
-                scope = this,
-                onAmountChanged = onAmountChanged,
-                onCodeChange = {
-                    val index = state.currencies.indexOfFirst { it.code == from.code }
-                    onCodeChange(index)
-                },
-            )
+    workaroundList.forEachIndexed { index, items ->
+        if (index == 1) {
+            item(key = "To") {
+                ReorderableItem(state = reorderableLazyColumnState, key = "To") {
+                    Column {
+                        SwapBtn(modifier = Modifier.padding(top = 16.dp), onClick = onSwapClick)
+                        Text(
+                            modifier = Modifier.padding(top = 16.dp, start = 52.dp),
+                            text = "To",
+                            fontWeight = FontWeight.Medium,
+                            color = ArkColor.TextSecondary,
+                        )
+                    }
+                }
+            }
+        }
+        items(items, key = { item -> item.code }) { item ->
+            ReorderableItem(state = reorderableLazyColumnState, key = item.code) {
+                FromOrToItem(
+                    listIndex = index,
+                    code = item.code,
+                    amount = item.value,
+                    haptic = haptic,
+                    scope = this,
+                    onAmountChanged = onAmountChanged,
+                    onCurrencyRemove = {
+                        val index = state.currencies.indexOfFirst { it.code == item.code }
+                        onCurrencyRemove(index)
+                    },
+                    onCodeChange = {
+                        val index = state.currencies.indexOfFirst { it.code == from.code }
+                        onCodeChange(index)
+                    },
+                )
+            }
         }
     }
-    item {
-        SwapBtn(modifier = Modifier.padding(top = 16.dp), onClick = onSwapClick)
-        Text(
-            modifier = Modifier.padding(top = 16.dp, start = 52.dp),
-            text = stringResource(CoreRString.quick_to),
-            fontWeight = FontWeight.Medium,
-            color = ArkColor.TextSecondary,
+}
+
+@Composable
+private fun FromOrToItem(
+    listIndex: Int,
+    code: CurrencyCode,
+    amount: String,
+    haptic: ReorderHapticFeedback,
+    scope: ReorderableCollectionItemScope,
+    onAmountChanged: (String) -> Unit,
+    onCurrencyRemove: () -> Unit,
+    onCodeChange: () -> Unit,
+) {
+    if (listIndex == 0) {
+        FromInput(
+            code = code,
+            amount = amount,
+            haptic = haptic,
+            scope = scope,
+            onAmountChanged = onAmountChanged,
+            onCodeChange = onCodeChange,
         )
-    }
-    itemsIndexed(to, key = { _, amount -> amount.code }) { index, item ->
-        ReorderableItem(state = reorderableLazyColumnState, key = item.code) {
-            ToResult(
-                code = item.code,
-                amount = item.value,
-                scope = this,
-                haptic = haptic,
-                onCurrencyRemove = {
-                    val index = state.currencies.indexOfFirst { it.code == item.code }
-                    onCurrencyRemove(index)
-                },
-                onCodeChange = {
-                    val index = state.currencies.indexOfFirst { it.code == item.code }
-                    onCodeChange(index)
-                },
-            )
-        }
+    } else {
+        ToResult(
+            code = code,
+            amount = amount,
+            scope = scope,
+            haptic = haptic,
+            onCurrencyRemove = onCurrencyRemove,
+            onCodeChange = onCodeChange,
+        )
     }
 }
 
@@ -633,7 +664,7 @@ fun Preview() {
         onGroupSelect = {},
         onCodeChange = {},
         onSwapClick = {},
-        onPairsSwap = { _, _ -> },
+        onPairsSwap = { _, _, _ -> },
         onAddAsset = {},
     )
 }
