@@ -181,18 +181,17 @@ fun AddQuickScreen(
     }
 }
 
-@Preview(showBackground = true, widthDp = 400)
 @Composable
 private fun Content(
-    state: AddQuickScreenState = AddQuickScreenState(),
-    onAmountChanged: (String) -> Unit = {},
-    onNewCurrencyClick: () -> Unit = {},
-    onCurrencyRemove: (Int) -> Unit = {},
-    onGroupSelect: (String) -> Unit = {},
-    onCodeChange: (Int) -> Unit = {},
-    onSwapClick: () -> Unit = {},
-    onPairsSwap: (from: Int, to: Int) -> Unit = { _, _ -> },
-    onAddAsset: () -> Unit = {},
+    state: AddQuickScreenState,
+    onAmountChanged: (String) -> Unit,
+    onNewCurrencyClick: () -> Unit,
+    onCurrencyRemove: (Int) -> Unit,
+    onGroupSelect: (String) -> Unit,
+    onCodeChange: (Int) -> Unit,
+    onSwapClick: () -> Unit,
+    onPairsSwap: (from: Int, to: Int) -> Unit,
+    onAddAsset: () -> Unit,
 ) {
     var showNewGroupDialog by remember { mutableStateOf(false) }
     var showGroupsPopup by remember { mutableStateOf(false) }
@@ -621,4 +620,20 @@ private fun SwapBtn(
                     .padding(start = 12.dp, end = 16.dp),
         )
     }
+}
+
+@Preview(showBackground = true, widthDp = 400)
+@Composable
+fun Preview() {
+    Content(
+        state = AddQuickScreenState(),
+        onAmountChanged = {},
+        onNewCurrencyClick = {},
+        onCurrencyRemove = {},
+        onGroupSelect = {},
+        onCodeChange = {},
+        onSwapClick = {},
+        onPairsSwap = { _, _ -> },
+        onAddAsset = {},
+    )
 }
