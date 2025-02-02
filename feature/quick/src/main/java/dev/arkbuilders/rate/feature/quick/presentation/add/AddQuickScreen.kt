@@ -630,3 +630,19 @@ private fun SwapBtn(
         )
     }
 }
+
+@Preview(showBackground = true, widthDp = 400)
+@Composable
+fun Preview() {
+    Content(
+        state = AddQuickScreenState(),
+        onAmountChanged = {},
+        onNewCurrencyClick = {},
+        onCurrencyRemove = {},
+        onGroupSelect = {},
+        onCodeChange = {},
+        onSwapClick = {},
+        onPairsSwap = { _, _ -> },
+        onAddAsset = {},
+    )
+}
