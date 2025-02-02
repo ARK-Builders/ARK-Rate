@@ -52,10 +52,12 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.navigation.compose)
     implementation(libs.material3)
+    implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.constraintlayout.compose)
+    implementation(libs.reorderable)
 
     implementation(libs.timber)
 
