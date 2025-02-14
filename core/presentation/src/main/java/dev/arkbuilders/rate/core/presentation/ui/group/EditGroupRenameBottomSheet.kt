@@ -26,6 +26,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -34,14 +35,17 @@ import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.core.presentation.ui.RateBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.RateBottomSheetTitle
 
+data class EditGroupRenameSheetState(val group: Group)
+
 @Composable
 fun EditGroupRenameBottomSheet(
     sheetState: SheetState,
-    group: String,
+    state: EditGroupRenameSheetState,
+    defaultName: String = stringResource(R.string.group_default_name),
     onDismiss: () -> Unit,
     onDone: (String) -> Unit,
 ) {
-    var groupRename by remember { mutableStateOf(group) }
+    var groupRename by remember { mutableStateOf(state.group.name) }
     RateBottomSheet(sheetState, onDismiss) {
         Box {
             RateBottomSheetTitle(stringResource(R.string.rename_group), onDismiss)

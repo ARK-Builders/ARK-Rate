@@ -17,7 +17,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +27,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -37,13 +37,15 @@ import dev.arkbuilders.rate.core.presentation.utils.rememberReorderHapticFeedbac
 import sh.calvin.reorderable.ReorderableColumn
 import sh.calvin.reorderable.ReorderableScope
 
+data class EditGroupReorderSheetState(val groups: List<Group>)
+
 @Composable
-fun EditGroupBottomSheet(
+fun EditGroupReorderBottomSheet(
     sheetState: SheetState,
-    groups: List<String?>,
+    state: EditGroupReorderSheetState,
     defaultName: String = stringResource(R.string.group_default_name),
     onSwap: (Int, Int) -> Unit,
-    onOptionsClick: (String?) -> Unit,
+    onOptionsClick: (Group) -> Unit,
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(
@@ -55,7 +57,7 @@ fun EditGroupBottomSheet(
         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
     ) {
         Content(
-            groups = groups,
+            groups = state.groups,
             defaultName = defaultName,
             onSwap = onSwap,
             onOptionsClick = onOptionsClick,
@@ -66,10 +68,10 @@ fun EditGroupBottomSheet(
 
 @Composable
 fun Content(
-    groups: List<String?>,
+    groups: List<Group>,
     defaultName: String,
     onSwap: (Int, Int) -> Unit,
-    onOptionsClick: (String?) -> Unit,
+    onOptionsClick: (Group) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val haptic = rememberReorderHapticFeedback()
@@ -109,8 +111,8 @@ fun Content(
                 haptic.performHapticFeedback(ReorderHapticFeedbackType.MOVE)
             },
         ) { scope, group, isDragging ->
-            key(group ?: defaultName) {
-                GroupItem(haptic, this, group ?: defaultName, onOptionsClick)
+            key(group) {
+                GroupItem(haptic, this, group, defaultName, onOptionsClick)
             }
         }
     }
@@ -120,8 +122,9 @@ fun Content(
 private fun GroupItem(
     haptic: ReorderHapticFeedback,
     scope: ReorderableScope,
-    group: String,
-    onOptionsClick: (String?) -> Unit,
+    group: Group,
+    defaultName: String,
+    onOptionsClick: (Group) -> Unit,
 ) {
     Row(
         modifier =
@@ -161,7 +164,7 @@ private fun GroupItem(
         Spacer(Modifier.width(8.dp))
         Text(
             modifier = Modifier.weight(1f),
-            text = group,
+            text = group.name ?: defaultName,
             color = ArkColor.TextPrimary,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,

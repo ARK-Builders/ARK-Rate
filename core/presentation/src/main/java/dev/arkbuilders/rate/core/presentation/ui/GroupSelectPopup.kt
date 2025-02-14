@@ -18,20 +18,20 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
-@Preview(showBackground = true, widthDp = 400)
 @Composable
 fun GroupSelectPopup(
-    groups: List<String> = listOf("Companies", "Funds", "Projects"),
+    groups: List<Group>,
+    defaultName: String = stringResource(R.string.group_default_name),
     widthPx: Int = 10,
-    onGroupSelect: (String) -> Unit = {},
-    onNewGroupClick: () -> Unit = {},
-    onDismiss: () -> Unit = {},
+    onGroupSelect: (Group) -> Unit,
+    onNewGroupClick: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
     Card(
         modifier = Modifier.width(with(LocalDensity.current) { widthPx.toDp() }),
@@ -92,7 +92,7 @@ fun GroupSelectPopup(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = it,
+                    text = it.name ?: defaultName,
                     color = ArkColor.TextPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,

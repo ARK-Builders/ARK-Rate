@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
@@ -29,11 +30,12 @@ import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.RateBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.RateBottomSheetTitle
 
+data class EditGroupOptionsSheetState(val group: Group)
+
 @Composable
 fun EditGroupOptionsBottomSheet(
     sheetState: SheetState,
-    group: String?,
-    defaultName: String = stringResource(R.string.group_default_name),
+    state: EditGroupOptionsSheetState,
     onRename: () -> Unit,
     onDelete: () -> Unit,
     onDismiss: () -> Unit,
@@ -41,7 +43,7 @@ fun EditGroupOptionsBottomSheet(
     RateBottomSheet(sheetState, onDismiss) {
         Box {
             RateBottomSheetTitle(
-                stringResource(R.string.edit_group_name, group ?: defaultName),
+                stringResource(R.string.edit_group_name, state.group.name),
                 onDismiss,
             )
             Column(
