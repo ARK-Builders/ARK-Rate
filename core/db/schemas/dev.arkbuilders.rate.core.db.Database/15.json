@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 15,
-    "identityHash": "5333ab84201dbcf96a6afb651e9bc64b",
+    "identityHash": "d89aa92edab6a35b3b27eb40b4f49a91",
     "entities": [
       {
         "tableName": "RoomAsset",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `code` TEXT NOT NULL, `amount` TEXT NOT NULL, `groupId` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `code` TEXT NOT NULL, `amount` TEXT NOT NULL, `groupId` INTEGER NOT NULL, FOREIGN KEY(`groupId`) REFERENCES `RoomGroup`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -40,7 +40,19 @@
           ]
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "RoomGroup",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "groupId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       },
       {
         "tableName": "RoomCurrencyRate",
@@ -102,7 +114,7 @@
       },
       {
         "tableName": "RoomPairAlert",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `targetCode` TEXT NOT NULL, `baseCode` TEXT NOT NULL, `targetPrice` TEXT NOT NULL, `startPrice` TEXT NOT NULL, `alertPercent` REAL, `oneTimeNotRecurrent` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `lastDateTriggered` TEXT, `groupId` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `targetCode` TEXT NOT NULL, `baseCode` TEXT NOT NULL, `targetPrice` TEXT NOT NULL, `startPrice` TEXT NOT NULL, `alertPercent` REAL, `oneTimeNotRecurrent` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `lastDateTriggered` TEXT, `groupId` INTEGER NOT NULL, FOREIGN KEY(`groupId`) REFERENCES `RoomGroup`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -172,11 +184,23 @@
           ]
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "RoomGroup",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "groupId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       },
       {
         "tableName": "RoomQuickPair",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `from` TEXT NOT NULL, `amount` TEXT NOT NULL, `to` TEXT NOT NULL, `calculatedDate` TEXT NOT NULL, `pinnedDate` TEXT, `groupId` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `from` TEXT NOT NULL, `amount` TEXT NOT NULL, `to` TEXT NOT NULL, `calculatedDate` TEXT NOT NULL, `pinnedDate` TEXT, `groupId` INTEGER NOT NULL, FOREIGN KEY(`groupId`) REFERENCES `RoomGroup`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -228,7 +252,19 @@
           ]
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "RoomGroup",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "groupId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       },
       {
         "tableName": "RoomCodeUseStat",
@@ -310,7 +346,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5333ab84201dbcf96a6afb651e9bc64b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd89aa92edab6a35b3b27eb40b4f49a91')"
     ]
   }
 }
