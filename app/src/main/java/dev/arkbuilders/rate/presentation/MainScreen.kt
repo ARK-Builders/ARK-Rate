@@ -57,8 +57,8 @@ fun MainScreen() {
         val intent = activity?.intent
         val createNewPair = intent?.getStringExtra(ADD_NEW_PAIR) ?: ""
         if (createNewPair.isNotEmpty()) {
-            val group = intent?.getStringExtra(ADD_NEW_PAIR_GROUP_KEY)
-            navController.navigate(AddQuickScreenDestination(group = group))
+            val groupId = intent?.getLongExtra(ADD_NEW_PAIR_GROUP_KEY, 0L)
+            navController.navigate(AddQuickScreenDestination(groupId = groupId))
             intent?.removeExtra(ADD_NEW_PAIR_GROUP_KEY)
             intent?.removeExtra(ADD_NEW_PAIR)
         }

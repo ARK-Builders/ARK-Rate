@@ -3,7 +3,7 @@ package dev.arkbuilders.rate.feature.quickwidget.presentation
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -52,7 +52,7 @@ class QuickPairsWidgetReceiver : GlanceAppWidgetReceiver() {
     }
 
     companion object {
-        val currentGroupKey = stringPreferencesKey("currentGroupKey")
+        val currentGroupIdKey = longPreferencesKey("currentGroupIdKey")
         const val PINNED_PAIRS_REFRESH = "PINNED_PAIRS_REFRESH"
 
         suspend fun updateWidgetNewGroup(
@@ -63,15 +63,19 @@ class QuickPairsWidgetReceiver : GlanceAppWidgetReceiver() {
             val quickRepo = QuickWidgetComponentHolder.provide(context).quickRepo()
             val allGroups = quickRepo.getAllGroups()
             updateAppWidgetState(context, glanceId) { prefs ->
-                var currentIndex: Int? = allGroups.indexOf(prefs[currentGroupKey])
+                val currentId = prefs[currentGroupIdKey]
+                var currentIndex: Int? =
+                    allGroups.indexOfFirst { group ->
+                        group.id == currentId
+                    }
                 if (currentIndex == -1)
                     currentIndex = null
                 val newIndex = findNewIndex(currentIndex, allGroups.lastIndex)
                 val newGroup = allGroups[newIndex]
                 if (newGroup != null) {
-                    prefs[currentGroupKey] = newGroup
+                    prefs[currentGroupIdKey] = newGroup.id
                 } else {
-                    prefs.remove(currentGroupKey)
+                    prefs.remove(currentGroupIdKey)
                 }
             }
             QuickPairsWidget().update(context, glanceId)
