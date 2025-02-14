@@ -9,9 +9,9 @@ import java.time.OffsetDateTime
 class RoomGroup(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
-    val name: String?,
+    val name: String,
     val isDefault: Boolean,
-    val sortIndex: Int,
+    val orderIndex: Int,
     val creationTime: OffsetDateTime,
     val featureType: GroupFeatureType,
 )

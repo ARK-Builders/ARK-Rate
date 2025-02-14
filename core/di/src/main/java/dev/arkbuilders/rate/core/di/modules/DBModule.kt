@@ -35,4 +35,7 @@ class DBModule {
 
     @Provides
     fun codeUseStatDao(db: Database) = db.codeUseStatDao()
+
+    @Provides
+    fun groupDao(db: Database) = db.groupDao()
 }

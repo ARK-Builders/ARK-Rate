@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 15,
-    "identityHash": "9927df12e2c6c86b308922f26acaaae2",
+    "identityHash": "08451da6421c5b718d351471206dddce",
     "entities": [
       {
         "tableName": "RoomAsset",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `code` TEXT NOT NULL, `amount` TEXT NOT NULL, `group` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `code` TEXT NOT NULL, `amount` TEXT NOT NULL, `groupId` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -27,10 +27,10 @@
             "notNull": true
           },
           {
-            "fieldPath": "group",
-            "columnName": "group",
-            "affinity": "TEXT",
-            "notNull": false
+            "fieldPath": "groupId",
+            "columnName": "groupId",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -102,7 +102,7 @@
       },
       {
         "tableName": "RoomPairAlert",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `targetCode` TEXT NOT NULL, `baseCode` TEXT NOT NULL, `targetPrice` TEXT NOT NULL, `startPrice` TEXT NOT NULL, `alertPercent` REAL, `oneTimeNotRecurrent` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `lastDateTriggered` TEXT, `group` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `targetCode` TEXT NOT NULL, `baseCode` TEXT NOT NULL, `targetPrice` TEXT NOT NULL, `startPrice` TEXT NOT NULL, `alertPercent` REAL, `oneTimeNotRecurrent` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `lastDateTriggered` TEXT, `groupId` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -159,10 +159,10 @@
             "notNull": false
           },
           {
-            "fieldPath": "group",
-            "columnName": "group",
-            "affinity": "TEXT",
-            "notNull": false
+            "fieldPath": "groupId",
+            "columnName": "groupId",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -176,7 +176,7 @@
       },
       {
         "tableName": "RoomQuickPair",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `from` TEXT NOT NULL, `amount` TEXT NOT NULL, `to` TEXT NOT NULL, `calculatedDate` TEXT NOT NULL, `pinnedDate` TEXT, `group` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `from` TEXT NOT NULL, `amount` TEXT NOT NULL, `to` TEXT NOT NULL, `calculatedDate` TEXT NOT NULL, `pinnedDate` TEXT, `groupId` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -215,10 +215,10 @@
             "notNull": false
           },
           {
-            "fieldPath": "group",
-            "columnName": "group",
-            "affinity": "TEXT",
-            "notNull": false
+            "fieldPath": "groupId",
+            "columnName": "groupId",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -264,7 +264,7 @@
       },
       {
         "tableName": "RoomGroup",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `isDefault` INTEGER NOT NULL, `sortIndex` INTEGER NOT NULL, `creationTime` TEXT NOT NULL, `featureType` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `isDefault` INTEGER NOT NULL, `orderIndex` INTEGER NOT NULL, `creationTime` TEXT NOT NULL, `featureType` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -276,7 +276,7 @@
             "fieldPath": "name",
             "columnName": "name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "isDefault",
@@ -285,8 +285,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "sortIndex",
-            "columnName": "sortIndex",
+            "fieldPath": "orderIndex",
+            "columnName": "orderIndex",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -316,7 +316,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9927df12e2c6c86b308922f26acaaae2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '08451da6421c5b718d351471206dddce')"
     ]
   }
 }

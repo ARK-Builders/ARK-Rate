@@ -5,6 +5,9 @@ import dev.arkbuilders.rate.core.db.entity.RoomGroup
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import java.time.OffsetDateTime
 
 class GroupRepoImpl(
@@ -15,13 +18,13 @@ class GroupRepoImpl(
         featureType: GroupFeatureType,
     ): Group {
         val all = groupDao.getAllByFeatureType(featureType)
-        val sortIndex = all.maxBy { it.sortIndex }.sortIndex + 1
+        val sortIndex = all.maxOf { it.orderIndex } + 1
         val group =
             Group(
                 id = 0,
                 name = name,
                 isDefault = false,
-                sortIndex = sortIndex,
+                orderIndex = sortIndex,
                 creationTime = OffsetDateTime.now(),
             )
         val id = groupDao.insert(group.toRoom(featureType))
@@ -31,27 +34,45 @@ class GroupRepoImpl(
     override suspend fun update(
         updated: Group,
         featureType: GroupFeatureType,
+    ): Long {
+        return groupDao.insert(updated.toRoom(featureType))
+    }
+
+    override suspend fun update(
+        updated: List<Group>,
+        featureType: GroupFeatureType,
     ) {
-        groupDao.insert(updated.toRoom(featureType))
+        groupDao.insert(updated.map { it.toRoom(featureType) })
+    }
+
+    override suspend fun getById(id: Long): Group {
+        return groupDao.getById(id).toGroup()
+    }
+
+    override suspend fun getDefault(groupFeatureType: GroupFeatureType): Group? {
+        return groupDao.getDefault(groupFeatureType)?.toGroup()
     }
 
     override suspend fun delete(id: Long) {
         groupDao.delete(id)
     }
 
+    override fun allFlow(featureType: GroupFeatureType): Flow<List<Group>> {
+        return groupDao
+            .allFlow(featureType)
+            .distinctUntilChanged()
+            .map { list -> list.map { it.toGroup() } }
+    }
+
     override suspend fun getAllSorted(featureType: GroupFeatureType): List<Group> {
         return groupDao
             .getAllByFeatureType(featureType)
             .map { it.toGroup() }
-            .sortedBy { it.sortIndex }
-    }
-
-    override suspend fun getDefaultByFeatureType(featureType: GroupFeatureType): Group? {
-        return groupDao.getDefaultByFeatureType(featureType)?.toGroup()
+            .sortedByDescending { it.orderIndex }
     }
 }
 
 private fun Group.toRoom(featureType: GroupFeatureType) =
-    RoomGroup(id, name, isDefault, sortIndex, creationTime, featureType)
+    RoomGroup(id, name, isDefault, orderIndex, creationTime, featureType)
 
-private fun RoomGroup.toGroup() = Group(id, name, isDefault, sortIndex, creationTime)
+private fun RoomGroup.toGroup() = Group(id, name, isDefault, orderIndex, creationTime)
