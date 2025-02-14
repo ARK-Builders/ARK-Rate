@@ -23,7 +23,6 @@ class GroupRepoImpl(
             Group(
                 id = 0,
                 name = name,
-                isDefault = false,
                 orderIndex = sortIndex,
                 creationTime = OffsetDateTime.now(),
             )
@@ -49,10 +48,6 @@ class GroupRepoImpl(
         return groupDao.getById(id).toGroup()
     }
 
-    override suspend fun getDefault(groupFeatureType: GroupFeatureType): Group? {
-        return groupDao.getDefault(groupFeatureType)?.toGroup()
-    }
-
     override suspend fun delete(id: Long) {
         groupDao.delete(id)
     }
@@ -73,6 +68,6 @@ class GroupRepoImpl(
 }
 
 private fun Group.toRoom(featureType: GroupFeatureType) =
-    RoomGroup(id, name, isDefault, orderIndex, creationTime, featureType)
+    RoomGroup(id, name, orderIndex, creationTime, featureType)
 
-private fun RoomGroup.toGroup() = Group(id, name, isDefault, orderIndex, creationTime)
+private fun RoomGroup.toGroup() = Group(id, name, orderIndex, creationTime)

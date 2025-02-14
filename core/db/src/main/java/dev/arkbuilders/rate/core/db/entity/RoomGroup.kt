@@ -10,7 +10,6 @@ class RoomGroup(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val name: String,
-    val isDefault: Boolean,
     val orderIndex: Int,
     val creationTime: OffsetDateTime,
     val featureType: GroupFeatureType,

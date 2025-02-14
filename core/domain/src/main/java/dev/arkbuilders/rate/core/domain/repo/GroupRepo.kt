@@ -24,8 +24,6 @@ interface GroupRepo {
 
     suspend fun getById(id: Long): Group
 
-    suspend fun getDefault(groupFeatureType: GroupFeatureType): Group?
-
     suspend fun delete(id: Long)
 
     suspend fun getAllSorted(featureType: GroupFeatureType): List<Group>

@@ -11,11 +11,10 @@ enum class GroupFeatureType {
 data class Group(
     val id: Long,
     val name: String,
-    val isDefault: Boolean,
     val orderIndex: Int,
     val creationTime: OffsetDateTime,
 ) {
     companion object {
-        fun empty() = Group(0, "", false, 0, OffsetDateTime.now())
+        fun empty() = Group(0, "", 0, OffsetDateTime.now())
     }
 }

@@ -16,15 +16,14 @@ class GetGroupByIdOrCreateDefaultUseCase(
         if (groupId != null)
             return groupRepo.getById(groupId)
 
-        var default = groupRepo.getDefault(groupFeatureType)
-        if (default != null)
-            return default
+        val all = groupRepo.getAllSorted(groupFeatureType)
+        if (all.isNotEmpty())
+            return all.first()
 
-        default =
+        val default =
             Group(
                 0,
                 defaultGroupNameProvider.provide(groupFeatureType),
-                isDefault = true,
                 0,
                 OffsetDateTime.now(),
             )
