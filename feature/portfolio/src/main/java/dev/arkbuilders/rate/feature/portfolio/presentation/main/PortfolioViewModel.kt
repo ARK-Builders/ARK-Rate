@@ -5,13 +5,20 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dev.arkbuilders.rate.core.domain.model.Amount
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.Group
+import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.core.domain.repo.GroupRepo
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
+import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsSheetState
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameSheetState
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderSheetState
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioScope
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
@@ -32,12 +39,15 @@ data class PortfolioScreenState(
     val filter: String = "",
     val baseCode: CurrencyCode = "USD",
     val pages: List<PortfolioScreenPage> = emptyList(),
+    val editGroupReorderSheetState: EditGroupReorderSheetState? = null,
+    val editGroupOptionsSheetState: EditGroupOptionsSheetState? = null,
+    val editGroupRenameSheetState: EditGroupRenameSheetState? = null,
     val initialized: Boolean = false,
     val noInternet: Boolean = false,
 )
 
 data class PortfolioScreenPage(
-    val group: String?,
+    val group: Group,
     val assets: List<PortfolioDisplayAsset>,
 )
 
@@ -60,8 +70,10 @@ sealed class PortfolioScreenEffect {
 class PortfolioViewModel(
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
+    private val groupRepo: GroupRepo,
     private val prefs: Prefs,
     private val convertUseCase: ConvertWithRateUseCase,
+    private val groupReorderSwapUseCase: GroupReorderSwapUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<PortfolioScreenState, PortfolioScreenEffect> {
     override val container: Container<PortfolioScreenState, PortfolioScreenEffect> =
@@ -151,7 +163,7 @@ class PortfolioViewModel(
                             assets,
                         )
                     PortfolioScreenPage(group, displayAssets)
-                }
+                }.sortedByDescending { it.group.orderIndex }
             reduce {
                 state.copy(baseCode = baseCode, pages = pages, initialized = true)
             }
@@ -173,6 +185,102 @@ class PortfolioViewModel(
             PortfolioDisplayAsset(asset, baseAmount, rate)
         }
     }
+
+    //region Group Management
+
+    fun onShowGroupsReorder() =
+        intent {
+            val groups = groupRepo.getAllSorted(GroupFeatureType.Portfolio)
+            reduce {
+                state.copy(
+                    editGroupReorderSheetState = EditGroupReorderSheetState(groups),
+                )
+            }
+        }
+
+    fun onSwapGroups(
+        from: Int,
+        to: Int,
+    ) = intent {
+        val newGroups =
+            groupReorderSwapUseCase(
+                state.editGroupReorderSheetState!!.groups,
+                from,
+                to,
+                GroupFeatureType.Portfolio,
+            )
+
+        reduce {
+            state.copy(
+                editGroupReorderSheetState =
+                    state.editGroupReorderSheetState?.copy(
+                        groups = newGroups,
+                    ),
+            )
+        }
+    }
+
+    fun onDismissGroupsReorder() =
+        intent {
+            reduce { state.copy(editGroupReorderSheetState = null) }
+        }
+
+    fun onShowGroupOptions(group: Group) =
+        intent {
+            reduce { state.copy(editGroupOptionsSheetState = EditGroupOptionsSheetState(group)) }
+        }
+
+    fun onGroupDelete(group: Group) =
+        intent {
+            groupRepo.delete(group.id)
+            val groups = groupRepo.getAllSorted(GroupFeatureType.Portfolio)
+            reduce {
+                state.copy(
+                    editGroupReorderSheetState =
+                        state.editGroupReorderSheetState!!.copy(
+                            groups = groups,
+                        ),
+                    editGroupOptionsSheetState = null,
+                    editGroupRenameSheetState = null,
+                )
+            }
+        }
+
+    fun onDismissGroupOptions() =
+        intent {
+            reduce { state.copy(editGroupOptionsSheetState = null) }
+        }
+
+    fun onShowGroupRename(group: Group) =
+        intent {
+            reduce { state.copy(editGroupRenameSheetState = EditGroupRenameSheetState(group)) }
+        }
+
+    fun onGroupRename(
+        group: Group,
+        newName: String,
+    ) = intent {
+        val renamed = group.copy(name = newName)
+        groupRepo.update(renamed, GroupFeatureType.Portfolio)
+        val groups = groupRepo.getAllSorted(GroupFeatureType.Portfolio)
+        reduce {
+            state.copy(
+                editGroupReorderSheetState =
+                    state.editGroupReorderSheetState!!.copy(
+                        groups = groups,
+                    ),
+                editGroupOptionsSheetState = null,
+                editGroupRenameSheetState = null,
+            )
+        }
+    }
+
+    fun onDismissGroupRename() =
+        intent {
+            reduce { state.copy(editGroupRenameSheetState = null) }
+        }
+
+    //endregion
 }
 
 @PortfolioScope
@@ -181,14 +289,18 @@ class PortfolioViewModelFactory @Inject constructor(
     private val currencyRepo: CurrencyRepo,
     private val prefs: Prefs,
     private val convertUseCase: ConvertWithRateUseCase,
+    private val groupReorderSwapUseCase: GroupReorderSwapUseCase,
     private val analyticsManager: AnalyticsManager,
+    private val groupRepo: GroupRepo,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return PortfolioViewModel(
             assetsRepo,
             currencyRepo,
+            groupRepo,
             prefs,
             convertUseCase,
+            groupReorderSwapUseCase,
             analyticsManager,
         ) as T
     }

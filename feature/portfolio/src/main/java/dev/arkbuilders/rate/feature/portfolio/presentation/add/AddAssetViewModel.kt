@@ -3,15 +3,21 @@ package dev.arkbuilders.rate.feature.portfolio.presentation.add
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.AmountStr
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.Group
+import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.core.domain.repo.GroupRepo
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
+import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCase
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
-import dev.arkbuilders.rate.feature.portfolio.di.PortfolioScope
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.feature.portfolio.domain.usecase.AddNewAssetsUseCase
@@ -25,12 +31,11 @@ import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
-import javax.inject.Inject
 
 data class AddAssetState(
     val currencies: List<AmountStr> = listOf(AmountStr("USD", "")),
-    val group: String? = null,
-    val availableGroups: List<String> = emptyList(),
+    val group: Group = Group.empty(),
+    val availableGroups: List<Group> = emptyList(),
 )
 
 sealed class AddAssetSideEffect {
@@ -46,9 +51,12 @@ sealed class AddAssetSideEffect {
 }
 
 class AddAssetViewModel(
+    private val groupId: Long?,
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
+    private val groupRepo: GroupRepo,
+    private val getGroupByIdOrCreateDefaultUseCase: GetGroupByIdOrCreateDefaultUseCase,
     private val analyticsManager: AnalyticsManager,
     private val addNewAssetsUseCase: AddNewAssetsUseCase,
 ) : ViewModel(), ContainerHost<AddAssetState, AddAssetSideEffect> {
@@ -85,10 +93,10 @@ class AddAssetViewModel(
         }.launchIn(viewModelScope)
 
         intent {
-            val groups =
-                assetsRepo.allAssets().mapNotNull { it.group }.distinct()
+            val group = getGroupByIdOrCreateDefaultUseCase(groupId, GroupFeatureType.Portfolio)
+            val groups = groupRepo.getAllSorted(GroupFeatureType.Portfolio)
             reduce {
-                state.copy(availableGroups = groups)
+                state.copy(group = group, availableGroups = groups)
             }
         }
     }
@@ -104,7 +112,15 @@ class AddAssetViewModel(
             }
         }
 
-    fun onGroupSelect(group: String?) =
+    fun onGroupCreate(name: String) =
+        intent {
+            val group = groupRepo.new(name, GroupFeatureType.Portfolio)
+            reduce {
+                state.copy(group = group)
+            }
+        }
+
+    fun onGroupSelect(group: Group) =
         intent {
             reduce { state.copy(group = group) }
         }
@@ -160,21 +176,33 @@ class AddAssetViewModel(
         }
 }
 
-@PortfolioScope
-class AddAssetViewModelFactory @Inject constructor(
+class AddAssetViewModelFactory @AssistedInject constructor(
+    @Assisted private val groupId: Long?,
     private val assetsRepo: PortfolioRepo,
     private val currencyRepo: CurrencyRepo,
+    private val groupRepo: GroupRepo,
+    private val getGroupByIdOrCreateDefaultUseCase: GetGroupByIdOrCreateDefaultUseCase,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val analyticsManager: AnalyticsManager,
     private val addNewAssetsUseCase: AddNewAssetsUseCase,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddAssetViewModel(
+            groupId,
             assetsRepo,
             currencyRepo,
             codeUseStatRepo,
+            groupRepo,
+            getGroupByIdOrCreateDefaultUseCase,
             analyticsManager,
             addNewAssetsUseCase,
         ) as T
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            @Assisted groupId: Long?,
+        ): AddAssetViewModelFactory
     }
 }

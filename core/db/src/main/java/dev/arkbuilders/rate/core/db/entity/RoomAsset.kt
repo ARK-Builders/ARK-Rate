@@ -11,5 +11,5 @@ data class RoomAsset(
     val id: Long = 0,
     val code: CurrencyCode,
     val amount: BigDecimal,
-    val group: String?,
+    val groupId: Long,
 )
