@@ -2,7 +2,9 @@ package dev.arkbuilders.rate.core.presentation.ui.group
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -39,7 +41,7 @@ fun EditGroupRow(onEdit: () -> Unit) {
             border =
                 BorderStroke(
                     width = 1.dp,
-                    color = ArkColor.BorderSecondary,
+                    color = ArkColor.Border,
                 ),
             colors = ButtonDefaults.outlinedButtonColors(),
             shape = RoundedCornerShape(8.dp),
@@ -49,6 +51,7 @@ fun EditGroupRow(onEdit: () -> Unit) {
                 contentDescription = null,
                 tint = ArkColor.TextSecondary,
             )
+            Spacer(Modifier.width(6.dp))
             Text(
                 text = stringResource(CoreRString.edit),
                 fontWeight = FontWeight.Medium,
