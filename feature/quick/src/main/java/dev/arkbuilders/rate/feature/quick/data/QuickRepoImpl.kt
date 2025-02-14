@@ -55,4 +55,4 @@ private suspend fun RoomQuickPair.toQuickPair(group: Group) =
     QuickPair(id, from, amount, to, calculatedDate, pinnedDate, group)
 
 private suspend fun RoomQuickPair.toQuickPair(groupRepo: GroupRepo) =
-    QuickPair(id, from, amount, to, calculatedDate, pinnedDate, groupRepo.getById(id))
+    QuickPair(id, from, amount, to, calculatedDate, pinnedDate, groupRepo.getById(groupId))
