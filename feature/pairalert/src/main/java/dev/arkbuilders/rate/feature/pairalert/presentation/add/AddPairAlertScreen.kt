@@ -47,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
+import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.AppSharedFlowKey
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
@@ -69,6 +70,7 @@ import dev.arkbuilders.rate.core.presentation.R as CoreR
 @Composable
 fun AddPairAlertScreen(
     pairAlertId: Long? = null,
+    groupId: Long? = null,
     navigator: DestinationsNavigator,
 ) {
     val ctx = LocalContext.current
@@ -78,7 +80,7 @@ fun AddPairAlertScreen(
         }
     val viewModel: AddPairAlertViewModel =
         viewModel(
-            factory = component.addPairAlertVMFactory().create(pairAlertId),
+            factory = component.addPairAlertVMFactory().create(pairAlertId, groupId),
         )
 
     val state by viewModel.collectAsState()
@@ -148,6 +150,7 @@ fun AddPairAlertScreen(
                 navigateSearchBase = viewModel::onNavigateSearchBase,
                 navigateSearchTarget = viewModel::onNavigateSearchTarget,
                 onGroupSelect = viewModel::onGroupSelect,
+                onGroupCreate = viewModel::onGroupCreate,
                 onPriceOrPercentChanged = viewModel::onPriceOrPercentChanged,
                 onOneTimeChanged = viewModel::onOneTimeChanged,
                 onPriceOrPercentInputChanged = viewModel::onPriceOrPercentInputChanged,
@@ -163,7 +166,8 @@ private fun Content(
     state: AddPairAlertScreenState,
     navigateSearchBase: () -> Unit,
     navigateSearchTarget: () -> Unit,
-    onGroupSelect: (String) -> Unit,
+    onGroupSelect: (Group) -> Unit,
+    onGroupCreate: (String) -> Unit,
     onPriceOrPercentChanged: (Boolean) -> Unit,
     onOneTimeChanged: (Boolean) -> Unit,
     onPriceOrPercentInputChanged: (String) -> Unit,
@@ -176,7 +180,7 @@ private fun Content(
 
     if (showNewGroupDialog) {
         GroupCreateDialog(onDismiss = { showNewGroupDialog = false }) {
-            onGroupSelect(it)
+            onGroupCreate(it)
         }
     }
 
@@ -209,9 +213,7 @@ private fun Content(
                             addGroupBtnWidth = it.size.width
                         },
                 onClick = { showGroupsPopup = !showGroupsPopup },
-                title =
-                    state.group?.let { state.group }
-                        ?: stringResource(CoreRString.add_group),
+                title = state.group.name,
                 icon = painterResource(id = CoreR.drawable.ic_group),
             )
             if (showGroupsPopup) {

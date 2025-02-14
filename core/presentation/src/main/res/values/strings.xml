@@ -159,5 +159,10 @@
     <string name="your_connection_is_back">Your connection is back.</string>
     <string name="offline">Offline</string>
     <string name="your_network_is_offline">Your network is offline.</string>
+    <string name="edit_group">Edit group</string>
+    <string name="rename_group">Rename group</string>
+    <string name="edit_group_name">Edit group \"%1$s\"</string>
+    <string name="rename">Rename</string>
+    <string name="groups">Groups</string>
 
 </resources>

@@ -18,21 +18,20 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
-@Preview(showBackground = true, widthDp = 400)
 @Composable
 fun PortfolioSelectPopup(
-    portfolios: List<String> = listOf("Companies", "Funds", "Projects"),
+    portfolios: List<Group>,
     widthPx: Int = 10,
-    onGroupSelect: (String) -> Unit = {},
-    onNewGroupClick: () -> Unit = {},
-    onDismiss: () -> Unit = {},
+    onGroupSelect: (Group) -> Unit,
+    onNewGroupClick: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
     Card(
         modifier = Modifier.width(with(LocalDensity.current) { widthPx.toDp() }),
@@ -93,7 +92,7 @@ fun PortfolioSelectPopup(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = it,
+                    text = it.name,
                     color = ArkColor.TextPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,

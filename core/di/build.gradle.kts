@@ -37,6 +37,7 @@ dependencies {
     implementation(project(":core:db"))
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
+    implementation(project(":core:presentation"))
 
     implementation(libs.androidx.core.ktx)
 

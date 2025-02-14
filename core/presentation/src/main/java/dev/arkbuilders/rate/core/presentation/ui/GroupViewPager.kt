@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import kotlinx.coroutines.launch
@@ -30,11 +31,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun GroupViewPager(
     modifier: Modifier = Modifier,
-    groups: List<String?>,
+    pagerState: PagerState,
+    groups: List<Group>,
     pageContent: @Composable (index: Int) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState { groups.size }
     Column(modifier = modifier) {
         Box {
             AppHorDiv(modifier = Modifier.align(Alignment.BottomCenter))
@@ -67,7 +68,7 @@ fun GroupViewPager(
                     ) {
                         Text(
                             modifier = Modifier.padding(horizontal = 6.dp),
-                            text = group ?: stringResource(R.string.group_default_name),
+                            text = group.name ?: stringResource(R.string.group_default_name),
                             color = if (selected) ArkColor.Teal700 else ArkColor.TextQuarterary,
                             fontWeight = FontWeight.SemiBold,
                         )

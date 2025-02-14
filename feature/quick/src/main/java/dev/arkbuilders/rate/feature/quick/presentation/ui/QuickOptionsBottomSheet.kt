@@ -2,7 +2,6 @@
 
 package dev.arkbuilders.rate.feature.quick.presentation.ui
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,9 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,8 +28,8 @@ import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
+import dev.arkbuilders.rate.core.presentation.ui.verticalScrollDisabled
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
-import kotlin.math.abs
 
 @Composable
 fun QuickOptionsBottomSheet(
@@ -211,20 +207,3 @@ private fun Content(
         }
     }
 }
-
-@SuppressLint("SuspiciousModifierThen")
-fun Modifier.verticalScrollDisabled() =
-    then(
-        pointerInput(Unit) {
-            awaitPointerEventScope {
-                while (true) {
-                    awaitPointerEvent(pass = PointerEventPass.Initial).changes.forEach {
-                        val offset = it.positionChange()
-                        if (abs(offset.y) > 0f) {
-                            it.consume()
-                        }
-                    }
-                }
-            }
-        },
-    )

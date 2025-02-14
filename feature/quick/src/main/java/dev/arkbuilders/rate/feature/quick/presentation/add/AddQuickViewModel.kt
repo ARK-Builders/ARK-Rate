@@ -9,13 +9,17 @@ import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.AmountStr
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.Group
+import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.model.toAmount
 import dev.arkbuilders.rate.core.domain.model.toStrAmount
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
+import dev.arkbuilders.rate.core.domain.repo.GroupRepo
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.domain.toDoubleArk
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
+import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCase
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
@@ -33,9 +37,10 @@ import java.time.OffsetDateTime
 data class AddQuickScreenState(
     val quickPairId: Long? = null,
     val currencies: List<AmountStr> = listOf(AmountStr("USD", "")),
-    val group: String? = null,
-    val availableGroups: List<String> = emptyList(),
+    val group: Group = Group.empty(),
+    val availableGroups: List<Group> = emptyList(),
     val finishEnabled: Boolean = false,
+    val initialized: Boolean = false,
 )
 
 sealed class AddQuickScreenEffect {
@@ -54,9 +59,11 @@ class AddQuickViewModel(
     private val quickPairId: Long?,
     private val newCode: CurrencyCode?,
     private val reuseNotEdit: Boolean,
-    private val group: String?,
+    private val groupId: Long?,
     private val quickRepo: QuickRepo,
+    private val groupRepo: GroupRepo,
     private val convertUseCase: ConvertWithRateUseCase,
+    private val getGroupByIdOrCreateDefaultUseCase: GetGroupByIdOrCreateDefaultUseCase,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<AddQuickScreenState, AddQuickScreenEffect> {
@@ -86,8 +93,7 @@ class AddQuickViewModel(
         }.launchIn(viewModelScope)
 
         intent {
-            val groups =
-                quickRepo.getAll().mapNotNull { it.group }.distinct()
+            val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
             val quickPair = quickPairId?.let { quickRepo.getById(it) }
             quickPair?.let {
                 val currencies =
@@ -105,15 +111,24 @@ class AddQuickViewModel(
                         currencies = calc,
                         group = quickPair.group,
                         availableGroups = groups,
+                        initialized = true,
                     )
                 }
                 checkFinishEnabled()
-            } ?: reduce {
+            } ?: let {
+                val group = getGroupByIdOrCreateDefaultUseCase(groupId, GroupFeatureType.Quick)
                 val currencies =
                     newCode?.let {
                         listOf(AmountStr(newCode, ""))
                     } ?: state.currencies
-                state.copy(currencies = currencies, availableGroups = groups, group = group)
+                reduce {
+                    state.copy(
+                        currencies = currencies,
+                        availableGroups = groups,
+                        group = group,
+                        initialized = true,
+                    )
+                }
             }
         }
     }
@@ -130,9 +145,17 @@ class AddQuickViewModel(
             checkFinishEnabled()
         }
 
-    fun onGroupSelect(group: String?) =
+    fun onGroupSelect(group: Group) =
         intent {
             reduce { state.copy(group = group) }
+        }
+
+    fun onGroupCreate(name: String) =
+        intent {
+            val group = groupRepo.new(name, GroupFeatureType.Quick)
+            reduce {
+                state.copy(group = group)
+            }
         }
 
     fun onAssetAmountChange(input: String) =
@@ -223,12 +246,14 @@ class AddQuickViewModel(
 }
 
 class AddQuickViewModelFactory @AssistedInject constructor(
-    @Assisted private val quickPairId: Long?,
+    @Assisted("pairId") private val quickPairId: Long?,
     @Assisted("newCode") private val newCode: CurrencyCode?,
     @Assisted private val reuseNotEdit: Boolean,
-    @Assisted("group") private val group: String?,
+    @Assisted("groupId") private val groupId: Long?,
     private val quickRepo: QuickRepo,
+    private val groupRepo: GroupRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
+    private val getGroupByIdOrCreateDefaultUseCase: GetGroupByIdOrCreateDefaultUseCase,
     private val convertUseCase: ConvertWithRateUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
@@ -237,9 +262,11 @@ class AddQuickViewModelFactory @AssistedInject constructor(
             quickPairId,
             newCode,
             reuseNotEdit,
-            group,
+            groupId,
             quickRepo,
+            groupRepo,
             convertUseCase,
+            getGroupByIdOrCreateDefaultUseCase,
             codeUseStatRepo,
             analyticsManager,
         ) as T
@@ -248,10 +275,10 @@ class AddQuickViewModelFactory @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            quickPairId: Long?,
+            @Assisted("pairId") quickPairId: Long?,
             @Assisted("newCode") newCode: CurrencyCode?,
             reuseNotEdit: Boolean,
-            @Assisted("group") group: String?,
+            @Assisted("groupId") group: Long?,
         ): AddQuickViewModelFactory
     }
 }

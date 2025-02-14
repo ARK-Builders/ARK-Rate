@@ -39,7 +39,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +49,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.AmountStr
+import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.AppSharedFlowKey
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
@@ -70,14 +70,17 @@ import dev.arkbuilders.rate.core.presentation.R as CoreR
 
 @Destination
 @Composable
-fun AddAssetScreen(navigator: DestinationsNavigator) {
+fun AddAssetScreen(
+    groupId: Long? = null,
+    navigator: DestinationsNavigator,
+) {
     val ctx = LocalContext.current
     val component =
         remember {
             PortfolioComponentHolder.provide(ctx)
         }
     val viewModel: AddAssetViewModel =
-        viewModel(factory = component.addCurrencyVMFactory())
+        viewModel(factory = component.addCurrencyVMFactory().create(groupId))
 
     val state by viewModel.collectAsState()
 
@@ -135,6 +138,7 @@ fun AddAssetScreen(navigator: DestinationsNavigator) {
                 onNewCurrencyClick = viewModel::onAddCode,
                 onAssetRemove = viewModel::onAssetRemove,
                 onGroupSelect = viewModel::onGroupSelect,
+                onGroupCreate = viewModel::onGroupCreate,
                 onCodeChange = viewModel::onSetCode,
                 onAddAsset = viewModel::onAddAsset,
             )
@@ -142,16 +146,16 @@ fun AddAssetScreen(navigator: DestinationsNavigator) {
     }
 }
 
-@Preview(showBackground = true, widthDp = 400)
 @Composable
 private fun Content(
-    state: AddAssetState = AddAssetState(emptyList(), group = "Hello"),
-    onAssetValueChanged: (Int, String) -> Unit = { _, _ -> },
-    onNewCurrencyClick: () -> Unit = {},
-    onAssetRemove: (Int) -> Unit = {},
-    onGroupSelect: (String) -> Unit = {},
-    onCodeChange: (Int) -> Unit = {},
-    onAddAsset: () -> Unit = {},
+    state: AddAssetState,
+    onAssetValueChanged: (Int, String) -> Unit,
+    onNewCurrencyClick: () -> Unit,
+    onAssetRemove: (Int) -> Unit,
+    onGroupSelect: (Group) -> Unit,
+    onGroupCreate: (String) -> Unit,
+    onCodeChange: (Int) -> Unit,
+    onAddAsset: () -> Unit,
 ) {
     var showNewGroupDialog by remember { mutableStateOf(false) }
     var showGroupsPopup by remember { mutableStateOf(false) }
@@ -159,7 +163,7 @@ private fun Content(
 
     if (showNewGroupDialog) {
         PortfolioCreateDialog(onDismiss = { showNewGroupDialog = false }) {
-            onGroupSelect(it)
+            onGroupCreate(it)
         }
     }
 
@@ -210,9 +214,7 @@ private fun Content(
                             addGroupBtnWidth = it.size.width
                         },
                 onClick = { showGroupsPopup = true },
-                title =
-                    state.group?.let { state.group }
-                        ?: stringResource(CoreRString.portfolio_default_portfolio),
+                title = state.group.name,
                 icon = painterResource(id = CoreR.drawable.ic_group),
             )
             if (showGroupsPopup) {
