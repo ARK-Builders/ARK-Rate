@@ -35,7 +35,6 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
-import timber.log.Timber
 import java.time.OffsetDateTime
 
 data class QuickScreenPage(
@@ -220,20 +219,18 @@ class QuickViewModel(
 
     private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
         val refreshDate = timestampRepo.getTimestamp(TimestampType.FetchRates)
+        val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
         val pages =
-            pairs
-                .reversed()
-                .groupBy { it.group }
-                .map { (group, pairs) ->
-                    val (pinned, notPinned) = pairs.partition { it.isPinned() }
-                    val pinnedMapped = pinned.map { mapPairToPinned(it, refreshDate!!) }
-                    val sortedPinned =
-                        pinnedMapped.sortedByDescending { it.pair.pinnedDate }
-                    val sortedNotPinned =
-                        notPinned.sortedByDescending { it.calculatedDate }
-                    QuickScreenPage(group, sortedPinned, sortedNotPinned)
-                }
-                .sortedByDescending { it.group.orderIndex }
+            groups.map { group ->
+                val filteredPairs = pairs.reversed().filter { it.group.id == group.id }
+                val (pinned, notPinned) = filteredPairs.partition { it.isPinned() }
+                val pinnedMapped = pinned.map { mapPairToPinned(it, refreshDate!!) }
+                val sortedPinned =
+                    pinnedMapped.sortedByDescending { it.pair.pinnedDate }
+                val sortedNotPinned =
+                    notPinned.sortedByDescending { it.calculatedDate }
+                QuickScreenPage(group, sortedPinned, sortedNotPinned)
+            }.filter { it.pinned.isNotEmpty() || it.notPinned.isNotEmpty() }
         return pages
     }
 

@@ -115,8 +115,9 @@ class AddAssetViewModel(
     fun onGroupCreate(name: String) =
         intent {
             val group = groupRepo.new(name, GroupFeatureType.Portfolio)
+            val groups = groupRepo.getAllSorted(GroupFeatureType.Portfolio)
             reduce {
-                state.copy(group = group)
+                state.copy(group = group, availableGroups = groups)
             }
         }
 

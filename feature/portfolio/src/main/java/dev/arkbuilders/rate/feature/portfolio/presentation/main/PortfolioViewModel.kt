@@ -109,6 +109,10 @@ class PortfolioViewModel(
             assetsRepo.allAssetsFlow().drop(1).onEach {
                 initPages()
             }.launchIn(viewModelScope)
+
+            groupRepo.allFlow(GroupFeatureType.Portfolio).drop(1).onEach {
+                initPages()
+            }.launchIn(viewModelScope)
         }
 
     fun onRefreshClick() =
@@ -154,16 +158,17 @@ class PortfolioViewModel(
         intent {
             val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
             val assets = assetsRepo.allAssets().reversed()
-            val groups = assets.groupBy(keySelector = { it.group })
+            val groups = groupRepo.getAllSorted(GroupFeatureType.Portfolio)
             val pages =
-                groups.map { (group, assets) ->
+                groups.map { group ->
+                    val filteredAssets = assets.filter { it.group.id == group.id }
                     val displayAssets =
                         assetToPortfolioDisplayAmount(
                             baseCode,
-                            assets,
+                            filteredAssets,
                         )
                     PortfolioScreenPage(group, displayAssets)
-                }.sortedByDescending { it.group.orderIndex }
+                }.filter { it.assets.isNotEmpty() }
             reduce {
                 state.copy(baseCode = baseCode, pages = pages, initialized = true)
             }

@@ -18,6 +18,7 @@ import dev.arkbuilders.rate.feature.pairalert.data.permission.NotificationPermis
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertScope
 import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
 import dev.arkbuilders.rate.feature.pairalert.domain.repo.PairAlertRepo
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
@@ -96,27 +97,18 @@ class PairAlertViewModel(
 
     private fun init() =
         intent {
+            initPages()
+
             AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
                 postSideEffect(PairAlertEffect.ShowSnackbarAdded(visuals))
             }.launchIn(viewModelScope)
 
-            pairAlertRepo.getAllFlow().onEach { all ->
-                val pages =
-                    all.reversed().groupBy { it.group }
-                        .map { (group, pairAlertList) ->
-                            val oneTimeTriggered =
-                                pairAlertList.filter {
-                                    it.triggered() && it.oneTimeNotRecurrent && !it.enabled
-                                }
-                            val created = pairAlertList - oneTimeTriggered.toSet()
+            groupRepo.allFlow(GroupFeatureType.PairAlert).drop(1).onEach {
+                initPages()
+            }.launchIn(viewModelScope)
 
-                            PairAlertScreenPage(group, created, oneTimeTriggered)
-                        }.sortedByDescending { it.group.orderIndex }
-                intent {
-                    reduce {
-                        state.copy(pages = pages, initialized = true)
-                    }
-                }
+            pairAlertRepo.getAllFlow().drop(1).onEach {
+                initPages()
             }.launchIn(viewModelScope)
         }
 
@@ -168,6 +160,26 @@ class PairAlertViewModel(
     fun undoDelete(pair: PairAlert) =
         intent {
             pairAlertRepo.insert(pair)
+        }
+
+    private suspend fun initPages() =
+        intent {
+            val pairs = pairAlertRepo.getAll()
+            val groups = groupRepo.getAllSorted(GroupFeatureType.PairAlert)
+            val pages =
+                groups.map { group ->
+                    val filteredPairs = pairs.reversed().filter { it.group.id == group.id }
+                    val oneTimeTriggered =
+                        filteredPairs.filter {
+                            it.triggered() && it.oneTimeNotRecurrent && !it.enabled
+                        }
+                    val created = filteredPairs - oneTimeTriggered.toSet()
+
+                    PairAlertScreenPage(group, created, oneTimeTriggered)
+                }.filter { it.created.isNotEmpty() || it.oneTimeTriggered.isNotEmpty() }
+            reduce {
+                state.copy(pages = pages, initialized = true)
+            }
         }
 
     //region Group Management
