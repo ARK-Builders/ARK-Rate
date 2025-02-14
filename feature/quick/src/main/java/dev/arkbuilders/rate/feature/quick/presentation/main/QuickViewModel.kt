@@ -6,15 +6,22 @@ import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.Group
+import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.model.TimestampType
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.core.domain.repo.GroupRepo
 import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
+import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsSheetState
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameSheetState
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderSheetState
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
@@ -28,15 +35,16 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import timber.log.Timber
 import java.time.OffsetDateTime
 
 data class QuickScreenPage(
-    val group: String?,
+    val group: Group,
     val pinned: List<PinnedQuickPair>,
     val notPinned: List<QuickPair>,
 )
 
-data class OptionsData(val pair: QuickPair)
+data class PairOptionsData(val pair: QuickPair)
 
 data class QuickScreenState(
     val filter: String = "",
@@ -44,7 +52,10 @@ data class QuickScreenState(
     val frequent: List<CurrencyName> = emptyList(),
     val topResults: List<CurrencyName> = emptyList(),
     val pages: List<QuickScreenPage> = emptyList(),
-    val optionsData: OptionsData? = null,
+    val pairOptionsData: PairOptionsData? = null,
+    val editGroupReorderSheetState: EditGroupReorderSheetState? = null,
+    val editGroupOptionsSheetState: EditGroupOptionsSheetState? = null,
+    val editGroupRenameSheetState: EditGroupRenameSheetState? = null,
     val initialized: Boolean = false,
     val noInternet: Boolean = false,
 )
@@ -63,8 +74,10 @@ class QuickViewModel(
     private val currencyRepo: CurrencyRepo,
     private val quickRepo: QuickRepo,
     private val timestampRepo: TimestampRepo,
+    private val groupRepo: GroupRepo,
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
+    private val groupReorderSwapUseCase: GroupReorderSwapUseCase,
     private val getTopResultUseCase: GetTopResultUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
@@ -95,6 +108,17 @@ class QuickViewModel(
             quickRepo.allFlow().drop(1).onEach { quick ->
                 intent {
                     val pages = mapPairsToPages(quick)
+                    reduce {
+                        state.copy(
+                            pages = pages,
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+
+            groupRepo.allFlow(GroupFeatureType.Quick).drop(1).onEach {
+                intent {
+                    val pages = mapPairsToPages(quickRepo.getAll())
                     reduce {
                         state.copy(
                             pages = pages,
@@ -143,14 +167,14 @@ class QuickViewModel(
             }
         }
 
-    fun onShowOptions(pair: QuickPair) =
+    fun onShowGroupOptions(pair: QuickPair) =
         intent {
-            reduce { state.copy(optionsData = OptionsData(pair)) }
+            reduce { state.copy(pairOptionsData = PairOptionsData(pair)) }
         }
 
     fun onHideOptions() =
         intent {
-            reduce { state.copy(optionsData = null) }
+            reduce { state.copy(pairOptionsData = null) }
         }
 
     fun onPin(pair: QuickPair) =
@@ -209,6 +233,7 @@ class QuickViewModel(
                         notPinned.sortedByDescending { it.calculatedDate }
                     QuickScreenPage(group, sortedPinned, sortedNotPinned)
                 }
+                .sortedByDescending { it.group.orderIndex }
         return pages
     }
 
@@ -223,14 +248,112 @@ class QuickViewModel(
             }
         return PinnedQuickPair(pair, actualTo, refreshDate)
     }
+
+    //region Group Management
+
+    fun onShowGroupsReorder() =
+        intent {
+            val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
+            reduce {
+                state.copy(
+                    editGroupReorderSheetState = EditGroupReorderSheetState(groups),
+                )
+            }
+        }
+
+    fun onSwapGroups(
+        from: Int,
+        to: Int,
+    ) = intent {
+        val newGroups =
+            groupReorderSwapUseCase(
+                state.editGroupReorderSheetState!!.groups,
+                from,
+                to,
+                GroupFeatureType.Quick,
+            )
+
+        reduce {
+            state.copy(
+                editGroupReorderSheetState =
+                    state.editGroupReorderSheetState?.copy(
+                        groups = newGroups,
+                    ),
+            )
+        }
+    }
+
+    fun onDismissGroupsReorder() =
+        intent {
+            reduce { state.copy(editGroupReorderSheetState = null) }
+        }
+
+    fun onShowGroupOptions(group: Group) =
+        intent {
+            reduce { state.copy(editGroupOptionsSheetState = EditGroupOptionsSheetState(group)) }
+        }
+
+    fun onGroupDelete(group: Group) =
+        intent {
+            groupRepo.delete(group.id)
+            val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
+            reduce {
+                state.copy(
+                    editGroupReorderSheetState =
+                        state.editGroupReorderSheetState!!.copy(
+                            groups = groups,
+                        ),
+                    editGroupOptionsSheetState = null,
+                    editGroupRenameSheetState = null,
+                )
+            }
+        }
+
+    fun onDismissGroupOptions() =
+        intent {
+            reduce { state.copy(editGroupOptionsSheetState = null) }
+        }
+
+    fun onShowGroupRename(group: Group) =
+        intent {
+            reduce { state.copy(editGroupRenameSheetState = EditGroupRenameSheetState(group)) }
+        }
+
+    fun onGroupRename(
+        group: Group,
+        newName: String,
+    ) = intent {
+        val renamed = group.copy(name = newName)
+        groupRepo.update(renamed, GroupFeatureType.Quick)
+        val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
+        reduce {
+            state.copy(
+                editGroupReorderSheetState =
+                    state.editGroupReorderSheetState!!.copy(
+                        groups = groups,
+                    ),
+                editGroupOptionsSheetState = null,
+                editGroupRenameSheetState = null,
+            )
+        }
+    }
+
+    fun onDismissGroupRename() =
+        intent {
+            reduce { state.copy(editGroupRenameSheetState = null) }
+        }
+
+    //endregion
 }
 
 class QuickViewModelFactory @AssistedInject constructor(
     private val quickRepo: QuickRepo,
     private val currencyRepo: CurrencyRepo,
     private val timestampRepo: TimestampRepo,
+    private val groupRepo: GroupRepo,
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
+    private val groupReorderSwapUseCase: GroupReorderSwapUseCase,
     private val getTopResultUseCase: GetTopResultUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
@@ -239,8 +362,10 @@ class QuickViewModelFactory @AssistedInject constructor(
             currencyRepo,
             quickRepo,
             timestampRepo,
+            groupRepo,
             convertUseCase,
             calcFrequentCurrUseCase,
+            groupReorderSwapUseCase,
             getTopResultUseCase,
             analyticsManager,
         ) as T
