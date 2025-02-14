@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -32,11 +34,13 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,11 +69,16 @@ import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.core.presentation.ui.NoInternetScreen
 import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsBottomSheet
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameBottomSheet
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomSheet
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRow
 import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponent
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponentHolder
 import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
 import dev.arkbuilders.rate.feature.pairalert.presentation.destinations.AddPairAlertScreenDestination
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import timber.log.Timber
@@ -95,7 +104,14 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
     val state by viewModel.collectAsState()
     val snackState = remember { SnackbarHostState() }
 
+    val scope = rememberCoroutineScope()
     val isEmpty = state.pages.isEmpty()
+    val pagerState = rememberPagerState { state.pages.size }
+    val editGroupReorderSheetState = rememberModalBottomSheetState()
+    val editGroupOptionsSheetState = rememberModalBottomSheetState()
+    val editGroupRenameSheetState = rememberModalBottomSheetState()
+
+    fun getCurrentGroup() = state.pages.getOrNull(pagerState.currentPage)?.group
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
@@ -103,6 +119,7 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
                 navigator.navigate(
                     AddPairAlertScreenDestination(
                         pairAlertId = effect.pairId,
+                        groupId = getCurrentGroup()?.id,
                     ),
                 )
 
@@ -176,6 +193,8 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
                     Content(
                         component = component,
                         state = state,
+                        pagerState = pagerState,
+                        onEditGroups = viewModel::onShowGroupsReorder,
                         onDelete = viewModel::onDelete,
                         onClick = { pair ->
                             viewModel.onNewPair(pair.id)
@@ -185,12 +204,56 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
             }
         }
     }
+
+    state.editGroupReorderSheetState?.let {
+        EditGroupReorderBottomSheet(
+            sheetState = editGroupReorderSheetState,
+            state = it,
+            onSwap = { f, t -> viewModel.onSwapGroups(f, t) },
+            onOptionsClick = { viewModel.onShowGroupOptions(it) },
+            onDismiss = {
+                scope.launch {
+                    editGroupReorderSheetState.hide()
+                    viewModel.onDismissGroupsReorder()
+                }
+            },
+        )
+    }
+    state.editGroupOptionsSheetState?.let {
+        EditGroupOptionsBottomSheet(
+            sheetState = editGroupOptionsSheetState,
+            state = it,
+            onRename = { viewModel.onShowGroupRename(it.group) },
+            onDelete = { viewModel.onGroupDelete(it.group) },
+            onDismiss = {
+                scope.launch {
+                    editGroupOptionsSheetState.hide()
+                    viewModel.onDismissGroupOptions()
+                }
+            },
+        )
+    }
+    state.editGroupRenameSheetState?.let { renameState ->
+        EditGroupRenameBottomSheet(
+            sheetState = editGroupRenameSheetState,
+            state = renameState,
+            onDone = { viewModel.onGroupRename(renameState.group, it) },
+            onDismiss = {
+                scope.launch {
+                    editGroupRenameSheetState.hide()
+                    viewModel.onDismissGroupRename()
+                }
+            },
+        )
+    }
 }
 
 @Composable
 private fun Content(
     component: PairAlertComponent,
     state: PairAlertScreenState,
+    pagerState: PagerState,
+    onEditGroups: () -> Unit,
     onDelete: (PairAlert) -> Unit,
     onClick: (PairAlert) -> Unit,
     onEnableToggle: (PairAlert, Boolean) -> Unit,
@@ -205,8 +268,10 @@ private fun Content(
                 onEnableToggle = onEnableToggle,
             )
         } else {
+            EditGroupRow(onEdit = onEditGroups)
             GroupViewPager(
                 modifier = Modifier.padding(top = 16.dp),
+                pagerState = pagerState,
                 groups = state.pages.map { it.group },
             ) { index ->
                 GroupPage(
@@ -434,17 +499,3 @@ private fun rememberNotificationPermissionLauncher(
         ).show()
     }
 }
-
-private val previewPairAlert =
-    PairAlert(
-        id = 0,
-        targetCode = "USD",
-        baseCode = "EUR",
-        targetPrice = 2.0.toBigDecimal(),
-        startPrice = 1.0.toBigDecimal(),
-        percent = null,
-        oneTimeNotRecurrent = true,
-        enabled = true,
-        group = "Group 1",
-        lastDateTriggered = null,
-    )
