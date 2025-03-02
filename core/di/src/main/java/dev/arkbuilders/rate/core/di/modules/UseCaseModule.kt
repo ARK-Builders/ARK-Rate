@@ -11,6 +11,7 @@ import dev.arkbuilders.rate.core.domain.usecase.DefaultGroupNameProvider
 import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
+import dev.arkbuilders.rate.core.domain.usecase.ValidateGroupNameUseCase
 import javax.inject.Singleton
 
 @Module
@@ -41,4 +42,8 @@ class UseCaseModule {
     @Singleton
     @Provides
     fun groupReorderSwapUseCase(groupRepo: GroupRepo) = GroupReorderSwapUseCase(groupRepo)
+
+    @Singleton
+    @Provides
+    fun validateGroupNameUseCase() = ValidateGroupNameUseCase()
 }

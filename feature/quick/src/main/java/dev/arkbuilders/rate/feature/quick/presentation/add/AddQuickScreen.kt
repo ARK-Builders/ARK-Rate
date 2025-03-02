@@ -174,12 +174,18 @@ private fun Content(
     onCodeChange: (Int) -> Unit,
     onAddAsset: () -> Unit,
 ) {
+    val ctx = LocalContext.current
     var showNewGroupDialog by remember { mutableStateOf(false) }
     var showGroupsPopup by remember { mutableStateOf(false) }
     var addGroupBtnWidth by remember { mutableStateOf(0) }
 
     if (showNewGroupDialog) {
-        GroupCreateDialog(onDismiss = { showNewGroupDialog = false }) {
+        GroupCreateDialog(
+            validateGroupNameUseCase =
+                QuickComponentHolder.provide(ctx)
+                    .validateGroupNameUseCase(),
+            onDismiss = { showNewGroupDialog = false },
+        ) {
             onGroupCreate(it)
         }
     }

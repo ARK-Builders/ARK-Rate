@@ -32,26 +32,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import dev.arkbuilders.rate.core.domain.usecase.ValidateGroupNameUseCase
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
 @Composable
 fun GroupCreateDialog(
+    validateGroupNameUseCase: ValidateGroupNameUseCase,
     onDismiss: () -> Unit,
     onConfirmClick: (String) -> Unit,
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
-        GroupCreateDialogContent(onDismiss, onConfirmClick)
+        GroupCreateDialogContent(validateGroupNameUseCase, onDismiss, onConfirmClick)
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun GroupCreateDialogContent(
+    validateGroupNameUseCase: ValidateGroupNameUseCase,
     onDismiss: () -> Unit = {},
     onConfirmClick: (String) -> Unit = {},
 ) {
@@ -149,6 +150,7 @@ fun GroupCreateDialogContent(
                     onConfirmClick(input)
                     onDismiss()
                 },
+                enabled = validateGroupNameUseCase(input),
                 colors = ButtonDefaults.buttonColors(containerColor = ArkColor.Primary),
                 shape = RoundedCornerShape(8.dp),
             ) {
