@@ -63,7 +63,7 @@ class GroupRepoImpl(
         return groupDao
             .getAllByFeatureType(featureType)
             .map { it.toGroup() }
-            .sortedByDescending { it.orderIndex }
+            .sortedBy { it.orderIndex }
     }
 }
 

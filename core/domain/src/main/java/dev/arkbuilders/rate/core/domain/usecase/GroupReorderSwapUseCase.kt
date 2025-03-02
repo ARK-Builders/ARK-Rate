@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.core.domain.usecase
 
+import android.util.Log
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
@@ -17,8 +18,7 @@ class GroupReorderSwapUseCase(
             groups.toMutableList()
                 .apply { add(to, removeAt(from)) }
                 .mapIndexed { index, group ->
-                    val reversedIndex = groups.lastIndex - index
-                    group.copy(orderIndex = reversedIndex)
+                    group.copy(orderIndex = index)
                 }
         groupRepo.update(listOf(newGroups[from], newGroups[to]), groupFeatureType)
         return newGroups
