@@ -60,9 +60,9 @@ import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.core.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.core.presentation.ui.DropDownWithIcon
 import dev.arkbuilders.rate.core.presentation.ui.GroupCreateDialog
+import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
-import dev.arkbuilders.rate.feature.portfolio.presentation.ui.PortfolioSelectPopup
 import dev.arkbuilders.rate.feature.search.presentation.destinations.SearchCurrencyScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -239,9 +239,10 @@ private fun Content(
                         properties = PopupProperties(),
                         onDismissRequest = { showGroupsPopup = false },
                     ) {
-                        PortfolioSelectPopup(
-                            portfolios = state.availableGroups,
+                        GroupSelectPopup(
+                            groups = state.availableGroups,
                             widthPx = addGroupBtnWidth,
+                            newGroupTitle = stringResource(CoreRString.portfolio_new_portfolio),
                             onGroupSelect = { onGroupSelect(it) },
                             onNewGroupClick = { showNewGroupDialog = true },
                             onDismiss = { showGroupsPopup = false },

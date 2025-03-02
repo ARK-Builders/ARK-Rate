@@ -27,7 +27,7 @@ import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 @Composable
 fun GroupSelectPopup(
     groups: List<Group>,
-    defaultName: String = stringResource(R.string.group_default_name),
+    newGroupTitle: String = stringResource(R.string.new_group),
     widthPx: Int = 10,
     onGroupSelect: (Group) -> Unit,
     onNewGroupClick: () -> Unit,
@@ -61,7 +61,7 @@ fun GroupSelectPopup(
             )
             Text(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(R.string.new_group),
+                text = newGroupTitle,
                 color = ArkColor.TextPrimary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
@@ -92,7 +92,7 @@ fun GroupSelectPopup(
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = it.name ?: defaultName,
+                    text = it.name,
                     color = ArkColor.TextPrimary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
