@@ -59,9 +59,9 @@ import dev.arkbuilders.rate.core.presentation.ui.AppButton
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.core.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.core.presentation.ui.DropDownWithIcon
+import dev.arkbuilders.rate.core.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
-import dev.arkbuilders.rate.feature.portfolio.presentation.ui.PortfolioCreateDialog
 import dev.arkbuilders.rate.feature.portfolio.presentation.ui.PortfolioSelectPopup
 import dev.arkbuilders.rate.feature.search.presentation.destinations.SearchCurrencyScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
@@ -157,14 +157,23 @@ private fun Content(
     onCodeChange: (Int) -> Unit,
     onAddAsset: () -> Unit,
 ) {
+    val ctx = LocalContext.current
     var showNewGroupDialog by remember { mutableStateOf(false) }
     var showGroupsPopup by remember { mutableStateOf(false) }
     var addGroupBtnWidth by remember { mutableStateOf(0) }
 
     if (showNewGroupDialog) {
-        PortfolioCreateDialog(onDismiss = { showNewGroupDialog = false }) {
-            onGroupCreate(it)
-        }
+        GroupCreateDialog(
+            title = stringResource(CoreRString.portfolio_name_dialog_title),
+            desc = stringResource(CoreRString.portfolio_name_dialog_desc),
+            inputTitle = stringResource(CoreRString.portfolio_name_dialog_portfolio_name),
+            inputPlaceholder = stringResource(CoreRString.portfolio_name_dialog_placeholder),
+            validateGroupNameUseCase =
+                PortfolioComponentHolder.provide(ctx)
+                    .validateGroupNameUseCase(),
+            onDismiss = { showNewGroupDialog = false },
+            onConfirmClick = { onGroupCreate(it) },
+        )
     }
 
     Column(modifier = Modifier.fillMaxSize()) {

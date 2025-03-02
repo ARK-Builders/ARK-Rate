@@ -3,6 +3,7 @@ package dev.arkbuilders.rate.feature.portfolio.di
 import dagger.Component
 import dev.arkbuilders.rate.core.db.dao.PortfolioDao
 import dev.arkbuilders.rate.core.di.CoreComponent
+import dev.arkbuilders.rate.core.domain.usecase.ValidateGroupNameUseCase
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.feature.portfolio.presentation.add.AddAssetViewModelFactory
 import dev.arkbuilders.rate.feature.portfolio.presentation.edit.EditAssetViewModelFactory
@@ -20,4 +21,6 @@ interface PortfolioComponent {
     fun assetsRepo(): PortfolioRepo
 
     fun portfolioDao(): PortfolioDao
+
+    fun validateGroupNameUseCase(): ValidateGroupNameUseCase
 }
