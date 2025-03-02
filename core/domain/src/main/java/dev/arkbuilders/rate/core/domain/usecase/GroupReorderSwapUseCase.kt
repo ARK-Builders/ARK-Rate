@@ -20,7 +20,7 @@ class GroupReorderSwapUseCase(
                 .mapIndexed { index, group ->
                     group.copy(orderIndex = index)
                 }
-        groupRepo.update(listOf(newGroups[from], newGroups[to]), groupFeatureType)
+        groupRepo.update(newGroups, groupFeatureType)
         return newGroups
     }
 }
