@@ -2,6 +2,7 @@ package dev.arkbuilders.rate.feature.quick.domain.model
 
 import dev.arkbuilders.rate.core.domain.model.Amount
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.Group
 import java.math.BigDecimal
 import java.time.OffsetDateTime
 
@@ -12,7 +13,7 @@ data class QuickPair(
     val to: List<Amount>,
     val calculatedDate: OffsetDateTime,
     val pinnedDate: OffsetDateTime?,
-    val group: String?,
+    val group: Group,
 ) {
     fun isPinned() = pinnedDate != null
 }

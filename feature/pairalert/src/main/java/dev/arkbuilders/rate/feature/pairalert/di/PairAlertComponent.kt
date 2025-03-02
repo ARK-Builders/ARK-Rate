@@ -6,6 +6,7 @@ import dev.arkbuilders.rate.core.db.dao.PairAlertDao
 import dev.arkbuilders.rate.core.di.CoreComponent
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.core.domain.usecase.ValidateGroupNameUseCase
 import dev.arkbuilders.rate.feature.pairalert.domain.repo.PairAlertRepo
 import dev.arkbuilders.rate.feature.pairalert.domain.usecase.HandlePairAlertCheckUseCase
 import dev.arkbuilders.rate.feature.pairalert.presentation.add.AddPairAlertViewModelFactory
@@ -29,4 +30,6 @@ interface PairAlertComponent {
     fun ctx(): Context
 
     fun handlePairAlertCheckUseCase(): HandlePairAlertCheckUseCase
+
+    fun validateGroupNameUseCase(): ValidateGroupNameUseCase
 }

@@ -1,6 +1,7 @@
 package dev.arkbuilders.rate.feature.pairalert.domain.model
 
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.Group
 import java.math.BigDecimal
 import java.time.OffsetDateTime
 
@@ -14,7 +15,7 @@ data class PairAlert(
     val oneTimeNotRecurrent: Boolean,
     val enabled: Boolean,
     val lastDateTriggered: OffsetDateTime?,
-    val group: String?,
+    val group: Group,
 ) {
     fun above() = targetPrice > startPrice
 

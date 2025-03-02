@@ -32,28 +32,47 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import dev.arkbuilders.rate.core.domain.usecase.ValidateGroupNameUseCase
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
 @Composable
 fun GroupCreateDialog(
+    title: String = stringResource(R.string.group_create_group),
+    desc: String = stringResource(R.string.group_please_enter_a_name_for_this_group),
+    inputTitle: String = stringResource(R.string.group_name),
+    inputPlaceholder: String = stringResource(R.string.e_g_group_1),
+    validateGroupNameUseCase: ValidateGroupNameUseCase,
     onDismiss: () -> Unit,
     onConfirmClick: (String) -> Unit,
 ) {
-    Dialog(onDismissRequest = { onDismiss() }) {
-        GroupCreateDialogContent(onDismiss, onConfirmClick)
+    Dialog(
+        onDismissRequest = { onDismiss() },
+    ) {
+        GroupCreateDialogContent(
+            title,
+            desc,
+            inputTitle,
+            inputPlaceholder,
+            validateGroupNameUseCase,
+            onDismiss,
+            onConfirmClick,
+        )
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun GroupCreateDialogContent(
-    onDismiss: () -> Unit = {},
-    onConfirmClick: (String) -> Unit = {},
+    title: String,
+    desc: String,
+    inputTitle: String,
+    inputPlaceholder: String,
+    validateGroupNameUseCase: ValidateGroupNameUseCase,
+    onDismiss: () -> Unit,
+    onConfirmClick: (String) -> Unit,
 ) {
     var input by remember {
         mutableStateOf("")
@@ -94,20 +113,20 @@ fun GroupCreateDialogContent(
         ) {
             Text(
                 modifier = Modifier.padding(top = 28.dp),
-                text = stringResource(R.string.group_create_group),
+                text = title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = ArkColor.TextPrimary,
             )
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = stringResource(R.string.group_please_enter_a_name_for_this_group),
+                text = desc,
                 color = ArkColor.TextTertiary,
             )
 
             Text(
                 modifier = Modifier.padding(top = 20.dp),
-                text = stringResource(R.string.group_name),
+                text = inputTitle,
                 fontWeight = FontWeight.Medium,
                 color = ArkColor.TextSecondary,
             )
@@ -134,7 +153,7 @@ fun GroupCreateDialogContent(
                         ),
                 placeholder = {
                     Text(
-                        text = stringResource(R.string.e_g_group_1),
+                        text = inputPlaceholder,
                         fontSize = 16.sp,
                         color = ArkColor.TextPlaceHolder,
                     )
@@ -149,6 +168,7 @@ fun GroupCreateDialogContent(
                     onConfirmClick(input)
                     onDismiss()
                 },
+                enabled = validateGroupNameUseCase(input),
                 colors = ButtonDefaults.buttonColors(containerColor = ArkColor.Primary),
                 shape = RoundedCornerShape(8.dp),
             ) {
