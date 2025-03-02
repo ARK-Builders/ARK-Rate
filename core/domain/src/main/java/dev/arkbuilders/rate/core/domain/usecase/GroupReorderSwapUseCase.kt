@@ -1,6 +1,5 @@
 package dev.arkbuilders.rate.core.domain.usecase
 
-import android.util.Log
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
