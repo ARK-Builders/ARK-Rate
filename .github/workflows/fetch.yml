@@ -1,0 +1,33 @@
+name: Fetch exchange rates
+
+on:
+  push:
+    branches: [ "main" ] # On every push to `main`
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 1" # Also, regularly at 00:00 on Monday
+
+env:
+  APP_ID: ${{ secrets.APP_ID }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Fetch fiat
+        run: curl -X GET "https://openexchangerates.org/api/latest.json?app_id=${{ secrets.APP_ID }}" --output fiat-rates.json # ADJUST PATH HERE
+        
+      - name: Fetch crypto       
+        run: curl -X GET "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd" --output crypto-rates.json # ADJUST PATH HERE
+
+      - name: Push into Git
+        run: |-
+          git config --global user.email "bot@ark-builders.dev"
+          git config --global user.name "ARK Builders Bot"
+          git add fiat-rates.json # ADJUST PATH HERE
+          git add crypto-rates.json # ADJUST PATH HERE
+          git commit -m "Automated update of rates"
+          git push
