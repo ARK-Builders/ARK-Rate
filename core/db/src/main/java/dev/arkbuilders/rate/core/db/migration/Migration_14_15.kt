@@ -63,7 +63,7 @@ private fun extractGroupsAndInsertIntoGroupTable(db: SupportSQLiteDatabase) {
         groups.forEach { group->
             db.execSQL(
                 "INSERT INTO RoomGroup (name, orderIndex, creationTime, featureType) VALUES (?, ?, ?, ?)",
-                arrayOf(group, orderIndex++, creationTime, featureType)
+                arrayOf(group, orderIndex++, creationTime, featureType.name)
             )
         }
     }
