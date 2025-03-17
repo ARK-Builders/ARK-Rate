@@ -44,7 +44,7 @@ fun EditGroupReorderBottomSheet(
     sheetState: SheetState,
     state: EditGroupReorderSheetState,
     defaultName: String = stringResource(R.string.group_default_name),
-    onSwap: (Int, Int) -> Unit,
+    onSwap: (from: Int, to: Int) -> Unit,
     onOptionsClick: (Group) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -70,7 +70,7 @@ fun EditGroupReorderBottomSheet(
 fun Content(
     groups: List<Group>,
     defaultName: String,
-    onSwap: (Int, Int) -> Unit,
+    onSwap: (from: Int, to: Int) -> Unit,
     onOptionsClick: (Group) -> Unit,
     onDismiss: () -> Unit,
 ) {

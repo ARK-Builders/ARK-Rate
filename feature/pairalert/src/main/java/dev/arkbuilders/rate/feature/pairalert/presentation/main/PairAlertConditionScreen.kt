@@ -209,7 +209,7 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
         EditGroupReorderBottomSheet(
             sheetState = editGroupReorderSheetState,
             state = it,
-            onSwap = { f, t -> viewModel.onSwapGroups(f, t) },
+            onSwap = { from, to -> viewModel.onSwapGroups(from, to) },
             onOptionsClick = { viewModel.onShowGroupOptions(it) },
             onDismiss = {
                 scope.launch {
