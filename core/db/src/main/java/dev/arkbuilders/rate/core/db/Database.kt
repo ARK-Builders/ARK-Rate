@@ -1,5 +1,7 @@
 package dev.arkbuilders.rate.core.db
 
+import android.app.Application
+import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import dev.arkbuilders.rate.core.db.dao.CodeUseStatDao
@@ -16,6 +18,7 @@ import dev.arkbuilders.rate.core.db.entity.RoomFetchTimestamp
 import dev.arkbuilders.rate.core.db.entity.RoomGroup
 import dev.arkbuilders.rate.core.db.entity.RoomPairAlert
 import dev.arkbuilders.rate.core.db.entity.RoomQuickPair
+import dev.arkbuilders.rate.core.db.migration.MIGRATION_14_15
 import dev.arkbuilders.rate.core.db.typeconverters.BigDecimalTypeConverter
 import dev.arkbuilders.rate.core.db.typeconverters.ListAmountTypeConverter
 import dev.arkbuilders.rate.core.db.typeconverters.OffsetDateTimeTypeConverter
@@ -55,5 +58,10 @@ abstract class Database : RoomDatabase() {
 
     companion object {
         const val DB_NAME = "arkrate.db"
+
+        fun build(app: Application) =
+            Room.databaseBuilder(app, Database::class.java, DB_NAME)
+                .addMigrations(MIGRATION_14_15)
+                .build()
     }
 }

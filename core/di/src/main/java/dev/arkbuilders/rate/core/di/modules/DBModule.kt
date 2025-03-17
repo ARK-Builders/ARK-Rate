@@ -1,11 +1,9 @@
 package dev.arkbuilders.rate.core.di.modules
 
 import android.app.Application
-import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dev.arkbuilders.rate.core.db.Database
-import dev.arkbuilders.rate.core.db.Database.Companion.DB_NAME
 import javax.inject.Singleton
 
 @Module
@@ -13,9 +11,7 @@ class DBModule {
     @Singleton
     @Provides
     fun database(app: Application): Database {
-        return Room.databaseBuilder(app, Database::class.java, DB_NAME)
-            .fallbackToDestructiveMigration()
-            .build()
+        return Database.build(app)
     }
 
     @Provides
