@@ -233,10 +233,15 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
             },
         )
     }
+    val validateGroupNameUseCase =
+        remember {
+            PairAlertComponentHolder.provide(ctx).validateGroupNameUseCase()
+        }
     state.editGroupRenameSheetState?.let { renameState ->
         EditGroupRenameBottomSheet(
             sheetState = editGroupRenameSheetState,
             state = renameState,
+            validateGroupNameUseCase = validateGroupNameUseCase,
             onDone = { viewModel.onGroupRename(renameState.group, it) },
             onDismiss = {
                 scope.launch {

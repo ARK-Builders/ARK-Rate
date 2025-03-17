@@ -270,10 +270,15 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                 },
             )
         }
+        val validateGroupNameUseCase =
+            remember {
+                QuickComponentHolder.provide(ctx).validateGroupNameUseCase()
+            }
         state.editGroupRenameSheetState?.let { renameState ->
             EditGroupRenameBottomSheet(
                 sheetState = editGroupRenameSheetState,
                 state = renameState,
+                validateGroupNameUseCase = validateGroupNameUseCase,
                 onDone = { viewModel.onGroupRename(renameState.group, it) },
                 onDismiss = {
                     scope.launch {

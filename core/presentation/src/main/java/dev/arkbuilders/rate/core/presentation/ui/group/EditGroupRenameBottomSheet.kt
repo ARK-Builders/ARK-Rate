@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.core.domain.model.Group
+import dev.arkbuilders.rate.core.domain.usecase.ValidateGroupNameUseCase
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -41,11 +43,16 @@ data class EditGroupRenameSheetState(val group: Group)
 fun EditGroupRenameBottomSheet(
     sheetState: SheetState,
     state: EditGroupRenameSheetState,
-    defaultName: String = stringResource(R.string.group_default_name),
+    validateGroupNameUseCase: ValidateGroupNameUseCase,
     onDismiss: () -> Unit,
     onDone: (String) -> Unit,
 ) {
     var groupRename by remember { mutableStateOf(state.group.name) }
+    val doneEnabled by remember {
+        derivedStateOf {
+            validateGroupNameUseCase(groupRename)
+        }
+    }
     RateBottomSheet(sheetState, onDismiss) {
         Box {
             RateBottomSheetTitle(stringResource(R.string.rename_group), onDismiss)
@@ -90,6 +97,7 @@ fun EditGroupRenameBottomSheet(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
                     onClick = { onDone(groupRename) },
+                    enabled = doneEnabled,
                 ) {
                     Text(
                         text = stringResource(CoreRString.save),
