@@ -30,6 +30,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -44,14 +45,16 @@ class QuickPairsWidget : GlanceAppWidget() {
         context: Context,
         id: GlanceId,
     ) {
-        val getPinnedUseCase =
-            QuickWidgetComponentHolder.provide(context).getPinnedQuickPairUseCase()
+        val quickComponent = QuickWidgetComponentHolder.provide(context)
+        val getPinnedUseCase = quickComponent.getPinnedQuickPairUseCase()
         val pinned = getPinnedUseCase.invoke()
+        val groups = quickComponent.groupRepo().getAllSorted(GroupFeatureType.Quick)
         provideContent {
             val prefs = currentState<Preferences>()
-            val group = prefs[QuickPairsWidgetReceiver.currentGroupKey]
-            val quickPairsList = pinned.filter { it.pair.group == group }
-            val displayGroup = group ?: context.getString(CoreRString.group_default_name)
+            val groupId = prefs[QuickPairsWidgetReceiver.currentGroupIdKey]
+            val quickPairsList = pinned.filter { it.pair.group.id == groupId }
+            val displayGroup = groups.find { it.id == groupId }
+            displayGroup ?: return@provideContent
             Column(
                 modifier =
                     GlanceModifier.fillMaxSize().background(Color.White)
@@ -79,7 +82,7 @@ class QuickPairsWidget : GlanceAppWidget() {
                     )
                     Text(
                         modifier = GlanceModifier.defaultWeight(),
-                        text = displayGroup,
+                        text = displayGroup.name,
                         style =
                             TextStyle(
                                 color = ColorProvider(ArkColor.TextTertiary),

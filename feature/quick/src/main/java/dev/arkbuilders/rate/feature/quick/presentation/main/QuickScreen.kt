@@ -8,13 +8,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -67,6 +71,10 @@ import dev.arkbuilders.rate.core.presentation.ui.NoResult
 import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsBottomSheet
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameBottomSheet
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomSheet
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRow
 import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.core.presentation.utils.findActivity
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
@@ -135,7 +143,13 @@ fun QuickScreen(navigator: DestinationsNavigator) {
     val isEmpty = state.pages.isEmpty()
 
     val scope = rememberCoroutineScope()
-    val bottomSheetState = rememberModalBottomSheetState()
+    val pagerState = rememberPagerState { state.pages.size }
+    val pairOptionsSheetState = rememberModalBottomSheetState()
+    val editGroupReorderSheetState = rememberModalBottomSheetState()
+    val editGroupOptionsSheetState = rememberModalBottomSheetState()
+    val editGroupRenameSheetState = rememberModalBottomSheetState()
+
+    fun getCurrentGroup() = state.pages.getOrNull(pagerState.currentPage)?.group
 
     Scaffold(
         floatingActionButton = {
@@ -153,7 +167,11 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                 containerColor = ArkColor.Secondary,
                 shape = CircleShape,
                 onClick = {
-                    navigator.navigate(AddQuickScreenDestination())
+                    navigator.navigate(
+                        AddQuickScreenDestination(
+                            groupId = getCurrentGroup()?.id,
+                        ),
+                    )
                 },
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
@@ -171,23 +189,30 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                 else ->
                     Content(
                         state = state,
+                        pagerState = pagerState,
+                        onEdit = viewModel::onShowGroupsReorder,
                         onFilterChanged = viewModel::onFilterChanged,
                         onDelete = viewModel::onDelete,
                         onClick = {
-                            viewModel.onShowOptions(it)
+                            viewModel.onShowGroupOptions(it)
                         },
                         onPin = viewModel::onPin,
                         onUnpin = viewModel::onUnpin,
                         onNewCode = {
                             navigator
-                                .navigate(AddQuickScreenDestination(newCode = it))
+                                .navigate(
+                                    AddQuickScreenDestination(
+                                        newCode = it,
+                                        groupId = getCurrentGroup()?.id,
+                                    ),
+                                )
                         },
                     )
             }
         }
-        state.optionsData?.let {
+        state.pairOptionsData?.let {
             QuickOptionsBottomSheet(
-                bottomSheetState,
+                pairOptionsSheetState,
                 pair = it.pair,
                 onPin = viewModel::onPin,
                 onUnpin = viewModel::onUnpin,
@@ -196,19 +221,69 @@ fun QuickScreen(navigator: DestinationsNavigator) {
                         AddQuickScreenDestination(
                             quickPairId = it.id,
                             reuseNotEdit = false,
+                            groupId = getCurrentGroup()?.id,
                         ),
                     )
                 },
                 onReuse = {
                     navigator.navigate(
-                        AddQuickScreenDestination(quickPairId = it.id),
+                        AddQuickScreenDestination(
+                            quickPairId = it.id,
+                            groupId = getCurrentGroup()?.id,
+                        ),
                     )
                 },
                 onDelete = viewModel::onDelete,
                 onDismiss = {
                     scope.launch {
-                        bottomSheetState.hide()
+                        pairOptionsSheetState.hide()
                         viewModel.onHideOptions()
+                    }
+                },
+            )
+        }
+        state.editGroupReorderSheetState?.let {
+            EditGroupReorderBottomSheet(
+                sheetState = editGroupReorderSheetState,
+                state = it,
+                onSwap = { from, to -> viewModel.onSwapGroups(from, to) },
+                onOptionsClick = { viewModel.onShowGroupOptions(it) },
+                onDismiss = {
+                    scope.launch {
+                        editGroupReorderSheetState.hide()
+                        viewModel.onDismissGroupsReorder()
+                    }
+                },
+            )
+        }
+        state.editGroupOptionsSheetState?.let {
+            EditGroupOptionsBottomSheet(
+                sheetState = editGroupOptionsSheetState,
+                state = it,
+                onRename = { viewModel.onShowGroupRename(it.group) },
+                onDelete = { viewModel.onGroupDelete(it.group) },
+                onDismiss = {
+                    scope.launch {
+                        editGroupOptionsSheetState.hide()
+                        viewModel.onDismissGroupOptions()
+                    }
+                },
+            )
+        }
+        val validateGroupNameUseCase =
+            remember {
+                QuickComponentHolder.provide(ctx).validateGroupNameUseCase()
+            }
+        state.editGroupRenameSheetState?.let { renameState ->
+            EditGroupRenameBottomSheet(
+                sheetState = editGroupRenameSheetState,
+                state = renameState,
+                validateGroupNameUseCase = validateGroupNameUseCase,
+                onDone = { viewModel.onGroupRename(renameState.group, it) },
+                onDismiss = {
+                    scope.launch {
+                        editGroupRenameSheetState.hide()
+                        viewModel.onDismissGroupRename()
                     }
                 },
             )
@@ -219,6 +294,8 @@ fun QuickScreen(navigator: DestinationsNavigator) {
 @Composable
 private fun Content(
     state: QuickScreenState,
+    pagerState: PagerState,
+    onEdit: () -> Unit,
     onFilterChanged: (String) -> Unit,
     onDelete: (QuickPair) -> Unit,
     onClick: (QuickPair) -> Unit,
@@ -260,8 +337,10 @@ private fun Content(
                     onNewCode = onNewCode,
                 )
             } else {
+                EditGroupRow(onEdit)
+                Spacer(Modifier.height(4.dp))
                 GroupViewPager(
-                    modifier = Modifier.padding(top = 20.dp),
+                    pagerState = pagerState,
                     groups = groups,
                 ) { index ->
                     GroupPage(

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,7 +44,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,6 +54,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.AppSharedFlowKey
@@ -78,7 +79,7 @@ fun AddQuickScreen(
     quickPairId: Long? = null,
     newCode: CurrencyCode? = null,
     reuseNotEdit: Boolean = true,
-    group: String? = null,
+    groupId: Long? = null,
     navigator: DestinationsNavigator,
 ) {
     val ctx = LocalContext.current
@@ -90,7 +91,7 @@ fun AddQuickScreen(
         viewModel(
             factory =
                 quickComponent.addQuickVMFactory()
-                    .create(quickPairId, newCode, reuseNotEdit, group),
+                    .create(quickPairId, newCode, reuseNotEdit, groupId),
         )
 
     val state by viewModel.collectAsState()
@@ -155,6 +156,7 @@ fun AddQuickScreen(
                 onNewCurrencyClick = viewModel::onAddCode,
                 onCurrencyRemove = viewModel::onCurrencyRemove,
                 onGroupSelect = viewModel::onGroupSelect,
+                onGroupCreate = viewModel::onGroupCreate,
                 onCodeChange = viewModel::onSetCode,
                 onAddAsset = viewModel::onAddQuickPair,
             )
@@ -162,24 +164,30 @@ fun AddQuickScreen(
     }
 }
 
-@Preview(showBackground = true, widthDp = 400)
 @Composable
 private fun Content(
-    state: AddQuickScreenState = AddQuickScreenState(),
-    onAmountChanged: (String) -> Unit = {},
-    onNewCurrencyClick: () -> Unit = {},
-    onCurrencyRemove: (Int) -> Unit = {},
-    onGroupSelect: (String) -> Unit = {},
-    onCodeChange: (Int) -> Unit = {},
-    onAddAsset: () -> Unit = {},
+    state: AddQuickScreenState,
+    onAmountChanged: (String) -> Unit,
+    onNewCurrencyClick: () -> Unit,
+    onCurrencyRemove: (Int) -> Unit,
+    onGroupSelect: (Group) -> Unit,
+    onGroupCreate: (String) -> Unit,
+    onCodeChange: (Int) -> Unit,
+    onAddAsset: () -> Unit,
 ) {
+    val ctx = LocalContext.current
     var showNewGroupDialog by remember { mutableStateOf(false) }
     var showGroupsPopup by remember { mutableStateOf(false) }
     var addGroupBtnWidth by remember { mutableStateOf(0) }
 
     if (showNewGroupDialog) {
-        GroupCreateDialog(onDismiss = { showNewGroupDialog = false }) {
-            onGroupSelect(it)
+        GroupCreateDialog(
+            validateGroupNameUseCase =
+                QuickComponentHolder.provide(ctx)
+                    .validateGroupNameUseCase(),
+            onDismiss = { showNewGroupDialog = false },
+        ) {
+            onGroupCreate(it)
         }
     }
 
@@ -231,7 +239,7 @@ private fun Content(
                         },
                 onClick = { showGroupsPopup = true },
                 title =
-                    state.group?.let { state.group }
+                    state.group.name
                         ?: stringResource(R.string.add_group),
                 icon = painterResource(id = R.drawable.ic_group),
             )
@@ -258,6 +266,7 @@ private fun Content(
                     }
                 }
             }
+            Spacer(Modifier.height(16.dp))
         }
         Column {
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)

@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -25,9 +29,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,14 +42,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
-import dev.arkbuilders.rate.core.domain.model.Amount
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
@@ -61,10 +65,15 @@ import dev.arkbuilders.rate.core.presentation.ui.NoResult
 import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsBottomSheet
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameBottomSheet
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomSheet
+import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRow
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.AddAssetScreenDestination
 import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.EditAssetScreenDestination
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.math.BigDecimal
@@ -87,6 +96,14 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
 
     val state by viewModel.collectAsState()
     val snackState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val isEmpty = state.pages.isEmpty()
+    val pagerState = rememberPagerState { state.pages.size }
+    val editGroupReorderSheetState = rememberModalBottomSheetState()
+    val editGroupOptionsSheetState = rememberModalBottomSheetState()
+    val editGroupRenameSheetState = rememberModalBottomSheetState()
+
+    fun getCurrentGroup() = state.pages.getOrNull(pagerState.currentPage)?.group
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
@@ -116,8 +133,6 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
         }
     }
 
-    val isEmpty = state.pages.isEmpty()
-
     Scaffold(
         floatingActionButton = {
             if (state.initialized.not())
@@ -131,7 +146,7 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                 containerColor = ArkColor.Secondary,
                 shape = CircleShape,
                 onClick = {
-                    navigator.navigate(AddAssetScreenDestination)
+                    navigator.navigate(AddAssetScreenDestination(groupId = getCurrentGroup()?.id))
                 },
             ) {
                 Icon(Icons.Default.Add, contentDescription = "")
@@ -148,7 +163,9 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
                 isEmpty -> PortfolioEmpty(navigator)
                 else ->
                     Content(
-                        state,
+                        state = state,
+                        pagerState = pagerState,
+                        onEditGroups = viewModel::onShowGroupsReorder,
                         onClick = { display ->
                             navigator
                                 .navigate(EditAssetScreenDestination(display.asset.id))
@@ -159,37 +176,62 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
             }
         }
     }
+    state.editGroupReorderSheetState?.let {
+        EditGroupReorderBottomSheet(
+            sheetState = editGroupReorderSheetState,
+            state = it,
+            onSwap = { from, to -> viewModel.onSwapGroups(from, to) },
+            onOptionsClick = { viewModel.onShowGroupOptions(it) },
+            onDismiss = {
+                scope.launch {
+                    editGroupReorderSheetState.hide()
+                    viewModel.onDismissGroupsReorder()
+                }
+            },
+        )
+    }
+    state.editGroupOptionsSheetState?.let {
+        EditGroupOptionsBottomSheet(
+            sheetState = editGroupOptionsSheetState,
+            state = it,
+            onRename = { viewModel.onShowGroupRename(it.group) },
+            onDelete = { viewModel.onGroupDelete(it.group) },
+            onDismiss = {
+                scope.launch {
+                    editGroupOptionsSheetState.hide()
+                    viewModel.onDismissGroupOptions()
+                }
+            },
+        )
+    }
+    val validateGroupNameUseCase =
+        remember {
+            PortfolioComponentHolder.provide(ctx).validateGroupNameUseCase()
+        }
+    state.editGroupRenameSheetState?.let { renameState ->
+        EditGroupRenameBottomSheet(
+            sheetState = editGroupRenameSheetState,
+            state = renameState,
+            validateGroupNameUseCase = validateGroupNameUseCase,
+            onDone = { viewModel.onGroupRename(renameState.group, it) },
+            onDismiss = {
+                scope.launch {
+                    editGroupRenameSheetState.hide()
+                    viewModel.onDismissGroupRename()
+                }
+            },
+        )
+    }
 }
 
-private val previewPortfolioAmount =
-    PortfolioDisplayAsset(
-        Asset(code = "EUR", value = 1100.2.toBigDecimal()),
-        Amount(code = "USD", value = 1200.0.toBigDecimal()),
-        ratioToBase = 1.1.toBigDecimal(),
-    )
-
-private val previewState =
-    PortfolioScreenState(
-        pages =
-            listOf(
-                PortfolioScreenPage(
-                    "Group1",
-                    listOf(previewPortfolioAmount, previewPortfolioAmount),
-                ),
-                PortfolioScreenPage(
-                    "Group2",
-                    listOf(previewPortfolioAmount, previewPortfolioAmount),
-                ),
-            ),
-    )
-
-@Preview(showBackground = true)
 @Composable
 private fun Content(
-    state: PortfolioScreenState = previewState,
-    onClick: (PortfolioDisplayAsset) -> Unit = {},
-    onFilterChange: (String) -> Unit = {},
-    onDelete: (Asset) -> Unit = {},
+    state: PortfolioScreenState,
+    pagerState: PagerState,
+    onEditGroups: () -> Unit,
+    onClick: (PortfolioDisplayAsset) -> Unit,
+    onFilterChange: (String) -> Unit,
+    onDelete: (Asset) -> Unit,
 ) {
     val groups = state.pages.map { it.group }
     Column {
@@ -213,8 +255,12 @@ private fun Content(
                 onDelete = onDelete,
             )
         } else {
+            EditGroupRow(
+                onEdit = onEditGroups,
+            )
+            Spacer(Modifier.height(4.dp))
             GroupViewPager(
-                modifier = Modifier.padding(top = 20.dp),
+                pagerState = pagerState,
                 groups = groups,
             ) { index ->
                 GroupPage(
@@ -299,11 +345,10 @@ private fun GroupPage(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 private fun CurrencyItem(
-    amount: PortfolioDisplayAsset = previewPortfolioAmount,
-    onClick: (PortfolioDisplayAsset) -> Unit = {},
+    amount: PortfolioDisplayAsset,
+    onClick: (PortfolioDisplayAsset) -> Unit,
 ) {
     Row(
         modifier =
@@ -403,7 +448,7 @@ private fun PortfolioEmpty(navigator: DestinationsNavigator) {
             AppButton(
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {
-                    navigator.navigate(AddAssetScreenDestination)
+                    navigator.navigate(AddAssetScreenDestination())
                 },
             ) {
                 Icon(

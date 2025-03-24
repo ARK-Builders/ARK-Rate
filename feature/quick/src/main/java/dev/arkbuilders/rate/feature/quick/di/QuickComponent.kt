@@ -2,6 +2,8 @@ package dev.arkbuilders.rate.feature.quick.di
 
 import dagger.Component
 import dev.arkbuilders.rate.core.di.CoreComponent
+import dev.arkbuilders.rate.core.domain.repo.GroupRepo
+import dev.arkbuilders.rate.core.domain.usecase.ValidateGroupNameUseCase
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
 import dev.arkbuilders.rate.feature.quick.domain.usecase.GetSortedPinnedQuickPairsUseCase
 import dev.arkbuilders.rate.feature.quick.presentation.add.AddQuickViewModelFactory
@@ -17,4 +19,8 @@ interface QuickComponent {
     fun getPinnedQuickPairUseCase(): GetSortedPinnedQuickPairsUseCase
 
     fun quickRepo(): QuickRepo
+
+    fun groupRepo(): GroupRepo
+
+    fun validateGroupNameUseCase(): ValidateGroupNameUseCase
 }
