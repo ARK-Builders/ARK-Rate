@@ -18,16 +18,16 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Fetch fiat
-        run: curl -X GET "https://openexchangerates.org/api/latest.json?app_id=${{ secrets.APP_ID }}" --output fiat-rates.json # ADJUST PATH HERE
-        
-      - name: Fetch crypto       
-        run: curl -X GET "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd" --output crypto-rates.json # ADJUST PATH HERE
+        run: curl -X GET "https://openexchangerates.org/api/latest.json?app_id=${{ secrets.APP_ID }}" --output core/data/src/main/assets/fiat-rates.json
+
+      - name: Fetch crypto
+        run: curl -X GET "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd" --output core/data/src/main/assets/crypto-rates.json
 
       - name: Push into Git
         run: |-
           git config --global user.email "bot@ark-builders.dev"
           git config --global user.name "ARK Builders Bot"
-          git add fiat-rates.json # ADJUST PATH HERE
-          git add crypto-rates.json # ADJUST PATH HERE
+          git add core/data/src/main/assets/fiat-rates.json
+          git add core/data/src/main/assets/crypto-rates.json
           git commit -m "Automated update of rates"
           git push
