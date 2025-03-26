@@ -53,6 +53,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -192,6 +193,7 @@ private fun Content(
     onGroupSelect: (Group) -> Unit,
     onGroupCreate: (String) -> Unit,
     onCodeChange: (Int) -> Unit,
+    onSwapClick: () -> Unit,
     onPairsSwap: (from: Int, to: Int) -> Unit,
     onAddAsset: () -> Unit,
 ) {
@@ -277,9 +279,7 @@ private fun Content(
                                 addGroupBtnWidth = it.size.width
                             },
                     onClick = { showGroupsPopup = true },
-                    title =
-                        state.group?.let { state.group }
-                            ?: stringResource(R.string.add_group),
+                    title = state.group.name,
                     icon = painterResource(id = R.drawable.ic_group),
                 )
                 if (showGroupsPopup) {
@@ -306,7 +306,9 @@ private fun Content(
                     }
                 }
             }
-            Spacer(Modifier.height(16.dp))
+            item {
+                Spacer(Modifier.height(16.dp))
+            }
         }
         Column {
             HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
@@ -644,5 +646,6 @@ fun Preview() {
         onSwapClick = {},
         onPairsSwap = { _, _ -> },
         onAddAsset = {},
+        onGroupCreate = {},
     )
 }
