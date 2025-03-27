@@ -22,7 +22,7 @@ class ConvertWithRateUseCase(
         toCode: CurrencyCode,
         _rates: Map<CurrencyCode, CurrencyRate>? = null,
     ): Pair<Amount, BigDecimal> {
-        val rates = _rates ?: currencyRepo.getCodeToCurrencyRate().getOrNull()!!
+        val rates = _rates ?: currencyRepo.getCodeToCurrencyRate()
         val fromRate = rates[fromCode]!!.rate
         val toRate = rates[toCode]!!.rate
         val rate = fromRate.divideArk(toRate)

@@ -83,12 +83,12 @@ class PortfolioViewModel(
         analyticsManager.trackScreen("PortfolioScreen")
 
         intent {
-            if (currencyRepo.isRatesAvailable().not()) {
-                reduce {
-                    state.copy(noInternet = true)
-                }
-                return@intent
-            }
+//            if (currencyRepo.isRatesAvailable().not()) {
+//                reduce {
+//                    state.copy(noInternet = true)
+//                }
+//                return@intent
+//            }
 
             init()
         }
@@ -117,12 +117,12 @@ class PortfolioViewModel(
 
     fun onRefreshClick() =
         intent {
-            reduce { state.copy(noInternet = false) }
-            if (currencyRepo.isRatesAvailable()) {
-                init()
-            } else {
-                reduce { state.copy(noInternet = true) }
-            }
+//            reduce { state.copy(noInternet = false) }
+//            if (currencyRepo.isRatesAvailable()) {
+//                init()
+//            } else {
+//                reduce { state.copy(noInternet = true) }
+//            }
         }
 
     fun onAssetRemove(asset: Asset) =
@@ -178,7 +178,7 @@ class PortfolioViewModel(
         baseCode: CurrencyCode,
         list: List<Asset>,
     ): List<PortfolioDisplayAsset> {
-        val rates = currencyRepo.getCodeToCurrencyRate().getOrNull()!!
+        val rates = currencyRepo.getCodeToCurrencyRate()
         return list.map { asset ->
             val (baseAmount, rate) =
                 convertUseCase(

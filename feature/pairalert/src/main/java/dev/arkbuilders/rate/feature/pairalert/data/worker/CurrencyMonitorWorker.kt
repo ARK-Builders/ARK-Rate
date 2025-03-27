@@ -16,11 +16,8 @@ class CurrencyMonitorWorker(
     private val timestampRepo: TimestampRepo,
 ) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
-        val pairsToNotifyResult = handlePairAlertCheckUseCase()
-        pairsToNotifyResult.onLeft {
-            return Result.failure()
-        }
-        pairsToNotifyResult.getOrNull()!!.forEach { (pairAlert, _) ->
+        val pairsToNotify = handlePairAlertCheckUseCase()
+        pairsToNotify.forEach { (pairAlert, _) ->
             notifyPair(pairAlert)
         }
         timestampRepo.rememberTimestamp(TimestampType.CheckPairAlerts)

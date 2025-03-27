@@ -84,12 +84,12 @@ class PairAlertViewModel(
         }
 
         intent {
-            if (currencyRepo.isRatesAvailable().not()) {
-                reduce {
-                    state.copy(noInternet = true)
-                }
-                return@intent
-            }
+//            if (currencyRepo.isRatesAvailable().not()) {
+//                reduce {
+//                    state.copy(noInternet = true)
+//                }
+//                return@intent
+//            }
 
             init()
         }
@@ -134,12 +134,12 @@ class PairAlertViewModel(
 
     fun onRefreshClick() =
         intent {
-            reduce { state.copy(noInternet = false) }
-            if (currencyRepo.isRatesAvailable()) {
-                init()
-            } else {
-                reduce { state.copy(noInternet = true) }
-            }
+//            reduce { state.copy(noInternet = false) }
+//            if (currencyRepo.isRatesAvailable()) {
+//                init()
+//            } else {
+//                reduce { state.copy(noInternet = true) }
+//            }
         }
 
     fun onEnableToggle(
