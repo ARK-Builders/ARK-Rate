@@ -33,32 +33,30 @@ class CurrencyRepoImpl @Inject constructor(
 ) : CurrencyRepo {
     private val mutex = Mutex()
 
-    override suspend fun getCurrencyRate(): Either<Throwable, List<CurrencyRate>> =
+    override suspend fun getCurrencyRate(): List<CurrencyRate> =
         withContext(Dispatchers.IO) {
             val local = localCurrencyDataSource.getAll()
             if (local.isNotEmpty()) {
                 launch(Job()) { updateRates() }
-                return@withContext local.right()
+                return@withContext local
             } else {
                 val remoteRates = updateRates()
                 if (remoteRates.isRight())
-                    return@withContext remoteRates
+                    return@withContext remoteRates.getOrNull()!!
 
                 val fallbackRates = useFallbackRates()
-                return@withContext fallbackRates.right()
+                return@withContext fallbackRates
             }
         }
 
-    override suspend fun getCurrencyName(): Either<Throwable, List<CurrencyName>> {
-        val localRates = localCurrencyDataSource.getAll()
-        if (localRates.isEmpty())
-            return IllegalStateException("Local rates are empty").left()
+    override suspend fun getCurrencyName(): List<CurrencyName> {
+        val rates = getCurrencyRate()
 
         val fiatNames = fiatDataSource.getCurrencyName()
         val cryptoNames = cryptoDataSource.getCurrencyName()
 
         val names =
-            localRates.map { rate ->
+            rates.map { rate ->
                 var name =
                     when (rate.type) {
                         CurrencyType.FIAT -> fiatNames[rate.code]
@@ -70,7 +68,7 @@ class CurrencyRepoImpl @Inject constructor(
                 name
             }
 
-        return names.sortedBy { it.code }.right()
+        return names.sortedBy { it.code }
     }
 
     private suspend fun updateRates(): Either<Throwable, List<CurrencyRate>> =

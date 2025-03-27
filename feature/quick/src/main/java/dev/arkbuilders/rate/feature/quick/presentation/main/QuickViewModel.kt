@@ -87,12 +87,12 @@ class QuickViewModel(
         analyticsManager.trackScreen("QuickScreen")
 
         intent {
-            if (currencyRepo.isRatesAvailable().not()) {
-                reduce {
-                    state.copy(noInternet = true)
-                }
-                return@intent
-            }
+//            if (currencyRepo.isRatesAvailable().not()) {
+//                reduce {
+//                    state.copy(noInternet = true)
+//                }
+//                return@intent
+//            }
 
             init()
         }
@@ -126,11 +126,11 @@ class QuickViewModel(
                 }
             }.launchIn(viewModelScope)
 
-            val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
+            val allCurrencies = currencyRepo.getCurrencyName()
             calcFrequentCurrUseCase.flow().drop(1).onEach {
                 val frequent =
                     calcFrequentCurrUseCase.invoke()
-                        .map { currencyRepo.nameByCodeUnsafe(it) }
+                        .map { currencyRepo.nameByCode(it) }
                 val topResults = getTopResultUseCase()
                 reduce {
                     state.copy(
@@ -142,7 +142,7 @@ class QuickViewModel(
 
             val frequent =
                 calcFrequentCurrUseCase()
-                    .map { currencyRepo.nameByCodeUnsafe(it) }
+                    .map { currencyRepo.nameByCode(it) }
             val topResults = getTopResultUseCase()
             val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
@@ -158,12 +158,12 @@ class QuickViewModel(
 
     fun onRefreshClick() =
         intent {
-            reduce { state.copy(noInternet = false) }
-            if (currencyRepo.isRatesAvailable()) {
-                init()
-            } else {
-                reduce { state.copy(noInternet = true) }
-            }
+//            reduce { state.copy(noInternet = false) }
+//            if (currencyRepo.isRatesAvailable()) {
+//                init()
+//            } else {
+//                reduce { state.copy(noInternet = true) }
+//            }
         }
 
     fun onShowGroupOptions(pair: QuickPair) =
