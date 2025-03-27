@@ -27,6 +27,7 @@ class CurrencyRepoImpl @Inject constructor(
     private val fiatDataSource: FiatCurrencyDataSource,
     private val cryptoDataSource: CryptoCurrencyDataSource,
     private val localCurrencyDataSource: LocalCurrencyDataSource,
+    private val fallbackRatesProvider: FallbackRatesProvider,
     private val timestampRepo: TimestampRepo,
     private val networkStatus: NetworkStatus,
 ) : CurrencyRepo {
@@ -39,12 +40,12 @@ class CurrencyRepoImpl @Inject constructor(
                 launch(Job()) { updateRates() }
                 return@withContext local.right()
             } else {
-                updateRates()
-                val newLocal = localCurrencyDataSource.getAll()
-                return@withContext if (newLocal.isEmpty())
-                    IllegalStateException("Local rates are empty").left()
-                else
-                    newLocal.right()
+                val remoteRates = updateRates()
+                if (remoteRates.isRight())
+                    return@withContext remoteRates
+
+                val fallbackRates = useFallbackRates()
+                return@withContext fallbackRates.right()
             }
         }
 
@@ -72,26 +73,30 @@ class CurrencyRepoImpl @Inject constructor(
         return names.sortedBy { it.code }.right()
     }
 
-    private suspend fun updateRates() =
+    private suspend fun updateRates(): Either<Throwable, List<CurrencyRate>> =
         mutex.withLock {
             val updatedDate =
                 timestampRepo
                     .getTimestamp(TimestampType.FetchRates)
 
             if ((networkStatus.isOnline() && hasUpdateIntervalPassed(updatedDate)).not()) {
-                return
+                return IllegalStateException("Skip rate updates").left()
             }
 
-            val crypto = cryptoDataSource.fetchRemote()
-            val fiat = fiatDataSource.fetchRemote()
-            if (crypto.isLeft() || fiat.isLeft()) {
-                return
-            }
-            localCurrencyDataSource.insert(
-                crypto.getOrNull()!! + fiat.getOrNull()!!,
-            )
+            val crypto = cryptoDataSource.fetchRemote().onLeft { return@withLock it.left() }
+            val fiat = fiatDataSource.fetchRemote().onLeft { return@withLock it.left() }
+            val rates = crypto.getOrNull()!! + fiat.getOrNull()!!
+            localCurrencyDataSource.insert(rates)
             timestampRepo.rememberTimestamp(TimestampType.FetchRates)
+            return@withLock rates.right()
         }
+
+    private suspend fun useFallbackRates(): List<CurrencyRate> {
+        val (rates, fetchDate) = fallbackRatesProvider.provideRatesAndFetchDate()
+        localCurrencyDataSource.insert(rates)
+        timestampRepo.rememberTimestamp(TimestampType.FetchRates, fetchDate)
+        return rates
+    }
 
     private fun hasUpdateIntervalPassed(updatedDate: OffsetDateTime?) =
         updatedDate == null ||
