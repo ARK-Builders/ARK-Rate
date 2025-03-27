@@ -66,7 +66,6 @@ import dev.arkbuilders.rate.core.presentation.ui.AppTopBarCenterTitle
 import dev.arkbuilders.rate.core.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.core.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
-import dev.arkbuilders.rate.core.presentation.ui.NoInternetScreen
 import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsBottomSheet
@@ -186,7 +185,6 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
     ) {
         Box(modifier = Modifier.padding(it)) {
             when {
-                state.noInternet -> NoInternetScreen(viewModel::onRefreshClick)
                 state.initialized.not() -> LoadingScreen()
                 isEmpty -> Empty(onNewPair = viewModel::onNewPair)
                 else ->

@@ -43,7 +43,6 @@ data class PortfolioScreenState(
     val editGroupOptionsSheetState: EditGroupOptionsSheetState? = null,
     val editGroupRenameSheetState: EditGroupRenameSheetState? = null,
     val initialized: Boolean = false,
-    val noInternet: Boolean = false,
 )
 
 data class PortfolioScreenPage(
@@ -82,16 +81,7 @@ class PortfolioViewModel(
     init {
         analyticsManager.trackScreen("PortfolioScreen")
 
-        intent {
-//            if (currencyRepo.isRatesAvailable().not()) {
-//                reduce {
-//                    state.copy(noInternet = true)
-//                }
-//                return@intent
-//            }
-
-            init()
-        }
+        init()
     }
 
     private fun init() =
@@ -113,16 +103,6 @@ class PortfolioViewModel(
             groupRepo.allFlow(GroupFeatureType.Portfolio).drop(1).onEach {
                 initPages()
             }.launchIn(viewModelScope)
-        }
-
-    fun onRefreshClick() =
-        intent {
-//            reduce { state.copy(noInternet = false) }
-//            if (currencyRepo.isRatesAvailable()) {
-//                init()
-//            } else {
-//                reduce { state.copy(noInternet = true) }
-//            }
         }
 
     fun onAssetRemove(asset: Asset) =
