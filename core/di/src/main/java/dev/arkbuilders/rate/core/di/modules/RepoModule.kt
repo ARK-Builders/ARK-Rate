@@ -12,6 +12,7 @@ import dev.arkbuilders.rate.core.data.repo.GroupRepoImpl
 import dev.arkbuilders.rate.core.data.repo.TimestampRepoImpl
 import dev.arkbuilders.rate.core.data.repo.currency.CryptoCurrencyDataSource
 import dev.arkbuilders.rate.core.data.repo.currency.CurrencyRepoImpl
+import dev.arkbuilders.rate.core.data.repo.currency.FallbackRatesProvider
 import dev.arkbuilders.rate.core.data.repo.currency.FiatCurrencyDataSource
 import dev.arkbuilders.rate.core.data.repo.currency.LocalCurrencyDataSource
 import dev.arkbuilders.rate.core.db.dao.CodeUseStatDao
@@ -39,11 +40,13 @@ class RepoModule {
         localCurrencyDataSource: LocalCurrencyDataSource,
         timestampRepo: TimestampRepo,
         networkStatus: NetworkStatus,
+        fallbackRatesProvider: FallbackRatesProvider,
     ): CurrencyRepo =
         CurrencyRepoImpl(
             fiatCurrencyDataSource,
             cryptoCurrencyDataSource,
             localCurrencyDataSource,
+            fallbackRatesProvider,
             timestampRepo,
             networkStatus,
         )

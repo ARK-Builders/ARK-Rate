@@ -20,6 +20,16 @@ class TimestampRepoImpl @Inject constructor(private val dao: TimestampDao) : Tim
             ),
         )
 
+    override suspend fun rememberTimestamp(
+        type: TimestampType,
+        manualDate: OffsetDateTime,
+    ) = dao.insert(
+        RoomFetchTimestamp(
+            type.name,
+            manualDate,
+        ),
+    )
+
     override suspend fun getTimestamp(type: TimestampType) =
         dao.getTimestamp(
             type.name,
