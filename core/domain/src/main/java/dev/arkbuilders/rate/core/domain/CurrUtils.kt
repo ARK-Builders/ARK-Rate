@@ -64,7 +64,6 @@ object CurrUtils {
                 "#." + "#".repeat(fractionSize),
                 DecimalFormatSymbols(Locale.ENGLISH),
             )
-        df.roundingMode = RoundingMode.CEILING
         return df.format(number)
     }
 

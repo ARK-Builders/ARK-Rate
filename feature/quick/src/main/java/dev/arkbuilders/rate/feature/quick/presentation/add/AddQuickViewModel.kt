@@ -12,7 +12,6 @@ import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.model.toAmount
-import dev.arkbuilders.rate.core.domain.model.toStrAmount
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
@@ -167,6 +166,36 @@ class AddQuickViewModel(
             checkFinishEnabled()
         }
 
+    fun onSwapClick() =
+        intent {
+            if (state.currencies.size < 2)
+                return@intent
+
+            val newFrom = state.currencies.last()
+            val newCurrencies =
+                state.currencies.toMutableList().apply {
+                    removeLast()
+                    add(0, newFrom)
+                }
+
+            reduce {
+                state.copy(currencies = newCurrencies)
+            }
+        }
+
+    fun onPairsSwap(
+        from: Int,
+        to: Int,
+    ) = intent {
+        val new =
+            state.currencies.toMutableList().apply {
+                add(to, removeAt(from))
+            }
+        reduce {
+            state.copy(currencies = new)
+        }
+    }
+
     fun onAddQuickPair() =
         intent {
             val from = state.currencies.first()
@@ -205,7 +234,8 @@ class AddQuickViewModel(
                     it.copy(value = "")
                 } else {
                     val (amount, _) = convertUseCase.invoke(from.toAmount(), it.code)
-                    amount.toStrAmount()
+                    val roundValue = CurrUtils.roundOff(amount.value)
+                    AmountStr(it.code, roundValue)
                 }
             }
         return listOf(from) + new
