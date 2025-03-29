@@ -31,7 +31,7 @@ fun QuickPairsScreen(
             item {
                 Text(
                     modifier = modifier.fillMaxWidth(),
-                    text = "Options",
+                    text = "Quick",
                     textAlign = TextAlign.Center
                 )
             }
