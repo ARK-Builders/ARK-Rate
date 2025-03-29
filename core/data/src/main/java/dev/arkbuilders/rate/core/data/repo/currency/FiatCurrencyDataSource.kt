@@ -3,31 +3,26 @@ package dev.arkbuilders.rate.core.data.repo.currency
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
+import dev.arkbuilders.rate.core.data.mapper.FiatRateResponseMapper
 import dev.arkbuilders.rate.core.data.network.api.FiatAPI
-import dev.arkbuilders.rate.core.domain.divideArk
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.CurrencyName
 import dev.arkbuilders.rate.core.domain.model.CurrencyRate
 import dev.arkbuilders.rate.core.domain.model.CurrencyType
-import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FiatCurrencyDataSource @Inject constructor(
     private val fiatAPI: FiatAPI,
+    private val fiatRateResponseMapper: FiatRateResponseMapper,
 ) : CurrencyDataSource {
     override val currencyType = CurrencyType.FIAT
 
     override suspend fun fetchRemote(): Either<Throwable, List<CurrencyRate>> {
         return try {
-            fiatAPI.get().rates.map { (code, rate) ->
-                CurrencyRate(
-                    currencyType,
-                    code,
-                    BigDecimal.ONE.divideArk(BigDecimal.valueOf(rate)),
-                )
-            }.right()
+            val response = fiatAPI.get()
+            fiatRateResponseMapper.map(response).right()
         } catch (e: Throwable) {
             e.left()
         }

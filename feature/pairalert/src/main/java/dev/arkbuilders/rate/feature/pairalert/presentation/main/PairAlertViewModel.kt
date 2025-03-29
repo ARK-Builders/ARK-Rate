@@ -41,7 +41,6 @@ data class PairAlertScreenState(
     val editGroupOptionsSheetState: EditGroupOptionsSheetState? = null,
     val editGroupRenameSheetState: EditGroupRenameSheetState? = null,
     val initialized: Boolean = false,
-    val noInternet: Boolean = false,
     val askNotificationPermissionPairId: Long? = null,
 )
 
@@ -83,16 +82,7 @@ class PairAlertViewModel(
             }
         }
 
-        intent {
-            if (currencyRepo.isRatesAvailable().not()) {
-                reduce {
-                    state.copy(noInternet = true)
-                }
-                return@intent
-            }
-
-            init()
-        }
+        init()
     }
 
     private fun init() =
@@ -129,16 +119,6 @@ class PairAlertViewModel(
             postSideEffect(PairAlertEffect.NavigateToAdd(state.askNotificationPermissionPairId))
             reduce {
                 state.copy(askNotificationPermissionPairId = null)
-            }
-        }
-
-    fun onRefreshClick() =
-        intent {
-            reduce { state.copy(noInternet = false) }
-            if (currencyRepo.isRatesAvailable()) {
-                init()
-            } else {
-                reduce { state.copy(noInternet = true) }
             }
         }
 
