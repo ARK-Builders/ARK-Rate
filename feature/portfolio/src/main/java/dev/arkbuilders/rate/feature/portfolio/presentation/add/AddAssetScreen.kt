@@ -47,6 +47,8 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
+import com.ramcosta.composedestinations.generated.search.destinations.SearchCurrencyScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.AmountStr
@@ -64,12 +66,11 @@ import dev.arkbuilders.rate.core.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
-import dev.arkbuilders.rate.feature.search.presentation.destinations.SearchCurrencyScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import dev.arkbuilders.rate.core.presentation.R as CoreR
 
-@Destination
+@Destination<ExternalModuleGraph>
 @Composable
 fun AddAssetScreen(
     groupId: Long? = null,

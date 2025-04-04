@@ -148,7 +148,8 @@ class PairAlertViewModel(
             val groups = groupRepo.getAllSorted(GroupFeatureType.PairAlert)
             val pages =
                 groups.map { group ->
-                    val filteredPairs = pairs.reversed().filter { it.group.id == group.id }
+                    val filteredPairs = pairs.filter { it.group.id == group.id }.toMutableList()
+                    filteredPairs.reverse()
                     val oneTimeTriggered =
                         filteredPairs.filter {
                             it.triggered() && it.oneTimeNotRecurrent && !it.enabled

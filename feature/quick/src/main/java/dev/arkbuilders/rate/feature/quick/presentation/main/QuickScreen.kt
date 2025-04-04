@@ -51,6 +51,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
+import com.ramcosta.composedestinations.generated.quick.destinations.AddQuickScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.Amount
@@ -79,7 +81,6 @@ import dev.arkbuilders.rate.core.presentation.utils.findActivity
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
-import dev.arkbuilders.rate.feature.quick.presentation.destinations.AddQuickScreenDestination
 import dev.arkbuilders.rate.feature.quick.presentation.ui.PinnedQuickSwipeItem
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickOptionsBottomSheet
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickSwipeItem
@@ -89,7 +90,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.OffsetDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination
+@Destination<ExternalModuleGraph>
 @Composable
 fun QuickScreen(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current

@@ -137,7 +137,8 @@ class PortfolioViewModel(
     private fun initPages() =
         intent {
             val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
-            val assets = assetsRepo.allAssets().reversed()
+            val assets = assetsRepo.allAssets().toMutableList()
+            assets.reverse()
             val groups = groupRepo.getAllSorted(GroupFeatureType.Portfolio)
             val pages =
                 groups.map { group ->

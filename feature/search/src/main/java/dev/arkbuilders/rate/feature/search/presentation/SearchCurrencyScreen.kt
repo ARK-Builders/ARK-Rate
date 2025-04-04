@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.presentation.CoreRString
@@ -32,7 +33,7 @@ import dev.arkbuilders.rate.feature.search.di.SearchComponentHolder
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
-@Destination
+@Destination<ExternalModuleGraph>
 @Composable
 fun SearchCurrencyScreen(
     appSharedFlowKeyString: String,

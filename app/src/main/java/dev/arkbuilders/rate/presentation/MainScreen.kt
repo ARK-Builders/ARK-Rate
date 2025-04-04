@@ -21,33 +21,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
-import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
+import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.generated.pairalert.destinations.PairAlertConditionScreenDestination
+import com.ramcosta.composedestinations.generated.portfolio.destinations.PortfolioScreenDestination
+import com.ramcosta.composedestinations.generated.quick.destinations.AddQuickScreenDestination
+import com.ramcosta.composedestinations.generated.quick.destinations.QuickScreenDestination
+import com.ramcosta.composedestinations.generated.settings.destinations.SettingsScreenDestination
+import com.ramcosta.composedestinations.rememberNavHostEngine
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbar
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbar
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.utils.findActivity
 import dev.arkbuilders.rate.core.presentation.utils.keyboardAsState
-import dev.arkbuilders.rate.feature.pairalert.presentation.destinations.PairAlertConditionScreenDestination
-import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.PortfolioScreenDestination
-import dev.arkbuilders.rate.feature.quick.presentation.destinations.AddQuickScreenDestination
-import dev.arkbuilders.rate.feature.quick.presentation.destinations.QuickScreenDestination
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR_GROUP_KEY
-import dev.arkbuilders.rate.feature.settings.presentation.destinations.SettingsScreenDestination
 import dev.arkbuilders.rate.presentation.navigation.AnimatedRateBottomNavigation
-import dev.arkbuilders.rate.presentation.navigation.NavGraphs
 import kotlinx.coroutines.flow.drop
-import timber.log.Timber
 
 @Composable
 fun MainScreen() {
-    val engine =
-        rememberAnimatedNavHostEngine(
-            rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING,
-        )
+    val engine = rememberNavHostEngine()
     val navController = engine.rememberNavController()
     val snackState = remember { SnackbarHostState() }
     val ctx = LocalContext.current
@@ -80,9 +76,8 @@ fun MainScreen() {
     val bottomBarVisible = rememberSaveable { mutableStateOf(false) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route ?: NavGraphs.root.startRoute.route
+    val currentRoute = navBackStackEntry?.destination?.route ?: NavGraphs.main.startRoute.route
 
-    Timber.d("ALLO $currentRoute")
     bottomBarVisible.value =
         when {
             currentRoute.startsWith(QuickScreenDestination.route) -> true
@@ -138,7 +133,7 @@ fun MainScreen() {
         DestinationsNavHost(
             engine = engine,
             navController = navController,
-            navGraph = NavGraphs.root,
+            navGraph = NavGraphs.main,
             modifier = Modifier.padding(it),
         )
     }

@@ -61,6 +61,8 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
+import com.ramcosta.composedestinations.generated.search.destinations.SearchCurrencyScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
@@ -83,7 +85,6 @@ import dev.arkbuilders.rate.core.presentation.utils.ReorderHapticFeedback
 import dev.arkbuilders.rate.core.presentation.utils.ReorderHapticFeedbackType
 import dev.arkbuilders.rate.core.presentation.utils.rememberReorderHapticFeedback
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
-import dev.arkbuilders.rate.feature.search.presentation.destinations.SearchCurrencyScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import sh.calvin.reorderable.ReorderableCollectionItemScope
@@ -92,7 +93,7 @@ import sh.calvin.reorderable.ReorderableLazyListState
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
-@Destination
+@Destination<ExternalModuleGraph>
 fun AddQuickScreen(
     quickPairId: Long? = null,
     newCode: CurrencyCode? = null,

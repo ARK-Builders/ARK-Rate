@@ -54,6 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
+import com.ramcosta.composedestinations.generated.pairalert.destinations.AddPairAlertScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
@@ -76,13 +78,12 @@ import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponent
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponentHolder
 import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
-import dev.arkbuilders.rate.feature.pairalert.presentation.destinations.AddPairAlertScreenDestination
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import timber.log.Timber
 
-@Destination
+@Destination<ExternalModuleGraph>
 @Composable
 fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current

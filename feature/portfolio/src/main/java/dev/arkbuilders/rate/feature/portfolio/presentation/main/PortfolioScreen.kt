@@ -46,6 +46,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
+import com.ramcosta.composedestinations.generated.portfolio.destinations.AddAssetScreenDestination
+import com.ramcosta.composedestinations.generated.portfolio.destinations.EditAssetScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
@@ -70,14 +73,12 @@ import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomShe
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRow
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
-import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.AddAssetScreenDestination
-import dev.arkbuilders.rate.feature.portfolio.presentation.destinations.EditAssetScreenDestination
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.math.BigDecimal
 
-@Destination
+@Destination<ExternalModuleGraph>
 @Composable
 fun PortfolioScreen(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current
