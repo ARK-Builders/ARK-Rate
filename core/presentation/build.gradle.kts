@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -30,18 +31,12 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
 }
 
 dependencies {
     implementation(project(":core:domain"))
 
-    implementation(libs.compose.destinations.animations)
+    implementation(libs.compose.destinations.core)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.ui)
