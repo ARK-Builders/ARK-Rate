@@ -40,9 +40,7 @@ data class AddQuickScreenState(
 )
 
 sealed class AddQuickScreenEffect {
-    data class NotifyPairAdded(val pair: QuickPair) : AddQuickScreenEffect()
-
-    data object NavigateBack : AddQuickScreenEffect()
+    data class NavigateBackWithResult(val newPairId: Long) : AddQuickScreenEffect()
 
     data class NavigateSearchSet(val index: Int, val prohibitedCodes: List<CurrencyCode>) :
         AddQuickScreenEffect()
@@ -226,13 +224,12 @@ class AddQuickViewModel(
                     pinnedDate = null,
                     group = state.group,
                 )
-            quickRepo.insert(quick)
+            val newId = quickRepo.insert(quick)
             codeUseStatRepo.codesUsed(
                 quick.from,
                 *quick.to.map { it.code }.toTypedArray(),
             )
-            postSideEffect(AddQuickScreenEffect.NotifyPairAdded(quick))
-            postSideEffect(AddQuickScreenEffect.NavigateBack)
+            postSideEffect(AddQuickScreenEffect.NavigateBackWithResult(newId))
         }
 
     private suspend fun calcToResult(old: List<AmountStr>): List<AmountStr> {

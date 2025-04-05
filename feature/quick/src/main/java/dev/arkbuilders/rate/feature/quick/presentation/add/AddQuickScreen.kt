@@ -65,12 +65,12 @@ import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.generated.search.destinations.SearchCurrencyScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.result.ResultRecipient
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -81,7 +81,6 @@ import dev.arkbuilders.rate.core.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.core.presentation.ui.DropDownWithIcon
 import dev.arkbuilders.rate.core.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
-import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.utils.ReorderHapticFeedback
 import dev.arkbuilders.rate.core.presentation.utils.ReorderHapticFeedbackType
 import dev.arkbuilders.rate.core.presentation.utils.rememberReorderHapticFeedback
@@ -102,6 +101,8 @@ fun AddQuickScreen(
     reuseNotEdit: Boolean = true,
     groupId: Long? = null,
     navigator: DestinationsNavigator,
+    // return back new pair id
+    resultNavigator: ResultBackNavigator<Long>,
     resultRecipient: ResultRecipient<SearchCurrencyScreenDestination, SearchNavResult>,
 ) {
     val ctx = LocalContext.current
@@ -129,24 +130,8 @@ fun AddQuickScreen(
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            AddQuickScreenEffect.NavigateBack -> navigator.popBackStack()
-            is AddQuickScreenEffect.NotifyPairAdded -> {
-                val added =
-                    ctx.getString(
-                        R.string.quick_snackbar_new_added_to,
-                        effect.pair.from,
-                        effect.pair.to.joinToString { it.code },
-                    )
-                AppSharedFlow.ShowAddedSnackbarQuick.flow.emit(
-                    NotifyAddedSnackbarVisuals(
-                        title = ctx.getString(R.string.quick_snackbar_new_title),
-                        description =
-                            ctx.getString(
-                                R.string.quick_snackbar_new_desc,
-                                added,
-                            ),
-                    ),
-                )
+            is AddQuickScreenEffect.NavigateBackWithResult -> {
+                resultNavigator.navigateBack(effect.newPairId)
             }
 
             is AddQuickScreenEffect.NavigateSearchAdd ->

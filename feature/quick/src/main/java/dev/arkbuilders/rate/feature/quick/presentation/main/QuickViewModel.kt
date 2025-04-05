@@ -17,8 +17,6 @@ import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
-import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderSheetState
@@ -60,7 +58,7 @@ data class QuickScreenState(
 
 sealed class QuickScreenEffect {
     data class ShowSnackbarAdded(
-        val visuals: NotifyAddedSnackbarVisuals,
+        val pair: QuickPair,
     ) : QuickScreenEffect()
 
     data class ShowRemovedSnackbar(val pair: QuickPair) : QuickScreenEffect()
@@ -90,10 +88,6 @@ class QuickViewModel(
 
     private fun init() =
         intent {
-            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
-                postSideEffect(QuickScreenEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
-
             quickRepo.allFlow().drop(1).onEach { quick ->
                 intent {
                     val pages = mapPairsToPages(quick)
@@ -144,6 +138,12 @@ class QuickViewModel(
                     initialized = true,
                 )
             }
+        }
+
+    fun onReturnFromAddScreen(newPairId: Long) =
+        intent {
+            val pair = quickRepo.getById(newPairId) ?: return@intent
+            postSideEffect(QuickScreenEffect.ShowSnackbarAdded(pair))
         }
 
     fun onShowGroupOptions(pair: QuickPair) =

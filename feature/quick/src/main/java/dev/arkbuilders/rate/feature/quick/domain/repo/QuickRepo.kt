@@ -5,7 +5,7 @@ import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import kotlinx.coroutines.flow.Flow
 
 interface QuickRepo {
-    suspend fun insert(quick: QuickPair)
+    suspend fun insert(quick: QuickPair): Long
 
     suspend fun getById(id: Long): QuickPair?
 

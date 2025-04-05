@@ -54,12 +54,15 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.generated.quick.destinations.AddQuickScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultRecipient
+import com.ramcosta.composedestinations.result.onResult
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.Amount
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.CurrencyName
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
+import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppButton
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv16
@@ -69,6 +72,7 @@ import dev.arkbuilders.rate.core.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.core.presentation.ui.ListHeader
 import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.core.presentation.ui.NoResult
+import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
@@ -92,7 +96,11 @@ import java.time.OffsetDateTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<ExternalModuleGraph>
 @Composable
-fun QuickScreen(navigator: DestinationsNavigator) {
+fun QuickScreen(
+    navigator: DestinationsNavigator,
+    // expect new pair id
+    resultRecipient: ResultRecipient<AddQuickScreenDestination, Long>,
+) {
     val ctx = LocalContext.current
     val component =
         remember {
@@ -103,6 +111,10 @@ fun QuickScreen(navigator: DestinationsNavigator) {
             factory = component.quickVMFactory().create(),
         )
 
+    resultRecipient.onResult { newPairId ->
+        viewModel.onReturnFromAddScreen(newPairId)
+    }
+
     BackHandler {
         viewModel.onBackClick()
     }
@@ -111,8 +123,24 @@ fun QuickScreen(navigator: DestinationsNavigator) {
     val snackState = remember { SnackbarHostState() }
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            is QuickScreenEffect.ShowSnackbarAdded ->
-                snackState.showSnackbar(effect.visuals)
+            is QuickScreenEffect.ShowSnackbarAdded -> {
+                val added =
+                    ctx.getString(
+                        R.string.quick_snackbar_new_added_to,
+                        effect.pair.from,
+                        effect.pair.to.joinToString { it.code },
+                    )
+                val visuals =
+                    NotifyAddedSnackbarVisuals(
+                        title = ctx.getString(R.string.quick_snackbar_new_title),
+                        description =
+                            ctx.getString(
+                                R.string.quick_snackbar_new_desc,
+                                added,
+                            ),
+                    )
+                snackState.showSnackbar(visuals)
+            }
 
             is QuickScreenEffect.ShowRemovedSnackbar -> {
                 val removed =
