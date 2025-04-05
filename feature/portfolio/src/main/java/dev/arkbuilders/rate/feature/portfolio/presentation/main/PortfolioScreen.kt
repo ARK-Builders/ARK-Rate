@@ -118,6 +118,12 @@ fun PortfolioScreen(
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
+            is PortfolioScreenEffect.SelectTab -> {
+                val page = state.pages.find { it.group.id == effect.groupId }!!
+                val pageIndex = state.pages.indexOf(page)
+                pagerState.scrollToPage(pageIndex)
+            }
+
             is PortfolioScreenEffect.ShowSnackbarAdded -> {
                 val added =
                     effect.assets

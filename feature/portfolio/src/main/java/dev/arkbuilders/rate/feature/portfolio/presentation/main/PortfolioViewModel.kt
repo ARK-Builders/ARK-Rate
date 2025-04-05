@@ -61,6 +61,8 @@ sealed class PortfolioScreenEffect {
 
     data class ShowRemovedSnackbar(val asset: Asset) : PortfolioScreenEffect()
 
+    data class SelectTab(val groupId: Long) : PortfolioScreenEffect()
+
     data object NavigateBack : PortfolioScreenEffect()
 }
 
@@ -101,8 +103,11 @@ class PortfolioViewModel(
 
     fun onReturnFromAddScreen(result: AddAssetsNavResult) =
         intent {
-            if (result.added.isNotEmpty())
+            if (result.added.isNotEmpty()) {
+                initPages()
+                postSideEffect(PortfolioScreenEffect.SelectTab(result.added.first().groupId))
                 postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(result.added.toList()))
+            }
         }
 
     fun onAssetRemove(asset: Asset) =

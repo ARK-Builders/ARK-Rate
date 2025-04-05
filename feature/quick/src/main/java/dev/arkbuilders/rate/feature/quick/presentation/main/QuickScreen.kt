@@ -120,6 +120,7 @@ fun QuickScreen(
     }
 
     val state by viewModel.collectAsState()
+    val pagerState = rememberPagerState { state.pages.size }
     val snackState = remember { SnackbarHostState() }
     viewModel.collectSideEffect { effect ->
         when (effect) {
@@ -164,6 +165,12 @@ fun QuickScreen(
                 snackState.showSnackbar(visuals)
             }
 
+            is QuickScreenEffect.SelectTab -> {
+                val page = state.pages.find { it.group.id == effect.groupId }!!
+                val pageIndex = state.pages.indexOf(page)
+                pagerState.scrollToPage(pageIndex)
+            }
+
             QuickScreenEffect.NavigateBack -> ctx.findActivity()?.finish()
         }
     }
@@ -171,7 +178,6 @@ fun QuickScreen(
     val isEmpty = state.pages.isEmpty()
 
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState { state.pages.size }
     val pairOptionsSheetState = rememberModalBottomSheetState()
     val editGroupReorderSheetState = rememberModalBottomSheetState()
     val editGroupOptionsSheetState = rememberModalBottomSheetState()

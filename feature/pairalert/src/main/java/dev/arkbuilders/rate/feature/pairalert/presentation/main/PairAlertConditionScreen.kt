@@ -144,6 +144,12 @@ fun PairAlertConditionScreen(
                     .launch(Manifest.permission.POST_NOTIFICATIONS)
             }
 
+            is PairAlertEffect.SelectTab -> {
+                val page = state.pages.find { it.group.id == effect.groupId }!!
+                val pageIndex = state.pages.indexOf(page)
+                pagerState.scrollToPage(pageIndex)
+            }
+
             is PairAlertEffect.ShowSnackbarAdded -> {
                 val pair = effect.pair
                 val aboveOrBelow =

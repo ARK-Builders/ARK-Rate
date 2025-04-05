@@ -49,6 +49,8 @@ sealed class PairAlertEffect {
 
     data object AskNotificationPermissionOnNewPair : PairAlertEffect()
 
+    data class SelectTab(val groupId: Long) : PairAlertEffect()
+
     data class ShowSnackbarAdded(
         val pair: PairAlert,
     ) : PairAlertEffect()
@@ -99,6 +101,8 @@ class PairAlertViewModel(
     fun onReturnFromAddScreen(newPairId: Long) =
         intent {
             val pair = pairAlertRepo.getById(newPairId) ?: return@intent
+            initPages()
+            postSideEffect(PairAlertEffect.SelectTab(pair.group.id))
             postSideEffect(PairAlertEffect.ShowSnackbarAdded(pair))
         }
 

@@ -63,6 +63,8 @@ sealed class QuickScreenEffect {
 
     data class ShowRemovedSnackbar(val pair: QuickPair) : QuickScreenEffect()
 
+    data class SelectTab(val groupId: Long) : QuickScreenEffect()
+
     data object NavigateBack : QuickScreenEffect()
 }
 
@@ -143,6 +145,9 @@ class QuickViewModel(
     fun onReturnFromAddScreen(newPairId: Long) =
         intent {
             val pair = quickRepo.getById(newPairId) ?: return@intent
+            val pages = mapPairsToPages(quickRepo.getAll())
+            reduce { state.copy(pages = pages) }
+            postSideEffect(QuickScreenEffect.SelectTab(pair.group.id))
             postSideEffect(QuickScreenEffect.ShowSnackbarAdded(pair))
         }
 
