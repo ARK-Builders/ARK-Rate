@@ -51,11 +51,10 @@ import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.generated.search.destinations.SearchCurrencyScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.result.ResultRecipient
-import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.AmountStr
 import dev.arkbuilders.rate.core.domain.model.Group
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -65,8 +64,8 @@ import dev.arkbuilders.rate.core.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.core.presentation.ui.DropDownWithIcon
 import dev.arkbuilders.rate.core.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
-import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
+import dev.arkbuilders.rate.feature.portfolio.presentation.model.AddAssetsNavResult
 import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -77,6 +76,7 @@ import dev.arkbuilders.rate.core.presentation.R as CoreR
 fun AddAssetScreen(
     groupId: Long? = null,
     navigator: DestinationsNavigator,
+    resultNavigator: ResultBackNavigator<AddAssetsNavResult>,
     resultRecipient: ResultRecipient<SearchCurrencyScreenDestination, SearchNavResult>,
 ) {
     val ctx = LocalContext.current
@@ -100,23 +100,8 @@ fun AddAssetScreen(
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            AddAssetSideEffect.NavigateBack -> navigator.popBackStack()
-            is AddAssetSideEffect.NotifyAssetAdded -> {
-                val added =
-                    effect.amounts
-                        .joinToString {
-                            "${CurrUtils.prepareToDisplay(it.value)} ${it.code}"
-                        }
-                AppSharedFlow.ShowAddedSnackbarPortfolio.flow.emit(
-                    NotifyAddedSnackbarVisuals(
-                        ctx.getString(CoreRString.portfolio_snackbar_new_title),
-                        ctx.getString(
-                            CoreRString.portfolio_snackbar_new_desc,
-                            added,
-                        ),
-                    ),
-                )
-            }
+            is AddAssetSideEffect.NavigateBackWithResult ->
+                resultNavigator.navigateBack(effect.result)
 
             is AddAssetSideEffect.NavigateSearchAdd ->
                 navigator.navigate(

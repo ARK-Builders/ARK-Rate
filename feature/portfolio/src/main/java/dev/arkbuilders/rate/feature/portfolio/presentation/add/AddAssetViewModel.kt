@@ -19,6 +19,8 @@ import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCa
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.feature.portfolio.domain.usecase.AddNewAssetsUseCase
+import dev.arkbuilders.rate.feature.portfolio.presentation.model.AddAssetsNavResult
+import dev.arkbuilders.rate.feature.portfolio.presentation.model.NavAsset
 import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -36,10 +38,7 @@ data class AddAssetState(
 )
 
 sealed class AddAssetSideEffect {
-    class NotifyAssetAdded(val amounts: List<Asset>) :
-        AddAssetSideEffect()
-
-    data object NavigateBack : AddAssetSideEffect()
+    data class NavigateBackWithResult(val result: AddAssetsNavResult) : AddAssetSideEffect()
 
     data class NavigateSearchAdd(val prohibitedCodes: List<CurrencyCode>) : AddAssetSideEffect()
 
@@ -169,8 +168,13 @@ class AddAssetViewModel(
                 }
             addNewAssetsUseCase(currencies)
             codeUseStatRepo.codesUsed(*currencies.map { it.code }.toTypedArray())
-            postSideEffect(AddAssetSideEffect.NotifyAssetAdded(currencies))
-            postSideEffect(AddAssetSideEffect.NavigateBack)
+            val navAssets =
+                currencies.map { NavAsset(it.id, it.code, it.value.toPlainString(), it.group.id) }
+            postSideEffect(
+                AddAssetSideEffect.NavigateBackWithResult(
+                    AddAssetsNavResult(navAssets.toTypedArray()),
+                ),
+            )
         }
 
     fun onSetCode(index: Int) =

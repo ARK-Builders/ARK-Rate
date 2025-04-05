@@ -50,6 +50,8 @@ import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.generated.portfolio.destinations.AddAssetScreenDestination
 import com.ramcosta.composedestinations.generated.portfolio.destinations.EditAssetScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultRecipient
+import com.ramcosta.composedestinations.result.onResult
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
@@ -64,6 +66,7 @@ import dev.arkbuilders.rate.core.presentation.ui.LargeNumberText
 import dev.arkbuilders.rate.core.presentation.ui.LargeNumberTooltipBox
 import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.core.presentation.ui.NoResult
+import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
@@ -73,6 +76,7 @@ import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomShe
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRow
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
+import dev.arkbuilders.rate.feature.portfolio.presentation.model.AddAssetsNavResult
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -80,7 +84,10 @@ import java.math.BigDecimal
 
 @Destination<ExternalModuleGraph>
 @Composable
-fun PortfolioScreen(navigator: DestinationsNavigator) {
+fun PortfolioScreen(
+    navigator: DestinationsNavigator,
+    resultRecipient: ResultRecipient<AddAssetScreenDestination, AddAssetsNavResult>,
+) {
     val ctx = LocalContext.current
     val component =
         remember {
@@ -89,6 +96,10 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
 
     val viewModel: PortfolioViewModel =
         viewModel(factory = component.assetsVMFactory())
+
+    resultRecipient.onResult {
+        viewModel.onReturnFromAddScreen(it)
+    }
 
     BackHandler {
         viewModel.onBackClick()
@@ -107,8 +118,23 @@ fun PortfolioScreen(navigator: DestinationsNavigator) {
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            is PortfolioScreenEffect.ShowSnackbarAdded ->
-                snackState.showSnackbar(effect.visuals)
+            is PortfolioScreenEffect.ShowSnackbarAdded -> {
+                val added =
+                    effect.assets
+                        .joinToString {
+                            "${CurrUtils.prepareToDisplay(BigDecimal(it.value))} ${it.code}"
+                        }
+                val visuals =
+                    NotifyAddedSnackbarVisuals(
+                        ctx.getString(CoreRString.portfolio_snackbar_new_title),
+                        ctx.getString(
+                            CoreRString.portfolio_snackbar_new_desc,
+                            added,
+                        ),
+                    )
+
+                snackState.showSnackbar(visuals)
+            }
 
             is PortfolioScreenEffect.ShowRemovedSnackbar -> {
                 val removed =

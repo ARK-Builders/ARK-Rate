@@ -14,14 +14,14 @@ import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
-import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderSheetState
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioScope
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
+import dev.arkbuilders.rate.feature.portfolio.presentation.model.AddAssetsNavResult
+import dev.arkbuilders.rate.feature.portfolio.presentation.model.NavAsset
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -57,9 +57,7 @@ data class PortfolioDisplayAsset(
 )
 
 sealed class PortfolioScreenEffect {
-    class ShowSnackbarAdded(
-        val visuals: NotifyAddedSnackbarVisuals,
-    ) : PortfolioScreenEffect()
+    class ShowSnackbarAdded(val assets: List<NavAsset>) : PortfolioScreenEffect()
 
     data class ShowRemovedSnackbar(val asset: Asset) : PortfolioScreenEffect()
 
@@ -88,10 +86,6 @@ class PortfolioViewModel(
         intent {
             initPages()
 
-            AppSharedFlow.ShowAddedSnackbarPortfolio.flow.onEach { visuals ->
-                postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
-
             prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
                 initPages()
             }.launchIn(viewModelScope)
@@ -103,6 +97,12 @@ class PortfolioViewModel(
             groupRepo.allFlow(GroupFeatureType.Portfolio).drop(1).onEach {
                 initPages()
             }.launchIn(viewModelScope)
+        }
+
+    fun onReturnFromAddScreen(result: AddAssetsNavResult) =
+        intent {
+            if (result.added.isNotEmpty())
+                postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(result.added.toList()))
         }
 
     fun onAssetRemove(asset: Asset) =
