@@ -184,7 +184,7 @@ class AddQuickViewModel(
             val newFrom = state.currencies.last()
             val newCurrencies =
                 state.currencies.toMutableList().apply {
-                    removeLast()
+                    removeAt(lastIndex)
                     add(0, newFrom)
                 }
 
