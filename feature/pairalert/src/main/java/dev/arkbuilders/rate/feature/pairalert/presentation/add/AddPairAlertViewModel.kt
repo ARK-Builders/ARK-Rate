@@ -45,9 +45,7 @@ data class AddPairAlertScreenState(
 )
 
 sealed class AddPairAlertScreenEffect {
-    data object NavigateBack : AddPairAlertScreenEffect()
-
-    class NotifyPairAdded(val pair: PairAlert) : AddPairAlertScreenEffect()
+    data class NavigateBackWithResult(val newPairId: Long) : AddPairAlertScreenEffect()
 
     data class NavigateSearchTarget(
         val prohibitedCodes: List<CurrencyCode>,
@@ -226,10 +224,9 @@ class AddPairAlertViewModel(
                     lastDateTriggered = null,
                     group = state.group,
                 )
-            pairAlertRepo.insert(pairAlert)
+            val newPairId = pairAlertRepo.insert(pairAlert)
             codeUseStatRepo.codesUsed(pairAlert.baseCode, pairAlert.targetCode)
-            postSideEffect(AddPairAlertScreenEffect.NotifyPairAdded(pairAlert))
-            postSideEffect(AddPairAlertScreenEffect.NavigateBack)
+            postSideEffect(AddPairAlertScreenEffect.NavigateBackWithResult(newPairId))
         }
 
     fun onGroupCreate(name: String) =

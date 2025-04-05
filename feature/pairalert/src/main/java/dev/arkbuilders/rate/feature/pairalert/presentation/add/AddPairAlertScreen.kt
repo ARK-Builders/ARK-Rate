@@ -50,10 +50,10 @@ import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.generated.search.destinations.SearchCurrencyScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.result.ResultRecipient
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.Group
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -63,7 +63,6 @@ import dev.arkbuilders.rate.core.presentation.ui.ArkLargeTextField
 import dev.arkbuilders.rate.core.presentation.ui.DropDownWithIcon
 import dev.arkbuilders.rate.core.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
-import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponentHolder
 import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.compose.collectAsState
@@ -76,6 +75,8 @@ fun AddPairAlertScreen(
     pairAlertId: Long? = null,
     groupId: Long? = null,
     navigator: DestinationsNavigator,
+    // return back new pair id
+    resultNavigator: ResultBackNavigator<Long>,
     resultRecipient: ResultRecipient<SearchCurrencyScreenDestination, SearchNavResult>,
 ) {
     val ctx = LocalContext.current
@@ -101,32 +102,8 @@ fun AddPairAlertScreen(
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            AddPairAlertScreenEffect.NavigateBack -> navigator.popBackStack()
-            is AddPairAlertScreenEffect.NotifyPairAdded -> {
-                val pair = effect.pair
-                val aboveOrBelow =
-                    if (pair.above())
-                        ctx.getString(CoreRString.above)
-                    else
-                        ctx.getString(CoreRString.below)
-                val visuals =
-                    NotifyAddedSnackbarVisuals(
-                        title =
-                            ctx.getString(
-                                CoreRString.alert_snackbar_new_title,
-                                pair.targetCode,
-                            ),
-                        description =
-                            ctx.getString(
-                                CoreRString.alert_snackbar_new_desc,
-                                pair.targetCode,
-                                aboveOrBelow,
-                                CurrUtils.prepareToDisplay(pair.targetPrice),
-                                pair.baseCode,
-                            ),
-                    )
-                AppSharedFlow.ShowAddedSnackbarPairAlert.flow.emit(visuals)
-            }
+            is AddPairAlertScreenEffect.NavigateBackWithResult ->
+                resultNavigator.navigateBack(effect.newPairId)
 
             is AddPairAlertScreenEffect.NavigateSearchBase ->
                 navigator.navigate(

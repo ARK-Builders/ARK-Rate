@@ -9,8 +9,6 @@ import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
 import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
-import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderSheetState
@@ -52,7 +50,7 @@ sealed class PairAlertEffect {
     data object AskNotificationPermissionOnNewPair : PairAlertEffect()
 
     data class ShowSnackbarAdded(
-        val visuals: NotifyAddedSnackbarVisuals,
+        val pair: PairAlert,
     ) : PairAlertEffect()
 
     data class ShowRemovedSnackbar(val pair: PairAlert) : PairAlertEffect()
@@ -89,10 +87,6 @@ class PairAlertViewModel(
         intent {
             initPages()
 
-            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
-                postSideEffect(PairAlertEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
-
             groupRepo.allFlow(GroupFeatureType.PairAlert).drop(1).onEach {
                 initPages()
             }.launchIn(viewModelScope)
@@ -100,6 +94,12 @@ class PairAlertViewModel(
             pairAlertRepo.getAllFlow().drop(1).onEach {
                 initPages()
             }.launchIn(viewModelScope)
+        }
+
+    fun onReturnFromAddScreen(newPairId: Long) =
+        intent {
+            val pair = pairAlertRepo.getById(newPairId) ?: return@intent
+            postSideEffect(PairAlertEffect.ShowSnackbarAdded(pair))
         }
 
     fun onNewPair(pairId: Long? = null) =

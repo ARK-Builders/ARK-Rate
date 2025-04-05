@@ -57,6 +57,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.generated.pairalert.destinations.AddPairAlertScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultRecipient
+import com.ramcosta.composedestinations.result.onResult
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
@@ -68,6 +70,7 @@ import dev.arkbuilders.rate.core.presentation.ui.AppTopBarCenterTitle
 import dev.arkbuilders.rate.core.presentation.ui.CurrIcon
 import dev.arkbuilders.rate.core.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
+import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsBottomSheet
@@ -85,7 +88,11 @@ import timber.log.Timber
 
 @Destination<ExternalModuleGraph>
 @Composable
-fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
+fun PairAlertConditionScreen(
+    navigator: DestinationsNavigator,
+    // expect new pair id
+    resultRecipient: ResultRecipient<AddPairAlertScreenDestination, Long>,
+) {
     val ctx = LocalContext.current
     val component =
         remember {
@@ -93,6 +100,10 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
         }
     val viewModel: PairAlertViewModel =
         viewModel(factory = component.pairAlertVMFactory())
+
+    resultRecipient.onResult {
+        viewModel.onReturnFromAddScreen(it)
+    }
 
     val onScreenOpenNotificationPermissionLauncher = rememberNotificationPermissionLauncher(ctx)
     val onNewPairNotificationPermissionLauncher =
@@ -133,8 +144,31 @@ fun PairAlertConditionScreen(navigator: DestinationsNavigator) {
                     .launch(Manifest.permission.POST_NOTIFICATIONS)
             }
 
-            is PairAlertEffect.ShowSnackbarAdded ->
-                snackState.showSnackbar(effect.visuals)
+            is PairAlertEffect.ShowSnackbarAdded -> {
+                val pair = effect.pair
+                val aboveOrBelow =
+                    if (pair.above())
+                        ctx.getString(CoreRString.above)
+                    else
+                        ctx.getString(CoreRString.below)
+                val visuals =
+                    NotifyAddedSnackbarVisuals(
+                        title =
+                            ctx.getString(
+                                CoreRString.alert_snackbar_new_title,
+                                pair.targetCode,
+                            ),
+                        description =
+                            ctx.getString(
+                                CoreRString.alert_snackbar_new_desc,
+                                pair.targetCode,
+                                aboveOrBelow,
+                                CurrUtils.prepareToDisplay(pair.targetPrice),
+                                pair.baseCode,
+                            ),
+                    )
+                snackState.showSnackbar(visuals)
+            }
 
             is PairAlertEffect.ShowRemovedSnackbar -> {
                 val visuals =
