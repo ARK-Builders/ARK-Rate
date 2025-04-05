@@ -13,9 +13,9 @@ import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
+import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
@@ -65,11 +65,12 @@ class EditAssetViewModel(
                 state.copy(asset, name, asset.value.toPlainString(), initialized = true)
             }
         }
-
-        AppSharedFlow.PickBaseCurrency.flow.onEach {
-            prefs.set(PreferenceKey.BaseCurrencyCode, it)
-        }.launchIn(viewModelScope)
     }
+
+    fun onNavResult(result: SearchNavResult) =
+        intent {
+            prefs.set(PreferenceKey.BaseCurrencyCode, result.code)
+        }
 
     fun onValueChange(input: String) =
         blockingIntent {

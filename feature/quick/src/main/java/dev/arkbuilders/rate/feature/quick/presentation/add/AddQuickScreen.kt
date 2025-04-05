@@ -64,12 +64,13 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.generated.search.destinations.SearchCurrencyScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
-import dev.arkbuilders.rate.core.presentation.AppSharedFlowKey
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -85,6 +86,7 @@ import dev.arkbuilders.rate.core.presentation.utils.ReorderHapticFeedback
 import dev.arkbuilders.rate.core.presentation.utils.ReorderHapticFeedbackType
 import dev.arkbuilders.rate.core.presentation.utils.rememberReorderHapticFeedback
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
+import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import sh.calvin.reorderable.ReorderableCollectionItemScope
@@ -100,6 +102,7 @@ fun AddQuickScreen(
     reuseNotEdit: Boolean = true,
     groupId: Long? = null,
     navigator: DestinationsNavigator,
+    resultRecipient: ResultRecipient<SearchCurrencyScreenDestination, SearchNavResult>,
 ) {
     val ctx = LocalContext.current
     val quickComponent =
@@ -112,6 +115,15 @@ fun AddQuickScreen(
                 quickComponent.addQuickVMFactory()
                     .create(quickPairId, newCode, reuseNotEdit, groupId),
         )
+
+    resultRecipient.onNavResult { result ->
+        when (result) {
+            NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                viewModel.onNavResult(result.value)
+            }
+        }
+    }
 
     val state by viewModel.collectAsState()
 
@@ -140,7 +152,7 @@ fun AddQuickScreen(
             is AddQuickScreenEffect.NavigateSearchAdd ->
                 navigator.navigate(
                     SearchCurrencyScreenDestination(
-                        appSharedFlowKeyString = AppSharedFlowKey.AddQuickCode.toString(),
+                        navKey = SearchNavResultType.ADD.name,
                         prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
                     ),
                 )
@@ -148,8 +160,8 @@ fun AddQuickScreen(
             is AddQuickScreenEffect.NavigateSearchSet ->
                 navigator.navigate(
                     SearchCurrencyScreenDestination(
-                        appSharedFlowKeyString = AppSharedFlowKey.SetQuickCode.toString(),
-                        pos = effect.index,
+                        navKey = SearchNavResultType.SET.name,
+                        navPos = effect.index,
                         prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
                     ),
                 )

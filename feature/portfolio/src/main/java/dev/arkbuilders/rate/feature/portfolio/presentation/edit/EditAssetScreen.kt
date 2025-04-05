@@ -41,9 +41,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.generated.search.destinations.SearchCurrencyScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.CurrencyName
-import dev.arkbuilders.rate.core.presentation.AppSharedFlowKey
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -53,6 +54,7 @@ import dev.arkbuilders.rate.core.presentation.ui.ArkCursorLargeTextField
 import dev.arkbuilders.rate.core.presentation.ui.InfoDialog
 import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
+import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Destination<ExternalModuleGraph>
@@ -60,6 +62,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun EditAssetScreen(
     assetId: Long,
     navigator: DestinationsNavigator,
+    resultRecipient: ResultRecipient<SearchCurrencyScreenDestination, SearchNavResult>,
 ) {
     val ctx = LocalContext.current
     val component =
@@ -71,6 +74,16 @@ fun EditAssetScreen(
         viewModel(
             factory = component.editAssetVMFactory().create(assetId),
         )
+
+    resultRecipient.onNavResult { result ->
+        when (result) {
+            NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                viewModel.onNavResult(result.value)
+            }
+        }
+    }
+
     val state by viewModel.collectAsState()
 
     Scaffold(
@@ -186,7 +199,7 @@ private fun Content(
             colors = ButtonDefaults.textButtonColors(contentColor = ArkColor.BrandUtility),
             onClick = {
                 navigator.navigate(
-                    SearchCurrencyScreenDestination(AppSharedFlowKey.PickBaseCurrency.toString()),
+                    SearchCurrencyScreenDestination(),
                 )
             },
             contentPadding = PaddingValues(2.dp),

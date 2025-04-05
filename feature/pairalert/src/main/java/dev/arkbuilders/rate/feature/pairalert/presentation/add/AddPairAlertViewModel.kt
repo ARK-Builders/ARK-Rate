@@ -2,7 +2,6 @@ package dev.arkbuilders.rate.feature.pairalert.presentation.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import arrow.core.Either
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -20,11 +19,9 @@ import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.domain.toDoubleArk
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
 import dev.arkbuilders.rate.feature.pairalert.domain.repo.PairAlertRepo
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
@@ -61,6 +58,11 @@ sealed class AddPairAlertScreenEffect {
     ) : AddPairAlertScreenEffect()
 }
 
+enum class SearchNavResultType {
+    TARGET,
+    BASE,
+}
+
 class AddPairAlertViewModel(
     private val pairAlertId: Long?,
     private val groupId: Long?,
@@ -78,14 +80,6 @@ class AddPairAlertViewModel(
     init {
         analyticsManager.trackScreen("AddPairAlertScreen")
 
-        AppSharedFlow.AddPairAlertTarget.flow.onEach {
-            initOnCodeChange(newTarget = it)
-        }.launchIn(viewModelScope)
-
-        AppSharedFlow.AddPairAlertBase.flow.onEach {
-            initOnCodeChange(newBase = it)
-        }.launchIn(viewModelScope)
-
         pairAlertId?.let {
             setupFromExisting()
             checkAboveNotBelow()
@@ -97,6 +91,14 @@ class AddPairAlertViewModel(
             reduce {
                 state.copy(availableGroups = groups, group = group)
             }
+        }
+    }
+
+    fun onNavResult(result: SearchNavResult) {
+        val type = SearchNavResultType.valueOf(result.key!!)
+        when (type) {
+            SearchNavResultType.TARGET -> initOnCodeChange(newTarget = result.code)
+            SearchNavResultType.BASE -> initOnCodeChange(newBase = result.code)
         }
     }
 

@@ -2,7 +2,6 @@ package dev.arkbuilders.rate.feature.portfolio.presentation.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -17,12 +16,10 @@ import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
 import dev.arkbuilders.rate.feature.portfolio.domain.usecase.AddNewAssetsUseCase
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
@@ -50,6 +47,11 @@ sealed class AddAssetSideEffect {
         AddAssetSideEffect()
 }
 
+enum class SearchNavResultType {
+    ADD,
+    SET,
+}
+
 class AddAssetViewModel(
     private val groupId: Long?,
     private val assetsRepo: PortfolioRepo,
@@ -66,38 +68,46 @@ class AddAssetViewModel(
     init {
         analyticsManager.trackScreen("AddAssetScreen")
 
-        AppSharedFlow.SetAssetCode.flow.onEach { (pos, selectedCode) ->
-            intent {
-                reduce {
-                    val newCurrencies = state.currencies.toMutableList()
-                    newCurrencies[pos] =
-                        newCurrencies[pos].copy(code = selectedCode)
-                    state.copy(currencies = newCurrencies)
-                }
-            }
-        }.launchIn(viewModelScope)
-
-        AppSharedFlow.AddAsset.flow.onEach { code ->
-            intent {
-                reduce {
-                    state.copy(
-                        currencies =
-                            state.currencies +
-                                AmountStr(
-                                    code,
-                                    "",
-                                ),
-                    )
-                }
-            }
-        }.launchIn(viewModelScope)
-
         intent {
             val group = getGroupByIdOrCreateDefaultUseCase(groupId, GroupFeatureType.Portfolio)
             val groups = groupRepo.getAllSorted(GroupFeatureType.Portfolio)
             reduce {
                 state.copy(group = group, availableGroups = groups)
             }
+        }
+    }
+
+    fun onNavResult(result: SearchNavResult) {
+        val type = SearchNavResultType.valueOf(result.key!!)
+        when (type) {
+            SearchNavResultType.ADD -> handleNavResAddCode(result.code)
+            SearchNavResultType.SET -> handleNavResSetCode(result.pos!!, result.code)
+        }
+    }
+
+    private fun handleNavResAddCode(code: CurrencyCode) =
+        intent {
+            reduce {
+                state.copy(
+                    currencies =
+                        state.currencies +
+                            AmountStr(
+                                code,
+                                "",
+                            ),
+                )
+            }
+        }
+
+    private fun handleNavResSetCode(
+        pos: Int,
+        code: CurrencyCode,
+    ) = intent {
+        reduce {
+            val newCurrencies = state.currencies.toMutableList()
+            newCurrencies[pos] =
+                newCurrencies[pos].copy(code = code)
+            state.copy(currencies = newCurrencies)
         }
     }
 

@@ -50,11 +50,12 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.generated.search.destinations.SearchCurrencyScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.AmountStr
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.AppSharedFlow
-import dev.arkbuilders.rate.core.presentation.AppSharedFlowKey
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -66,6 +67,7 @@ import dev.arkbuilders.rate.core.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
+import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import dev.arkbuilders.rate.core.presentation.R as CoreR
@@ -75,6 +77,7 @@ import dev.arkbuilders.rate.core.presentation.R as CoreR
 fun AddAssetScreen(
     groupId: Long? = null,
     navigator: DestinationsNavigator,
+    resultRecipient: ResultRecipient<SearchCurrencyScreenDestination, SearchNavResult>,
 ) {
     val ctx = LocalContext.current
     val component =
@@ -83,6 +86,15 @@ fun AddAssetScreen(
         }
     val viewModel: AddAssetViewModel =
         viewModel(factory = component.addCurrencyVMFactory().create(groupId))
+
+    resultRecipient.onNavResult { result ->
+        when (result) {
+            NavResult.Canceled -> {}
+            is NavResult.Value -> {
+                viewModel.onNavResult(result.value)
+            }
+        }
+    }
 
     val state by viewModel.collectAsState()
 
@@ -109,7 +121,7 @@ fun AddAssetScreen(
             is AddAssetSideEffect.NavigateSearchAdd ->
                 navigator.navigate(
                     SearchCurrencyScreenDestination(
-                        appSharedFlowKeyString = AppSharedFlowKey.AddAsset.toString(),
+                        navKey = SearchNavResultType.ADD.name,
                         prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
                     ),
                 )
@@ -117,8 +129,8 @@ fun AddAssetScreen(
             is AddAssetSideEffect.NavigateSearchSet ->
                 navigator.navigate(
                     SearchCurrencyScreenDestination(
-                        appSharedFlowKeyString = AppSharedFlowKey.SetAssetCode.name,
-                        pos = effect.index,
+                        navKey = SearchNavResultType.SET.name,
+                        navPos = effect.index,
                         prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
                     ),
                 )

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
@@ -36,10 +36,10 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Destination<ExternalModuleGraph>
 @Composable
 fun SearchCurrencyScreen(
-    appSharedFlowKeyString: String,
-    pos: Int? = null,
+    navKey: String? = null,
+    navPos: Int? = null,
     prohibitedCodes: Array<CurrencyCode>? = null,
-    navigator: DestinationsNavigator,
+    resultNavigator: ResultBackNavigator<SearchNavResult>,
 ) {
     val ctx = LocalContext.current
     val component =
@@ -50,13 +50,14 @@ fun SearchCurrencyScreen(
         viewModel(
             factory =
                 component.searchVMFactory()
-                    .create(appSharedFlowKeyString, pos, prohibitedCodes?.toList()),
+                    .create(navKey, navPos, prohibitedCodes?.toList()),
         )
     val state by viewModel.collectAsState()
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            SearchScreenEffect.NavigateBack -> navigator.popBackStack()
+            is SearchScreenEffect.NavigateBackWithResult ->
+                resultNavigator.navigateBack(effect.result)
         }
     }
 
@@ -72,7 +73,7 @@ fun SearchCurrencyScreen(
         topBar = {
             AppTopBarBack(
                 title = stringResource(CoreRString.search_currency),
-                onBackClick = { navigator.popBackStack() },
+                onBackClick = { resultNavigator.navigateBack() },
             )
         },
     ) {
