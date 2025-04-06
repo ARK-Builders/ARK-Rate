@@ -207,7 +207,8 @@ class QuickViewModel(
         val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
         val pages =
             groups.map { group ->
-                val filteredPairs = pairs.reversed().filter { it.group.id == group.id }
+                val filteredPairs = pairs.filter { it.group.id == group.id }.toMutableList()
+                filteredPairs.reverse()
                 val (pinned, notPinned) = filteredPairs.partition { it.isPinned() }
                 val pinnedMapped = pinned.map { mapPairToPinned(it, refreshDate!!) }
                 val sortedPinned =
