@@ -5,9 +5,8 @@
 package dev.arkbuilders.rate.presentation
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -93,8 +92,7 @@ fun MainScreen() {
     Scaffold(
         modifier =
             Modifier
-                .systemBarsPadding()
-                .imePadding(),
+                .safeDrawingPadding(),
         snackbarHost = {
             SnackbarHost(
                 hostState = snackState,
@@ -103,6 +101,7 @@ fun MainScreen() {
                 when (visuals) {
                     is ConnectivityOnlineSnackbarVisuals ->
                         ConnectivityOnlineSnackbar()
+
                     is ConnectivityOfflineSnackbarVisuals ->
                         ConnectivityOfflineSnackbar()
                 }
