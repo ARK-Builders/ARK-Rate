@@ -33,7 +33,7 @@ class CurrencyRepoImpl @Inject constructor(
 ) : CurrencyRepo {
     private val mutex = Mutex()
 
-    override suspend fun getCurrencyRate(): List<CurrencyRate> =
+    override suspend fun getCurrencyRates(): List<CurrencyRate> =
         withContext(Dispatchers.IO) {
             val local = localCurrencyDataSource.getAll()
             if (local.isNotEmpty()) {
@@ -49,8 +49,8 @@ class CurrencyRepoImpl @Inject constructor(
             }
         }
 
-    override suspend fun getCurrencyName(): List<CurrencyName> {
-        val rates = getCurrencyRate()
+    override suspend fun getCurrencyNames(): List<CurrencyName> {
+        val rates = getCurrencyRates()
 
         val fiatNames = fiatDataSource.getCurrencyName()
         val cryptoNames = cryptoDataSource.getCurrencyName()

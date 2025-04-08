@@ -59,7 +59,7 @@ class SearchViewModel(
         analyticsManager.trackScreen("SearchScreen")
 
         intent {
-            val all = currencyRepo.getCurrencyName().mapToSearchModel()
+            val all = currencyRepo.getCurrencyNames().mapToSearchModel()
             val frequent =
                 calcFrequentCurrUseCase.invoke()
                     .map { currencyRepo.nameByCode(it) }
