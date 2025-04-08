@@ -1,22 +1,16 @@
 package dev.arkbuilders.rate.feature.portfolio.presentation.add
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,17 +23,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,14 +43,12 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import com.ramcosta.composedestinations.result.ResultRecipient
-import dev.arkbuilders.rate.core.domain.model.AmountStr
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppButton
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.core.presentation.ui.ArkBasicTextField
 import dev.arkbuilders.rate.core.presentation.ui.DropDownWithIcon
 import dev.arkbuilders.rate.core.presentation.ui.GroupCreateDialog
 import dev.arkbuilders.rate.core.presentation.ui.GroupSelectPopup
@@ -99,27 +87,7 @@ fun AddAssetScreen(
     val state by viewModel.collectAsState()
 
     viewModel.collectSideEffect { effect ->
-        when (effect) {
-            is AddAssetSideEffect.NavigateBackWithResult ->
-                resultNavigator.navigateBack(effect.result)
-
-            is AddAssetSideEffect.NavigateSearchAdd ->
-                navigator.navigate(
-                    SearchCurrencyScreenDestination(
-                        navKey = SearchNavResultType.ADD.name,
-                        prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
-                    ),
-                )
-
-            is AddAssetSideEffect.NavigateSearchSet ->
-                navigator.navigate(
-                    SearchCurrencyScreenDestination(
-                        navKey = SearchNavResultType.SET.name,
-                        navPos = effect.index,
-                        prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
-                    ),
-                )
-        }
+        handleAddAssetSideEffect(effect, navigator, resultNavigator)
     }
 
     Scaffold(
@@ -283,96 +251,5 @@ private fun Currencies(
             onAssetRemove,
             onCodeChange,
         )
-    }
-}
-
-@Composable
-fun InputCurrency(
-    pos: Int,
-    amount: AmountStr,
-    onAssetValueChanged: (Int, String) -> Unit,
-    onAssetRemove: (Int) -> Unit,
-    onCodeChange: (Int) -> Unit,
-) {
-    Row(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
-        Row(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .height(44.dp)
-                    .border(
-                        1.dp,
-                        ArkColor.Border,
-                        RoundedCornerShape(8.dp),
-                    )
-                    .clip(RoundedCornerShape(8.dp)),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable { onCodeChange(pos) },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = Modifier.padding(start = 14.dp),
-                    text = amount.code,
-                    fontSize = 16.sp,
-                    color = ArkColor.TextSecondary,
-                )
-                Icon(
-                    modifier = Modifier.padding(start = 9.dp, end = 5.dp),
-                    painter = painterResource(CoreRDrawable.ic_chevron),
-                    contentDescription = "",
-                    tint = ArkColor.FGQuinary,
-                )
-            }
-            ArkBasicTextField(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                value = amount.value,
-                onValueChange = { onAssetValueChanged(pos, it) },
-                textStyle =
-                    TextStyle.Default.copy(
-                        color = ArkColor.TextPrimary,
-                        fontSize = 16.sp,
-                    ),
-                keyboardOptions =
-                    KeyboardOptions.Default
-                        .copy(keyboardType = KeyboardType.Number),
-                placeholder = {
-                    Text(
-                        text = stringResource(CoreRString.input_value),
-                        color = ArkColor.TextPlaceHolder,
-                        fontSize = 16.sp,
-                    )
-                },
-            )
-        }
-
-        Box(
-            modifier =
-                Modifier
-                    .padding(start = 16.dp)
-                    .size(44.dp)
-                    .border(
-                        1.dp,
-                        ArkColor.Border,
-                        RoundedCornerShape(8.dp),
-                    )
-                    .clip(RoundedCornerShape(8.dp))
-                    .clickable { onAssetRemove(pos) },
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painter = painterResource(id = CoreR.drawable.ic_delete),
-                contentDescription = "",
-                tint = ArkColor.FGSecondary,
-            )
-        }
     }
 }
