@@ -55,7 +55,7 @@ class EditAssetViewModel(
 
         intent {
             val asset = assetsRepo.getById(assetId)
-            val name = currencyRepo.nameByCodeUnsafe(asset!!.code)
+            val name = currencyRepo.nameByCode(asset!!.code)
 
             inputFlow.debounce(PERSIST_AMOUNT_DEBOUNCE).onEach {
                 assetsRepo.setAsset(asset.copy(value = it.toBigDecimalArk()))

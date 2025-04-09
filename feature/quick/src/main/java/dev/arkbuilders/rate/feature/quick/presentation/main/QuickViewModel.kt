@@ -56,7 +56,6 @@ data class QuickScreenState(
     val editGroupOptionsSheetState: EditGroupOptionsSheetState? = null,
     val editGroupRenameSheetState: EditGroupRenameSheetState? = null,
     val initialized: Boolean = false,
-    val noInternet: Boolean = false,
 )
 
 sealed class QuickScreenEffect {
@@ -86,16 +85,7 @@ class QuickViewModel(
     init {
         analyticsManager.trackScreen("QuickScreen")
 
-        intent {
-            if (currencyRepo.isRatesAvailable().not()) {
-                reduce {
-                    state.copy(noInternet = true)
-                }
-                return@intent
-            }
-
-            init()
-        }
+        init()
     }
 
     private fun init() =
@@ -126,11 +116,11 @@ class QuickViewModel(
                 }
             }.launchIn(viewModelScope)
 
-            val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
+            val allCurrencies = currencyRepo.getCurrencyNames()
             calcFrequentCurrUseCase.flow().drop(1).onEach {
                 val frequent =
                     calcFrequentCurrUseCase.invoke()
-                        .map { currencyRepo.nameByCodeUnsafe(it) }
+                        .map { currencyRepo.nameByCode(it) }
                 val topResults = getTopResultUseCase()
                 reduce {
                     state.copy(
@@ -142,7 +132,7 @@ class QuickViewModel(
 
             val frequent =
                 calcFrequentCurrUseCase()
-                    .map { currencyRepo.nameByCodeUnsafe(it) }
+                    .map { currencyRepo.nameByCode(it) }
             val topResults = getTopResultUseCase()
             val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
@@ -153,16 +143,6 @@ class QuickViewModel(
                     pages = pages,
                     initialized = true,
                 )
-            }
-        }
-
-    fun onRefreshClick() =
-        intent {
-            reduce { state.copy(noInternet = false) }
-            if (currencyRepo.isRatesAvailable()) {
-                init()
-            } else {
-                reduce { state.copy(noInternet = true) }
             }
         }
 

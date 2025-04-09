@@ -8,5 +8,9 @@ object OffsetDateTimeTypeConverter {
     fun fromOffsetDateTime(date: OffsetDateTime): String = date.toString()
 
     @TypeConverter
-    fun toOffsetDateTime(date: String): OffsetDateTime = OffsetDateTime.parse(date)
+    fun toOffsetDateTime(dateString: String): OffsetDateTime {
+        val date = OffsetDateTime.parse(dateString)
+        val offset = OffsetDateTime.now().offset
+        return date.withOffsetSameInstant(offset)
+    }
 }
