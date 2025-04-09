@@ -51,44 +51,44 @@ fun PairAlertItem(
     }
     Row(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .clickable {
-                onClick(pairAlert)
-            }
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .clickable {
+                    onClick(pairAlert)
+                }
+                .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CurrIcon(modifier = Modifier.size(40.dp), code = pairAlert.targetCode)
         Column(
             modifier =
-            Modifier
-                .padding(start = 12.dp)
-                .weight(1f),
+                Modifier
+                    .padding(start = 12.dp)
+                    .weight(1f),
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text =
-                "$currencyName(${pairAlert.targetCode}) " +
-                    if (pairAlert.oneTimeNotRecurrent) "(One-time)" else "",
+                    "$currencyName(${pairAlert.targetCode}) " +
+                        if (pairAlert.oneTimeNotRecurrent) "(One-time)" else "",
                 fontWeight = FontWeight.Medium,
                 color = ArkColor.TextPrimary,
             )
             Text(
                 text =
-                buildString {
-                    append(
-                        "${
-                            if (pairAlert.above())
-                                stringResource(CoreRString.above_c)
-                            else
-                                stringResource(CoreRString.below_c)
-                        } ",
-                    )
-                    append("${CurrUtils.prepareToDisplay(pairAlert.targetPrice)} ")
-                    append(pairAlert.baseCode)
-                },
+                    buildString {
+                        append(
+                            "${
+                                if (pairAlert.above())
+                                    stringResource(CoreRString.above_c)
+                                else
+                                    stringResource(CoreRString.below_c)
+                            } ",
+                        )
+                        append("${CurrUtils.prepareToDisplay(pairAlert.targetPrice)} ")
+                        append(pairAlert.baseCode)
+                    },
                 color = ArkColor.TextTertiary,
             )
             if (oneTimeTriggered) {
@@ -98,10 +98,10 @@ fun PairAlertItem(
                 if (date != null) {
                     Text(
                         text =
-                        stringResource(
-                            CoreRString.alert_notified_on,
-                            DateFormatUtils.notifiedOn(date),
-                        ),
+                            stringResource(
+                                CoreRString.alert_notified_on,
+                                DateFormatUtils.notifiedOn(date),
+                            ),
                         color = ArkColor.TextTertiary,
                     )
                 }
@@ -112,14 +112,14 @@ fun PairAlertItem(
             checked = pairAlert.enabled,
             onCheckedChange = { onEnableToggle(pairAlert, it) },
             colors =
-            SwitchDefaults.colors(
-                checkedThumbColor = Color.White,
-                checkedBorderColor = ArkColor.Primary,
-                checkedTrackColor = ArkColor.Primary,
-                uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = ArkColor.BGTertiary,
-                uncheckedBorderColor = ArkColor.BGTertiary,
-            ),
+                SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedBorderColor = ArkColor.Primary,
+                    checkedTrackColor = ArkColor.Primary,
+                    uncheckedThumbColor = Color.White,
+                    uncheckedTrackColor = ArkColor.BGTertiary,
+                    uncheckedBorderColor = ArkColor.BGTertiary,
+                ),
         )
     }
 }

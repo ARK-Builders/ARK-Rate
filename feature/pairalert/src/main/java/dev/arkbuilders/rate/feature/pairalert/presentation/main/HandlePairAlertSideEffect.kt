@@ -60,18 +60,18 @@ suspend fun handlePairAlertSideEffect(
             val visuals =
                 NotifyAddedSnackbarVisuals(
                     title =
-                    ctx.getString(
-                        CoreRString.alert_snackbar_new_title,
-                        pair.targetCode,
-                    ),
+                        ctx.getString(
+                            CoreRString.alert_snackbar_new_title,
+                            pair.targetCode,
+                        ),
                     description =
-                    ctx.getString(
-                        CoreRString.alert_snackbar_new_desc,
-                        pair.targetCode,
-                        aboveOrBelow,
-                        CurrUtils.prepareToDisplay(pair.targetPrice),
-                        pair.baseCode,
-                    ),
+                        ctx.getString(
+                            CoreRString.alert_snackbar_new_desc,
+                            pair.targetCode,
+                            aboveOrBelow,
+                            CurrUtils.prepareToDisplay(pair.targetPrice),
+                            pair.baseCode,
+                        ),
                 )
             snackState.showSnackbar(visuals)
         }
@@ -80,16 +80,16 @@ suspend fun handlePairAlertSideEffect(
             val visuals =
                 NotifyRemovedSnackbarVisuals(
                     title =
-                    ctx.getString(
-                        CoreRString.alert_snackbar_removed_title,
-                        effect.pair.targetCode,
-                    ),
+                        ctx.getString(
+                            CoreRString.alert_snackbar_removed_title,
+                            effect.pair.targetCode,
+                        ),
                     description =
-                    ctx.getString(
-                        CoreRString.alert_snackbar_removed_desc,
-                        effect.pair.targetCode,
-                        effect.pair.baseCode,
-                    ),
+                        ctx.getString(
+                            CoreRString.alert_snackbar_removed_desc,
+                            effect.pair.targetCode,
+                            effect.pair.baseCode,
+                        ),
                     onUndo = {
                         viewModel.undoDelete(effect.pair)
                     },

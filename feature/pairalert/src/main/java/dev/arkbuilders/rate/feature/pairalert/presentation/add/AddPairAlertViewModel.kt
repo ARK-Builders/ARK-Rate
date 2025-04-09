@@ -107,10 +107,6 @@ class AddPairAlertViewModel(
         blockingIntent {
             val target = newTarget ?: state.targetCode
             val base = newBase ?: state.baseCode
-            val group =
-                groupId?.let {
-                    groupRepo.getAllSorted(GroupFeatureType.PairAlert).find { it.id == groupId }!!
-                } ?: state.group
             val (_, currentPrice) =
                 convertUseCase(
                     fromCode = target,
@@ -121,7 +117,6 @@ class AddPairAlertViewModel(
                     currentPrice = currentPrice,
                     targetCode = target,
                     baseCode = base,
-                    group = group,
                 )
             val priceOrPercent = calcNewPriceOrPercent(newState)
 

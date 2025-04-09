@@ -100,18 +100,18 @@ fun PairAlertConditionScreen(
     fun getCurrentGroup() = state.pages.getOrNull(pagerState.currentPage)?.group
 
     viewModel.collectSideEffect { effect ->
-       handlePairAlertSideEffect(
-           effect,
-           state,
-           navigator,
-           viewModel,
-           pagerState,
-           snackState,
-           onScreenOpenNotificationPermissionLauncher,
-           onNewPairNotificationPermissionLauncher,
-           ctx,
-           ::getCurrentGroup,
-       )
+        handlePairAlertSideEffect(
+            effect,
+            state,
+            navigator,
+            viewModel,
+            pagerState,
+            snackState,
+            onScreenOpenNotificationPermissionLauncher,
+            onNewPairNotificationPermissionLauncher,
+            ctx,
+            ::getCurrentGroup,
+        )
     }
 
     Scaffold(
