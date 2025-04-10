@@ -47,9 +47,6 @@ import dev.arkbuilders.rate.core.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.core.presentation.ui.GroupViewPager
 import dev.arkbuilders.rate.core.presentation.ui.ListHeader
 import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
-import dev.arkbuilders.rate.core.presentation.ui.NoResult
-import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
-import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsBottomSheet

@@ -47,7 +47,7 @@ fun PairAlertItem(
     }
     val currencyRepo = component.currencyRepo()
     LaunchedEffect(Unit) {
-        currencyName = currencyRepo.nameByCodeUnsafe(pairAlert.targetCode).name
+        currencyName = currencyRepo.nameByCode(pairAlert.targetCode).name
     }
     Row(
         modifier =
