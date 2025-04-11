@@ -5,6 +5,7 @@ package dev.arkbuilders.rate.core.presentation.ui.group
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -75,7 +76,7 @@ fun Content(
     onDismiss: () -> Unit,
 ) {
     val haptic = rememberReorderHapticFeedback()
-    Box(modifier = Modifier) {
+    Box(modifier = Modifier.fillMaxWidth()) {
         Text(
             modifier =
                 Modifier

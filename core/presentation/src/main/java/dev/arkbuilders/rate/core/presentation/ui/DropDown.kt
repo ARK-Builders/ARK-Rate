@@ -14,10 +14,46 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
+
+@Composable
+fun DropDownBtn(
+    modifier: Modifier = Modifier,
+    title: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier =
+            modifier
+                .height(36.dp)
+                .border(
+                    1.dp,
+                    ArkColor.Border,
+                    RoundedCornerShape(8.dp),
+                )
+                .clip(RoundedCornerShape(8.dp))
+                .clickable { onClick() },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier.padding(start = 12.dp),
+            text = title,
+            fontWeight = FontWeight.SemiBold,
+            color = ArkColor.FGSecondary,
+        )
+        Icon(
+            modifier = Modifier.padding(start = 8.dp, end = 15.dp),
+            painter = painterResource(id = CoreRDrawable.ic_chevron),
+            contentDescription = "",
+            tint = ArkColor.FGSecondary,
+        )
+    }
+}
 
 @Composable
 fun DropDownWithIcon(

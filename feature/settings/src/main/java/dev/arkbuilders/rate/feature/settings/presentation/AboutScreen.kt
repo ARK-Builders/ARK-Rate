@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.components.about.presentation.ArkAbout
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
@@ -14,7 +15,7 @@ import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
 import dev.arkbuilders.rate.feature.settings.di.SettingsComponentHolder
 
-@Destination
+@Destination<ExternalModuleGraph>
 @Composable
 fun AboutScreen(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current

@@ -2,7 +2,6 @@ package dev.arkbuilders.rate.feature.quick.presentation.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -19,17 +18,11 @@ import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.domain.toDoubleArk
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.syntax.simple.blockingIntent
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
-import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import java.time.OffsetDateTime
 
@@ -43,15 +36,18 @@ data class AddQuickScreenState(
 )
 
 sealed class AddQuickScreenEffect {
-    data class NotifyPairAdded(val pair: QuickPair) : AddQuickScreenEffect()
-
-    data object NavigateBack : AddQuickScreenEffect()
+    data class NavigateBackWithResult(val newPairId: Long) : AddQuickScreenEffect()
 
     data class NavigateSearchSet(val index: Int, val prohibitedCodes: List<CurrencyCode>) :
         AddQuickScreenEffect()
 
     data class NavigateSearchAdd(val prohibitedCodes: List<CurrencyCode>) :
         AddQuickScreenEffect()
+}
+
+enum class SearchNavResultType {
+    ADD,
+    SET,
 }
 
 class AddQuickViewModel(
@@ -71,25 +67,6 @@ class AddQuickViewModel(
 
     init {
         analyticsManager.trackScreen("AddQuickScreen")
-
-        AppSharedFlow.SetQuickCode.flow.onEach { (index, code) ->
-            intent {
-                val mutable = state.currencies.toMutableList()
-                val new = mutable[index].copy(code = code)
-                mutable[index] = new
-                val calc = calcToResult(mutable)
-                reduce { state.copy(currencies = calc) }
-            }
-        }.launchIn(viewModelScope)
-
-        AppSharedFlow.AddQuickCode.flow.onEach { code ->
-            intent {
-                val newAmounts = state.currencies + AmountStr(code, "")
-                val calc = calcToResult(newAmounts)
-                reduce { state.copy(currencies = calc) }
-                checkFinishEnabled()
-            }
-        }.launchIn(viewModelScope)
 
         intent {
             val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
@@ -130,6 +107,33 @@ class AddQuickViewModel(
                 }
             }
         }
+    }
+
+    fun onNavResult(result: SearchNavResult) {
+        val type = SearchNavResultType.valueOf(result.key!!)
+        when (type) {
+            SearchNavResultType.ADD -> handleNavResAddCode(result.code)
+            SearchNavResultType.SET -> handleNavResSetCode(result.pos!!, result.code)
+        }
+    }
+
+    private fun handleNavResAddCode(code: CurrencyCode) =
+        intent {
+            val newAmounts = state.currencies + AmountStr(code, "")
+            val calc = calcToResult(newAmounts)
+            reduce { state.copy(currencies = calc) }
+            checkFinishEnabled()
+        }
+
+    private fun handleNavResSetCode(
+        index: Int,
+        code: CurrencyCode,
+    ) = intent {
+        val mutable = state.currencies.toMutableList()
+        val new = mutable[index].copy(code = code)
+        mutable[index] = new
+        val calc = calcToResult(mutable)
+        reduce { state.copy(currencies = calc) }
     }
 
     fun onCurrencyRemove(removeIndex: Int) =
@@ -174,7 +178,7 @@ class AddQuickViewModel(
             val newFrom = state.currencies.last()
             val newCurrencies =
                 state.currencies.toMutableList().apply {
-                    removeLast()
+                    removeAt(lastIndex)
                     add(0, newFrom)
                 }
 
@@ -216,13 +220,12 @@ class AddQuickViewModel(
                     pinnedDate = null,
                     group = state.group,
                 )
-            quickRepo.insert(quick)
+            val newId = quickRepo.insert(quick)
             codeUseStatRepo.codesUsed(
                 quick.from,
                 *quick.to.map { it.code }.toTypedArray(),
             )
-            postSideEffect(AddQuickScreenEffect.NotifyPairAdded(quick))
-            postSideEffect(AddQuickScreenEffect.NavigateBack)
+            postSideEffect(AddQuickScreenEffect.NavigateBackWithResult(newId))
         }
 
     private suspend fun calcToResult(old: List<AmountStr>): List<AmountStr> {

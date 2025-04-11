@@ -1,0 +1,32 @@
+package dev.arkbuilders.rate.presentation.navigation
+
+import com.ramcosta.composedestinations.animations.defaults.DefaultFadingTransitions
+import com.ramcosta.composedestinations.annotation.ExternalDestination
+import com.ramcosta.composedestinations.annotation.NavHostGraph
+import com.ramcosta.composedestinations.generated.pairalert.destinations.AddPairAlertScreenDestination
+import com.ramcosta.composedestinations.generated.pairalert.destinations.PairAlertConditionScreenDestination
+import com.ramcosta.composedestinations.generated.portfolio.destinations.AddAssetScreenDestination
+import com.ramcosta.composedestinations.generated.portfolio.destinations.EditAssetScreenDestination
+import com.ramcosta.composedestinations.generated.portfolio.destinations.PortfolioScreenDestination
+import com.ramcosta.composedestinations.generated.quick.destinations.AddQuickScreenDestination
+import com.ramcosta.composedestinations.generated.quick.destinations.QuickScreenDestination
+import com.ramcosta.composedestinations.generated.search.destinations.SearchCurrencyScreenDestination
+import com.ramcosta.composedestinations.generated.settings.destinations.AboutScreenDestination
+import com.ramcosta.composedestinations.generated.settings.destinations.SettingsScreenDestination
+
+@NavHostGraph(
+    defaultTransitions = DefaultFadingTransitions::class,
+)
+annotation class MainGraph {
+    @ExternalDestination<QuickScreenDestination>(start = true)
+    @ExternalDestination<AddQuickScreenDestination>
+    @ExternalDestination<PortfolioScreenDestination>
+    @ExternalDestination<AddAssetScreenDestination>
+    @ExternalDestination<EditAssetScreenDestination>
+    @ExternalDestination<PairAlertConditionScreenDestination>
+    @ExternalDestination<AddPairAlertScreenDestination>
+    @ExternalDestination<SettingsScreenDestination>
+    @ExternalDestination<AboutScreenDestination>
+    @ExternalDestination<SearchCurrencyScreenDestination>
+    companion object Includes
+}
