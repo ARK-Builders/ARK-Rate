@@ -62,7 +62,6 @@ import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickOptionsBottomShee
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickSwipeItem
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.OffsetDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,16 +93,6 @@ fun QuickScreen(
     val state by viewModel.collectAsState()
     val pagerState = rememberPagerState { state.pages.size }
     val snackState = remember { SnackbarHostState() }
-    viewModel.collectSideEffect { effect ->
-        handleQuickSideEffect(
-            effect,
-            state,
-            viewModel,
-            pagerState,
-            snackState,
-            ctx,
-        )
-    }
 
     val isEmpty = state.pages.isEmpty()
 
@@ -114,6 +103,14 @@ fun QuickScreen(
     val editGroupRenameSheetState = rememberModalBottomSheetState()
 
     fun getCurrentGroup() = state.pages.getOrNull(pagerState.currentPage)?.group
+
+    HandleQuickSideEffects(
+        viewModel = viewModel,
+        state = state,
+        pagerState = pagerState,
+        snackState = snackState,
+        ctx = ctx,
+    )
 
     Scaffold(
         floatingActionButton = {

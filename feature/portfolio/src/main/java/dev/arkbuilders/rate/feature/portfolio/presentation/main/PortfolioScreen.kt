@@ -67,7 +67,6 @@ import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.presentation.model.AddAssetsNavResult
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 import java.math.BigDecimal
 
 @Destination<ExternalModuleGraph>
@@ -104,17 +103,14 @@ fun PortfolioScreen(
 
     fun getCurrentGroup() = state.pages.getOrNull(pagerState.currentPage)?.group
 
-    viewModel.collectSideEffect { effect ->
-        handlePortfolioSideEffect(
-            effect,
-            viewModel,
-            navigator,
-            state,
-            pagerState,
-            snackState,
-            ctx,
-        )
-    }
+    HandlePortfolioSideEffect(
+        viewModel,
+        navigator,
+        state,
+        pagerState,
+        snackState,
+        ctx,
+    )
 
     Scaffold(
         floatingActionButton = {

@@ -57,7 +57,6 @@ import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponentHolder
 import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Destination<ExternalModuleGraph>
 @Composable
@@ -97,20 +96,17 @@ fun PairAlertConditionScreen(
 
     fun getCurrentGroup() = state.pages.getOrNull(pagerState.currentPage)?.group
 
-    viewModel.collectSideEffect { effect ->
-        handlePairAlertSideEffect(
-            effect,
-            state,
-            navigator,
-            viewModel,
-            pagerState,
-            snackState,
-            onScreenOpenNotificationPermissionLauncher,
-            onNewPairNotificationPermissionLauncher,
-            ctx,
-            ::getCurrentGroup,
-        )
-    }
+    HandlePairAlertSideEffect(
+        state,
+        navigator,
+        viewModel,
+        pagerState,
+        snackState,
+        onScreenOpenNotificationPermissionLauncher,
+        onNewPairNotificationPermissionLauncher,
+        ctx,
+        ::getCurrentGroup,
+    )
 
     Scaffold(
         floatingActionButton = {
