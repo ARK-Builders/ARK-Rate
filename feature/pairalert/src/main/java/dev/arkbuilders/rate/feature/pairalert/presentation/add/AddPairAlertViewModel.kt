@@ -2,7 +2,6 @@ package dev.arkbuilders.rate.feature.pairalert.presentation.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import arrow.core.Either
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -20,17 +19,11 @@ import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.domain.toDoubleArk
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
 import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
 import dev.arkbuilders.rate.feature.pairalert.domain.repo.PairAlertRepo
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.syntax.simple.blockingIntent
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
-import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import java.math.BigDecimal
 
@@ -48,9 +41,7 @@ data class AddPairAlertScreenState(
 )
 
 sealed class AddPairAlertScreenEffect {
-    data object NavigateBack : AddPairAlertScreenEffect()
-
-    class NotifyPairAdded(val pair: PairAlert) : AddPairAlertScreenEffect()
+    data class NavigateBackWithResult(val newPairId: Long) : AddPairAlertScreenEffect()
 
     data class NavigateSearchTarget(
         val prohibitedCodes: List<CurrencyCode>,
@@ -59,6 +50,11 @@ sealed class AddPairAlertScreenEffect {
     data class NavigateSearchBase(
         val prohibitedCodes: List<CurrencyCode>,
     ) : AddPairAlertScreenEffect()
+}
+
+enum class SearchNavResultType {
+    TARGET,
+    BASE,
 }
 
 class AddPairAlertViewModel(
@@ -78,14 +74,6 @@ class AddPairAlertViewModel(
     init {
         analyticsManager.trackScreen("AddPairAlertScreen")
 
-        AppSharedFlow.AddPairAlertTarget.flow.onEach {
-            initOnCodeChange(newTarget = it)
-        }.launchIn(viewModelScope)
-
-        AppSharedFlow.AddPairAlertBase.flow.onEach {
-            initOnCodeChange(newBase = it)
-        }.launchIn(viewModelScope)
-
         pairAlertId?.let {
             setupFromExisting()
             checkAboveNotBelow()
@@ -100,6 +88,14 @@ class AddPairAlertViewModel(
         }
     }
 
+    fun onNavResult(result: SearchNavResult) {
+        val type = SearchNavResultType.valueOf(result.key!!)
+        when (type) {
+            SearchNavResultType.TARGET -> initOnCodeChange(newTarget = result.code)
+            SearchNavResultType.BASE -> initOnCodeChange(newBase = result.code)
+        }
+    }
+
     private fun initOnCodeChange(
         newTarget: CurrencyCode? = null,
         newBase: CurrencyCode? = null,
@@ -107,10 +103,6 @@ class AddPairAlertViewModel(
         blockingIntent {
             val target = newTarget ?: state.targetCode
             val base = newBase ?: state.baseCode
-            val group =
-                groupId?.let {
-                    groupRepo.getAllSorted(GroupFeatureType.PairAlert).find { it.id == groupId }!!
-                } ?: state.group
             val (_, currentPrice) =
                 convertUseCase(
                     fromCode = target,
@@ -121,7 +113,6 @@ class AddPairAlertViewModel(
                     currentPrice = currentPrice,
                     targetCode = target,
                     baseCode = base,
-                    group = group,
                 )
             val priceOrPercent = calcNewPriceOrPercent(newState)
 
@@ -224,10 +215,9 @@ class AddPairAlertViewModel(
                     lastDateTriggered = null,
                     group = state.group,
                 )
-            pairAlertRepo.insert(pairAlert)
+            val newPairId = pairAlertRepo.insert(pairAlert)
             codeUseStatRepo.codesUsed(pairAlert.baseCode, pairAlert.targetCode)
-            postSideEffect(AddPairAlertScreenEffect.NotifyPairAdded(pairAlert))
-            postSideEffect(AddPairAlertScreenEffect.NavigateBack)
+            postSideEffect(AddPairAlertScreenEffect.NavigateBackWithResult(newPairId))
         }
 
     fun onGroupCreate(name: String) =

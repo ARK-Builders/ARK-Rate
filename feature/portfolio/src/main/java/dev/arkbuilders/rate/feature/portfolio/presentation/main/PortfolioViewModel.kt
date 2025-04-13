@@ -14,23 +14,19 @@ import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
-import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderSheetState
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioScope
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
+import dev.arkbuilders.rate.feature.portfolio.presentation.model.AddAssetsNavResult
+import dev.arkbuilders.rate.feature.portfolio.presentation.model.NavAsset
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.syntax.simple.blockingIntent
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
-import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -57,11 +53,11 @@ data class PortfolioDisplayAsset(
 )
 
 sealed class PortfolioScreenEffect {
-    class ShowSnackbarAdded(
-        val visuals: NotifyAddedSnackbarVisuals,
-    ) : PortfolioScreenEffect()
+    class ShowSnackbarAdded(val assets: List<NavAsset>) : PortfolioScreenEffect()
 
     data class ShowRemovedSnackbar(val asset: Asset) : PortfolioScreenEffect()
+
+    data class SelectTab(val groupId: Long) : PortfolioScreenEffect()
 
     data object NavigateBack : PortfolioScreenEffect()
 }
@@ -88,10 +84,6 @@ class PortfolioViewModel(
         intent {
             initPages()
 
-            AppSharedFlow.ShowAddedSnackbarPortfolio.flow.onEach { visuals ->
-                postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
-
             prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
                 initPages()
             }.launchIn(viewModelScope)
@@ -103,6 +95,15 @@ class PortfolioViewModel(
             groupRepo.allFlow(GroupFeatureType.Portfolio).drop(1).onEach {
                 initPages()
             }.launchIn(viewModelScope)
+        }
+
+    fun onReturnFromAddScreen(result: AddAssetsNavResult) =
+        intent {
+            if (result.added.isNotEmpty()) {
+                initPages()
+                postSideEffect(PortfolioScreenEffect.SelectTab(result.added.first().groupId))
+                postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(result.added.toList()))
+            }
         }
 
     fun onAssetRemove(asset: Asset) =
@@ -137,7 +138,8 @@ class PortfolioViewModel(
     private fun initPages() =
         intent {
             val baseCode = prefs.get(PreferenceKey.BaseCurrencyCode)
-            val assets = assetsRepo.allAssets().reversed()
+            val assets = assetsRepo.allAssets().toMutableList()
+            assets.reverse()
             val groups = groupRepo.getAllSorted(GroupFeatureType.Portfolio)
             val pages =
                 groups.map { group ->

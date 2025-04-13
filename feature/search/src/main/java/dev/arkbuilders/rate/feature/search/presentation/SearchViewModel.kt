@@ -11,15 +11,9 @@ import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
-import dev.arkbuilders.rate.core.presentation.AppSharedFlowKey
 import dev.arkbuilders.rate.feature.search.di.SearchScope
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.syntax.simple.blockingIntent
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
-import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
 data class CurrencySearchModel(
@@ -39,12 +33,12 @@ data class SearchScreenState(
 )
 
 sealed class SearchScreenEffect {
-    data object NavigateBack : SearchScreenEffect()
+    data class NavigateBackWithResult(val result: SearchNavResult) : SearchScreenEffect()
 }
 
 class SearchViewModel(
-    private val appSharedFlowKeyString: String,
-    private val pos: Int?,
+    private val navKey: String?,
+    private val navPos: Int?,
     private val prohibitedCodes: List<CurrencyCode>?,
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
@@ -99,39 +93,14 @@ class SearchViewModel(
                 }
             }
 
-            emitResult(CurrencyName(code = model.code, name = model.name))
-            postSideEffect(SearchScreenEffect.NavigateBack)
+            val result = SearchNavResult(navKey, navPos, model.code)
+            postSideEffect(SearchScreenEffect.NavigateBackWithResult(result))
         }
 
     fun onCodeProhibitedDialogDismiss() =
         intent {
             reduce { state.copy(showCodeProhibitedDialog = false) }
         }
-
-    private suspend fun emitResult(name: CurrencyName) {
-        val appFlowKey = AppSharedFlowKey.valueOf(appSharedFlowKeyString)
-        when (appFlowKey) {
-            AppSharedFlowKey.SetAssetCode ->
-                AppSharedFlow.SetAssetCode.flow.emit(pos!! to name.code)
-
-            AppSharedFlowKey.AddAsset -> AppSharedFlow.AddAsset.flow.emit(name.code)
-
-            AppSharedFlowKey.AddPairAlertBase ->
-                AppSharedFlow.AddPairAlertBase.flow.emit(name.code)
-
-            AppSharedFlowKey.AddPairAlertTarget ->
-                AppSharedFlow.AddPairAlertTarget.flow.emit(name.code)
-
-            AppSharedFlowKey.SetQuickCode ->
-                AppSharedFlow.SetQuickCode.flow.emit(pos!! to name.code)
-
-            AppSharedFlowKey.PickBaseCurrency ->
-                AppSharedFlow.PickBaseCurrency.flow.emit(name.code)
-
-            AppSharedFlowKey.AddQuickCode ->
-                AppSharedFlow.AddQuickCode.flow.emit(name.code)
-        }
-    }
 
     private fun List<CurrencyName>.mapToSearchModel() =
         map { name ->
@@ -141,8 +110,8 @@ class SearchViewModel(
 }
 
 class SearchViewModelFactory @AssistedInject constructor(
-    @Assisted private val appSharedFlowKeyString: String,
-    @Assisted private val pos: Int?,
+    @Assisted private val navKey: String?,
+    @Assisted private val navPos: Int?,
     @Assisted private val prohibitedCodes: List<CurrencyCode>?,
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
@@ -151,8 +120,8 @@ class SearchViewModelFactory @AssistedInject constructor(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SearchViewModel(
-            appSharedFlowKeyString,
-            pos,
+            navKey,
+            navPos,
             prohibitedCodes,
             currencyRepo,
             calcFrequentCurrUseCase,
@@ -165,8 +134,8 @@ class SearchViewModelFactory @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            appSharedFlowKeyString: String,
-            pos: Int?,
+            navKey: String?,
+            navPos: Int?,
             prohibitedCodes: List<CurrencyCode>?,
         ): SearchViewModelFactory
     }
