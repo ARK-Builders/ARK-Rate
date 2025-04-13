@@ -46,7 +46,15 @@ class QuickPairsWidgetReceiver : GlanceAppWidgetReceiver() {
             GlanceAppWidgetManager(context)
                 .getGlanceIds(QuickPairsWidget::class.java)
                 .forEach { glanceId ->
-                    glanceAppWidget.update(context, glanceId)
+                    QuickPairsWidgetReceiver.run {
+                        updateWidgetNewGroup(
+                            context = context,
+                            glanceId = glanceId,
+                            findNewIndex = { _, _ ->
+                                0
+                            },
+                        )
+                    }
                 }
         }
     }
