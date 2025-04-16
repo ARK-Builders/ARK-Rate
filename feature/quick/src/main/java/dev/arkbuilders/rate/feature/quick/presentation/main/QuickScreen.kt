@@ -3,9 +3,7 @@ package dev.arkbuilders.rate.feature.quick.presentation.main
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -52,7 +50,6 @@ import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomSheet
-import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRow
 import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
@@ -147,7 +144,7 @@ fun QuickScreen(
                     Content(
                         state = state,
                         pagerState = pagerState,
-                        onEdit = viewModel::onShowGroupsReorder,
+                        onEditGroups = viewModel::onShowGroupsReorder,
                         onFilterChanged = viewModel::onFilterChanged,
                         onDelete = viewModel::onDelete,
                         onClick = {
@@ -252,7 +249,7 @@ fun QuickScreen(
 private fun Content(
     state: QuickScreenState,
     pagerState: PagerState,
-    onEdit: () -> Unit,
+    onEditGroups: () -> Unit,
     onFilterChanged: (String) -> Unit,
     onDelete: (QuickPair) -> Unit,
     onClick: (QuickPair) -> Unit,
@@ -294,11 +291,10 @@ private fun Content(
                     onNewCode = onNewCode,
                 )
             } else {
-                EditGroupRow(onEdit)
-                Spacer(Modifier.height(4.dp))
                 GroupViewPager(
                     pagerState = pagerState,
                     groups = groups,
+                    onEditGroups = onEditGroups,
                 ) { index ->
                     GroupPage(
                         frequent = state.frequent,
