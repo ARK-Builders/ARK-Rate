@@ -42,4 +42,5 @@ object ArkColor {
     val UtilitySuccess700 = Color(0xFF067647)
 
     val NeutralGray500 = Color(0xFF6C737F)
+    val NeutralGray700 = Color(0xFF384250)
 }

@@ -51,7 +51,6 @@ import dev.arkbuilders.rate.core.presentation.ui.RateSnackbarHost
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomSheet
-import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRow
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponent
 import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponentHolder
 import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
@@ -221,11 +220,10 @@ private fun Content(
                 onEnableToggle = onEnableToggle,
             )
         } else {
-            EditGroupRow(onEdit = onEditGroups)
             GroupViewPager(
-                modifier = Modifier.padding(top = 16.dp),
                 pagerState = pagerState,
                 groups = state.pages.map { it.group },
+                onEditGroups = onEditGroups,
             ) { index ->
                 GroupPage(
                     component = component,

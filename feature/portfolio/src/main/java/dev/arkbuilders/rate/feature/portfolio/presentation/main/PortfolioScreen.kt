@@ -7,9 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -61,7 +59,6 @@ import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomSheet
-import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRow
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.presentation.model.AddAssetsNavResult
@@ -233,13 +230,10 @@ private fun Content(
                 onDelete = onDelete,
             )
         } else {
-            EditGroupRow(
-                onEdit = onEditGroups,
-            )
-            Spacer(Modifier.height(4.dp))
             GroupViewPager(
                 pagerState = pagerState,
                 groups = groups,
+                onEditGroups = onEditGroups,
             ) { index ->
                 GroupPage(
                     filter = state.filter,
