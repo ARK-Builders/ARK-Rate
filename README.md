@@ -1,25 +1,16 @@
-# ARK Rate: Handy Exchange Calculator by ARK Builders
+<h1 align="center">ARK Rate</h1>
 
-**ARK Rate** is a powerful and user-friendly currency converter allowing you to quickly and accurately convert any currency to another. But there's more! ARK Rate stands out from other apps with its unique features.
-
-## Versatile Currency Exchange Calculator
-
-Our intuitive interface enables you to easily sum values in different currencies and represent them in any currency of your choice. Be it Euro, Turkish Lira, Korean Won, or Dollars, ARK Rate always provides you with up-to-date data.
-
-## Currency Rate Tracking
-
-Traders will appreciate our currency rate tracking feature. Receive notifications when a rate hits a point of your interest and always stay updated with the latest news - be it traditional currencies or cryptocurrencies.
-
-## Offline Functionality
-
-Our app updates the rates of all known currencies twice a day and can function without an internet connection. If you lack internet connection for more than 12 hours, ARK Rate will continue working based on the latest known information, which is perfect for travelers.
-
-## Privacy
-
-We value transparency and honesty, so the app does not collect any user data and does not connect to the internet more than twice a day.
+ARK Rate is a powerful and user-friendly currency converter allowing you to quickly and accurately convert any currency to another
 
 
-**With ARK Rate, you will always stay informed about fresh currency rates, no matter where you are and what you have in your pocket. Join our community of users and find out why ARK Rate is your perfect choice for currency handling!**
+[![Get it on Google Play](https://img.shields.io/badge/Get%20it%20on%20Google%20Play-3DDC84?logo=google-play&logoColor=white&style=flat-square)](https://play.google.com/store/apps/details?id=com.arkbuilders.app)
 
-<a href="https://www.ark-builders.dev/apps/rate" target="_blank"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/581023/255703247-978df9c0-3de4-44ed-97f1-ae46631af49d.png" alt="Download APK" style="height: 60px !important;width: 217px !important;" ></a>
-<a href="https://www.buymeacoffee.com/arkbuilders" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+## Connect with Us
+[![ARK Builders](https://img.shields.io/badge/ARK%20Builders-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/uRWJyYBr)
+[![ark_builders](https://img.shields.io/badge/ark__builders-0088CC?logo=telegram&logoColor=white)](https://t.me/ark_builders)
+[![ARK-Builders](https://img.shields.io/badge/ARK--Builders-181717?logo=github&logoColor=white)](https://github.com/ARK-Builders)
+[![ARKBuilders_DEV](https://img.shields.io/badge/ARKBuilders__DEV-000000?logo=x&logoColor=white)](https://x.com/ARKBuilders_DEV)
+[![in ARK Builders Dev](https://img.shields.io/badge/in%20ARK%20Builders%20Dev-0A66C2?logoColor=white)](https://www.linkedin.com/company/ark-builders-dev/)
+[![ARK-Builders-Dev](https://img.shields.io/badge/ARK--Builders--Dev-FF0000?logo=youtube&logoColor=white)](https://www.youtube.com/@ARK-Builders-Dev)
+[![ARKBuilders](https://img.shields.io/badge/ARKBuilders-12100E?logo=medium&logoColor=white)](https://ark-builders.medium.com/rate-2-0-full-revamp-b9ca3246fad2)
