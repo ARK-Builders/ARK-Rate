@@ -8,10 +8,10 @@ class GetTopResultUseCase(
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
 ) {
     suspend operator fun invoke(): List<CurrencyName> {
-        val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
+        val allCurrencies = currencyRepo.getCurrencyNames()
         val frequent =
             calcFrequentCurrUseCase.invoke()
-                .map { currencyRepo.nameByCodeUnsafe(it) }
+                .map { currencyRepo.nameByCode(it) }
         return frequent + (allCurrencies - frequent)
     }
 }

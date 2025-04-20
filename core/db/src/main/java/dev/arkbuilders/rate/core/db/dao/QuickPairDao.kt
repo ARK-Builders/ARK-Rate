@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface QuickPairDao {
     @Upsert
-    suspend fun insert(quickCurrency: RoomQuickPair)
+    suspend fun insert(quickCurrency: RoomQuickPair): Long
 
     @Query("SELECT * FROM RoomQuickPair WHERE id = :id")
     suspend fun getById(id: Long): RoomQuickPair?

@@ -92,7 +92,6 @@ android {
 
     buildFeatures {
         buildConfig = true
-        compose = true
     }
     packaging {
         resources {
@@ -149,7 +148,7 @@ dependencies {
 
     implementation(libs.qrgenerator)
 
-    implementation(libs.compose.destinations.animations)
+    implementation(libs.compose.destinations.core)
     ksp(libs.compose.destinations.compiler)
 
     implementation(libs.retrofit)

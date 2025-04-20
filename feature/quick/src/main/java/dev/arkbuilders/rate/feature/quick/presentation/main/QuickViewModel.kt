@@ -17,8 +17,6 @@ import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
-import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderSheetState
@@ -30,10 +28,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.syntax.simple.blockingIntent
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
-import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import java.time.OffsetDateTime
 
@@ -56,15 +50,16 @@ data class QuickScreenState(
     val editGroupOptionsSheetState: EditGroupOptionsSheetState? = null,
     val editGroupRenameSheetState: EditGroupRenameSheetState? = null,
     val initialized: Boolean = false,
-    val noInternet: Boolean = false,
 )
 
 sealed class QuickScreenEffect {
     data class ShowSnackbarAdded(
-        val visuals: NotifyAddedSnackbarVisuals,
+        val pair: QuickPair,
     ) : QuickScreenEffect()
 
     data class ShowRemovedSnackbar(val pair: QuickPair) : QuickScreenEffect()
+
+    data class SelectTab(val groupId: Long) : QuickScreenEffect()
 
     data object NavigateBack : QuickScreenEffect()
 }
@@ -86,24 +81,11 @@ class QuickViewModel(
     init {
         analyticsManager.trackScreen("QuickScreen")
 
-        intent {
-            if (currencyRepo.isRatesAvailable().not()) {
-                reduce {
-                    state.copy(noInternet = true)
-                }
-                return@intent
-            }
-
-            init()
-        }
+        init()
     }
 
     private fun init() =
         intent {
-            AppSharedFlow.ShowAddedSnackbarQuick.flow.onEach { visuals ->
-                postSideEffect(QuickScreenEffect.ShowSnackbarAdded(visuals))
-            }.launchIn(viewModelScope)
-
             quickRepo.allFlow().drop(1).onEach { quick ->
                 intent {
                     val pages = mapPairsToPages(quick)
@@ -126,11 +108,11 @@ class QuickViewModel(
                 }
             }.launchIn(viewModelScope)
 
-            val allCurrencies = currencyRepo.getCurrencyNameUnsafe()
+            val allCurrencies = currencyRepo.getCurrencyNames()
             calcFrequentCurrUseCase.flow().drop(1).onEach {
                 val frequent =
                     calcFrequentCurrUseCase.invoke()
-                        .map { currencyRepo.nameByCodeUnsafe(it) }
+                        .map { currencyRepo.nameByCode(it) }
                 val topResults = getTopResultUseCase()
                 reduce {
                     state.copy(
@@ -142,7 +124,7 @@ class QuickViewModel(
 
             val frequent =
                 calcFrequentCurrUseCase()
-                    .map { currencyRepo.nameByCodeUnsafe(it) }
+                    .map { currencyRepo.nameByCode(it) }
             val topResults = getTopResultUseCase()
             val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
@@ -156,14 +138,13 @@ class QuickViewModel(
             }
         }
 
-    fun onRefreshClick() =
+    fun onReturnFromAddScreen(newPairId: Long) =
         intent {
-            reduce { state.copy(noInternet = false) }
-            if (currencyRepo.isRatesAvailable()) {
-                init()
-            } else {
-                reduce { state.copy(noInternet = true) }
-            }
+            val pair = quickRepo.getById(newPairId) ?: return@intent
+            val pages = mapPairsToPages(quickRepo.getAll())
+            reduce { state.copy(pages = pages) }
+            postSideEffect(QuickScreenEffect.SelectTab(pair.group.id))
+            postSideEffect(QuickScreenEffect.ShowSnackbarAdded(pair))
         }
 
     fun onShowGroupOptions(pair: QuickPair) =
@@ -222,7 +203,8 @@ class QuickViewModel(
         val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
         val pages =
             groups.map { group ->
-                val filteredPairs = pairs.reversed().filter { it.group.id == group.id }
+                val filteredPairs = pairs.filter { it.group.id == group.id }.toMutableList()
+                filteredPairs.reverse()
                 val (pinned, notPinned) = filteredPairs.partition { it.isPinned() }
                 val pinnedMapped = pinned.map { mapPairToPinned(it, refreshDate!!) }
                 val sortedPinned =

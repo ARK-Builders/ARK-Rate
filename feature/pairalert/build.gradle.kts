@@ -15,7 +15,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         ksp {
-            arg("compose-destinations.mode", "destinations")
+            arg("compose-destinations.moduleName", "pairalert")
         }
     }
 
@@ -27,9 +27,6 @@ android {
                 "proguard-rules.pro",
             )
         }
-    }
-    buildFeatures {
-        compose = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
@@ -70,7 +67,7 @@ dependencies {
     implementation(libs.arrow.core)
     implementation(libs.arrow.fx.coroutines)
 
-    implementation(libs.compose.destinations.animations)
+    implementation(libs.compose.destinations.core)
     ksp(libs.compose.destinations.compiler)
 
     testImplementation(libs.junit)

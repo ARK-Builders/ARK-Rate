@@ -15,7 +15,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         ksp {
-            arg("compose-destinations.mode", "destinations")
+            arg("compose-destinations.moduleName", "settings")
         }
     }
 
@@ -27,9 +27,6 @@ android {
                 "proguard-rules.pro",
             )
         }
-    }
-    buildFeatures {
-        compose = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
@@ -64,7 +61,7 @@ dependencies {
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 
-    implementation(libs.compose.destinations.animations)
+    implementation(libs.compose.destinations.core)
     ksp(libs.compose.destinations.compiler)
 
     implementation(platform(libs.firebase.bom))

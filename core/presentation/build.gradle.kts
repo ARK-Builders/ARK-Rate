@@ -31,15 +31,12 @@ android {
     kotlinOptions {
         jvmTarget = "21"
     }
-    buildFeatures {
-        compose = true
-    }
 }
 
 dependencies {
     implementation(project(":core:domain"))
 
-    implementation(libs.compose.destinations.animations)
+    implementation(libs.compose.destinations.core)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.ui)
