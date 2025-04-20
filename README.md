@@ -107,3 +107,6 @@ graph TD
 [![in ARK Builders Dev](https://img.shields.io/badge/in%20ARK%20Builders%20Dev-0A66C2?logoColor=white)](https://www.linkedin.com/company/ark-builders-dev/)
 [![ARK-Builders-Dev](https://img.shields.io/badge/ARK--Builders--Dev-FF0000?logo=youtube&logoColor=white)](https://www.youtube.com/@ARK-Builders-Dev)
 [![ARKBuilders](https://img.shields.io/badge/ARKBuilders-12100E?logo=medium&logoColor=white)](https://ark-builders.medium.com/rate-2-0-full-revamp-b9ca3246fad2)
+
+<a href="https://www.ark-builders.dev/apps/rate" target="_blank"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/581023/255703247-978df9c0-3de4-44ed-97f1-ae46631af49d.png" alt="Download APK" style="height: 60px !important;width: 217px !important;" ></a>
+<a href="https://www.buymeacoffee.com/arkbuilders" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
