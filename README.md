@@ -12,6 +12,10 @@
 [![Build the app](https://github.com/ARK-Builders/ARK-Rate/actions/workflows/build.yml/badge.svg)](https://github.com/ARK-Builders/ARK-Rate/actions/workflows/build.yml)
 [![Get it on Google Play](https://img.shields.io/badge/Get%20it%20on%20Google%20Play-3DDC84?logo=google-play&logoColor=white&style=flat-square)](https://play.google.com/store/apps/details?id=dev.arkbuilders.rate)
 
+<a href="https://www.producthunt.com/posts/ark-rate?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-ark&#0045;rate" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=955026&theme=light&t=1745634671467" alt="ARK&#0032;Rate - Offline&#0032;money&#0032;exchange&#0032;calculator&#0032;for&#0032;travelers&#0032;and&#0032;nomads | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+
+
+
 ## 🌟 Why ARK Rate Rules the Money Game
 - **Instant Conversions**: Swap USD to JPY, EUR to NGN, or BTC to ETH in a flash! ⚡
 - **200+ Currencies**: From GBP to CZK, we’ve got the world’s money covered. 🌎
