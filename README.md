@@ -2,19 +2,16 @@
 
 **ARK Rate** is the **open-source Android app** that redefines currency conversion and portfolio management! Convert over **200 currencies** instantly, manage **cryptocurrencies**, and monitor your assets—all in one blazing-fast, ad-free app. Whether you’re traveling offline in Tokyo or trading BTC in New York, ARK Rate delivers offline-first accuracy with zero hassle. Ready to master your money? Let’s dive into the future of finance!
 
-
-
 ## 📱 Screenshots
 <p align="center">
 <img src="https://github.com/user-attachments/assets/7050cc40-74b5-4ff2-99d9-0f734471616d"/>
 </p>
 
+
+[<img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Download on the Play Store" width="240"/>](https://play.google.com/store/apps/details?id=dev.arkbuilders.rate)
+[<img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=955026" alt="Download on the Play Store" width="240" />](https://www.producthunt.com/posts/ark-rate)
+
 [![Build the app](https://github.com/ARK-Builders/ARK-Rate/actions/workflows/build.yml/badge.svg)](https://github.com/ARK-Builders/ARK-Rate/actions/workflows/build.yml)
-[![Get it on Google Play](https://img.shields.io/badge/Get%20it%20on%20Google%20Play-3DDC84?logo=google-play&logoColor=white&style=flat-square)](https://play.google.com/store/apps/details?id=dev.arkbuilders.rate)
-
-<a href="https://www.producthunt.com/posts/ark-rate?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-ark&#0045;rate" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=955026&theme=light&t=1745634671467" alt="ARK&#0032;Rate - Offline&#0032;money&#0032;exchange&#0032;calculator&#0032;for&#0032;travelers&#0032;and&#0032;nomads | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
-
-
 
 ## 🌟 Why ARK Rate Rules the Money Game
 - **Instant Conversions**: Swap USD to JPY, EUR to NGN, or BTC to ETH in a flash! ⚡
@@ -24,17 +21,16 @@
 - **Offline Mode**: Convert currencies anywhere, no Wi-Fi needed! 📴
 - **Ad-Free & No Login**: Pure, distraction-free finance—no sign-ups, no nonsense. 🚀
 
-**[Discover ARK Rate](https://www.ark-builders.dev/apps/rate)** | **[Download on Google Play](https://play.google.com/store/apps/details?id=dev.arkbuilders.rate)**
+**[Discover ARK Rate](https://www.ark-builders.dev/apps/rate)**
 
 ## 🛠 Tech Stack:
 Our stack is a love letter to modern development, blending cutting-edge libraries with rock-solid architecture. Here’s the magic behind the scenes! 💻
 
 - **Kotlin 2.0+**: The latest Kotlin powers our code with sleek syntax, bulletproof null safety, and next-gen features. It’s fast, expressive, and keeps ARK Rate future-proof! 🚀
-- **Gradle 8.11.1+**: Our build system screams speed with blazing-fast compiles and slick dependency management, making development a breeze for contributors. ⚡
 - **Jetpack Compose**: Say hello to a jaw-dropping UI! Compose crafts ARK Rate’s slick, responsive interface for seamless currency swaps and portfolio views. 🎨
 - **Jetpack Glance**: Home screen widgets? Nailed it! Glance brings instant rate updates to your fingertips, no app launch needed. 📱
 - **Dagger**: Precision dependency injection keeps our code modular and testable, injecting everything from databases to network clients like a pro. 🔪
-- **MVVM**: Our Model-View-ViewModel architecture ensures clean, scalable code, powering real-time rate updates with zero fuss. 📊
+- **MVVM+**: Our Model-View-ViewModel architecture ensures clean, scalable code, powering real-time rate updates with zero fuss. Empowered by [orbit-mvi](https://github.com/orbit-mvi/orbit-mvi), Redux/MVI-like library - but without the baggage. It's so simple we think of it as MVVM+  📊
 - **Clean Architecture**: Layered, modular, and maintainable—our codebase is built to scale, making it easy to add epic new features. 🏗️
 - **Room Database**: Offline conversions? No sweat! Room stores currency data locally for instant access, even on a remote safari. 💾
 - **WorkManager**: Background tasks like rate syncing run smoothly, ensuring your portfolio stays fresh without draining your battery. ⏰
@@ -47,8 +43,6 @@ graph TD
     A[ARK Rate] --- B[app]
     A --- C[core]
     A --- D[feature]
-    A --- E[fiaticons]
-    A --- F[cryptoicons]
 
     C --- C1[data]
     C --- C2[db]
