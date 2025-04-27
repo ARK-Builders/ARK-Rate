@@ -28,6 +28,7 @@ Our stack is a love letter to modern development, blending cutting-edge librarie
 
 - **Kotlin 2.0+**: The latest Kotlin powers our code with sleek syntax, bulletproof null safety, and next-gen features. It’s fast, expressive, and keeps ARK Rate future-proof! 🚀
 - **Jetpack Compose**: Say hello to a jaw-dropping UI! Compose crafts ARK Rate’s slick, responsive interface for seamless currency swaps and portfolio views. 🎨
+- **Compose Destinations**: KSP library that processes annotations and generates code that uses Official Jetpack Compose Navigation under the hood, without boilerplate code 🎯
 - **Jetpack Glance**: Home screen widgets? Nailed it! Glance brings instant rate updates to your fingertips, no app launch needed. 📱
 - **Dagger**: Precision dependency injection keeps our code modular and testable, injecting everything from databases to network clients like a pro. 🔪
 - **MVVM+**: Our Model-View-ViewModel architecture ensures clean, scalable code, powering real-time rate updates with zero fuss. Empowered by [orbit-mvi](https://github.com/orbit-mvi/orbit-mvi), Redux/MVI-like library - but without the baggage. It's so simple we think of it as MVVM+  📊
@@ -106,5 +107,5 @@ graph TD
 [![ARK-Builders-Dev](https://img.shields.io/badge/ARK--Builders--Dev-FF0000?logo=youtube&logoColor=white)](https://www.youtube.com/@ARK-Builders-Dev)
 [![ARKBuilders](https://img.shields.io/badge/ARKBuilders-12100E?logo=medium&logoColor=white)](https://ark-builders.medium.com/rate-2-0-full-revamp-b9ca3246fad2)
 
-<a href="https://www.ark-builders.dev/apps/rate" target="_blank"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/581023/255703247-978df9c0-3de4-44ed-97f1-ae46631af49d.png" alt="Download APK" style="height: 60px !important;width: 217px !important;" ></a>
+
 <a href="https://www.buymeacoffee.com/arkbuilders" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
