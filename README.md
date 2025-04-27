@@ -36,57 +36,35 @@ Our stack is a love letter to modern development, blending cutting-edge librarie
 - **Room Database**: Offline conversions? No sweat! Room stores currency data locally for instant access, even on a remote safari. 💾
 - **WorkManager**: Background tasks like rate syncing run smoothly, ensuring your portfolio stays fresh without draining your battery. ⏰
 
-## 📐 ARK Rate Modules Diagram
+## 📐 ARK Rate Architecture
 Below, our Mermaid-powered tree diagram showcases the repository’s structure with vibrant, color-coded nodes and straight-line connections. Ready to explore this financial beast? Fork it and join the revolution! 🚀
 
 ```mermaid
 graph TD
-    A[ARK Rate] --- B[app]
-    A --- C[core]
-    A --- D[feature]
+    %% Presentation Layer
+    A[Presentation Layer] --> B[Domain Layer]
+    A --> C[UI]
+    A --> D[ViewModel]
 
-    C --- C1[data]
-    C --- C2[db]
-    C --- C3[di]
-    C --- C4[domain]
-    C --- C5[presentation]
+    %% Domain Layer
+    B --> E[Use Cases]
+    B --> F[Entities]
+    B --> G[Repository Interfaces]
 
-    D --- D1[pairalert]
-    D --- D2[portfolio]
-    D --- D3[quick]
-    D --- D4[quickwidget]
-    D --- D5[search]
-    D --- D6[settings]
+    %% Data Layer
+    H[Data Layer] --> B
+    H --> I[Repository Impl]
+    I --> J[Data Sources]
+    J --> K[Local Data Source]
+    J --> L[Remote Data Source]
 
-    %% Styling for visual appeal
-    classDef root fill:#FFD700,stroke:#333,stroke-width:2px,border-radius:10px;
-    classDef core fill:#00C4B4,stroke:#333,stroke-width:2px,border-radius:5px;
-    classDef feature fill:#FF6F61,stroke:#333,stroke-width:2px,border-radius:5px;
-    classDef assets fill:#9370DB,stroke:#333,stroke-width:2px,border-radius:5px;
-
-    class A root;
-    class C,C1,C2,C3,C4,C5 core;
-    class D,D1,D2,D3,D4,D5,D6 feature;
-    class E,F assets;
-
-    %% Node labels with context
-    A[ARK Rate: Root Module]
-    B[app: Main Application]
-    C[core: Shared Infrastructure]
-    C1[data: Data Sources & APIs]
-    C2[db: Room Database]
-    C3[di: Dagger Injection]
-    C4[domain: Use Cases & Entities]
-    C5[presentation: UI & ViewModels]
-    D[feature: App Features]
-    D1[pairalert: Rate Alerts]
-    D2[portfolio: Asset Tracking]
-    D3[quick: Quick Converter]
-    D4[quickwidget: Home Widget]
-    D5[search: Currency Search]
-    D6[settings: User Settings]
-    E[fiaticons: Fiat Currency Icons]
-    F[cryptoicons: Crypto Icons]
+    %% Styling
+    classDef presentation fill:#f9f,stroke:#333,stroke-width:2px
+    classDef domain fill:#bbf,stroke:#333,stroke-width:2px
+    classDef data fill:#bfb,stroke:#333,stroke-width:2px
+    class A,C,D presentation
+    class B,E,F,G domain
+    class H,I,J,K,L data
 ```
 
 ## 🤝 Any contribution is welcomed!
