@@ -7,16 +7,15 @@
 <img src="https://github.com/user-attachments/assets/7050cc40-74b5-4ff2-99d9-0f734471616d"/>
 </p>
 
-
-[<img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Download on the Play Store" width="240"/>](https://play.google.com/store/apps/details?id=dev.arkbuilders.rate)
-[<img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=955026" alt="Download on the Play Store" width="240" />](https://www.producthunt.com/posts/ark-rate)
+[<img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Download on the Play Store" width="240" height="52"/>](https://play.google.com/store/apps/details?id=dev.arkbuilders.rate)
+[<img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=955026" alt="Download on the Play Store" width="240"/>](https://www.producthunt.com/posts/ark-rate)
 
 [![Build the app](https://github.com/ARK-Builders/ARK-Rate/actions/workflows/build.yml/badge.svg)](https://github.com/ARK-Builders/ARK-Rate/actions/workflows/build.yml)
 
 ## 🌟 Why ARK Rate Rules the Money Game
 - **Instant Conversions**: Swap USD to JPY, EUR to NGN, or BTC to ETH in a flash! ⚡
 - **200+ Currencies**: From GBP to CZK, we’ve got the world’s money covered. 🌎
-- **Crypto Power**: Track and convert BTC, ETH, SOL, and more with live crypto rates. ₿
+- **Crypto Power**: Track and convert BTC, ETH, SOL, and more with live crypto rates.
 - **Portfolio Tracking**: Manage fiat and crypto assets. 📊
 - **Offline Mode**: Convert currencies anywhere, no Wi-Fi needed! 📴
 - **Ad-Free & No Login**: Pure, distraction-free finance—no sign-ups, no nonsense. 🚀
