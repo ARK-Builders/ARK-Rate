@@ -3,6 +3,8 @@ package dev.arkbuilders.rate.presentation.navigation
 import com.ramcosta.composedestinations.animations.defaults.DefaultFadingTransitions
 import com.ramcosta.composedestinations.annotation.ExternalDestination
 import com.ramcosta.composedestinations.annotation.NavHostGraph
+import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingQuickScreenDestination
+import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingScreenDestination
 import com.ramcosta.composedestinations.generated.pairalert.destinations.AddPairAlertScreenDestination
 import com.ramcosta.composedestinations.generated.pairalert.destinations.PairAlertConditionScreenDestination
 import com.ramcosta.composedestinations.generated.portfolio.destinations.AddAssetScreenDestination
@@ -18,6 +20,8 @@ import com.ramcosta.composedestinations.generated.settings.destinations.Settings
     defaultTransitions = DefaultFadingTransitions::class,
 )
 annotation class MainGraph {
+    @ExternalDestination<OnboardingScreenDestination>
+    @ExternalDestination<OnboardingQuickScreenDestination>
     @ExternalDestination<QuickScreenDestination>(start = true)
     @ExternalDestination<AddQuickScreenDestination>
     @ExternalDestination<PortfolioScreenDestination>

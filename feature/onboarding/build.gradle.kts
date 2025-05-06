@@ -15,7 +15,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         ksp {
-            arg("compose-destinations.moduleName", "quick")
+            arg("compose-destinations.moduleName", "onboarding")
         }
     }
 
@@ -42,6 +42,7 @@ dependencies {
     implementation(project(":core:db"))
     implementation(project(":core:domain"))
     implementation(project(":core:presentation"))
+    implementation(project(":feature:quick"))
 
     implementation(libs.androidx.ui)
     implementation(libs.navigation.compose)
