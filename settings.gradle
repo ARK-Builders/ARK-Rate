@@ -15,11 +15,21 @@ dependencyResolutionManagement {
         maven { url "https://jitpack.io" }
         jcenter()
         maven {
+            // Important note:
+            // To authenticate with GitHub Packages, you need to generate a fine-grained personal access token
+            // The token needs access only to [Public repositories]
+            // Add it as gpr.token=$token in local.properties file in the root of the project
+            // For more details, refer to the documentation:
+            // https://github.com/settings/personal-access-tokens/new
+            // https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-with-a-personal-access-token
+
+            def localProps = getLocalProps()
+
             name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/ARK-Builders/arklib-android"
+            url = "https://maven.pkg.github.com/ARK-Builders/ark-android"
             credentials {
                 username = "token"
-                password = "\u0037\u0066\u0066\u0036\u0030\u0039\u0033\u0066\u0032\u0037\u0033\u0036\u0033\u0037\u0064\u0036\u0037\u0066\u0038\u0030\u0034\u0039\u0062\u0030\u0039\u0038\u0039\u0038\u0066\u0034\u0066\u0034\u0031\u0064\u0062\u0033\u0064\u0033\u0038\u0065"
+                password = localProps.getProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
             }
         }
     }
@@ -39,3 +49,16 @@ include ':feature:pairalert'
 include ':feature:quickwidget'
 include ':feature:search'
 include ':feature:settings'
+
+def getLocalProps() {
+    def props = new Properties()
+    def localPropsFile = new File(rootDir, "local.properties")
+
+    if (localPropsFile.exists()) {
+        localPropsFile.withInputStream { stream ->
+            props.load(stream)
+        }
+    }
+
+    return props
+}
