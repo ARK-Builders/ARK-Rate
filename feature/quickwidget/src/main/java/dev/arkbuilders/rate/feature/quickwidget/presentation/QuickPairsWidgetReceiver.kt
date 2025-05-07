@@ -46,15 +46,13 @@ class QuickPairsWidgetReceiver : GlanceAppWidgetReceiver() {
             GlanceAppWidgetManager(context)
                 .getGlanceIds(QuickPairsWidget::class.java)
                 .forEach { glanceId ->
-                    QuickPairsWidgetReceiver.run {
-                        updateWidgetNewGroup(
-                            context = context,
-                            glanceId = glanceId,
-                            findNewIndex = { _, _ ->
-                                0
-                            },
-                        )
-                    }
+                    updateWidgetNewGroup(
+                        context = context,
+                        glanceId = glanceId,
+                        findNewIndex = { currentIndex, _ ->
+                            currentIndex ?: 0
+                        },
+                    )
                 }
         }
     }
@@ -78,8 +76,9 @@ class QuickPairsWidgetReceiver : GlanceAppWidgetReceiver() {
                     }
                 if (currentIndex == -1)
                     currentIndex = null
+
                 val newIndex = findNewIndex(currentIndex, allGroups.lastIndex)
-                val newGroup = allGroups[newIndex]
+                val newGroup = allGroups.getOrNull(newIndex)
                 if (newGroup != null) {
                     prefs[currentGroupIdKey] = newGroup.id
                 } else {
