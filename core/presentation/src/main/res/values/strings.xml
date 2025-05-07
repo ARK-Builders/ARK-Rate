@@ -87,6 +87,10 @@
     <string name="privacy_policy_url" translatable="false">https://www.ark-builders.dev/apps/rate/privacy-policy</string>
     <string name="privacy_policy">Privacy policy</string>
 
+    <string name="get_started">Get started</string>
+    <string name="next">Next</string>
+    <string name="okay">Okay</string>
+    <string name="finish">Finish</string>
     <string name="calculate">Calculate</string>
     <string name="add_group">Add group</string>
     <string name="save">Save</string>
@@ -166,5 +170,22 @@
     <string name="edit_group_name">Edit group \"%1$s\"</string>
     <string name="rename">Rename</string>
     <string name="groups">Groups</string>
+
+
+
+    <string name="onboarding_1_title">Welcome to ARK Rate!</string>
+    <string name="onboarding_2_title">Effortless Multi-Currency Conversion</string>
+    <string name="onboarding_2_desc">Convert a single currency into multiple currencies instantly with ease.</string>
+    <string name="onboarding_3_title">Stay Ahead with Pinned Exchange Rates</string>
+    <string name="onboarding_3_desc">Keep track of your most-used currency pairs for quick and convenient conversions.</string>
+    <string name="onboarding_4_title">Monitor Your Portfolio in Real-Time</string>
+    <string name="onboarding_4_desc">Stay updated on your total assets and currency value changes in one place.</string>
+
+    <string name="onboarding_walkthrough_1_title">Start a quick calculation</string>
+    <string name="onboarding_walkthrough_1_desc">Convert any money to one or more currencies at same time. Save the result to recall it later. Pin it to the top to auto-update the calculation!</string>
+    <string name="onboarding_walkthrough_2_title">Keep track of your assets</string>
+    <string name="onboarding_walkthrough_2_desc">Use the Portfolio feature to add your money across all wallets and cards.</string>
+    <string name="onboarding_walkthrough_3_title">Alerts to let you know about price changes</string>
+    <string name="onboarding_walkthrough_3_desc">To set up the alerts, click on the “Alerts” menu.</string>
 
 </resources>

@@ -49,6 +49,7 @@ include ':feature:pairalert'
 include ':feature:quickwidget'
 include ':feature:search'
 include ':feature:settings'
+include ':feature:onboarding'
 
 def getLocalProps() {
     def props = new Properties()
