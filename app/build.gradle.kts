@@ -106,7 +106,6 @@ dependencies {
     implementation(project(":feature:quick"))
     implementation(project(":feature:quickwidget"))
     implementation(project(":feature:portfolio"))
-    implementation(project(":feature:pairalert"))
     implementation(project(":feature:search"))
     implementation(project(":feature:settings"))
     implementation(project(":fiaticons"))

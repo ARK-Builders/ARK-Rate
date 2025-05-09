@@ -17,8 +17,6 @@ import dev.arkbuilders.rate.core.di.DaggerCoreComponent
 import dev.arkbuilders.rate.core.domain.AppConfig
 import dev.arkbuilders.rate.core.domain.BuildConfigFields
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
-import dev.arkbuilders.rate.feature.pairalert.data.worker.CurrencyMonitorWorker
-import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponentHolder
 import dev.arkbuilders.rate.feature.quickwidget.worker.QuickPairsWidgetRefreshWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +42,6 @@ class App : Application(), Configuration.Provider, CoreComponentProvider {
         instance = this
 
         initCrashlytics()
-        initWorker(CurrencyMonitorWorker::class.java, CurrencyMonitorWorker.NAME)
         initWorker(QuickPairsWidgetRefreshWorker::class.java, QuickPairsWidgetRefreshWorker.NAME)
     }
 
@@ -88,16 +85,10 @@ class App : Application(), Configuration.Provider, CoreComponentProvider {
     override fun getWorkManagerConfiguration() =
         Configuration.Builder()
             .setMinimumLoggingLevel(android.util.Log.INFO)
-            .setWorkerFactory(buildAppWorkerFactory())
+            .setWorkerFactory(AppWorkerFactory())
             .build()
 
     override fun provideCoreComponent() = coreComponent
-
-    private fun buildAppWorkerFactory() =
-        AppWorkerFactory(
-            PairAlertComponentHolder.provide(this).handlePairAlertCheckUseCase(),
-            coreComponent.timestampRepo(),
-        )
 
     companion object {
         lateinit var instance: App

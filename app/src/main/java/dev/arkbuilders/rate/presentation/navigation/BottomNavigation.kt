@@ -25,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ramcosta.composedestinations.generated.pairalert.destinations.PairAlertConditionScreenDestination
 import com.ramcosta.composedestinations.generated.portfolio.destinations.PortfolioScreenDestination
 import com.ramcosta.composedestinations.generated.quick.destinations.QuickScreenDestination
 import com.ramcosta.composedestinations.generated.settings.destinations.SettingsScreenDestination
@@ -44,13 +43,6 @@ sealed class BottomNavItem(
         CoreRDrawable.ic_nav_portfolio_disabled,
         CoreRDrawable.ic_nav_portfolio_enabled,
         PortfolioScreenDestination.route,
-    )
-
-    data object PairAlert : BottomNavItem(
-        CoreRString.bottom_nav_alerts,
-        CoreRDrawable.ic_nav_alerts_disabled,
-        CoreRDrawable.ic_nav_alerts_enabled,
-        PairAlertConditionScreenDestination.route,
     )
 
     data object Quick : BottomNavItem(
@@ -95,7 +87,6 @@ fun RateBottomNavigation(
         listOf(
             BottomNavItem.Quick,
             BottomNavItem.Assets,
-            BottomNavItem.PairAlert,
             BottomNavItem.Settings,
         )
     Column {
