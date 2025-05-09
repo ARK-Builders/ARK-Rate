@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
+import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.utils.ReorderHapticFeedback
@@ -98,7 +99,7 @@ fun Content(
             Icon(
                 modifier = Modifier,
                 painter = painterResource(id = CoreRDrawable.ic_close),
-                contentDescription = "",
+                contentDescription = stringResource(CoreRString.close),
                 tint = ArkColor.FGQuinary,
             )
         }

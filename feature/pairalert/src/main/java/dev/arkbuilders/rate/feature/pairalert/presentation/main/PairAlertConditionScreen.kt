@@ -121,7 +121,7 @@ fun PairAlertConditionScreen(
                 shape = CircleShape,
                 onClick = viewModel::onNewPair,
             ) {
-                Icon(Icons.Default.Add, contentDescription = "")
+                Icon(Icons.Default.Add, contentDescription = stringResource(CoreRString.add))
             }
         },
         topBar = {

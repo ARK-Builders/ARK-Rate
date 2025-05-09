@@ -49,7 +49,7 @@ fun DropDownBtn(
         Icon(
             modifier = Modifier.padding(start = 8.dp, end = 15.dp),
             painter = painterResource(id = CoreRDrawable.ic_chevron),
-            contentDescription = "",
+            contentDescription = null,
             tint = ArkColor.FGSecondary,
         )
     }
@@ -78,7 +78,7 @@ fun DropDownWithIcon(
         Icon(
             modifier = Modifier.padding(start = 16.dp),
             painter = icon,
-            contentDescription = "",
+            contentDescription = null,
             tint = ArkColor.FGSecondary,
         )
         Text(
@@ -93,7 +93,7 @@ fun DropDownWithIcon(
         Icon(
             modifier = Modifier.padding(end = 20.dp),
             painter = painterResource(id = R.drawable.ic_chevron),
-            contentDescription = "",
+            contentDescription = null,
             tint = ArkColor.FGSecondary,
         )
     }

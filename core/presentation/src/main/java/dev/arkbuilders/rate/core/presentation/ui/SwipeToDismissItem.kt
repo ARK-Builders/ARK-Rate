@@ -79,7 +79,7 @@ private fun DismissBackground(state: SwipeToDismissBoxState) {
             Icon(
                 modifier = Modifier.padding(end = 17.dp),
                 painter = painterResource(id = R.drawable.ic_delete),
-                contentDescription = "",
+                contentDescription = null,
                 tint = Color.White,
             )
         }

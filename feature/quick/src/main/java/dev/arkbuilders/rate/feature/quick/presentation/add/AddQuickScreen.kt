@@ -204,7 +204,7 @@ private fun Content(
                     Icon(
                         modifier = Modifier.padding(start = 20.dp),
                         painter = painterResource(id = R.drawable.ic_add),
-                        contentDescription = "",
+                        contentDescription = null,
                     )
                     Text(
                         modifier =

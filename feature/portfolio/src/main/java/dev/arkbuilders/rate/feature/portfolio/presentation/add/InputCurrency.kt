@@ -69,7 +69,7 @@ fun InputCurrency(
                 Icon(
                     modifier = Modifier.padding(start = 9.dp, end = 5.dp),
                     painter = painterResource(CoreRDrawable.ic_chevron),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = ArkColor.FGQuinary,
                 )
             }
@@ -114,7 +114,7 @@ fun InputCurrency(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_delete),
-                contentDescription = "",
+                contentDescription = stringResource(CoreRString.delete),
                 tint = ArkColor.FGSecondary,
             )
         }

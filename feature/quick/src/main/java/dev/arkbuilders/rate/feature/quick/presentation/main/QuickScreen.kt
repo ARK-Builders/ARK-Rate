@@ -129,7 +129,7 @@ fun QuickScreen(
                     )
                 },
             ) {
-                Icon(Icons.Default.Add, contentDescription = "")
+                Icon(Icons.Default.Add, contentDescription = stringResource(CoreRString.add))
             }
         },
         snackbarHost = {

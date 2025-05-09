@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
+import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.utils.ReorderHapticFeedback
@@ -100,7 +101,7 @@ fun ToResult(
                 Icon(
                     modifier = Modifier.padding(start = 9.dp, end = 5.dp),
                     painter = painterResource(R.drawable.ic_chevron),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = ArkColor.FGQuinary,
                 )
             }
@@ -140,7 +141,7 @@ fun ToResult(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_delete),
-                contentDescription = "",
+                contentDescription = stringResource(CoreRString.delete),
                 tint = ArkColor.FGSecondary,
             )
         }

@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import dev.arkbuilders.rate.core.domain.usecase.ValidateGroupNameUseCase
+import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
@@ -87,7 +88,7 @@ fun GroupCreateDialogContent(
         Icon(
             modifier = Modifier.padding(start = 30.dp, top = 35.dp),
             painter = painterResource(id = R.drawable.ic_group),
-            contentDescription = "",
+            contentDescription = null,
             tint = ArkColor.FGSecondary,
         )
         IconButton(
@@ -100,7 +101,7 @@ fun GroupCreateDialogContent(
             Icon(
                 modifier = Modifier,
                 painter = painterResource(id = R.drawable.ic_close),
-                contentDescription = "",
+                contentDescription = stringResource(CoreRString.close),
                 tint = ArkColor.FGQuinary,
             )
         }

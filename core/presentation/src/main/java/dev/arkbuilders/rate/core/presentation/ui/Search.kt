@@ -57,7 +57,7 @@ fun SearchTextField(
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = ArkColor.FGQuarterary,
                 )
             },

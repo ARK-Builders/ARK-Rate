@@ -32,7 +32,7 @@ fun NoInternetScreen(onRefreshClick: () -> Unit) {
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_wifi_off),
-                contentDescription = "",
+                contentDescription = null,
                 tint = Color.Unspecified,
             )
             Text(
@@ -54,7 +54,7 @@ fun NoInternetScreen(onRefreshClick: () -> Unit) {
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_refresh2),
-                    contentDescription = "",
+                    contentDescription = null,
                 )
                 Text(
                     modifier = Modifier.padding(start = 6.dp),

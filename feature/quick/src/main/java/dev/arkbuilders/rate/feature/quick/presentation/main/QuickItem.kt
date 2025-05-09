@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +33,7 @@ import androidx.constraintlayout.compose.Dimension
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.Amount
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
+import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.CurrIcon
 
@@ -183,14 +185,14 @@ fun QuickItem(
                     Icon(
                         modifier = Modifier,
                         painter = painterResource(CoreRDrawable.ic_chevron_up),
-                        contentDescription = "",
+                        contentDescription = stringResource(CoreRString.collapse),
                         tint = ArkColor.FGSecondary,
                     )
                 } else {
                     Icon(
                         modifier = Modifier,
                         painter = painterResource(CoreRDrawable.ic_chevron),
-                        contentDescription = "",
+                        contentDescription = stringResource(CoreRString.expand),
                         tint = ArkColor.FGSecondary,
                     )
                 }
