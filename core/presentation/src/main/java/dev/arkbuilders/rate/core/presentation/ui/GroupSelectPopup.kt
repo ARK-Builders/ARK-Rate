@@ -56,7 +56,7 @@ fun GroupSelectPopup(
                         bottom = 16.dp,
                     ),
                 painter = painterResource(id = R.drawable.ic_group_add),
-                contentDescription = "",
+                contentDescription = null,
                 tint = ArkColor.FGQuinary,
             )
             Text(
@@ -87,7 +87,7 @@ fun GroupSelectPopup(
                             bottom = 16.dp,
                         ),
                     painter = painterResource(id = R.drawable.ic_group),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = ArkColor.FGQuinary,
                 )
                 Text(

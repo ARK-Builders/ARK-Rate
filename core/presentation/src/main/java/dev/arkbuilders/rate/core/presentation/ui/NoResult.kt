@@ -24,7 +24,7 @@ fun NoResult() {
             Icon(
                 modifier = Modifier.size(72.dp),
                 painter = painterResource(R.drawable.ic_search_refraction),
-                contentDescription = "",
+                contentDescription = null,
                 tint = ArkColor.Secondary,
             )
             Text(

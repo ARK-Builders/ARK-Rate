@@ -100,7 +100,7 @@ fun FromInput(
                 Icon(
                     modifier = Modifier.padding(start = 9.dp, end = 5.dp),
                     painter = painterResource(R.drawable.ic_chevron),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = ArkColor.FGQuinary,
                 )
             }

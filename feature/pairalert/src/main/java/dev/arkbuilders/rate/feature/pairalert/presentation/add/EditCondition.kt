@@ -86,7 +86,7 @@ fun EditCondition(
                                 else
                                     CoreRDrawable.ic_pair_alert_dec,
                         ),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint =
                         if (state.aboveNotBelow)
                             ArkColor.PairAlertInc

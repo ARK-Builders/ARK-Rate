@@ -206,7 +206,7 @@ private fun Content(
         ) {
             Icon(
                 painter = painterResource(id = CoreRDrawable.ic_edit),
-                contentDescription = "",
+                contentDescription = null,
             )
             Text(
                 modifier = Modifier.padding(start = 6.dp),
@@ -234,7 +234,7 @@ private fun Content(
             ) {
                 Icon(
                     painter = painterResource(id = CoreRDrawable.ic_info),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = ArkColor.Primary,
                 )
             }
@@ -264,7 +264,7 @@ private fun Content(
             ) {
                 Icon(
                     painter = painterResource(id = CoreRDrawable.ic_info),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = ArkColor.Primary,
                 )
             }

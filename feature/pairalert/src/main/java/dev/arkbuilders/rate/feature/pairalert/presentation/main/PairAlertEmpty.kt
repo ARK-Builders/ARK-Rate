@@ -30,7 +30,7 @@ fun PairAlertEmpty(onNewPair: () -> Unit) {
         ) {
             Icon(
                 painter = painterResource(id = CoreRDrawable.ic_empty_pair),
-                contentDescription = "",
+                contentDescription = null,
                 tint = Color.Unspecified,
             )
             Text(
@@ -54,7 +54,7 @@ fun PairAlertEmpty(onNewPair: () -> Unit) {
             ) {
                 Icon(
                     painter = painterResource(id = CoreRDrawable.ic_add),
-                    contentDescription = "",
+                    contentDescription = null,
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),

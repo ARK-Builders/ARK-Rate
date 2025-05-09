@@ -129,7 +129,7 @@ private fun DismissBackground(
                     Icon(
                         modifier = Modifier.padding(start = 17.dp),
                         painter = painterResource(id = R.drawable.ic_pin),
-                        contentDescription = "",
+                        contentDescription = null,
                         tint = Color.White,
                     )
                     Text(
@@ -160,7 +160,7 @@ private fun DismissBackground(
                 Icon(
                     modifier = Modifier.padding(end = 17.dp),
                     painter = painterResource(id = R.drawable.ic_delete),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = Color.White,
                 )
             }

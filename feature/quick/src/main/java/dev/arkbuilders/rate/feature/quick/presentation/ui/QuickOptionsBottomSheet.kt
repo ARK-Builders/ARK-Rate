@@ -94,7 +94,7 @@ private fun Content(
             Icon(
                 modifier = Modifier,
                 painter = painterResource(id = CoreRDrawable.ic_close),
-                contentDescription = "",
+                contentDescription = stringResource(CoreRString.close),
                 tint = ArkColor.FGQuinary,
             )
         }
@@ -120,7 +120,7 @@ private fun Content(
                 Icon(
                     modifier = Modifier,
                     painter = painterResource(id = CoreRDrawable.ic_pin),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = ArkColor.TextSecondary,
                 )
                 Text(
@@ -147,7 +147,7 @@ private fun Content(
                 Icon(
                     modifier = Modifier,
                     painter = painterResource(id = CoreRDrawable.ic_edit),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = ArkColor.TextSecondary,
                 )
                 Text(
@@ -170,7 +170,7 @@ private fun Content(
                 Icon(
                     modifier = Modifier,
                     painter = painterResource(id = CoreRDrawable.ic_reuse),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = ArkColor.TextSecondary,
                 )
                 Text(
@@ -193,7 +193,7 @@ private fun Content(
                 Icon(
                     modifier = Modifier,
                     painter = painterResource(id = CoreRDrawable.ic_delete),
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = ArkColor.TextError,
                 )
                 Text(

@@ -155,7 +155,7 @@ private fun Content(
         ) {
             Icon(
                 painter = painterResource(CoreRDrawable.ic_info),
-                contentDescription = "",
+                contentDescription = null,
                 tint = ArkColor.TextTertiary,
             )
             Text(

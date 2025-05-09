@@ -84,7 +84,7 @@ fun EditGroupOptionsBottomSheet(
                     Icon(
                         modifier = Modifier,
                         painter = painterResource(id = CoreRDrawable.ic_delete),
-                        contentDescription = "",
+                        contentDescription = null,
                         tint = ArkColor.TextError,
                     )
                     Text(

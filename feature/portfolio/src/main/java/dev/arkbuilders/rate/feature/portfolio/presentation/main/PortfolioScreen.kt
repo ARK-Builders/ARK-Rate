@@ -125,7 +125,7 @@ fun PortfolioScreen(
                     navigator.navigate(AddAssetScreenDestination(groupId = getCurrentGroup()?.id))
                 },
             ) {
-                Icon(Icons.Default.Add, contentDescription = "")
+                Icon(Icons.Default.Add, contentDescription = stringResource(CoreRString.add))
             }
         },
         snackbarHost = {

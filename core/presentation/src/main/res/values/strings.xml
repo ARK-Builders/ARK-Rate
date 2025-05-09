@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">ARK Rate</string>
-    <string name="app_name_debug">ARK Rate [Debug]</string>
+    <string name="app_name">Currency converter</string>
+    <string name="app_name_debug">Currency converter [Debug]</string>
 
     <string name="info_dialog_market_capitalization">Market Capitalization</string>
     <string name="info_dialog_market_capitalization_description">The total market value of a cryptocurrency\'s circulating supply.\n\nIt is analogous to the free-float capitalization in the stock market.\n\nCap = Current Price x Circulating Supply.</string>
@@ -39,7 +39,7 @@
     <string name="portfolio_new_asset">New asset</string>
     <string name="portfolio_new_portfolio">New portfolio</string>
     <string name="portfolio_name_dialog_title">Create portfolio</string>
-    <string name="portfolio_name_dialog_desc">Please enter a name for this group.</string>
+    <string name="portfolio_name_dialog_desc">Please enter a name for this portfolio.</string>
     <string name="portfolio_name_dialog_portfolio_name">Portfolio name</string>
     <string name="portfolio_name_dialog_placeholder">e.g. Portfolio 1</string>
     <string name="portfolio_snackbar_new_title">New asset has been added</string>
@@ -71,12 +71,12 @@
     <string name="search_currency_already_selected">Currency already selected</string>
     <string name="search_currency_already_selected_desc">Please choose a different currency. Identical currencies cannot be used together.</string>
 
-    <string name="group_create_group">Create Group</string>
-    <string name="group_please_enter_a_name_for_this_group">Please enter a name for this group.</string>
-    <string name="group_name">Group name</string>
-    <string name="e_g_group_1">e.g. Group 1</string>
+    <string name="group_create_group">Create Folder</string>
+    <string name="group_please_enter_a_name_for_this_group">Please enter a name for this folder.</string>
+    <string name="group_name">Folder name</string>
+    <string name="e_g_group_1">e.g. Folder 1</string>
     <string name="group_default_name">Default</string>
-    <string name="new_group">New group</string>
+    <string name="new_group">New folder</string>
 
     <string name="crash_reports">Crash reports</string>
     <string name="all_currencies">All currencies</string>
@@ -87,8 +87,14 @@
     <string name="privacy_policy_url" translatable="false">https://www.ark-builders.dev/apps/rate/privacy-policy</string>
     <string name="privacy_policy">Privacy policy</string>
 
+    <string name="add">Add</string>
+    <string name="close">Close</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
+    <string name="back">Back</string>
+
     <string name="calculate">Calculate</string>
-    <string name="add_group">Add group</string>
+    <string name="add_group">Add folder</string>
     <string name="save">Save</string>
     <string name="input_value">Input value</string>
     <string name="result">Result</string>
@@ -161,10 +167,10 @@
     <string name="your_connection_is_back">Your connection is back.</string>
     <string name="offline">Offline</string>
     <string name="your_network_is_offline">Your network is offline.</string>
-    <string name="edit_group">Edit group</string>
-    <string name="rename_group">Rename group</string>
-    <string name="edit_group_name">Edit group \"%1$s\"</string>
+    <string name="edit_group">Edit folder</string>
+    <string name="rename_group">Rename folder</string>
+    <string name="edit_group_name">Edit folder \"%1$s\"</string>
     <string name="rename">Rename</string>
-    <string name="groups">Groups</string>
+    <string name="groups">Folders</string>
 
 </resources>

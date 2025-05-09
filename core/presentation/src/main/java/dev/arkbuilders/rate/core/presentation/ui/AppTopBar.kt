@@ -16,9 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
@@ -43,7 +45,7 @@ fun AppTopBarBack(
                     Icon(
                         modifier = Modifier,
                         painter = painterResource(id = R.drawable.ic_back),
-                        contentDescription = "",
+                        contentDescription = stringResource(CoreRString.back),
                         tint = ArkColor.FGSecondary,
                     )
                 }

@@ -45,7 +45,6 @@ android {
             isDebuggable = true
             addManifestPlaceholders(
                 mapOf(
-                    "appIcon" to "@mipmap/ic_launcher_debug",
                     "appLabel" to "@string/app_name_debug",
                 ),
             )
@@ -62,7 +61,6 @@ android {
 
             addManifestPlaceholders(
                 mapOf(
-                    "appIcon" to "@mipmap/ic_launcher",
                     "appLabel" to "@string/app_name",
                 ),
             )

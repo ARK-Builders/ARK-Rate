@@ -15,11 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
@@ -56,7 +58,7 @@ private fun Content(
                         .padding(top = 20.dp, start = 16.dp)
                         .align(Alignment.TopStart),
                 painter = painterResource(id = R.drawable.ic_info_bg),
-                contentDescription = "",
+                contentDescription = null,
                 tint = Color.Unspecified,
             )
             IconButton(
@@ -70,7 +72,7 @@ private fun Content(
                 Icon(
                     modifier = Modifier.size(12.dp),
                     painter = painterResource(id = R.drawable.ic_close),
-                    contentDescription = "",
+                    contentDescription = stringResource(CoreRString.close),
                     tint = ArkColor.FGQuinary,
                 )
             }
