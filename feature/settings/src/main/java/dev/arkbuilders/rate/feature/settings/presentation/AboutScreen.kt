@@ -31,7 +31,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
         ArkAbout(
             modifier = Modifier.padding(it),
             appName = stringResource(id = CoreRString.app_name),
-            appLogoResId = CoreRDrawable.ic_about_logo,
+            appLogoResId = CoreRDrawable.ic_app_logo,
             versionName = component.buildConfigFieldsProvider().provide().versionName,
             privacyPolicyUrl = stringResource(CoreRString.privacy_policy_url),
         )
