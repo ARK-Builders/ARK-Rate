@@ -68,7 +68,7 @@ class QuickPairsWidget : GlanceAppWidget() {
                         modifier =
                             GlanceModifier.size(24.dp).padding(4.dp)
                                 .clickable(actionRunCallback<AddNewPairAction>()),
-                        provider = ImageProvider(CoreRDrawable.ic_about_logo),
+                        provider = ImageProvider(CoreRDrawable.ic_app_logo),
                         contentDescription = null,
                     )
                     Text(
