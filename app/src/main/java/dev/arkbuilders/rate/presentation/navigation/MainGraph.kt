@@ -3,8 +3,6 @@ package dev.arkbuilders.rate.presentation.navigation
 import com.ramcosta.composedestinations.animations.defaults.DefaultFadingTransitions
 import com.ramcosta.composedestinations.annotation.ExternalDestination
 import com.ramcosta.composedestinations.annotation.NavHostGraph
-import com.ramcosta.composedestinations.generated.pairalert.destinations.AddPairAlertScreenDestination
-import com.ramcosta.composedestinations.generated.pairalert.destinations.PairAlertConditionScreenDestination
 import com.ramcosta.composedestinations.generated.portfolio.destinations.AddAssetScreenDestination
 import com.ramcosta.composedestinations.generated.portfolio.destinations.EditAssetScreenDestination
 import com.ramcosta.composedestinations.generated.portfolio.destinations.PortfolioScreenDestination
@@ -23,8 +21,6 @@ annotation class MainGraph {
     @ExternalDestination<PortfolioScreenDestination>
     @ExternalDestination<AddAssetScreenDestination>
     @ExternalDestination<EditAssetScreenDestination>
-    @ExternalDestination<PairAlertConditionScreenDestination>
-    @ExternalDestination<AddPairAlertScreenDestination>
     @ExternalDestination<SettingsScreenDestination>
     @ExternalDestination<AboutScreenDestination>
     @ExternalDestination<SearchCurrencyScreenDestination>

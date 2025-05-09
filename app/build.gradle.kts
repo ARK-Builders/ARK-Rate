@@ -17,8 +17,8 @@ android {
         applicationId = "dev.arkbuilders.rate"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.compileSdk.get().toInt()
-        versionCode = 6
-        versionName = "2.0.2"
+        versionCode = 7
+        versionName = "2.1"
         setProperty("archivesBaseName", "ark-rate")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -106,7 +106,6 @@ dependencies {
     implementation(project(":feature:quick"))
     implementation(project(":feature:quickwidget"))
     implementation(project(":feature:portfolio"))
-    implementation(project(":feature:pairalert"))
     implementation(project(":feature:search"))
     implementation(project(":feature:settings"))
     implementation(project(":fiaticons"))

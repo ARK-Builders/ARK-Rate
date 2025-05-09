@@ -8,13 +8,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -214,66 +212,5 @@ private fun Content(
                 fontWeight = FontWeight.SemiBold,
             )
         }
-
-        AppHorDiv(modifier = Modifier.padding(top = 32.dp))
-        Row(
-            modifier = Modifier.padding(top = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(CoreRString.market_capitalization),
-                fontWeight = FontWeight.Medium,
-                color = ArkColor.TextTertiary,
-            )
-            IconButton(
-                modifier =
-                    Modifier
-                        .padding(start = 4.dp)
-                        .size(20.dp),
-                onClick = { showMarketCapitalizationDialog = true },
-            ) {
-                Icon(
-                    painter = painterResource(id = CoreRDrawable.ic_info),
-                    contentDescription = null,
-                    tint = ArkColor.Primary,
-                )
-            }
-        }
-        Text(
-            modifier = Modifier.padding(top = 8.dp),
-            text = stringResource(CoreRString.n_a),
-            fontWeight = FontWeight.SemiBold,
-            color = ArkColor.TextPrimary,
-        )
-        AppHorDiv(modifier = Modifier.padding(top = 24.dp))
-        Row(
-            modifier = Modifier.padding(top = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(CoreRString.value_of_circulating_currency),
-                fontWeight = FontWeight.Medium,
-                color = ArkColor.TextTertiary,
-            )
-            IconButton(
-                modifier =
-                    Modifier
-                        .padding(start = 4.dp)
-                        .size(20.dp),
-                onClick = { showValueOfCirculatingDialog = true },
-            ) {
-                Icon(
-                    painter = painterResource(id = CoreRDrawable.ic_info),
-                    contentDescription = null,
-                    tint = ArkColor.Primary,
-                )
-            }
-        }
-        Text(
-            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
-            text = stringResource(CoreRString.n_a),
-            fontWeight = FontWeight.SemiBold,
-            color = ArkColor.TextPrimary,
-        )
     }
 }
