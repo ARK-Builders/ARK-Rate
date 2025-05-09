@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">ARK Rate</string>
-    <string name="app_name_debug">ARK Rate [Debug]</string>
+    <string name="app_name">Currency converter</string>
+    <string name="app_name_debug">Currency converter [Debug]</string>
 
     <string name="info_dialog_market_capitalization">Market Capitalization</string>
     <string name="info_dialog_market_capitalization_description">The total market value of a cryptocurrency\'s circulating supply.\n\nIt is analogous to the free-float capitalization in the stock market.\n\nCap = Current Price x Circulating Supply.</string>
