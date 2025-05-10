@@ -329,7 +329,7 @@ private fun GroupPage(
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         if (pinned.isNotEmpty()) {
             item {
-                ListHeader(text = stringResource(CoreRString.quick_pinned_pairs))
+                ListHeader(text = stringResource(CoreRString.quick_pinned_calculations))
             }
             items(pinned, key = { it.pair.id }) {
                 PinnedQuickSwipeItem(

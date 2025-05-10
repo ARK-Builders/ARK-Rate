@@ -73,7 +73,7 @@ class QuickPairsWidget : GlanceAppWidget() {
                     )
                     Text(
                         modifier = GlanceModifier.defaultWeight(),
-                        text = context.getString(CoreRString.quick_pinned_pairs),
+                        text = context.getString(CoreRString.quick_pinned_calculations),
                         style =
                             TextStyle(
                                 color = ColorProvider(ArkColor.TextTertiary),
