@@ -79,9 +79,10 @@ fun QuickScreen(
             factory = component.quickVMFactory().create(),
         )
 
-    resultRecipient.onResult { newPairId ->
-        viewModel.onReturnFromAddScreen(newPairId)
-    }
+    resultRecipient.onResult(
+        onCancelled = viewModel::onNavResultCancelled,
+        onValue = viewModel::onNavResultValue,
+    )
 
     BackHandler {
         viewModel.onBackClick()
