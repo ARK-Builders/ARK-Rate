@@ -222,7 +222,7 @@ class AddPairAlertViewModel(
 
     fun onGroupCreate(name: String) =
         intent {
-            val group = groupRepo.new(name, GroupFeatureType.PairAlert)
+            val group = groupRepo.getByNameOrCreateNew(name, GroupFeatureType.PairAlert)
             val groups = groupRepo.getAllSorted(GroupFeatureType.PairAlert)
             reduce {
                 state.copy(group = group, availableGroups = groups)

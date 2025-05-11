@@ -155,7 +155,7 @@ class AddQuickViewModel(
 
     fun onGroupCreate(name: String) =
         intent {
-            val group = groupRepo.new(name, GroupFeatureType.Quick)
+            val group = groupRepo.getByNameOrCreateNew(name, GroupFeatureType.Quick)
             reduce {
                 state.copy(group = group)
             }
