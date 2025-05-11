@@ -11,6 +11,7 @@ jobs:
     environment: Development
     env:
       BRANCH_NAME: ${{ github.ref_name }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v4
 
