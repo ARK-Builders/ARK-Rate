@@ -222,22 +222,23 @@ class AddPairAlertViewModel(
             postSideEffect(AddPairAlertScreenEffect.NavigateBackWithResult(newPairId))
         }
 
-    fun onGroupCreate(name: String) = intent {
-        val group = Group.empty(name = name)
-        val inAvailable = state.availableGroups.any { it.name == group.name }
-        reduce {
-            if (inAvailable) {
-                state.copy(
-                    group = group,
-                )
-            } else {
-                state.copy(
-                    group = group,
-                    availableGroups = state.availableGroups + group,
-                )
+    fun onGroupCreate(name: String) =
+        intent {
+            val group = Group.empty(name = name)
+            val inAvailable = state.availableGroups.any { it.name == group.name }
+            reduce {
+                if (inAvailable) {
+                    state.copy(
+                        group = group,
+                    )
+                } else {
+                    state.copy(
+                        group = group,
+                        availableGroups = state.availableGroups + group,
+                    )
+                }
             }
         }
-    }
 
     fun onGroupSelect(group: Group) =
         intent {
