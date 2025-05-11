@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -32,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -137,7 +140,9 @@ fun GroupCreateDialogContent(
                         .padding(top = 6.dp)
                         .fillMaxWidth(),
                 value = input,
-                onValueChange = { input = it },
+                onValueChange = {
+                    input = it.replace(System.lineSeparator(), "")
+                },
                 textStyle =
                     TextStyle.Default.copy(
                         fontSize = 16.sp,
@@ -159,6 +164,15 @@ fun GroupCreateDialogContent(
                         color = ArkColor.TextPlaceHolder,
                     )
                 },
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardActions =
+                    KeyboardActions {
+                        val valid = validateGroupNameUseCase(input)
+                        if (valid) {
+                            onConfirmClick(input)
+                            onDismiss()
+                        }
+                    },
             )
             Button(
                 modifier =
