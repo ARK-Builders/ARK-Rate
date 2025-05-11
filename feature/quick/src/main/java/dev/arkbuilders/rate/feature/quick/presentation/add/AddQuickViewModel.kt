@@ -155,9 +155,19 @@ class AddQuickViewModel(
 
     fun onGroupCreate(name: String) =
         intent {
-            val group = groupRepo.getByNameOrCreateNew(name, GroupFeatureType.Quick)
+            val group = Group.empty(name = name)
+            val inAvailable = state.availableGroups.any { it.name == group.name }
             reduce {
-                state.copy(group = group)
+                if (inAvailable) {
+                    state.copy(
+                        group = group,
+                    )
+                } else {
+                    state.copy(
+                        group = group,
+                        availableGroups = state.availableGroups + group,
+                    )
+                }
             }
         }
 
@@ -210,6 +220,8 @@ class AddQuickViewModel(
                     0
                 }
 
+            val group = groupRepo.getByNameOrCreateNew(state.group.name, GroupFeatureType.Quick)
+
             val quick =
                 QuickPair(
                     id = id,
@@ -218,7 +230,7 @@ class AddQuickViewModel(
                     to = state.currencies.drop(1).map { it.toAmount() },
                     calculatedDate = OffsetDateTime.now(),
                     pinnedDate = null,
-                    group = state.group,
+                    group = group,
                 )
             val newId = quickRepo.insert(quick)
             codeUseStatRepo.codesUsed(

@@ -119,10 +119,19 @@ class AddAssetViewModel(
 
     fun onGroupCreate(name: String) =
         intent {
-            val group = groupRepo.getByNameOrCreateNew(name, GroupFeatureType.Portfolio)
-            val groups = groupRepo.getAllSorted(GroupFeatureType.Portfolio)
+            val group = Group.empty(name = name)
+            val inAvailable = state.availableGroups.any { it.name == group.name }
             reduce {
-                state.copy(group = group, availableGroups = groups)
+                if (inAvailable) {
+                    state.copy(
+                        group = group,
+                    )
+                } else {
+                    state.copy(
+                        group = group,
+                        availableGroups = state.availableGroups + group,
+                    )
+                }
             }
         }
 
@@ -154,12 +163,14 @@ class AddAssetViewModel(
 
     fun onAddAsset() =
         intent {
+            val group = groupRepo.getByNameOrCreateNew(state.group.name, GroupFeatureType.Portfolio)
+
             val currencies =
                 state.currencies.map {
                     Asset(
                         code = it.code,
                         value = it.value.toBigDecimalArk(),
-                        group = state.group,
+                        group = group,
                     )
                 }
             addNewAssetsUseCase(currencies)

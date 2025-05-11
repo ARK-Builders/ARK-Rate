@@ -202,6 +202,8 @@ class AddPairAlertViewModel(
 
             val id = if (state.editExisting) pairAlertId!! else 0
 
+            val group = groupRepo.getByNameOrCreateNew(state.group.name, GroupFeatureType.PairAlert)
+
             val pairAlert =
                 PairAlert(
                     id = id,
@@ -213,21 +215,29 @@ class AddPairAlertViewModel(
                     oneTimeNotRecurrent = state.oneTimeNotRecurrent,
                     enabled = true,
                     lastDateTriggered = null,
-                    group = state.group,
+                    group = group,
                 )
             val newPairId = pairAlertRepo.insert(pairAlert)
             codeUseStatRepo.codesUsed(pairAlert.baseCode, pairAlert.targetCode)
             postSideEffect(AddPairAlertScreenEffect.NavigateBackWithResult(newPairId))
         }
 
-    fun onGroupCreate(name: String) =
-        intent {
-            val group = groupRepo.getByNameOrCreateNew(name, GroupFeatureType.PairAlert)
-            val groups = groupRepo.getAllSorted(GroupFeatureType.PairAlert)
-            reduce {
-                state.copy(group = group, availableGroups = groups)
+    fun onGroupCreate(name: String) = intent {
+        val group = Group.empty(name = name)
+        val inAvailable = state.availableGroups.any { it.name == group.name }
+        reduce {
+            if (inAvailable) {
+                state.copy(
+                    group = group,
+                )
+            } else {
+                state.copy(
+                    group = group,
+                    availableGroups = state.availableGroups + group,
+                )
             }
         }
+    }
 
     fun onGroupSelect(group: Group) =
         intent {

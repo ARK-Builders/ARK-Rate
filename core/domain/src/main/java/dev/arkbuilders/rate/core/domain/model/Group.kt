@@ -15,6 +15,6 @@ data class Group(
     val creationTime: OffsetDateTime,
 ) {
     companion object {
-        fun empty() = Group(0, "", 0, OffsetDateTime.now())
+        fun empty(name: String = "") = Group(0, name, 0, OffsetDateTime.now())
     }
 }
