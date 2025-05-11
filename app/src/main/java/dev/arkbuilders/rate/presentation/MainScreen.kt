@@ -23,7 +23,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
-import com.ramcosta.composedestinations.generated.pairalert.destinations.PairAlertConditionScreenDestination
 import com.ramcosta.composedestinations.generated.portfolio.destinations.PortfolioScreenDestination
 import com.ramcosta.composedestinations.generated.quick.destinations.AddQuickScreenDestination
 import com.ramcosta.composedestinations.generated.quick.destinations.QuickScreenDestination
@@ -81,7 +80,6 @@ fun MainScreen() {
         when {
             currentRoute.startsWith(QuickScreenDestination.route) -> true
             currentRoute.startsWith(PortfolioScreenDestination.route) -> true
-            currentRoute.startsWith(PairAlertConditionScreenDestination.route) -> true
             currentRoute.startsWith(SettingsScreenDestination.route) -> true
             else -> false
         }

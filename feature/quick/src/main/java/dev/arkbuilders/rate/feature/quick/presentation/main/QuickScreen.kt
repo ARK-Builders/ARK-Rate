@@ -79,9 +79,10 @@ fun QuickScreen(
             factory = component.quickVMFactory().create(),
         )
 
-    resultRecipient.onResult { newPairId ->
-        viewModel.onReturnFromAddScreen(newPairId)
-    }
+    resultRecipient.onResult(
+        onCancelled = viewModel::onNavResultCancelled,
+        onValue = viewModel::onNavResultValue,
+    )
 
     BackHandler {
         viewModel.onBackClick()
@@ -329,7 +330,7 @@ private fun GroupPage(
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         if (pinned.isNotEmpty()) {
             item {
-                ListHeader(text = stringResource(CoreRString.quick_pinned_pairs))
+                ListHeader(text = stringResource(CoreRString.quick_pinned_calculations))
             }
             items(pinned, key = { it.pair.id }) {
                 PinnedQuickSwipeItem(

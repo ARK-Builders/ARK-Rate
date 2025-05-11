@@ -13,10 +13,15 @@ import java.time.OffsetDateTime
 class GroupRepoImpl(
     private val groupDao: GroupDao,
 ) : GroupRepo {
-    override suspend fun new(
+    override suspend fun getByNameOrCreateNew(
         name: String,
         featureType: GroupFeatureType,
     ): Group {
+        val exists = getByName(name, featureType)
+        exists?.let {
+            return exists
+        }
+
         val all = groupDao.getAllByFeatureType(featureType)
         val sortIndex = all.maxOf { it.orderIndex } + 1
         val group =
@@ -46,6 +51,13 @@ class GroupRepoImpl(
 
     override suspend fun getById(id: Long): Group {
         return groupDao.getById(id).toGroup()
+    }
+
+    override suspend fun getByName(
+        name: String,
+        featureType: GroupFeatureType,
+    ): Group? {
+        return groupDao.getByName(name, featureType)?.toGroup()
     }
 
     override suspend fun delete(id: Long) {

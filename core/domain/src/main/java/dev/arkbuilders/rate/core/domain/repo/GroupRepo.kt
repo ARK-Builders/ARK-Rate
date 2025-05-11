@@ -5,7 +5,7 @@ import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import kotlinx.coroutines.flow.Flow
 
 interface GroupRepo {
-    suspend fun new(
+    suspend fun getByNameOrCreateNew(
         name: String,
         featureType: GroupFeatureType,
     ): Group
@@ -23,6 +23,11 @@ interface GroupRepo {
     fun allFlow(featureType: GroupFeatureType): Flow<List<Group>>
 
     suspend fun getById(id: Long): Group
+
+    suspend fun getByName(
+        name: String,
+        featureType: GroupFeatureType,
+    ): Group?
 
     suspend fun delete(id: Long)
 

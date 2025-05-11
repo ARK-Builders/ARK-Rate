@@ -24,6 +24,12 @@ interface GroupDao {
     @Query("SELECT * FROM RoomGroup WHERE id = :id")
     suspend fun getById(id: Long): RoomGroup
 
+    @Query("SELECT * FROM RoomGroup WHERE name = :name AND featureType = :featureType")
+    suspend fun getByName(
+        name: String,
+        featureType: GroupFeatureType,
+    ): RoomGroup?
+
     @Query("DELETE FROM RoomGroup WHERE id = :id")
     suspend fun delete(id: Long): Int
 }

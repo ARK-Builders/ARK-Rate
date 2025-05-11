@@ -138,13 +138,27 @@ class QuickViewModel(
             }
         }
 
-    fun onReturnFromAddScreen(newPairId: Long) =
+    fun onNavResultValue(newPairId: Long) =
         intent {
             val pair = quickRepo.getById(newPairId) ?: return@intent
             val pages = mapPairsToPages(quickRepo.getAll())
-            reduce { state.copy(pages = pages) }
+            reduce {
+                state.copy(
+                    pages = pages,
+                    filter = "",
+                )
+            }
             postSideEffect(QuickScreenEffect.SelectTab(pair.group.id))
             postSideEffect(QuickScreenEffect.ShowSnackbarAdded(pair))
+        }
+
+    fun onNavResultCancelled() =
+        intent {
+            reduce {
+                state.copy(
+                    filter = "",
+                )
+            }
         }
 
     fun onShowGroupOptions(pair: QuickPair) =

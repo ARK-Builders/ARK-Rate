@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -25,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.arkbuilders.rate.core.domain.model.Group
@@ -86,7 +89,17 @@ fun EditGroupRenameBottomSheet(
                             color = ArkColor.TextPrimary,
                         ),
                     value = groupRename,
-                    onValueChange = { groupRename = it },
+                    onValueChange = {
+                        groupRename = it.replace(System.lineSeparator(), "")
+                    },
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                    keyboardActions =
+                        KeyboardActions {
+                            if (doneEnabled) {
+                                onDone(groupRename)
+                                onDismiss()
+                            }
+                        },
                 )
                 Spacer(Modifier.height(16.dp))
                 AppHorDiv()
