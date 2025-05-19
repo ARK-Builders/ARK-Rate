@@ -15,7 +15,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         ksp {
-            arg("compose-destinations.moduleName", "quick")
+            arg("compose-destinations.moduleName", "onboarding")
         }
     }
 
@@ -24,7 +24,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -74,6 +74,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
-tasks.getByPath(":feature:pairalert:preBuild").dependsOn("ktlintCheck")
+tasks.getByPath(":feature:onboarding:preBuild").dependsOn("ktlintCheck")
 
-tasks.getByPath(":feature:pairalert:preBuild").dependsOn("ktlintFormat")
+tasks.getByPath(":feature:onboarding:preBuild").dependsOn("ktlintFormat")

@@ -44,10 +44,14 @@ class PrefsImpl(val context: Context) : Prefs {
     private fun <T> resolveKey(key: PreferenceKey<T>): Preferences.Key<T> {
         val result =
             when (key) {
-                PreferenceKey.CollectAnalytics -> booleanPreferencesKey("analytics")
-
-                PreferenceKey.BaseCurrencyCode -> stringPreferencesKey("baseCurrencyCode")
-                PreferenceKey.CollectCrashReports -> booleanPreferencesKey("crashReports")
+                PreferenceKey.CollectAnalytics ->
+                    booleanPreferencesKey("analytics")
+                PreferenceKey.BaseCurrencyCode ->
+                    stringPreferencesKey("baseCurrencyCode")
+                PreferenceKey.CollectCrashReports ->
+                    booleanPreferencesKey("crashReports")
+                PreferenceKey.IsOnboardingCompleted ->
+                    booleanPreferencesKey("isOnboardingCompleted")
             }
 
         return result as Preferences.Key<T>
