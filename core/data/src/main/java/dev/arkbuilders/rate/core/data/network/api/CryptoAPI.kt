@@ -1,4 +1,4 @@
-@file:Suppress("ktlint:standard:max-line-length")
+@file:Suppress("ktlint")
 package dev.arkbuilders.rate.core.data.network.api
 
 import dev.arkbuilders.rate.core.data.network.dto.CryptoRateResponse
