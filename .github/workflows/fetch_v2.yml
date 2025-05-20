@@ -1,4 +1,4 @@
-name: Fetch exchange rates
+name: Fetch exchange rates v2
 
 on:
   push:
