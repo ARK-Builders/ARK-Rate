@@ -4,8 +4,8 @@ on:
   push:
     branches: [ "main" ] # On every push to `main`
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * 1" # Also, regularly at 00:00 on Monday
+ # schedule:
+    #- cron: "0 0 * * 1" # Also, regularly at 00:00 on Monday
 
 env:
   APP_ID: ${{ secrets.APP_ID }}
