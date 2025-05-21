@@ -34,7 +34,7 @@ jobs:
           pip install --upgrade pip
           pip install requests
           
-      - name: Run fetch_rates script
+      - name: Run fetch-rates.py script
         run: python fetch-rates.py
         
       - name: Fetch fiat
