@@ -51,6 +51,7 @@ def fetch_all_data():
 
     with open(full_rates_file, "w", encoding="utf-8") as f:
         json.dump(merged_data, f, indent=4)
+        
     print(f"Merged data saved to {full_rates_file}")
 
 def reduce_data():
@@ -64,12 +65,18 @@ def reduce_data():
     crypto_ids = [key.lower() for key in crypto_data.keys()]
 
     keys_to_keep = ["id", "symbol", "name", "current_price", "market_cap", "market_cap_rank"]
-    
+
+    #reduced data to new_data
+    #keep track of unique symbols to ensure no duplicates
     new_data = []
     symbols_set = set()
 
     for item in data:
-        # if item['symbol'] not in symbols_set
+
+        #option for if we dont want to filter based on crypto.json
+        #if item['symbol'] not in symbols_set:
+
+        #unique 'symbols' and 'symbol' is in crypto.json file
         if item['symbol'] not in symbols_set and item['symbol'] in crypto_ids:
             item_filtered = {key: item[key] for key in keys_to_keep if key in item}
             new_data.append(item_filtered)
@@ -77,8 +84,9 @@ def reduce_data():
         else:
             #print(f"Duplicate found: {item['symbol']}")
             continue
-
-    # new_data = new_data[:1001]
+            
+    #option to filter for top 1000
+    #new_data = new_data[:999]
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(new_data, f)
 
@@ -86,8 +94,7 @@ def main():
     # Step 1: Fetch and merge API data
     fetch_all_data()
 
-    # Step 2: Reduce the merged data based on crypto.json content.
-    # The merged file from the API is used as the full rates file.
+    # Step 2: Reduce the merged data
     reduce_data()
 
 if __name__ == "__main__":
