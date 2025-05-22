@@ -133,26 +133,26 @@ fun OnboardingQuickScreen(externalNavigator: OnboardingExternalNavigator) {
             }
         }
 
-        OnboardingQuickStep.PairAlerts -> {
-            pairAlertRect?.let {
-                Spotlight(
-                    targetRect = it,
-                    onTargetClicked = {},
-                    onDismiss = {},
-                    shape = SpotlightShape.Circle,
-                    padding = 20.dp,
-                )
-                SpotlightTooltip(
-                    targetRect = it,
-                    titleText = stringResource(CoreRString.onboarding_quick_empty_3_title),
-                    descText = stringResource(CoreRString.onboarding_quick_empty_3_desc),
-                    buttonText = stringResource(CoreRString.finish),
-                    position = TooltipPosition.Above,
-                    targetPadding = 40.dp,
-                    onClick = { viewModel.onNext() },
-                )
-            }
-        }
+//        OnboardingQuickStep.PairAlerts -> {
+//            pairAlertRect?.let {
+//                Spotlight(
+//                    targetRect = it,
+//                    onTargetClicked = {},
+//                    onDismiss = {},
+//                    shape = SpotlightShape.Circle,
+//                    padding = 20.dp,
+//                )
+//                SpotlightTooltip(
+//                    targetRect = it,
+//                    titleText = stringResource(CoreRString.onboarding_quick_empty_3_title),
+//                    descText = stringResource(CoreRString.onboarding_quick_empty_3_desc),
+//                    buttonText = stringResource(CoreRString.finish),
+//                    position = TooltipPosition.Above,
+//                    targetPadding = 40.dp,
+//                    onClick = { viewModel.onNext() },
+//                )
+//            }
+//        }
     }
 }
 

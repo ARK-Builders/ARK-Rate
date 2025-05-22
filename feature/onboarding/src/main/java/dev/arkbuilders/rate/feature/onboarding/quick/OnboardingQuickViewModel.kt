@@ -14,7 +14,7 @@ import javax.inject.Inject
 enum class OnboardingQuickStep {
     Calculate,
     Portfolio,
-    PairAlerts,
+//    PairAlerts,
 }
 
 data class OnboardingQuickState(

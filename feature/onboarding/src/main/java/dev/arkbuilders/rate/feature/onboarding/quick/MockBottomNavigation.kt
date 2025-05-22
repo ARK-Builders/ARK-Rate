@@ -62,7 +62,6 @@ fun MockBottomNavigation(
         listOf(
             BottomNavItem.Quick,
             BottomNavItem.Assets,
-            BottomNavItem.PairAlert,
             BottomNavItem.Settings,
         )
     Column {
