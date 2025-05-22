@@ -42,6 +42,7 @@ dependencies {
     implementation(project(":core:db"))
     implementation(project(":core:domain"))
     implementation(project(":core:presentation"))
+    implementation(project(":feature:quick"))
 
     implementation(libs.androidx.ui)
     implementation(libs.navigation.compose)

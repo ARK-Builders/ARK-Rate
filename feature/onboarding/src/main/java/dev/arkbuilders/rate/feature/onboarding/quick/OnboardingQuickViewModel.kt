@@ -2,7 +2,6 @@ package dev.arkbuilders.rate.feature.onboarding.quick
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
@@ -16,15 +15,10 @@ enum class OnboardingQuickStep {
     Calculate,
     Portfolio,
     PairAlerts,
-    PairSwipeToRight,
-    PairSwipeToLeft,
-    PinnedSwipeToRight,
-    PairMenu,
 }
 
 data class OnboardingQuickState(
     val stepIndex: Int = 0,
-    val currencies: List<CurrencyName> = emptyList(),
 )
 
 sealed class OnboardingQuickEffect {
@@ -37,15 +31,6 @@ class OnboardingQuickViewModel(
 ) : ViewModel(), ContainerHost<OnboardingQuickState, OnboardingQuickEffect> {
     override val container: Container<OnboardingQuickState, OnboardingQuickEffect> =
         container(OnboardingQuickState())
-
-    init {
-        intent {
-            val currencies = getTopResultUseCase.invoke()
-            reduce {
-                state.copy(currencies = currencies)
-            }
-        }
-    }
 
     fun onNext() =
         intent {
@@ -60,10 +45,6 @@ class OnboardingQuickViewModel(
                 state.copy(stepIndex = nextIndex)
             }
         }
-
-    fun onSkip() {
-        finish()
-    }
 
     private fun finish() =
         intent {

@@ -24,6 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingQuickPairScreenDestination
 import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingQuickScreenDestination
 import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingScreenDestination
 import com.ramcosta.composedestinations.generated.portfolio.destinations.PortfolioScreenDestination
@@ -31,7 +32,9 @@ import com.ramcosta.composedestinations.generated.quick.destinations.AddQuickScr
 import com.ramcosta.composedestinations.generated.quick.destinations.QuickScreenDestination
 import com.ramcosta.composedestinations.generated.settings.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
+import com.ramcosta.composedestinations.navargs.primitives.longNavType
 import com.ramcosta.composedestinations.rememberNavHostEngine
+import com.ramcosta.composedestinations.scope.resultRecipient
 import com.ramcosta.composedestinations.spec.Direction
 import com.ramcosta.composedestinations.utils.startDestination
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
@@ -43,6 +46,8 @@ import dev.arkbuilders.rate.core.presentation.utils.findActivity
 import dev.arkbuilders.rate.core.presentation.utils.keyboardAsState
 import dev.arkbuilders.rate.feature.onboarding.OnboardingExternalNavigator
 import dev.arkbuilders.rate.feature.onboarding.quick.OnboardingQuickScreen
+import dev.arkbuilders.rate.feature.quick.presentation.QuickExternalNavigator
+import dev.arkbuilders.rate.feature.quick.presentation.main.QuickScreen
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR_GROUP_KEY
 import dev.arkbuilders.rate.presentation.navigation.AnimatedRateBottomNavigation
@@ -157,8 +162,8 @@ fun MainScreen() {
             modifier = Modifier.padding(it),
         ) {
             composable(OnboardingQuickScreenDestination) {
-                OnboardingQuickScreen(
-                    externalNavigator =
+                val externalNavigator =
+                    remember {
                         object : OnboardingExternalNavigator {
                             override fun navigateOnFinish() {
                                 destinationsNavigator.navigate(QuickScreenDestination) {
@@ -167,7 +172,26 @@ fun MainScreen() {
                                     }
                                 }
                             }
-                        },
+                        }
+                    }
+                OnboardingQuickScreen(
+                    externalNavigator = externalNavigator,
+                )
+            }
+
+            composable(QuickScreenDestination) {
+                val externalNavigator =
+                    remember {
+                        object : QuickExternalNavigator {
+                            override fun navigateToPairOnboarding() {
+                                destinationsNavigator.navigate(OnboardingQuickPairScreenDestination)
+                            }
+                        }
+                    }
+                QuickScreen(
+                    navigator = destinationsNavigator,
+                    resultRecipient = resultRecipient(longNavType),
+                    externalNavigator = externalNavigator,
                 )
             }
         }

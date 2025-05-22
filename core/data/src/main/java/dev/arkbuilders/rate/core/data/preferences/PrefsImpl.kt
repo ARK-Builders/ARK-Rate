@@ -52,6 +52,9 @@ class PrefsImpl(val context: Context) : Prefs {
                     booleanPreferencesKey("crashReports")
                 PreferenceKey.IsOnboardingCompleted ->
                     booleanPreferencesKey("isOnboardingCompleted")
+
+                PreferenceKey.IsOnboardingQuickPairCompleted ->
+                    booleanPreferencesKey("IsOnboardingQuickPairCompleted")
             }
 
         return result as Preferences.Key<T>

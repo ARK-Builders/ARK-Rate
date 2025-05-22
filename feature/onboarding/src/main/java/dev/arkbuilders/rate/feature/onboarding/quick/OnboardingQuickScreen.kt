@@ -67,29 +67,17 @@ fun OnboardingQuickScreen(externalNavigator: OnboardingExternalNavigator) {
     var calculateRect by remember { (mutableStateOf<Rect?>(null)) }
     var portfolioRect by remember { (mutableStateOf<Rect?>(null)) }
     var pairAlertRect by remember { (mutableStateOf<Rect?>(null)) }
-    var quickPairRect by remember { (mutableStateOf<Rect?>(null)) }
 
     Box {
         Column {
-            if (state.stepIndex >= 3) {
-                OnboardingQuickPairScreen(
-                    modifier = Modifier.weight(1f),
-                    pairModifier =
-                        Modifier.onGloballyPositioned { coordinates ->
-                            quickPairRect = coordinates.boundsInRoot()
-                        },
-                    stepIndex = state.stepIndex,
-                    currencies = state.currencies,
-                )
-            } else {
-                QuickEmpty(
-                    modifier = Modifier.weight(1f),
-                    calculateModifier =
-                        Modifier.onGloballyPositioned { coordinates ->
-                            calculateRect = coordinates.boundsInRoot()
-                        },
-                )
-            }
+            QuickEmpty(
+                modifier = Modifier.weight(1f),
+                calculateModifier =
+                    Modifier.onGloballyPositioned { coordinates ->
+                        calculateRect = coordinates.boundsInRoot()
+                    },
+            )
+
             MockBottomNavigation(
                 portfolioModifier =
                     Modifier.onGloballyPositioned { coordinates ->
@@ -123,6 +111,7 @@ fun OnboardingQuickScreen(externalNavigator: OnboardingExternalNavigator) {
                 )
             }
         }
+
         OnboardingQuickStep.Portfolio -> {
             portfolioRect?.let {
                 Spotlight(
@@ -143,6 +132,7 @@ fun OnboardingQuickScreen(externalNavigator: OnboardingExternalNavigator) {
                 )
             }
         }
+
         OnboardingQuickStep.PairAlerts -> {
             pairAlertRect?.let {
                 Spotlight(
@@ -159,90 +149,6 @@ fun OnboardingQuickScreen(externalNavigator: OnboardingExternalNavigator) {
                     buttonText = stringResource(CoreRString.finish),
                     position = TooltipPosition.Above,
                     targetPadding = 40.dp,
-                    onClick = { viewModel.onNext() },
-                )
-            }
-        }
-
-        OnboardingQuickStep.PairSwipeToRight -> {
-            quickPairRect?.let {
-                Spotlight(
-                    targetRect = it,
-                    onTargetClicked = {},
-                    onDismiss = {},
-                    shape = SpotlightShape.Rect,
-                    padding = 0.dp,
-                )
-                SpotlightTooltip(
-                    targetRect = it,
-                    titleText = stringResource(CoreRString.onboarding_quick_pair_1_title),
-                    descText = stringResource(CoreRString.onboarding_quick_pair_1_desc),
-                    buttonText = stringResource(CoreRString.next),
-                    position = TooltipPosition.Below,
-                    targetPadding = 24.dp,
-                    onClick = { viewModel.onNext() },
-                    onSkip = { viewModel.onSkip() },
-                )
-            }
-        }
-        OnboardingQuickStep.PairSwipeToLeft -> {
-            quickPairRect?.let {
-                Spotlight(
-                    targetRect = it,
-                    onTargetClicked = {},
-                    onDismiss = {},
-                    shape = SpotlightShape.Rect,
-                    padding = 0.dp,
-                )
-                SpotlightTooltip(
-                    targetRect = it,
-                    titleText = stringResource(CoreRString.onboarding_quick_pair_2_title),
-                    descText = stringResource(CoreRString.onboarding_quick_pair_2_desc),
-                    buttonText = stringResource(CoreRString.next),
-                    position = TooltipPosition.Below,
-                    targetPadding = 24.dp,
-                    onClick = { viewModel.onNext() },
-                    onSkip = { viewModel.onSkip() },
-                )
-            }
-        }
-        OnboardingQuickStep.PinnedSwipeToRight -> {
-            quickPairRect?.let {
-                Spotlight(
-                    targetRect = it,
-                    onTargetClicked = {},
-                    onDismiss = {},
-                    shape = SpotlightShape.Rect,
-                    padding = 0.dp,
-                )
-                SpotlightTooltip(
-                    targetRect = it,
-                    titleText = stringResource(CoreRString.onboarding_quick_pair_3_title),
-                    descText = stringResource(CoreRString.onboarding_quick_pair_3_desc),
-                    buttonText = stringResource(CoreRString.next),
-                    position = TooltipPosition.Below,
-                    targetPadding = 24.dp,
-                    onClick = { viewModel.onNext() },
-                    onSkip = { viewModel.onSkip() },
-                )
-            }
-        }
-        OnboardingQuickStep.PairMenu -> {
-            quickPairRect?.let {
-                Spotlight(
-                    targetRect = it,
-                    onTargetClicked = {},
-                    onDismiss = {},
-                    shape = SpotlightShape.Rect,
-                    padding = 0.dp,
-                )
-                SpotlightTooltip(
-                    targetRect = it,
-                    titleText = stringResource(CoreRString.onboarding_quick_pair_4_title),
-                    descText = stringResource(CoreRString.onboarding_quick_pair_4_desc),
-                    buttonText = stringResource(CoreRString.finish),
-                    position = TooltipPosition.Below,
-                    targetPadding = 24.dp,
                     onClick = { viewModel.onNext() },
                 )
             }

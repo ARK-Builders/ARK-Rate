@@ -13,6 +13,7 @@ import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.utils.findActivity
+import dev.arkbuilders.rate.feature.quick.presentation.QuickExternalNavigator
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -30,6 +31,7 @@ fun HandleQuickSideEffects(
     pagerState: PagerState,
     snackState: SnackbarHostState,
     ctx: Context,
+    externalNavigator: QuickExternalNavigator,
 ) {
     val selectTabEffect = remember { mutableStateOf<QuickScreenEffect.SelectTab?>(null) }
 
@@ -42,6 +44,7 @@ fun HandleQuickSideEffects(
                 viewModel = viewModel,
                 snackState = snackState,
                 ctx = ctx,
+                externalNavigator = externalNavigator,
             )
         }
     }
@@ -79,6 +82,7 @@ suspend fun handleQuickSideEffect(
     viewModel: QuickViewModel,
     snackState: SnackbarHostState,
     ctx: Context,
+    externalNavigator: QuickExternalNavigator,
 ) {
     when (effect) {
         is QuickScreenEffect.ShowSnackbarAdded -> {
@@ -127,5 +131,6 @@ suspend fun handleQuickSideEffect(
         }
 
         QuickScreenEffect.NavigateBack -> ctx.findActivity()?.finish()
+        QuickScreenEffect.NavigateToPairOnboarding -> externalNavigator.navigateToPairOnboarding()
     }
 }

@@ -12,6 +12,8 @@ import dev.arkbuilders.rate.core.domain.model.TimestampType
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
+import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
+import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
@@ -61,6 +63,8 @@ sealed class QuickScreenEffect {
 
     data class SelectTab(val groupId: Long) : QuickScreenEffect()
 
+    data object NavigateToPairOnboarding : QuickScreenEffect()
+
     data object NavigateBack : QuickScreenEffect()
 }
 
@@ -74,6 +78,7 @@ class QuickViewModel(
     private val groupReorderSwapUseCase: GroupReorderSwapUseCase,
     private val getTopResultUseCase: GetTopResultUseCase,
     private val analyticsManager: AnalyticsManager,
+    private val prefs: Prefs,
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
     override val container: Container<QuickScreenState, QuickScreenEffect> =
         container(QuickScreenState())
@@ -140,6 +145,11 @@ class QuickViewModel(
 
     fun onNavResultValue(newPairId: Long) =
         intent {
+            if (prefs.get(PreferenceKey.IsOnboardingQuickPairCompleted).not()) {
+                postSideEffect(QuickScreenEffect.NavigateToPairOnboarding)
+                return@intent
+            }
+
             val pair = quickRepo.getById(newPairId) ?: return@intent
             val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
@@ -349,6 +359,7 @@ class QuickViewModelFactory @AssistedInject constructor(
     private val groupReorderSwapUseCase: GroupReorderSwapUseCase,
     private val getTopResultUseCase: GetTopResultUseCase,
     private val analyticsManager: AnalyticsManager,
+    private val prefs: Prefs,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return QuickViewModel(
@@ -361,6 +372,7 @@ class QuickViewModelFactory @AssistedInject constructor(
             groupReorderSwapUseCase,
             getTopResultUseCase,
             analyticsManager,
+            prefs,
         ) as T
     }
 

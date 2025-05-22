@@ -11,6 +11,8 @@ sealed class PreferenceKey<out T>(val defaultValue: T) {
     data object BaseCurrencyCode : PreferenceKey<CurrencyCode>("USD")
 
     data object IsOnboardingCompleted : PreferenceKey<Boolean>(false)
+
+    data object IsOnboardingQuickPairCompleted : PreferenceKey<Boolean>(false)
 }
 
 interface Prefs {
