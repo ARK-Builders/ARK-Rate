@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
@@ -85,6 +86,7 @@ fun EditAssetScreen(
     val state by viewModel.collectAsState()
 
     Scaffold(
+        modifier = Modifier.safeDrawingPadding(),
         topBar = {
             AppTopBarBack(
                 title = stringResource(CoreRString.asset_detail),

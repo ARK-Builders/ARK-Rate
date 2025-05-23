@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,27 +69,25 @@ fun OnboardingQuickScreen(externalNavigator: OnboardingExternalNavigator) {
     var portfolioRect by remember { (mutableStateOf<Rect?>(null)) }
     var pairAlertRect by remember { (mutableStateOf<Rect?>(null)) }
 
-    Box {
-        Column {
-            QuickEmpty(
-                modifier = Modifier.weight(1f),
-                calculateModifier =
-                    Modifier.onGloballyPositioned { coordinates ->
-                        calculateRect = coordinates.boundsInRoot()
-                    },
-            )
+    Column(modifier = Modifier.safeDrawingPadding()) {
+        QuickEmpty(
+            modifier = Modifier.weight(1f),
+            calculateModifier =
+                Modifier.onGloballyPositioned { coordinates ->
+                    calculateRect = coordinates.boundsInRoot()
+                },
+        )
 
-            MockBottomNavigation(
-                portfolioModifier =
-                    Modifier.onGloballyPositioned { coordinates ->
-                        portfolioRect = coordinates.boundsInRoot()
-                    },
-                pairAlertModifier =
-                    Modifier.onGloballyPositioned { coordinates ->
-                        pairAlertRect = coordinates.boundsInRoot()
-                    },
-            )
-        }
+        MockBottomNavigation(
+            portfolioModifier =
+                Modifier.onGloballyPositioned { coordinates ->
+                    portfolioRect = coordinates.boundsInRoot()
+                },
+            pairAlertModifier =
+                Modifier.onGloballyPositioned { coordinates ->
+                    pairAlertRect = coordinates.boundsInRoot()
+                },
+        )
     }
     when (OnboardingQuickStep.entries[state.stepIndex]) {
         OnboardingQuickStep.Calculate -> {

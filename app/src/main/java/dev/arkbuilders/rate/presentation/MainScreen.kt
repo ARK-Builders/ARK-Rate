@@ -5,6 +5,7 @@
 package dev.arkbuilders.rate.presentation
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
@@ -115,11 +116,9 @@ fun MainScreen() {
         return
 
     Scaffold(
-        modifier =
-            Modifier
-                .safeDrawingPadding(),
         snackbarHost = {
             SnackbarHost(
+                modifier = Modifier.safeDrawingPadding(),
                 hostState = snackState,
             ) { data ->
                 val visuals = data.visuals
@@ -153,6 +152,7 @@ fun MainScreen() {
                 bottomBarVisible = bottomBarVisible,
             )
         },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) {
         DestinationsNavHost(
             engine = engine,
