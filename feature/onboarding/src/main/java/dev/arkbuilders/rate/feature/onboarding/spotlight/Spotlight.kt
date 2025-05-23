@@ -5,18 +5,15 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
@@ -36,7 +33,6 @@ fun Spotlight(
     padding: Dp = 0.dp,
 ) {
     val density = LocalDensity.current
-    val statusBarHeightPx = WindowInsets.systemBars.getTop(density).toFloat()
     val paddingPx = with(density) { padding.toPx() }
 
     var showSpotlight by remember { mutableStateOf(true) }
@@ -82,14 +78,11 @@ fun Spotlight(
                     }
                 }
 
-            // handle edge to edge
-            val adjustedRect = spotlightRect.translate(Offset(0f, -statusBarHeightPx))
-
             val spotlightPath =
                 Path().apply {
                     when (shape) {
-                        SpotlightShape.Circle -> addOval(adjustedRect)
-                        SpotlightShape.Rect -> addRect(adjustedRect)
+                        SpotlightShape.Circle -> addOval(spotlightRect)
+                        SpotlightShape.Rect -> addRect(spotlightRect)
                     }
                 }
 
