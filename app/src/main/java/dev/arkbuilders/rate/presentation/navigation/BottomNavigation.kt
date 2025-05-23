@@ -10,6 +10,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -19,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -89,7 +91,7 @@ fun RateBottomNavigation(
             BottomNavItem.Assets,
             BottomNavItem.Settings,
         )
-    Column {
+    Column(modifier = Modifier.navigationBarsPadding()) {
         HorizontalDivider(thickness = 1.dp, color = ArkColor.BorderSecondary)
         BottomAppBar(
             containerColor = Color.White,

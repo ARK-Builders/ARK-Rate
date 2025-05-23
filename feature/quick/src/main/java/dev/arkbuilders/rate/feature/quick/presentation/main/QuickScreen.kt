@@ -3,8 +3,11 @@ package dev.arkbuilders.rate.feature.quick.presentation.main
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.PagerState
@@ -54,6 +57,7 @@ import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
+import dev.arkbuilders.rate.feature.quick.presentation.QuickExternalNavigator
 import dev.arkbuilders.rate.feature.quick.presentation.ui.PinnedQuickSwipeItem
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickOptionsBottomSheet
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickSwipeItem
@@ -68,6 +72,7 @@ fun QuickScreen(
     navigator: DestinationsNavigator,
     // expect new pair id
     resultRecipient: ResultRecipient<AddQuickScreenDestination, Long>,
+    externalNavigator: QuickExternalNavigator,
 ) {
     val ctx = LocalContext.current
     val component =
@@ -108,9 +113,11 @@ fun QuickScreen(
         pagerState = pagerState,
         snackState = snackState,
         ctx = ctx,
+        externalNavigator = externalNavigator,
     )
 
     Scaffold(
+        modifier = Modifier.statusBarsPadding().imePadding(),
         floatingActionButton = {
             if (state.initialized.not())
                 return@Scaffold
@@ -136,6 +143,7 @@ fun QuickScreen(
         snackbarHost = {
             RateSnackbarHost(snackState)
         },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) {
         Box(modifier = Modifier.padding(it)) {
             when {
