@@ -84,10 +84,6 @@ class PortfolioViewModel(
         intent {
             initPages()
 
-            prefs.flow(PreferenceKey.BaseCurrencyCode).drop(1).onEach {
-                initPages()
-            }.launchIn(viewModelScope)
-
             assetsRepo.allAssetsFlow().drop(1).onEach {
                 initPages()
             }.launchIn(viewModelScope)
@@ -104,6 +100,12 @@ class PortfolioViewModel(
                 postSideEffect(PortfolioScreenEffect.SelectTab(result.added.first().groupId))
                 postSideEffect(PortfolioScreenEffect.ShowSnackbarAdded(result.added.toList()))
             }
+        }
+
+    fun onChangeBaseCurrency(baseCode: CurrencyCode) =
+        intent {
+            prefs.set(PreferenceKey.BaseCurrencyCode, baseCode)
+            initPages()
         }
 
     fun onAssetRemove(asset: Asset) =
