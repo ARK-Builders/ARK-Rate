@@ -47,8 +47,8 @@ jobs:
         run: cat core/data/src/main/assets/fiat-rates.json
       
       #- name: Move JSON file to assets directory
-       # run: mv crypto-rates.json core/data/src/main/assets/
-
+       #run: mv crypto-rates.json core/data/src/main/assets/
+       
       - name: Push into Git
         run: |-
           git config --global user.email "bot@ark-builders.dev"
