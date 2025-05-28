@@ -40,9 +40,14 @@ jobs:
       - name: Fetch fiat
         run: curl -X GET "https://openexchangerates.org/api/latest.json?app_id=${{secrets.APP_ID}}" --output core/data/src/main/assets/fiat-rates.json
 
-      - name: print secret
-        run: echo ${{secrets.APP_ID}}
-      
+      - name: Check if APP_ID secret is set
+        run: |
+          if [ -z "${{ secrets.APP_ID }}" ]; then
+            echo "APP_ID is NOT set"
+          else
+            echo "APP_ID is set (value is masked)"
+          fi
+
       - name: print to debug
         run: cat core/data/src/main/assets/fiat-rates.json
       
