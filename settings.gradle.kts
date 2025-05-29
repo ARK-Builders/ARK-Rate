@@ -1,19 +1,30 @@
+import java.util.Properties
+
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
         google()
         mavenCentral()
-        jcenter()
-        maven { url "https://jitpack.io" }
+        maven {
+            setUrl("https://jitpack.io")
+        }
     }
+    plugins {
+        kotlin("jvm") version "2.1.20"
+    }
+}
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        maven { url "https://jitpack.io" }
-        jcenter()
+        maven {
+            setUrl("https://jitpack.io")
+        }
         maven {
             // Important note:
             // To authenticate with GitHub Packages, you need to generate a fine-grained personal access token
@@ -23,10 +34,10 @@ dependencyResolutionManagement {
             // https://github.com/settings/personal-access-tokens/new
             // https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-with-a-personal-access-token
 
-            def localProps = getLocalProps()
+            val localProps = getLocalProps()
 
             name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/ARK-Builders/ark-android"
+            setUrl("https://maven.pkg.github.com/ARK-Builders/ark-android")
             credentials {
                 username = "token"
                 password = localProps.getProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
@@ -35,27 +46,27 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "arkrate"
-include ':app'
-include ':fiaticons'
-include ':cryptoicons'
-include ':core:domain'
-include ':core:data'
-include ':core:presentation'
-include ':feature:quick'
-include ':core:db'
-include ':core:di'
-include ':feature:portfolio'
-include ':feature:pairalert'
-include ':feature:quickwidget'
-include ':feature:search'
-include ':feature:settings'
+include(":app")
+include(":fiaticons")
+include(":cryptoicons")
+include(":core:domain")
+include(":core:data")
+include(":core:presentation")
+include(":feature:quick")
+include(":core:db")
+include(":core:di")
+include(":feature:portfolio")
+include(":feature:pairalert")
+include(":feature:quickwidget")
+include(":feature:search")
+include(":feature:settings")
 
-def getLocalProps() {
-    def props = new Properties()
-    def localPropsFile = new File(rootDir, "local.properties")
+fun getLocalProps(): Properties {
+    val props = Properties()
+    val localPropsFile = File(rootDir, "local.properties")
 
     if (localPropsFile.exists()) {
-        localPropsFile.withInputStream { stream ->
+        localPropsFile.inputStream().use { stream ->
             props.load(stream)
         }
     }

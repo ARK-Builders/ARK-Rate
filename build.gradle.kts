@@ -8,6 +8,7 @@ plugins {
     id("com.google.gms.google-services") version "4.4.2" apply false
     id("com.google.firebase.crashlytics") version "3.0.1" apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    kotlin("jvm")
 }
 
 allprojects {
@@ -20,3 +21,10 @@ ktlint {
 }
 
 tasks.getByPath("ktlintCheck").shouldRunAfter("ktlintFormat")
+dependencies {
+    implementation(kotlin("stdlib-jdk8"))
+}
+
+kotlin {
+    jvmToolchain(8)
+}
