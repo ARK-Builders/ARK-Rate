@@ -75,6 +75,18 @@ graph TD
 
 **Hit that ⭐ Star button** if ARK Rate sparks your financial fire! Your support drives us forward!
 
+## 🔧 Building
+To build the project, you need to provide a personal access token to download dependencies hosted on GitHub Packages.
+
+### 📦 GitHub Packages Authentication
+
+1. Generate a **fine-grained personal access token**:
+   - URL: [Create token](https://github.com/settings/personal-access-tokens/new)
+   - Required access: **Public repositories**
+
+2. Add the token to your `local.properties` file at the root of the project: `gpr.token=$your_github_token`
+
+
 ## 🌐 Connect with ARK-Builders
 [![ARK Builders](https://img.shields.io/badge/ARK%20Builders-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/uRWJyYBr)
 [![ark_builders](https://img.shields.io/badge/ark__builders-0088CC?logo=telegram&logoColor=white)](https://t.me/ark_builders)
