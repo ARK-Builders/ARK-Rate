@@ -4,16 +4,23 @@ package dev.arkbuilders.rate.feature.portfolio.presentation.main
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,8 +36,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,11 +49,13 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.generated.portfolio.destinations.AddAssetScreenDestination
 import com.ramcosta.composedestinations.generated.portfolio.destinations.EditAssetScreenDestination
+import com.ramcosta.composedestinations.generated.search.destinations.SearchCurrencyScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.ResultRecipient
 import com.ramcosta.composedestinations.result.onResult
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv16
@@ -62,6 +73,7 @@ import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomShe
 import dev.arkbuilders.rate.feature.portfolio.di.PortfolioComponentHolder
 import dev.arkbuilders.rate.feature.portfolio.domain.model.Asset
 import dev.arkbuilders.rate.feature.portfolio.presentation.model.AddAssetsNavResult
+import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import java.math.BigDecimal
@@ -70,7 +82,8 @@ import java.math.BigDecimal
 @Composable
 fun PortfolioScreen(
     navigator: DestinationsNavigator,
-    resultRecipient: ResultRecipient<AddAssetScreenDestination, AddAssetsNavResult>,
+    addResultRecipient: ResultRecipient<AddAssetScreenDestination, AddAssetsNavResult>,
+    searchResultRecipient: ResultRecipient<SearchCurrencyScreenDestination, SearchNavResult>,
 ) {
     val ctx = LocalContext.current
     val component =
@@ -81,8 +94,11 @@ fun PortfolioScreen(
     val viewModel: PortfolioViewModel =
         viewModel(factory = component.assetsVMFactory())
 
-    resultRecipient.onResult {
+    addResultRecipient.onResult {
         viewModel.onReturnFromAddScreen(it)
+    }
+    searchResultRecipient.onResult {
+        viewModel.onChangeBaseCurrency(it.code)
     }
 
     BackHandler {
@@ -145,6 +161,16 @@ fun PortfolioScreen(
                             navigator
                                 .navigate(EditAssetScreenDestination(display.asset.id))
                         },
+                        onChangeBaseCurrency = {
+                            navigator.navigate(
+                                SearchCurrencyScreenDestination(
+                                    title =
+                                        ctx.getString(
+                                            CoreRString.change_base_currency,
+                                        ),
+                                ),
+                            )
+                        },
                         onFilterChange = viewModel::onFilterChange,
                         onDelete = viewModel::onAssetRemove,
                     )
@@ -205,6 +231,7 @@ private fun Content(
     pagerState: PagerState,
     onEditGroups: () -> Unit,
     onClick: (PortfolioDisplayAsset) -> Unit,
+    onChangeBaseCurrency: () -> Unit,
     onFilterChange: (String) -> Unit,
     onDelete: (Asset) -> Unit,
 ) {
@@ -227,6 +254,7 @@ private fun Content(
                 baseCode = state.baseCode,
                 amounts = state.pages.first().assets,
                 onClick = onClick,
+                onChangeBaseCurrency = onChangeBaseCurrency,
                 onDelete = onDelete,
             )
         } else {
@@ -240,6 +268,7 @@ private fun Content(
                     baseCode = state.baseCode,
                     amounts = state.pages[index].assets,
                     onClick = onClick,
+                    onChangeBaseCurrency = onChangeBaseCurrency,
                     onDelete = onDelete,
                 )
             }
@@ -253,6 +282,7 @@ private fun GroupPage(
     baseCode: CurrencyCode,
     amounts: List<PortfolioDisplayAsset>,
     onClick: (PortfolioDisplayAsset) -> Unit = {},
+    onChangeBaseCurrency: () -> Unit,
     onDelete: (Asset) -> Unit,
 ) {
     val total =
@@ -268,8 +298,40 @@ private fun GroupPage(
         ) {
             if (filter.isEmpty()) {
                 item {
+                    Spacer(Modifier.height(8.dp))
+                    Box(Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier =
+                                Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .padding(end = 14.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .clickable { onChangeBaseCurrency() }
+                                    .padding(4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier,
+                                text = baseCode,
+                                fontSize = 12.6.sp,
+                                fontWeight = FontWeight.W500,
+                                color = ArkColor.TextTertiary,
+                            )
+                            Icon(
+                                modifier =
+                                    Modifier
+                                        .padding(start = 8.dp)
+                                        .width(10.5.dp)
+                                        .height(6.dp),
+                                painter = painterResource(CoreRDrawable.ic_chevron),
+                                contentDescription = null,
+                                tint = ArkColor.TextTertiary,
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
                     Text(
-                        modifier = Modifier.padding(top = 32.dp),
+                        modifier = Modifier,
                         text = stringResource(CoreRString.portfolio_total_assets),
                         color = ArkColor.TextTertiary,
                         fontWeight = FontWeight.Medium,

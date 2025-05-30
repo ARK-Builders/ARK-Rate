@@ -36,6 +36,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Destination<ExternalModuleGraph>
 @Composable
 fun SearchCurrencyScreen(
+    title: String? = null,
     navKey: String? = null,
     navPos: Int? = null,
     prohibitedCodes: Array<CurrencyCode>? = null,
@@ -72,7 +73,7 @@ fun SearchCurrencyScreen(
     Scaffold(
         topBar = {
             AppTopBarBack(
-                title = stringResource(CoreRString.search_currency),
+                title = title ?: stringResource(CoreRString.search_currency),
                 onBackClick = { resultNavigator.navigateBack() },
             )
         },
