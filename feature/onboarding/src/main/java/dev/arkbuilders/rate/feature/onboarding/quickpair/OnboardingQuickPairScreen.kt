@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -130,7 +129,6 @@ fun OnboardingQuickPairScreen(navigator: DestinationsNavigator) {
         return
 
     Scaffold(
-        modifier = Modifier.safeDrawingPadding(),
         floatingActionButton = {
             FloatingActionButton(
                 contentColor = Color.White,
