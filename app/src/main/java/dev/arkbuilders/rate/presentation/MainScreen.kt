@@ -5,6 +5,7 @@
 package dev.arkbuilders.rate.presentation
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
@@ -21,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingQuickPairScreenDestination
@@ -52,6 +52,20 @@ import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAc
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR_GROUP_KEY
 import dev.arkbuilders.rate.presentation.navigation.AnimatedRateBottomNavigation
 import kotlinx.coroutines.flow.drop
+
+private val dontApplySafeDrawingPaddingRoutes =
+    listOf(
+        OnboardingScreenDestination.route,
+        OnboardingQuickScreenDestination.route,
+        OnboardingQuickPairScreenDestination.route,
+    )
+
+private val showBottomBarRoutes =
+    listOf(
+        QuickScreenDestination.route,
+        PortfolioScreenDestination.route,
+        SettingsScreenDestination.route,
+    )
 
 @Composable
 fun MainScreen() {
@@ -96,16 +110,19 @@ fun MainScreen() {
 
     val isKeyboardOpen by keyboardAsState()
     val bottomBarVisible = rememberSaveable { mutableStateOf(false) }
+    val applySafeDrawingPadding = remember { mutableStateOf(true) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: NavGraphs.main.startRoute.route
 
     bottomBarVisible.value =
-        when {
-            currentRoute.startsWith(QuickScreenDestination.route) -> true
-            currentRoute.startsWith(PortfolioScreenDestination.route) -> true
-            currentRoute.startsWith(SettingsScreenDestination.route) -> true
-            else -> false
+        showBottomBarRoutes.any {
+            currentRoute.startsWith(it)
+        }
+
+    applySafeDrawingPadding.value =
+        !dontApplySafeDrawingPaddingRoutes.any {
+            currentRoute.startsWith(it)
         }
 
     if (isKeyboardOpen)
@@ -117,7 +134,9 @@ fun MainScreen() {
     Scaffold(
         modifier =
             Modifier
-                .safeDrawingPadding(),
+                .let {
+                    if (applySafeDrawingPadding.value) it.safeDrawingPadding() else it
+                },
         snackbarHost = {
             SnackbarHost(
                 hostState = snackState,
@@ -153,6 +172,7 @@ fun MainScreen() {
                 bottomBarVisible = bottomBarVisible,
             )
         },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) {
         DestinationsNavHost(
             engine = engine,
