@@ -59,7 +59,7 @@ fun OnboardingScreen(navigator: DestinationsNavigator) {
     BackHandler {
         if (pageState.currentPage + 1 > 1) {
             scope.launch {
-                pageState.scrollToPage(pageState.currentPage - 1)
+                pageState.animateScrollToPage(pageState.currentPage - 1)
             }
         } else {
             ctx.findActivity()?.finish()
@@ -83,7 +83,7 @@ fun OnboardingScreen(navigator: DestinationsNavigator) {
             onClick = {
                 if (pageState.currentPage + 1 < items.size) {
                     scope.launch {
-                        pageState.scrollToPage(pageState.currentPage + 1)
+                        pageState.animateScrollToPage(pageState.currentPage + 1)
                     }
                 } else {
                     navigator.navigate(OnboardingQuickScreenDestination)
