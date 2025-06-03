@@ -80,6 +80,24 @@ android {
         }
     }
 
+    productFlavors.all {
+        val cryptoRatesLastModified =
+            rootProject.file("core/data/src/main/assets/crypto-rates.json").lastModified()
+        val fiatRatesLastModified =
+            rootProject.file("core/data/src/main/assets/fiat-rates.json").lastModified()
+
+        buildConfigField(
+            "long",
+            "CRYPTO_LAST_MODIFIED",
+            cryptoRatesLastModified.toString(),
+        )
+        buildConfigField(
+            "long",
+            "FIAT_LAST_MODIFIED",
+            fiatRatesLastModified.toString(),
+        )
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
