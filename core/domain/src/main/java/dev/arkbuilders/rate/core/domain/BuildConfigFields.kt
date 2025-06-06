@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.core.domain
 
+import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import java.time.OffsetDateTime
 
 data class BuildConfigFields(
@@ -9,6 +10,7 @@ data class BuildConfigFields(
     val isGooglePlayBuild: Boolean,
     val fallbackCryptoRatesFetchDate: OffsetDateTime,
     val fallbackFiatRatesFetchDate: OffsetDateTime,
+    val availableIconCodes: Set<CurrencyCode>,
 )
 
 interface BuildConfigFieldsProvider {
