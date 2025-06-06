@@ -53,6 +53,7 @@ class App : Application(), Configuration.Provider, CoreComponentProvider {
                 isGooglePlayBuild = BuildConfig.GOOGLE_PLAY_BUILD,
                 fallbackCryptoRatesFetchDate = fallbackCryptoRatesFetchDate,
                 fallbackFiatRatesFetchDate = fallbackFiatRatesFetchDate,
+                availableIconCodes = BuildConfig.ICON_CODES.toSet(),
             ),
         )
     }

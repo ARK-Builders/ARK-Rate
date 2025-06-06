@@ -96,6 +96,22 @@ android {
             "FIAT_LAST_MODIFIED",
             fiatRatesLastModified.toString(),
         )
+
+        val cryptoIcons = collectCurrencyIcons(project.rootDir.resolve("cryptoicons"))
+        val fiatIcons = collectCurrencyIcons(project.rootDir.resolve("fiaticons"))
+        val allIcons = (cryptoIcons + fiatIcons).distinct()
+
+        buildConfigField(
+            "String[]",
+            "ICON_CODES",
+            allIcons.joinToString(
+                prefix = "new String[] {",
+                postfix = "}",
+                separator = ", ",
+            ) {
+                "\"$it\""
+            },
+        )
     }
 
     compileOptions {
@@ -186,3 +202,10 @@ dependencies {
 tasks.getByPath(":app:preBuild").dependsOn("ktlintCheck")
 
 tasks.getByPath(":app:preBuild").dependsOn("ktlintFormat")
+
+fun collectCurrencyIcons(moduleDir: File): List<String> {
+    val drawableDir = moduleDir.resolve("src/main/res/drawable")
+    return drawableDir.listFiles()!!
+        .map { it.nameWithoutExtension.uppercase() }
+        .map { if (it == "curr_try") "try" else it }
+}
