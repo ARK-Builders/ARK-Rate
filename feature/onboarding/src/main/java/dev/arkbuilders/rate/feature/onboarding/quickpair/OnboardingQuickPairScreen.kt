@@ -208,7 +208,7 @@ fun OnboardingQuickPairScreen(navigator: DestinationsNavigator) {
         Spotlight(
             targetRect = it,
             onTargetClicked = {},
-            onDismiss = {},
+            onDismiss = { viewModel.onNext() },
             shape = SpotlightShape.Rect,
             padding = 0.dp,
         )

@@ -105,7 +105,7 @@ fun OnboardingQuickScreen(
                 Spotlight(
                     targetRect = it,
                     onTargetClicked = {},
-                    onDismiss = {},
+                    onDismiss = { viewModel.onNext() },
                     shape = SpotlightShape.Circle,
                     padding = 20.dp,
                 )
@@ -126,7 +126,7 @@ fun OnboardingQuickScreen(
                 Spotlight(
                     targetRect = it,
                     onTargetClicked = {},
-                    onDismiss = {},
+                    onDismiss = { viewModel.onNext() },
                     shape = SpotlightShape.Circle,
                     padding = 20.dp,
                 )
