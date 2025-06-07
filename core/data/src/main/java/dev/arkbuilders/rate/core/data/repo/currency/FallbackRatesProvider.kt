@@ -6,12 +6,11 @@ import dev.arkbuilders.rate.core.data.mapper.CryptoRateResponseMapper
 import dev.arkbuilders.rate.core.data.mapper.FiatRateResponseMapper
 import dev.arkbuilders.rate.core.data.network.dto.CryptoRateResponse
 import dev.arkbuilders.rate.core.data.network.dto.FiatRateResponse
+import dev.arkbuilders.rate.core.domain.BuildConfigFieldsProvider
 import dev.arkbuilders.rate.core.domain.model.CurrencyRate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.time.Instant
 import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,6 +19,7 @@ class FallbackRatesProvider @Inject constructor(
     private val ctx: Context,
     private val fiatRateResponseMapper: FiatRateResponseMapper,
     private val cryptoRateResponseMapper: CryptoRateResponseMapper,
+    private val buildConfigFieldsProvider: BuildConfigFieldsProvider,
 ) {
     suspend fun provideRatesAndFetchDate(): Pair<List<CurrencyRate>, OffsetDateTime> =
         withContext(Dispatchers.IO) {
@@ -37,10 +37,12 @@ class FallbackRatesProvider @Inject constructor(
             val cryptoResp = Gson().fromJson(cryptoJson, Array<CryptoRateResponse>::class.java)
             val cryptoRates = cryptoRateResponseMapper.map(cryptoResp.toList())
 
+            val fields = buildConfigFieldsProvider.provide()
+
             val fetchDate =
-                OffsetDateTime.ofInstant(
-                    Instant.ofEpochSecond(fiatResp.timestamp),
-                    ZoneOffset.UTC,
+                minOf(
+                    fields.fallbackCryptoRatesFetchDate,
+                    fields.fallbackFiatRatesFetchDate,
                 )
             val rates = cryptoRates + fiatRates
             return@withContext rates to fetchDate

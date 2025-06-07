@@ -10,24 +10,18 @@ import dev.arkbuilders.rate.core.domain.model.CurrencyName
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
-import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
+import dev.arkbuilders.rate.core.domain.usecase.SearchUseCase
 import dev.arkbuilders.rate.feature.search.di.SearchScope
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
 
-data class CurrencySearchModel(
-    val code: CurrencyCode,
-    val name: String,
-    val isProhibited: Boolean,
-)
-
 data class SearchScreenState(
-    val frequent: List<CurrencySearchModel> = emptyList(),
-    val all: List<CurrencySearchModel> = emptyList(),
+    val prohibitedCodes: List<CurrencyCode> = emptyList(),
+    val frequent: List<CurrencyName> = emptyList(),
+    val all: List<CurrencyName> = emptyList(),
     val filter: String = "",
-    val topResults: List<CurrencySearchModel> = emptyList(),
-    val topResultsFiltered: List<CurrencySearchModel> = emptyList(),
+    val topResultsFiltered: List<CurrencyName> = emptyList(),
     val initialized: Boolean = false,
     val showCodeProhibitedDialog: Boolean = false,
 )
@@ -42,29 +36,24 @@ class SearchViewModel(
     private val prohibitedCodes: List<CurrencyCode>?,
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
-    private val getTopResultUseCase: GetTopResultUseCase,
+    private val searchUseCase: SearchUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ContainerHost<SearchScreenState, SearchScreenEffect>,
     ViewModel() {
     override val container: Container<SearchScreenState, SearchScreenEffect> =
-        container(SearchScreenState())
+        container(SearchScreenState(prohibitedCodes = prohibitedCodes ?: emptyList()))
 
     init {
         analyticsManager.trackScreen("SearchScreen")
 
         intent {
-            val all = currencyRepo.getCurrencyNames().mapToSearchModel()
-            val frequent =
-                calcFrequentCurrUseCase.invoke()
-                    .map { currencyRepo.nameByCode(it) }
-                    .mapToSearchModel()
-            val topResults = getTopResultUseCase().mapToSearchModel()
+            val all = currencyRepo.getCurrencyNames()
+            val frequent = calcFrequentCurrUseCase.invoke().map { currencyRepo.nameByCode(it) }
 
             reduce {
                 state.copy(
                     frequent = frequent,
                     all = all,
-                    topResults = topResults,
                     initialized = true,
                 )
             }
@@ -73,16 +62,20 @@ class SearchViewModel(
 
     fun onInputChange(input: String) =
         blockingIntent {
-            val filtered =
-                state.topResults
-                    .filter {
-                        it.name.contains(input, ignoreCase = true) ||
-                            it.code.contains(input, ignoreCase = true)
-                    }
-            reduce { state.copy(filter = input, topResultsFiltered = filtered) }
+            reduce {
+                state.copy(
+                    filter = input,
+                    topResultsFiltered =
+                        searchUseCase(
+                            state.all,
+                            state.frequent.map { it.code },
+                            input,
+                        ),
+                )
+            }
         }
 
-    fun onClick(model: CurrencySearchModel) =
+    fun onClick(model: CurrencyName) =
         intent {
             prohibitedCodes?.let {
                 if (model.code in prohibitedCodes) {
@@ -101,12 +94,6 @@ class SearchViewModel(
         intent {
             reduce { state.copy(showCodeProhibitedDialog = false) }
         }
-
-    private fun List<CurrencyName>.mapToSearchModel() =
-        map { name ->
-            val isProhibited = prohibitedCodes?.let { name.code in it } ?: false
-            CurrencySearchModel(code = name.code, name = name.name, isProhibited = isProhibited)
-        }
 }
 
 class SearchViewModelFactory @AssistedInject constructor(
@@ -115,7 +102,7 @@ class SearchViewModelFactory @AssistedInject constructor(
     @Assisted private val prohibitedCodes: List<CurrencyCode>?,
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
-    private val getTopResultUseCase: GetTopResultUseCase,
+    private val searchUseCase: SearchUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -125,7 +112,7 @@ class SearchViewModelFactory @AssistedInject constructor(
             prohibitedCodes,
             currencyRepo,
             calcFrequentCurrUseCase,
-            getTopResultUseCase,
+            searchUseCase,
             analyticsManager,
         ) as T
     }
