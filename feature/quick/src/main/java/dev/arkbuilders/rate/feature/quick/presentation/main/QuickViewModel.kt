@@ -15,8 +15,8 @@ import dev.arkbuilders.rate.core.domain.repo.GroupRepo
 import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
-import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
+import dev.arkbuilders.rate.core.domain.usecase.SearchUseCase
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderSheetState
@@ -43,7 +43,7 @@ data class QuickScreenState(
     val filter: String = "",
     val currencies: List<CurrencyName> = emptyList(),
     val frequent: List<CurrencyName> = emptyList(),
-    val topResults: List<CurrencyName> = emptyList(),
+    val topResultsFiltered: List<CurrencyName> = emptyList(),
     val pages: List<QuickScreenPage> = emptyList(),
     val pairOptionsData: PairOptionsData? = null,
     val editGroupReorderSheetState: EditGroupReorderSheetState? = null,
@@ -72,7 +72,7 @@ class QuickViewModel(
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val groupReorderSwapUseCase: GroupReorderSwapUseCase,
-    private val getTopResultUseCase: GetTopResultUseCase,
+    private val searchUseCase: SearchUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
     override val container: Container<QuickScreenState, QuickScreenEffect> =
@@ -113,11 +113,9 @@ class QuickViewModel(
                 val frequent =
                     calcFrequentCurrUseCase.invoke()
                         .map { currencyRepo.nameByCode(it) }
-                val topResults = getTopResultUseCase()
                 reduce {
                     state.copy(
                         frequent = frequent,
-                        topResults = topResults,
                     )
                 }
             }.launchIn(viewModelScope)
@@ -125,13 +123,11 @@ class QuickViewModel(
             val frequent =
                 calcFrequentCurrUseCase()
                     .map { currencyRepo.nameByCode(it) }
-            val topResults = getTopResultUseCase()
             val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
                 state.copy(
                     currencies = allCurrencies,
                     frequent = frequent,
-                    topResults = topResults,
                     pages = pages,
                     initialized = true,
                 )
@@ -185,7 +181,17 @@ class QuickViewModel(
 
     fun onFilterChanged(filter: String) =
         blockingIntent {
-            reduce { state.copy(filter = filter) }
+            reduce {
+                state.copy(
+                    filter = filter,
+                    topResultsFiltered =
+                        searchUseCase(
+                            state.currencies,
+                            state.frequent.map { it.code },
+                            filter,
+                        ),
+                )
+            }
         }
 
     fun onDelete(pair: QuickPair) =
@@ -347,7 +353,7 @@ class QuickViewModelFactory @AssistedInject constructor(
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val groupReorderSwapUseCase: GroupReorderSwapUseCase,
-    private val getTopResultUseCase: GetTopResultUseCase,
+    private val searchUseCase: SearchUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -359,7 +365,7 @@ class QuickViewModelFactory @AssistedInject constructor(
             convertUseCase,
             calcFrequentCurrUseCase,
             groupReorderSwapUseCase,
-            getTopResultUseCase,
+            searchUseCase,
             analyticsManager,
         ) as T
     }
