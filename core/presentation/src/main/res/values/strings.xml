@@ -189,9 +189,9 @@
     <string name="onboarding_4_desc">Stay updated on your total assets and currency value changes in one place.</string>
 
     <string name="onboarding_quick_empty_1_title">Start a quick calculation</string>
-    <string name="onboarding_quick_empty_1_desc">Convert any money to one or more currencies at same time. Save the result to recall it later.</string>
+    <string name="onboarding_quick_empty_1_desc">Convert any currency to one or more currencies at same time. Save the result to recall it later.</string>
     <string name="onboarding_quick_empty_2_title">Keep track of your assets</string>
-    <string name="onboarding_quick_empty_2_desc">Use the Portfolio feature to add your money across all wallets and cards.</string>
+    <string name="onboarding_quick_empty_2_desc">Use the Portfolio feature to add your assets across all wallets and cards.</string>
     <string name="onboarding_quick_empty_3_title">Alerts to let you know about price changes</string>
     <string name="onboarding_quick_empty_3_desc">To set up the alerts, click on the “Alerts” menu.</string>
 
@@ -200,7 +200,7 @@
     <string name="onboarding_quick_pair_2_title">Swipe the pair to the left to delete</string>
     <string name="onboarding_quick_pair_2_desc">Delete a calculation quickly by swiping left.</string>
     <string name="onboarding_quick_pair_3_title">Swipe the pinned pair to the right to unpin a calculation</string>
-    <string name="onboarding_quick_pair_3_desc">Unpin a calculation to keep it in history.</string>
+    <string name="onboarding_quick_pair_3_desc">Unpin a calculation to move it to calculation history.</string>
     <string name="onboarding_quick_pair_4_title">Calculation context menu</string>
     <string name="onboarding_quick_pair_4_desc">Tap to show the complete menu.</string>
 
