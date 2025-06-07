@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -83,7 +84,10 @@ fun OnboardingScreen(navigator: DestinationsNavigator) {
             onClick = {
                 if (pageState.currentPage + 1 < items.size) {
                     scope.launch {
-                        pageState.animateScrollToPage(pageState.currentPage + 1)
+                        pageState.animateScrollToPage(
+                            pageState.currentPage + 1,
+                            animationSpec = tween(durationMillis = 1000),
+                        )
                     }
                 } else {
                     navigator.navigate(OnboardingQuickScreenDestination)
