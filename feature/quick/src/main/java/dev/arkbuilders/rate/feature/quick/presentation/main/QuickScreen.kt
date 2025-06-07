@@ -277,8 +277,7 @@ private fun Content(
         }
         if (state.filter.isNotEmpty()) {
             QuickSearchPage(
-                filter = state.filter,
-                topResults = state.topResults,
+                topResultsFiltered = state.topResultsFiltered,
                 onNewCode = onNewCode,
             )
         } else {

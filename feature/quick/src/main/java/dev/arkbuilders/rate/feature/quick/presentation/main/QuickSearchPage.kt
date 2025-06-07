@@ -15,21 +15,15 @@ import dev.arkbuilders.rate.core.presentation.ui.NoResult
 
 @Composable
 fun QuickSearchPage(
-    filter: String,
-    topResults: List<CurrencyName>,
+    topResultsFiltered: List<CurrencyName>,
     onNewCode: (CurrencyCode) -> Unit,
 ) {
-    val filtered =
-        topResults.filter {
-            it.name.contains(filter, ignoreCase = true) ||
-                it.code.contains(filter, ignoreCase = true)
-        }
-    if (filtered.isNotEmpty()) {
+    if (topResultsFiltered.isNotEmpty()) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             item {
                 ListHeader(text = stringResource(CoreRString.top_results))
             }
-            items(filtered) { name ->
+            items(topResultsFiltered) { name ->
                 CurrencyInfoItem(name) { onNewCode(it.code) }
             }
         }
