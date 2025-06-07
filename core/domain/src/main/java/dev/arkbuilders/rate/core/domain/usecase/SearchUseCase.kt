@@ -19,12 +19,20 @@ class SearchUseCase(
                         it.code.contains(query, ignoreCase = true)
                 }.sortedBy { it.code }
 
-        val prefix =
-            filtered.filter { it.code.startsWith(query, ignoreCase = true) }
+        val prefixAndIcons =
+            filtered.filter {
+                it.code.startsWith(
+                    query,
+                    ignoreCase = true,
+                ) && it.code in buildConfigFields.availableIconCodes
+            }
+
+        val prefix = filtered.filter { it.code.startsWith(query, ignoreCase = true) }
+
         val frequent = filtered.filter { it.code in frequent }
         val icons = filtered.filter { it.code in buildConfigFields.availableIconCodes }
 
-        val result = prefix + frequent + icons + filtered
+        val result = prefixAndIcons + prefix + frequent + icons + filtered
         return result.distinct()
     }
 }
