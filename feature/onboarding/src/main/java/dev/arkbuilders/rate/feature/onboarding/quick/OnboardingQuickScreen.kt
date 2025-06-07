@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.feature.onboarding.quick
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
@@ -45,7 +47,10 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 @Destination<ExternalModuleGraph>
-fun OnboardingQuickScreen(externalNavigator: OnboardingExternalNavigator) {
+fun OnboardingQuickScreen(
+    navigator: DestinationsNavigator,
+    externalNavigator: OnboardingExternalNavigator,
+) {
     val ctx = LocalContext.current
     val onboardingComponent =
         remember {
@@ -59,9 +64,14 @@ fun OnboardingQuickScreen(externalNavigator: OnboardingExternalNavigator) {
 
     val state by viewModel.collectAsState()
 
+    BackHandler {
+        viewModel.onBack()
+    }
+
     viewModel.collectSideEffect { effect ->
         when (effect) {
             OnboardingQuickEffect.Finish -> externalNavigator.navigateOnFinish()
+            OnboardingQuickEffect.NavBack -> navigator.popBackStack()
         }
     }
 

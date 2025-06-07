@@ -195,6 +195,7 @@ fun MainScreen() {
                         }
                     }
                 OnboardingQuickScreen(
+                    navigator = destinationsNavigator,
                     externalNavigator = externalNavigator,
                 )
             }

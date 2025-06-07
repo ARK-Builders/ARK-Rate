@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.feature.onboarding.quickpair
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -102,9 +103,14 @@ fun OnboardingQuickPairScreen(navigator: DestinationsNavigator) {
 
     val state by viewModel.collectAsState()
 
+    BackHandler {
+        viewModel.onBack()
+    }
+
     viewModel.collectSideEffect { effect ->
         when (effect) {
             OnboardingQuickPairEffect.Finish -> navigator.popBackStack()
+            OnboardingQuickPairEffect.NavBack -> navigator.popBackStack()
         }
     }
 

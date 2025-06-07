@@ -30,6 +30,8 @@ data class OnboardingQuickPairState(
 )
 
 sealed class OnboardingQuickPairEffect {
+    data object NavBack : OnboardingQuickPairEffect()
+
     data object Finish : OnboardingQuickPairEffect()
 }
 
@@ -66,6 +68,19 @@ class OnboardingQuickPairViewModel(
 
             reduce {
                 state.copy(stepIndex = nextIndex)
+            }
+        }
+
+    fun onBack() =
+        intent {
+            val prevIndex = state.stepIndex - 1
+            if (prevIndex < 0) {
+                postSideEffect(OnboardingQuickPairEffect.NavBack)
+                return@intent
+            }
+
+            reduce {
+                state.copy(stepIndex = prevIndex)
             }
         }
 
