@@ -36,7 +36,10 @@ jobs:
         
       - name: Fetch fiat
         run: curl -X GET "https://openexchangerates.org/api/latest.json?app_id=${{ secrets.APP_ID }}" --output core/data/src/main/assets/fiat-rates.json
-
+      
+      - name: cat file
+        run: cat core/data/src/main/assets/fiat-rates.json
+      
      # - name: Move JSON file to assets directory
        # run: mv crypto-rates.json core/data/src/main/assets/
        
