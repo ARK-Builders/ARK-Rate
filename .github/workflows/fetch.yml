@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+env:
+  APP_ID: ${{ secrets.APP_ID }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,7 +39,7 @@ jobs:
         
       - name: Fetch fiat
         run: curl -X GET "https://openexchangerates.org/api/latest.json?app_id=${{ secrets.APP_ID }}" --output core/data/src/main/assets/fiat-rates.json
-      
+        
       - name: cat file
         run: cat core/data/src/main/assets/fiat-rates.json
       
