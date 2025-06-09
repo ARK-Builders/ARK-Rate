@@ -1,4 +1,4 @@
-name: Fetch exchange rates v2
+name: Fetch Exchange Rates
 
 on:
   workflow_dispatch:
@@ -38,7 +38,7 @@ jobs:
         run: python fetch-rates.py
         
       - name: Fetch fiat
-        run: curl -X GET "https://openexchangerates.org/api/latest.json?app_id=${{secrets.APP_ID}}" --output core/data/src/main/assets/fiat-rates.json
+        run: curl -X GET "https://openexchangerates.org/api/latest.json?app_id=$APP_ID" --output core/data/src/main/assets/fiat-rates.json
 
       - name: Check if APP_ID secret is set
         run: |
