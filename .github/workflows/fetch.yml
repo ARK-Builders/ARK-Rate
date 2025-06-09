@@ -5,8 +5,8 @@ on:
   schedule:
     - cron: "0 0,8,16 * * *"
     
-env:
-  APP_ID: ${{ secrets.APP_ID }}
+#env:
+ # APP_ID: ${{ secrets.APP_ID }}
 
 permissions:
   contents: write
