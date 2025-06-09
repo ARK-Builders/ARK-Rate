@@ -4,19 +4,16 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 0,8,16 * * *"
-  push:
-    branches:
-      - main
-
+    
 env:
   APP_ID: ${{ secrets.APP_ID }}
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-  
-    permissions:
-      contents: write
 
     steps:
       - name: Check out the repository
