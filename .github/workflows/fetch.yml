@@ -35,10 +35,7 @@ jobs:
       #  run: python fetch-rates.py
         
       - name: Fetch fiat
-        env:
-          APP_ID: ${{ secrets.APP_ID }}
-        run: |
-          curl -f -X GET "https://openexchangerates.org/api/latest.json?app_id=${{ secrets.APP_ID }}" --output core/data/src/main/assets/fiat-rates.json
+        run: curl -f -X GET "https://openexchangerates.org/api/latest.json?app_id=${{ secrets.APP_ID }}" --output core/data/src/main/assets/fiat-rates.json
           
       - name: cat file
         run: cat core/data/src/main/assets/fiat-rates.json
