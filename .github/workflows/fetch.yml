@@ -37,8 +37,12 @@ jobs:
       - name: Fetch fiat
         env:
           APP_ID: ${{ secrets.APP_ID }}
-        run: curl -X GET "https://openexchangerates.org/api/latest.json?app_id=$APP_ID" --output core/data/src/main/assets/fiat-rates.json
-        
+        run: |
+          echo "Using APP_ID: ${APP_ID:0:4}****" # optional: just to check it's populated (safe partial print)
+          curl -f -X GET "https://openexchangerates.org/api/latest.json?app_id=$APP_ID" \
+            --output core/data/src/main/assets/fiat-rates.json
+
+
       - name: cat file
         run: cat core/data/src/main/assets/fiat-rates.json
       
