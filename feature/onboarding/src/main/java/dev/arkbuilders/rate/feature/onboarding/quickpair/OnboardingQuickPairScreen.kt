@@ -219,8 +219,8 @@ fun OnboardingQuickPairScreen(navigator: DestinationsNavigator) {
             quickPairRect?.let {
                 SpotlightTooltip(
                     targetRect = it,
-                    titleText = stringResource(CoreRString.onboarding_quick_pair_1_title),
-                    descText = stringResource(CoreRString.onboarding_quick_pair_1_desc),
+                    titleText = stringResource(CoreRString.onboarding_quick_calc_1_title),
+                    descText = stringResource(CoreRString.onboarding_quick_calc_1_desc),
                     buttonText = stringResource(CoreRString.next),
                     position = TooltipPosition.Below,
                     targetPadding = 24.dp,
@@ -234,8 +234,8 @@ fun OnboardingQuickPairScreen(navigator: DestinationsNavigator) {
             quickPairRect?.let {
                 SpotlightTooltip(
                     targetRect = it,
-                    titleText = stringResource(CoreRString.onboarding_quick_pair_2_title),
-                    descText = stringResource(CoreRString.onboarding_quick_pair_2_desc),
+                    titleText = stringResource(CoreRString.onboarding_quick_calc_2_title),
+                    descText = stringResource(CoreRString.onboarding_quick_calc_2_desc),
                     buttonText = stringResource(CoreRString.next),
                     position = TooltipPosition.Below,
                     targetPadding = 24.dp,
@@ -249,8 +249,8 @@ fun OnboardingQuickPairScreen(navigator: DestinationsNavigator) {
             quickPairRect?.let {
                 SpotlightTooltip(
                     targetRect = it,
-                    titleText = stringResource(CoreRString.onboarding_quick_pair_3_title),
-                    descText = stringResource(CoreRString.onboarding_quick_pair_3_desc),
+                    titleText = stringResource(CoreRString.onboarding_quick_calc_3_title),
+                    descText = stringResource(CoreRString.onboarding_quick_calc_3_desc),
                     buttonText = stringResource(CoreRString.next),
                     position = TooltipPosition.Below,
                     targetPadding = 24.dp,
@@ -264,8 +264,8 @@ fun OnboardingQuickPairScreen(navigator: DestinationsNavigator) {
             quickPairRect?.let {
                 SpotlightTooltip(
                     targetRect = it,
-                    titleText = stringResource(CoreRString.onboarding_quick_pair_4_title),
-                    descText = stringResource(CoreRString.onboarding_quick_pair_4_desc),
+                    titleText = stringResource(CoreRString.onboarding_quick_calc_4_title),
+                    descText = stringResource(CoreRString.onboarding_quick_calc_4_desc),
                     buttonText = stringResource(CoreRString.finish),
                     position = TooltipPosition.Below,
                     targetPadding = 24.dp,
