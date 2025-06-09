@@ -5,6 +5,7 @@
 package dev.arkbuilders.rate.presentation
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
@@ -16,28 +17,55 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingQuickPairScreenDestination
+import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingQuickScreenDestination
+import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingScreenDestination
 import com.ramcosta.composedestinations.generated.portfolio.destinations.PortfolioScreenDestination
 import com.ramcosta.composedestinations.generated.quick.destinations.AddQuickScreenDestination
 import com.ramcosta.composedestinations.generated.quick.destinations.QuickScreenDestination
 import com.ramcosta.composedestinations.generated.settings.destinations.SettingsScreenDestination
+import com.ramcosta.composedestinations.manualcomposablecalls.composable
+import com.ramcosta.composedestinations.navargs.primitives.longNavType
 import com.ramcosta.composedestinations.rememberNavHostEngine
+import com.ramcosta.composedestinations.scope.resultRecipient
+import com.ramcosta.composedestinations.spec.Direction
+import com.ramcosta.composedestinations.utils.startDestination
+import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbar
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbar
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.utils.findActivity
 import dev.arkbuilders.rate.core.presentation.utils.keyboardAsState
+import dev.arkbuilders.rate.feature.onboarding.OnboardingExternalNavigator
+import dev.arkbuilders.rate.feature.onboarding.quick.OnboardingQuickScreen
+import dev.arkbuilders.rate.feature.quick.presentation.QuickExternalNavigator
+import dev.arkbuilders.rate.feature.quick.presentation.main.QuickScreen
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR_GROUP_KEY
 import dev.arkbuilders.rate.presentation.navigation.AnimatedRateBottomNavigation
 import kotlinx.coroutines.flow.drop
+
+private val dontApplySafeDrawingPaddingRoutes =
+    listOf(
+        OnboardingScreenDestination.route,
+        OnboardingQuickScreenDestination.route,
+        OnboardingQuickPairScreenDestination.route,
+    )
+
+private val showBottomBarRoutes =
+    listOf(
+        QuickScreenDestination.route,
+        PortfolioScreenDestination.route,
+        SettingsScreenDestination.route,
+    )
 
 @Composable
 fun MainScreen() {
@@ -45,6 +73,7 @@ fun MainScreen() {
     val navController = engine.rememberNavController()
     val snackState = remember { SnackbarHostState() }
     val ctx = LocalContext.current
+    var start: Direction? by remember { mutableStateOf(null) }
 
     LaunchedEffect(key1 = Unit) {
         val activity = ctx.findActivity()
@@ -69,28 +98,45 @@ fun MainScreen() {
                 snackState.showSnackbar(visuals)
             }
     }
+    LaunchedEffect(key1 = Unit) {
+        val completed = App.instance.coreComponent.prefs().get(PreferenceKey.IsOnboardingCompleted)
+        start =
+            if (completed) {
+                QuickScreenDestination
+            } else {
+                OnboardingScreenDestination
+            }
+    }
 
     val isKeyboardOpen by keyboardAsState()
     val bottomBarVisible = rememberSaveable { mutableStateOf(false) }
+    val applySafeDrawingPadding = remember { mutableStateOf(true) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: NavGraphs.main.startRoute.route
 
     bottomBarVisible.value =
-        when {
-            currentRoute.startsWith(QuickScreenDestination.route) -> true
-            currentRoute.startsWith(PortfolioScreenDestination.route) -> true
-            currentRoute.startsWith(SettingsScreenDestination.route) -> true
-            else -> false
+        showBottomBarRoutes.any {
+            currentRoute.startsWith(it)
+        }
+
+    applySafeDrawingPadding.value =
+        !dontApplySafeDrawingPaddingRoutes.any {
+            currentRoute.startsWith(it)
         }
 
     if (isKeyboardOpen)
         bottomBarVisible.value = false
 
+    if (start == null)
+        return
+
     Scaffold(
         modifier =
             Modifier
-                .safeDrawingPadding(),
+                .let {
+                    if (applySafeDrawingPadding.value) it.safeDrawingPadding() else it
+                },
         snackbarHost = {
             SnackbarHost(
                 hostState = snackState,
@@ -126,12 +172,49 @@ fun MainScreen() {
                 bottomBarVisible = bottomBarVisible,
             )
         },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) {
         DestinationsNavHost(
             engine = engine,
             navController = navController,
+            start = start!!,
             navGraph = NavGraphs.main,
             modifier = Modifier.padding(it),
-        )
+        ) {
+            composable(OnboardingQuickScreenDestination) {
+                val externalNavigator =
+                    remember {
+                        object : OnboardingExternalNavigator {
+                            override fun navigateOnFinish() {
+                                destinationsNavigator.navigate(QuickScreenDestination) {
+                                    popUpTo(NavGraphs.main.startDestination) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                OnboardingQuickScreen(
+                    navigator = destinationsNavigator,
+                    externalNavigator = externalNavigator,
+                )
+            }
+
+            composable(QuickScreenDestination) {
+                val externalNavigator =
+                    remember {
+                        object : QuickExternalNavigator {
+                            override fun navigateToPairOnboarding() {
+                                destinationsNavigator.navigate(OnboardingQuickPairScreenDestination)
+                            }
+                        }
+                    }
+                QuickScreen(
+                    navigator = destinationsNavigator,
+                    resultRecipient = resultRecipient(longNavType),
+                    externalNavigator = externalNavigator,
+                )
+            }
+        }
     }
 }
