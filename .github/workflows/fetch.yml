@@ -3,7 +3,7 @@ name: Fetch Exchange Rates
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0,8,16 * * *"
+    - cron: "0 16 * * *"
     
 env:
   APP_ID: ${{ secrets.APP_ID }}
