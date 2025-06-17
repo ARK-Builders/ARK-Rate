@@ -6,7 +6,7 @@ import dev.arkbuilders.rate.core.domain.model.Group
 import java.math.BigDecimal
 import java.time.OffsetDateTime
 
-data class QuickPair(
+data class QuickCalculation(
     val id: Long,
     val from: CurrencyCode,
     val amount: BigDecimal,
@@ -18,8 +18,8 @@ data class QuickPair(
     fun isPinned() = pinnedDate != null
 }
 
-data class PinnedQuickPair(
-    val pair: QuickPair,
+data class PinnedQuickCalculation(
+    val pair: QuickCalculation,
     val actualTo: List<Amount>,
     val refreshDate: OffsetDateTime,
 )

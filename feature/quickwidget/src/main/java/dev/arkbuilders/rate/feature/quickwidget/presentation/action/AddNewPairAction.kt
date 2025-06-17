@@ -6,7 +6,7 @@ import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.state.updateAppWidgetState
-import dev.arkbuilders.rate.feature.quickwidget.presentation.QuickPairsWidgetReceiver
+import dev.arkbuilders.rate.feature.quickwidget.presentation.QuickCalculationsWidgetReceiver
 
 class AddNewPairAction : ActionCallback {
     override suspend fun onAction(
@@ -17,7 +17,7 @@ class AddNewPairAction : ActionCallback {
         var groupId: Long? = null
 
         updateAppWidgetState(context, glanceId) { pref ->
-            groupId = pref[QuickPairsWidgetReceiver.currentGroupIdKey]
+            groupId = pref[QuickCalculationsWidgetReceiver.currentGroupIdKey]
         }
         context.startActivity(
             Intent().apply {

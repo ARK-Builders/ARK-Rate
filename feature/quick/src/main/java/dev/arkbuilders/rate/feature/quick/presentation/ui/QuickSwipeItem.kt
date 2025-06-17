@@ -25,14 +25,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
-import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
+import dev.arkbuilders.rate.feature.quick.domain.model.QuickCalculation
 
 // bug: callbacks from swipe called multiply times
 @Composable
 fun PinnedQuickSwipeItem(
     content: @Composable () -> Unit,
-    pair: QuickPair,
-    onUnpin: (QuickPair) -> Unit,
+    pair: QuickCalculation,
+    onUnpin: (QuickCalculation) -> Unit,
     onDelete: () -> Unit,
 ) {
     val dismissState =
@@ -69,8 +69,8 @@ fun PinnedQuickSwipeItem(
 @Composable
 fun QuickSwipeItem(
     content: @Composable () -> Unit,
-    pair: QuickPair,
-    onPin: (QuickPair) -> Unit,
+    pair: QuickCalculation,
+    onPin: (QuickCalculation) -> Unit,
     onDelete: () -> Unit,
 ) {
     val dismissState =

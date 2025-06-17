@@ -52,8 +52,8 @@ import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameBottomShee
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomSheet
 import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
-import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
-import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
+import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickCalculation
+import dev.arkbuilders.rate.feature.quick.domain.model.QuickCalculation
 import dev.arkbuilders.rate.feature.quick.presentation.ui.PinnedQuickSwipeItem
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickOptionsBottomSheet
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickSwipeItem
@@ -174,7 +174,7 @@ fun QuickScreen(
                 onEdit = {
                     navigator.navigate(
                         AddQuickScreenDestination(
-                            quickPairId = it.id,
+                            quickCalculationId = it.id,
                             reuseNotEdit = false,
                             groupId = getCurrentGroup()?.id,
                         ),
@@ -183,7 +183,7 @@ fun QuickScreen(
                 onReuse = {
                     navigator.navigate(
                         AddQuickScreenDestination(
-                            quickPairId = it.id,
+                            quickCalculationId = it.id,
                             groupId = getCurrentGroup()?.id,
                         ),
                     )
@@ -252,10 +252,10 @@ private fun Content(
     pagerState: PagerState,
     onEditGroups: () -> Unit,
     onFilterChanged: (String) -> Unit,
-    onDelete: (QuickPair) -> Unit,
-    onClick: (QuickPair) -> Unit,
-    onPin: (QuickPair) -> Unit,
-    onUnpin: (QuickPair) -> Unit,
+    onDelete: (QuickCalculation) -> Unit,
+    onClick: (QuickCalculation) -> Unit,
+    onPin: (QuickCalculation) -> Unit,
+    onUnpin: (QuickCalculation) -> Unit,
     onNewCode: (CurrencyCode) -> Unit,
 ) {
     val groups = state.pages.map { it.group }
@@ -318,12 +318,12 @@ private fun Content(
 private fun GroupPage(
     frequent: List<CurrencyName>,
     currencies: List<CurrencyName>,
-    pinned: List<PinnedQuickPair>,
-    notPinned: List<QuickPair>,
-    onDelete: (QuickPair) -> Unit,
-    onPin: (QuickPair) -> Unit,
-    onUnpin: (QuickPair) -> Unit,
-    onClick: (QuickPair) -> Unit = {},
+    pinned: List<PinnedQuickCalculation>,
+    notPinned: List<QuickCalculation>,
+    onDelete: (QuickCalculation) -> Unit,
+    onPin: (QuickCalculation) -> Unit,
+    onUnpin: (QuickCalculation) -> Unit,
+    onClick: (QuickCalculation) -> Unit = {},
     onNewCode: (CurrencyCode) -> Unit,
 ) {
     val ctx = LocalContext.current

@@ -40,7 +40,7 @@ import dev.arkbuilders.rate.feature.quickwidget.presentation.action.NextPageActi
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.OpenAppAction
 import dev.arkbuilders.rate.feature.quickwidget.presentation.action.PreviousPageAction
 
-class QuickPairsWidget : GlanceAppWidget() {
+class QuickCalcualtionsWidget : GlanceAppWidget() {
     override suspend fun provideGlance(
         context: Context,
         id: GlanceId,
@@ -51,7 +51,7 @@ class QuickPairsWidget : GlanceAppWidget() {
         val groups = quickComponent.groupRepo().getAllSorted(GroupFeatureType.Quick)
         provideContent {
             val prefs = currentState<Preferences>()
-            val groupId = prefs[QuickPairsWidgetReceiver.currentGroupIdKey]
+            val groupId = prefs[QuickCalculationsWidgetReceiver.currentGroupIdKey]
             val quickPairsList = pinned.filter { it.pair.group.id == groupId }
             val displayGroup = groups.find { it.id == groupId }
             displayGroup ?: return@provideContent

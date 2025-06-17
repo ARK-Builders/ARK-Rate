@@ -21,11 +21,11 @@ import androidx.glance.unit.ColorProvider
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.utils.IconUtils
-import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
+import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickCalculation
 
 @Composable
 fun QuickPairItem(
-    quick: PinnedQuickPair,
+    quick: PinnedQuickCalculation,
     context: Context,
 ) {
     Row(

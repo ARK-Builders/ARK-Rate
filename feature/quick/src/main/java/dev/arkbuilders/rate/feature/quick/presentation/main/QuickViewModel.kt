@@ -20,8 +20,8 @@ import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderSheetState
-import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
-import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
+import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickCalculation
+import dev.arkbuilders.rate.feature.quick.domain.model.QuickCalculation
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
@@ -33,11 +33,11 @@ import java.time.OffsetDateTime
 
 data class QuickScreenPage(
     val group: Group,
-    val pinned: List<PinnedQuickPair>,
-    val notPinned: List<QuickPair>,
+    val pinned: List<PinnedQuickCalculation>,
+    val notPinned: List<QuickCalculation>,
 )
 
-data class PairOptionsData(val pair: QuickPair)
+data class PairOptionsData(val pair: QuickCalculation)
 
 data class QuickScreenState(
     val filter: String = "",
@@ -54,10 +54,10 @@ data class QuickScreenState(
 
 sealed class QuickScreenEffect {
     data class ShowSnackbarAdded(
-        val pair: QuickPair,
+        val pair: QuickCalculation,
     ) : QuickScreenEffect()
 
-    data class ShowRemovedSnackbar(val pair: QuickPair) : QuickScreenEffect()
+    data class ShowRemovedSnackbar(val pair: QuickCalculation) : QuickScreenEffect()
 
     data class SelectTab(val groupId: Long) : QuickScreenEffect()
 
@@ -161,7 +161,7 @@ class QuickViewModel(
             }
         }
 
-    fun onShowGroupOptions(pair: QuickPair) =
+    fun onShowGroupOptions(pair: QuickCalculation) =
         intent {
             reduce { state.copy(pairOptionsData = PairOptionsData(pair)) }
         }
@@ -171,13 +171,13 @@ class QuickViewModel(
             reduce { state.copy(pairOptionsData = null) }
         }
 
-    fun onPin(pair: QuickPair) =
+    fun onPin(pair: QuickCalculation) =
         intent {
             val newPair = pair.copy(pinnedDate = OffsetDateTime.now())
             quickRepo.insert(newPair)
         }
 
-    fun onUnpin(pair: QuickPair) =
+    fun onUnpin(pair: QuickCalculation) =
         intent {
             val newPair = pair.copy(pinnedDate = null)
             quickRepo.insert(newPair)
@@ -188,7 +188,7 @@ class QuickViewModel(
             reduce { state.copy(filter = filter) }
         }
 
-    fun onDelete(pair: QuickPair) =
+    fun onDelete(pair: QuickCalculation) =
         intent {
             val deleted = quickRepo.delete(pair.id)
             if (deleted) {
@@ -196,7 +196,7 @@ class QuickViewModel(
             }
         }
 
-    fun undoDelete(pair: QuickPair) =
+    fun undoDelete(pair: QuickCalculation) =
         intent {
             quickRepo.insert(pair)
         }
@@ -212,7 +212,7 @@ class QuickViewModel(
             }
         }
 
-    private suspend fun mapPairsToPages(pairs: List<QuickPair>): List<QuickScreenPage> {
+    private suspend fun mapPairsToPages(pairs: List<QuickCalculation>): List<QuickScreenPage> {
         val refreshDate = timestampRepo.getTimestamp(TimestampType.FetchRates)
         val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
         val pages =
@@ -231,15 +231,15 @@ class QuickViewModel(
     }
 
     private suspend fun mapPairToPinned(
-        pair: QuickPair,
+        pair: QuickCalculation,
         refreshDate: OffsetDateTime,
-    ): PinnedQuickPair {
+    ): PinnedQuickCalculation {
         val actualTo =
             pair.to.map { to ->
                 val (amount, _) = convertUseCase.invoke(pair.from, pair.amount, to.code)
                 amount
             }
-        return PinnedQuickPair(pair, actualTo, refreshDate)
+        return PinnedQuickCalculation(pair, actualTo, refreshDate)
     }
 
     //region Group Management

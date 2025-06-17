@@ -68,7 +68,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 @Destination<ExternalModuleGraph>
 fun AddQuickScreen(
-    quickPairId: Long? = null,
+    quickCalculationId: Long? = null,
     newCode: CurrencyCode? = null,
     reuseNotEdit: Boolean = true,
     groupId: Long? = null,
@@ -86,7 +86,7 @@ fun AddQuickScreen(
         viewModel(
             factory =
                 quickComponent.addQuickVMFactory()
-                    .create(quickPairId, newCode, reuseNotEdit, groupId),
+                    .create(quickCalculationId, newCode, reuseNotEdit, groupId),
         )
 
     resultRecipient.onNavResult { result ->
@@ -109,7 +109,7 @@ fun AddQuickScreen(
                 if (reuseNotEdit)
                     R.string.quick_add_new_calculation
                 else
-                    R.string.quick_edit_pair
+                    R.string.quick_edit_calc
             AppTopBarBack(
                 title = stringResource(title),
                 onBackClick = { navigator.popBackStack() },
@@ -126,8 +126,8 @@ fun AddQuickScreen(
                 onGroupCreate = viewModel::onGroupCreate,
                 onCodeChange = viewModel::onSetCode,
                 onSwapClick = viewModel::onSwapClick,
-                onPairsSwap = viewModel::onPairsSwap,
-                onAddAsset = viewModel::onAddQuickPair,
+                onCurrenciesSwap = viewModel::onCurrenciesSwap,
+                onAddAsset = viewModel::onAddQuickCalculation,
             )
         }
     }
@@ -143,7 +143,7 @@ private fun Content(
     onGroupCreate: (String) -> Unit,
     onCodeChange: (Int) -> Unit,
     onSwapClick: () -> Unit,
-    onPairsSwap: (from: Int, to: Int) -> Unit,
+    onCurrenciesSwap: (from: Int, to: Int) -> Unit,
     onAddAsset: () -> Unit,
 ) {
     val ctx = LocalContext.current
@@ -168,7 +168,7 @@ private fun Content(
         rememberReorderableLazyListState(lazyListState) { from, to ->
             val fromIndex = state.currencies.indexOfFirst { it.code == from.key }
             val toIndex = state.currencies.indexOfFirst { it.code == to.key }
-            onPairsSwap(fromIndex, toIndex)
+            onCurrenciesSwap(fromIndex, toIndex)
             haptic.performHapticFeedback(ReorderHapticFeedbackType.MOVE)
         }
 
@@ -288,7 +288,7 @@ fun Preview() {
         onGroupSelect = {},
         onCodeChange = {},
         onSwapClick = {},
-        onPairsSwap = { _, _ -> },
+        onCurrenciesSwap = { _, _ -> },
         onAddAsset = {},
         onGroupCreate = {},
     )

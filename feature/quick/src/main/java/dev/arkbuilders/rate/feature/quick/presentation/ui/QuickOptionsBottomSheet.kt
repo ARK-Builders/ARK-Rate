@@ -29,17 +29,17 @@ import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.verticalScrollDisabled
-import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
+import dev.arkbuilders.rate.feature.quick.domain.model.QuickCalculation
 
 @Composable
 fun QuickOptionsBottomSheet(
     sheetState: SheetState,
-    pair: QuickPair,
-    onPin: (QuickPair) -> Unit,
-    onUnpin: (QuickPair) -> Unit,
-    onEdit: (QuickPair) -> Unit,
-    onReuse: (QuickPair) -> Unit,
-    onDelete: (QuickPair) -> Unit,
+    pair: QuickCalculation,
+    onPin: (QuickCalculation) -> Unit,
+    onUnpin: (QuickCalculation) -> Unit,
+    onEdit: (QuickCalculation) -> Unit,
+    onReuse: (QuickCalculation) -> Unit,
+    onDelete: (QuickCalculation) -> Unit,
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(
@@ -64,12 +64,12 @@ fun QuickOptionsBottomSheet(
 
 @Composable
 private fun Content(
-    pair: QuickPair,
-    onPin: (QuickPair) -> Unit,
-    onUnpin: (QuickPair) -> Unit,
-    onEdit: (QuickPair) -> Unit,
-    onReuse: (QuickPair) -> Unit,
-    onDelete: (QuickPair) -> Unit,
+    pair: QuickCalculation,
+    onPin: (QuickCalculation) -> Unit,
+    onUnpin: (QuickCalculation) -> Unit,
+    onEdit: (QuickCalculation) -> Unit,
+    onReuse: (QuickCalculation) -> Unit,
+    onDelete: (QuickCalculation) -> Unit,
     onDismiss: () -> Unit,
 ) {
     Box(modifier = Modifier.verticalScrollDisabled()) {

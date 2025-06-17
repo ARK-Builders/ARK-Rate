@@ -1,8 +1,8 @@
 package dev.arkbuilders.rate.feature.quick.domain.usecase
 
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
-import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
-import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
+import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickCalculation
+import dev.arkbuilders.rate.feature.quick.domain.model.QuickCalculation
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
 import java.time.OffsetDateTime
 
@@ -18,13 +18,13 @@ class GetSortedPinnedQuickPairsUseCase(
             }
             .sortedByDescending { it.pair.pinnedDate }
 
-    private suspend fun mapPairToPinned(pair: QuickPair): PinnedQuickPair {
+    private suspend fun mapPairToPinned(pair: QuickCalculation): PinnedQuickCalculation {
         val actualTo =
             pair.to.map { to ->
                 val (amount, _) = convertUseCase.invoke(pair.from, pair.amount, to.code)
                 amount
             }
-        return PinnedQuickPair(
+        return PinnedQuickCalculation(
             pair,
             actualTo,
             OffsetDateTime.now(),

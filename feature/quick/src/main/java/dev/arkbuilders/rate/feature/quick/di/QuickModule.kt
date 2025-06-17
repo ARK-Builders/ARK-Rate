@@ -2,7 +2,7 @@ package dev.arkbuilders.rate.feature.quick.di
 
 import dagger.Module
 import dagger.Provides
-import dev.arkbuilders.rate.core.db.dao.QuickPairDao
+import dev.arkbuilders.rate.core.db.dao.QuickCalculationDao
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.feature.quick.data.QuickRepoImpl
@@ -14,7 +14,7 @@ class QuickModule {
     @QuickScope
     @Provides
     fun quickRepo(
-        quickPairDao: QuickPairDao,
+        quickPairDao: QuickCalculationDao,
         groupRepo: GroupRepo,
     ): QuickRepo = QuickRepoImpl(quickPairDao, groupRepo)
 

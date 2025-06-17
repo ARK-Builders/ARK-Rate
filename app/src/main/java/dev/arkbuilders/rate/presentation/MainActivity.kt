@@ -10,7 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import dev.arkbuilders.rate.core.presentation.theme.ARKRateTheme
-import dev.arkbuilders.rate.feature.quickwidget.presentation.QuickPairsWidgetReceiver
+import dev.arkbuilders.rate.feature.quickwidget.presentation.QuickCalculationsWidgetReceiver
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +30,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         sendBroadcast(
-            Intent(this, QuickPairsWidgetReceiver::class.java).apply {
-                action = QuickPairsWidgetReceiver.PINNED_PAIRS_REFRESH
+            Intent(this, QuickCalculationsWidgetReceiver::class.java).apply {
+                action = QuickCalculationsWidgetReceiver.PINNED_CALCULATIONS_REFRESH
             },
         )
         super.onStop()
