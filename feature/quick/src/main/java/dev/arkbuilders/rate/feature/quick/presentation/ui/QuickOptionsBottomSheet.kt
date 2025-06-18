@@ -34,7 +34,7 @@ import dev.arkbuilders.rate.feature.quick.domain.model.QuickCalculation
 @Composable
 fun QuickOptionsBottomSheet(
     sheetState: SheetState,
-    pair: QuickCalculation,
+    calculation: QuickCalculation,
     onPin: (QuickCalculation) -> Unit,
     onUnpin: (QuickCalculation) -> Unit,
     onEdit: (QuickCalculation) -> Unit,
@@ -51,7 +51,7 @@ fun QuickOptionsBottomSheet(
         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
     ) {
         Content(
-            pair = pair,
+            pair = calculation,
             onPin = onPin,
             onUnpin = onUnpin,
             onEdit = onEdit,

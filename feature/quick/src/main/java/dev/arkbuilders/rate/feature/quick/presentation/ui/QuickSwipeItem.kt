@@ -31,7 +31,7 @@ import dev.arkbuilders.rate.feature.quick.domain.model.QuickCalculation
 @Composable
 fun PinnedQuickSwipeItem(
     content: @Composable () -> Unit,
-    pair: QuickCalculation,
+    calculation: QuickCalculation,
     onUnpin: (QuickCalculation) -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -40,7 +40,7 @@ fun PinnedQuickSwipeItem(
             confirmValueChange = {
                 when (it) {
                     SwipeToDismissBoxValue.StartToEnd -> {
-                        onUnpin(pair)
+                        onUnpin(calculation)
                         true
                     }
 
@@ -59,7 +59,7 @@ fun PinnedQuickSwipeItem(
         backgroundContent = {
             DismissBackground(
                 state = dismissState,
-                isPinned = pair.isPinned(),
+                isPinned = calculation.isPinned(),
             )
         },
         content = { content() },

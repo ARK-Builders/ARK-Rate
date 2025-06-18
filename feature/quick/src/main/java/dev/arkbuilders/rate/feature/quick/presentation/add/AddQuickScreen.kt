@@ -73,7 +73,7 @@ fun AddQuickScreen(
     reuseNotEdit: Boolean = true,
     groupId: Long? = null,
     navigator: DestinationsNavigator,
-    // return back new pair id
+    // return back new calculation id
     resultNavigator: ResultBackNavigator<Long>,
     resultRecipient: ResultRecipient<SearchCurrencyScreenDestination, SearchNavResult>,
 ) {

@@ -19,7 +19,7 @@ data class QuickCalculation(
 }
 
 data class PinnedQuickCalculation(
-    val pair: QuickCalculation,
+    val calculation: QuickCalculation,
     val actualTo: List<Amount>,
     val refreshDate: OffsetDateTime,
 )

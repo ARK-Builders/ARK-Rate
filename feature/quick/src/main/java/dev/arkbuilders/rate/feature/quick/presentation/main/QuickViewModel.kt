@@ -222,7 +222,7 @@ class QuickViewModel(
                 val (pinned, notPinned) = filteredPairs.partition { it.isPinned() }
                 val pinnedMapped = pinned.map { mapPairToPinned(it, refreshDate!!) }
                 val sortedPinned =
-                    pinnedMapped.sortedByDescending { it.pair.pinnedDate }
+                    pinnedMapped.sortedByDescending { it.calculation.pinnedDate }
                 val sortedNotPinned =
                     notPinned.sortedByDescending { it.calculatedDate }
                 QuickScreenPage(group, sortedPinned, sortedNotPinned)

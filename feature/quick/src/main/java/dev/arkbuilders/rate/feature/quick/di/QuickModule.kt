@@ -7,7 +7,7 @@ import dev.arkbuilders.rate.core.domain.repo.GroupRepo
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.feature.quick.data.QuickRepoImpl
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
-import dev.arkbuilders.rate.feature.quick.domain.usecase.GetSortedPinnedQuickPairsUseCase
+import dev.arkbuilders.rate.feature.quick.domain.usecase.GetSortedPinnedQuickCalculationsUseCase
 
 @Module
 class QuickModule {
@@ -23,7 +23,7 @@ class QuickModule {
     fun getSortedPinnedQuickPairsUseCase(
         quickRepo: QuickRepo,
         convertWithRateUseCase: ConvertWithRateUseCase,
-    ) = GetSortedPinnedQuickPairsUseCase(
+    ) = GetSortedPinnedQuickCalculationsUseCase(
         quickRepo,
         convertWithRateUseCase,
     )

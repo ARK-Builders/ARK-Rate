@@ -66,7 +66,7 @@ import java.time.OffsetDateTime
 @Composable
 fun QuickScreen(
     navigator: DestinationsNavigator,
-    // expect new pair id
+    // expect new calculation id
     resultRecipient: ResultRecipient<AddQuickScreenDestination, Long>,
 ) {
     val ctx = LocalContext.current
@@ -168,7 +168,7 @@ fun QuickScreen(
         state.pairOptionsData?.let {
             QuickOptionsBottomSheet(
                 pairOptionsSheetState,
-                pair = it.pair,
+                calculation = it.pair,
                 onPin = viewModel::onPin,
                 onUnpin = viewModel::onUnpin,
                 onEdit = {
@@ -332,11 +332,11 @@ private fun GroupPage(
             item {
                 ListHeader(text = stringResource(CoreRString.quick_pinned_calculations))
             }
-            items(pinned, key = { it.pair.id }) {
+            items(pinned, key = { it.calculation.id }) {
                 PinnedQuickSwipeItem(
                     content = {
                         QuickItem(
-                            from = Amount(it.pair.from, it.pair.amount),
+                            from = Amount(it.calculation.from, it.calculation.amount),
                             to = it.actualTo,
                             dateText =
                                 stringResource(
@@ -347,11 +347,11 @@ private fun GroupPage(
                                         it.refreshDate,
                                     ),
                                 ),
-                            onClick = { onClick(it.pair) },
+                            onClick = { onClick(it.calculation) },
                         )
                     },
-                    pair = it.pair,
-                    onDelete = { onDelete(it.pair) },
+                    calculation = it.calculation,
+                    onDelete = { onDelete(it.calculation) },
                     onUnpin = onUnpin,
                 )
                 AppHorDiv16()

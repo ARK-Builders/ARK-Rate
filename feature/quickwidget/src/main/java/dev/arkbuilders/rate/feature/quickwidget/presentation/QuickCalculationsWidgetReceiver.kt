@@ -17,7 +17,7 @@ import timber.log.Timber
 class QuickCalculationsWidgetReceiver : GlanceAppWidgetReceiver() {
     private val coroutineScope = MainScope()
 
-    override val glanceAppWidget: GlanceAppWidget = QuickCalcualtionsWidget()
+    override val glanceAppWidget: GlanceAppWidget = QuickCalculationsWidget()
 
     override fun onReceive(
         context: Context,
@@ -44,7 +44,7 @@ class QuickCalculationsWidgetReceiver : GlanceAppWidgetReceiver() {
     private fun updateAll(context: Context) {
         coroutineScope.launch {
             GlanceAppWidgetManager(context)
-                .getGlanceIds(QuickCalcualtionsWidget::class.java)
+                .getGlanceIds(QuickCalculationsWidget::class.java)
                 .forEach { glanceId ->
                     updateWidgetNewGroup(
                         context = context,
@@ -85,7 +85,7 @@ class QuickCalculationsWidgetReceiver : GlanceAppWidgetReceiver() {
                     prefs.remove(currentGroupIdKey)
                 }
             }
-            QuickCalcualtionsWidget().update(context, glanceId)
+            QuickCalculationsWidget().update(context, glanceId)
         }
     }
 }

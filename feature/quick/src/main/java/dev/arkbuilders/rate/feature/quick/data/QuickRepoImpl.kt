@@ -21,22 +21,22 @@ class QuickRepoImpl @Inject constructor(
     override suspend fun getById(id: Long): QuickCalculation? =
         dao.getById(
             id,
-        )?.toQuickPair(groupRepo)
+        )?.toQuickCalculation(groupRepo)
 
     override suspend fun getAll(): List<QuickCalculation> {
         val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
-        return dao.getAll().map { roomPair ->
-            val group = groups.find { it.id == roomPair.groupId }!!
-            roomPair.toQuickPair(group)
+        return dao.getAll().map { roomCalculation ->
+            val group = groups.find { it.id == roomCalculation.groupId }!!
+            roomCalculation.toQuickCalculation(group)
         }
     }
 
     override fun allFlow() =
         dao.allFlow().map { list ->
             val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
-            list.map { roomPair ->
-                val group = groups.find { it.id == roomPair.groupId }!!
-                roomPair.toQuickPair(group)
+            list.map { roomCalculation ->
+                val group = groups.find { it.id == roomCalculation.groupId }!!
+                roomCalculation.toQuickCalculation(group)
             }
         }
 
@@ -54,8 +54,8 @@ private fun QuickCalculation.toRoom() =
         group.id,
     )
 
-private suspend fun RoomQuickCalculation.toQuickPair(group: Group) =
+private fun RoomQuickCalculation.toQuickCalculation(group: Group) =
     QuickCalculation(id, from, amount, to, calculatedDate, pinnedDate, group)
 
-private suspend fun RoomQuickCalculation.toQuickPair(groupRepo: GroupRepo) =
+private suspend fun RoomQuickCalculation.toQuickCalculation(groupRepo: GroupRepo) =
     QuickCalculation(id, from, amount, to, calculatedDate, pinnedDate, groupRepo.getById(groupId))
