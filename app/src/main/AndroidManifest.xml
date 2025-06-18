@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".feature.quickwidget.presentation.QuickPairsWidgetReceiver"
+        <receiver android:name=".feature.quickwidget.presentation.QuickCalculationsWidgetReceiver"
             android:exported="true">
 
             <intent-filter>

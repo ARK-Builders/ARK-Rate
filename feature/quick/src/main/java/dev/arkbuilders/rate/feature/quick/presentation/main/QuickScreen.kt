@@ -52,8 +52,8 @@ import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameBottomShee
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomSheet
 import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
-import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
-import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
+import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickCalculation
+import dev.arkbuilders.rate.feature.quick.domain.model.QuickCalculation
 import dev.arkbuilders.rate.feature.quick.presentation.ui.PinnedQuickSwipeItem
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickOptionsBottomSheet
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickSwipeItem
@@ -66,7 +66,7 @@ import java.time.OffsetDateTime
 @Composable
 fun QuickScreen(
     navigator: DestinationsNavigator,
-    // expect new pair id
+    // expect new calculation id
     resultRecipient: ResultRecipient<AddQuickScreenDestination, Long>,
 ) {
     val ctx = LocalContext.current
@@ -168,13 +168,13 @@ fun QuickScreen(
         state.pairOptionsData?.let {
             QuickOptionsBottomSheet(
                 pairOptionsSheetState,
-                pair = it.pair,
+                calculation = it.pair,
                 onPin = viewModel::onPin,
                 onUnpin = viewModel::onUnpin,
                 onEdit = {
                     navigator.navigate(
                         AddQuickScreenDestination(
-                            quickPairId = it.id,
+                            quickCalculationId = it.id,
                             reuseNotEdit = false,
                             groupId = getCurrentGroup()?.id,
                         ),
@@ -183,7 +183,7 @@ fun QuickScreen(
                 onReuse = {
                     navigator.navigate(
                         AddQuickScreenDestination(
-                            quickPairId = it.id,
+                            quickCalculationId = it.id,
                             groupId = getCurrentGroup()?.id,
                         ),
                     )
@@ -252,10 +252,10 @@ private fun Content(
     pagerState: PagerState,
     onEditGroups: () -> Unit,
     onFilterChanged: (String) -> Unit,
-    onDelete: (QuickPair) -> Unit,
-    onClick: (QuickPair) -> Unit,
-    onPin: (QuickPair) -> Unit,
-    onUnpin: (QuickPair) -> Unit,
+    onDelete: (QuickCalculation) -> Unit,
+    onClick: (QuickCalculation) -> Unit,
+    onPin: (QuickCalculation) -> Unit,
+    onUnpin: (QuickCalculation) -> Unit,
     onNewCode: (CurrencyCode) -> Unit,
 ) {
     val groups = state.pages.map { it.group }
@@ -318,12 +318,12 @@ private fun Content(
 private fun GroupPage(
     frequent: List<CurrencyName>,
     currencies: List<CurrencyName>,
-    pinned: List<PinnedQuickPair>,
-    notPinned: List<QuickPair>,
-    onDelete: (QuickPair) -> Unit,
-    onPin: (QuickPair) -> Unit,
-    onUnpin: (QuickPair) -> Unit,
-    onClick: (QuickPair) -> Unit = {},
+    pinned: List<PinnedQuickCalculation>,
+    notPinned: List<QuickCalculation>,
+    onDelete: (QuickCalculation) -> Unit,
+    onPin: (QuickCalculation) -> Unit,
+    onUnpin: (QuickCalculation) -> Unit,
+    onClick: (QuickCalculation) -> Unit = {},
     onNewCode: (CurrencyCode) -> Unit,
 ) {
     val ctx = LocalContext.current
@@ -332,11 +332,11 @@ private fun GroupPage(
             item {
                 ListHeader(text = stringResource(CoreRString.quick_pinned_calculations))
             }
-            items(pinned, key = { it.pair.id }) {
+            items(pinned, key = { it.calculation.id }) {
                 PinnedQuickSwipeItem(
                     content = {
                         QuickItem(
-                            from = Amount(it.pair.from, it.pair.amount),
+                            from = Amount(it.calculation.from, it.calculation.amount),
                             to = it.actualTo,
                             dateText =
                                 stringResource(
@@ -347,11 +347,11 @@ private fun GroupPage(
                                         it.refreshDate,
                                     ),
                                 ),
-                            onClick = { onClick(it.pair) },
+                            onClick = { onClick(it.calculation) },
                         )
                     },
-                    pair = it.pair,
-                    onDelete = { onDelete(it.pair) },
+                    calculation = it.calculation,
+                    onDelete = { onDelete(it.calculation) },
                     onUnpin = onUnpin,
                 )
                 AppHorDiv16()

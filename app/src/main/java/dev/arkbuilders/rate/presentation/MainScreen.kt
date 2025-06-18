@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.portfolio.destinations.PortfolioScreenDestination
@@ -34,8 +33,8 @@ import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbar
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.utils.findActivity
 import dev.arkbuilders.rate.core.presentation.utils.keyboardAsState
-import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR
-import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR_GROUP_KEY
+import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewCalculationAction.Companion.ADD_NEW_CALCULATION
+import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewCalculationAction.Companion.ADD_NEW_CALCULATION_GROUP_KEY
 import dev.arkbuilders.rate.presentation.navigation.AnimatedRateBottomNavigation
 import kotlinx.coroutines.flow.drop
 
@@ -49,12 +48,12 @@ fun MainScreen() {
     LaunchedEffect(key1 = Unit) {
         val activity = ctx.findActivity()
         val intent = activity?.intent
-        val createNewPair = intent?.getStringExtra(ADD_NEW_PAIR) ?: ""
+        val createNewPair = intent?.getStringExtra(ADD_NEW_CALCULATION) ?: ""
         if (createNewPair.isNotEmpty()) {
-            val groupId = intent?.getLongExtra(ADD_NEW_PAIR_GROUP_KEY, 0L)
+            val groupId = intent?.getLongExtra(ADD_NEW_CALCULATION_GROUP_KEY, 0L)
             navController.navigate(AddQuickScreenDestination(groupId = groupId))
-            intent?.removeExtra(ADD_NEW_PAIR_GROUP_KEY)
-            intent?.removeExtra(ADD_NEW_PAIR)
+            intent?.removeExtra(ADD_NEW_CALCULATION_GROUP_KEY)
+            intent?.removeExtra(ADD_NEW_CALCULATION)
         }
     }
     LaunchedEffect(key1 = Unit) {
