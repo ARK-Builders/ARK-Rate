@@ -24,6 +24,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.generated.destinations.SplashScreenDestination
 import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingQuickPairScreenDestination
 import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingQuickScreenDestination
 import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingScreenDestination
@@ -35,9 +36,7 @@ import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navargs.primitives.longNavType
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.scope.resultRecipient
-import com.ramcosta.composedestinations.spec.Direction
 import com.ramcosta.composedestinations.utils.startDestination
-import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbar
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbar
@@ -73,7 +72,6 @@ fun MainScreen() {
     val navController = engine.rememberNavController()
     val snackState = remember { SnackbarHostState() }
     val ctx = LocalContext.current
-    var start: Direction? by remember { mutableStateOf(null) }
 
     LaunchedEffect(key1 = Unit) {
         val activity = ctx.findActivity()
@@ -98,15 +96,6 @@ fun MainScreen() {
                 snackState.showSnackbar(visuals)
             }
     }
-    LaunchedEffect(key1 = Unit) {
-        val completed = App.instance.coreComponent.prefs().get(PreferenceKey.IsOnboardingCompleted)
-        start =
-            if (completed) {
-                QuickScreenDestination
-            } else {
-                OnboardingScreenDestination
-            }
-    }
 
     val isKeyboardOpen by keyboardAsState()
     val bottomBarVisible = rememberSaveable { mutableStateOf(false) }
@@ -127,9 +116,6 @@ fun MainScreen() {
 
     if (isKeyboardOpen)
         bottomBarVisible.value = false
-
-    if (start == null)
-        return
 
     Scaffold(
         modifier =
@@ -177,7 +163,7 @@ fun MainScreen() {
         DestinationsNavHost(
             engine = engine,
             navController = navController,
-            start = start!!,
+            start = SplashScreenDestination,
             navGraph = NavGraphs.main,
             modifier = Modifier.padding(it),
         ) {

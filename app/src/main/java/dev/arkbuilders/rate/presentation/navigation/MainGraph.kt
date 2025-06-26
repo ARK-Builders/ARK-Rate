@@ -19,7 +19,7 @@ import com.ramcosta.composedestinations.generated.settings.destinations.Settings
     defaultTransitions = DefaultFadingTransitions::class,
 )
 annotation class MainGraph {
-    @ExternalDestination<OnboardingScreenDestination>(start = true)
+    @ExternalDestination<OnboardingScreenDestination>
     @ExternalDestination<OnboardingQuickScreenDestination>
     @ExternalDestination<OnboardingQuickPairScreenDestination>
     @ExternalDestination<QuickScreenDestination>

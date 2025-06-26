@@ -13,6 +13,12 @@ sealed class PreferenceKey<out T>(val defaultValue: T) {
     data object IsOnboardingCompleted : PreferenceKey<Boolean>(false)
 
     data object IsOnboardingQuickPairCompleted : PreferenceKey<Boolean>(false)
+
+    data object IsFirstLaunch : PreferenceKey<Boolean>(true)
+
+    data object FirstInstallVersionCode : PreferenceKey<Int?>(null)
+
+    data object CurrentVersionCode : PreferenceKey<Int?>(null)
 }
 
 interface Prefs {
