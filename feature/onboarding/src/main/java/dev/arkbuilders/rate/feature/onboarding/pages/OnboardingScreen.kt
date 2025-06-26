@@ -60,7 +60,10 @@ fun OnboardingScreen(navigator: DestinationsNavigator) {
     BackHandler {
         if (pageState.currentPage + 1 > 1) {
             scope.launch {
-                pageState.animateScrollToPage(pageState.currentPage - 1)
+                pageState.animateScrollToPage(
+                    page = pageState.currentPage - 1,
+                    animationSpec = tween(durationMillis = 300),
+                )
             }
         } else {
             ctx.findActivity()?.finish()
@@ -73,20 +76,26 @@ fun OnboardingScreen(navigator: DestinationsNavigator) {
     ) {
         HorizontalPager(
             state = pageState,
-            modifier = Modifier.fillMaxWidth().weight(1f),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
         ) { page ->
             Item(pageItem = items[page])
         }
         Indicators(size = items.size, index = pageState.currentPage)
         Spacer(Modifier.height(36.dp))
         AppButton(
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp),
             onClick = {
                 if (pageState.currentPage + 1 < items.size) {
                     scope.launch {
                         pageState.animateScrollToPage(
-                            pageState.currentPage + 1,
-                            animationSpec = tween(durationMillis = 1000),
+                            page = pageState.currentPage + 1,
+                            animationSpec = tween(durationMillis = 300),
                         )
                     }
                 } else {
@@ -118,7 +127,10 @@ private fun Item(pageItem: PageItem) {
             contentScale = ContentScale.FillWidth,
         )
         Box(
-            modifier = Modifier.weight(0.55f).padding(horizontal = 32.dp),
+            modifier =
+                Modifier
+                    .weight(0.55f)
+                    .padding(horizontal = 32.dp),
             contentAlignment = Alignment.Center,
         ) {
             Column {
