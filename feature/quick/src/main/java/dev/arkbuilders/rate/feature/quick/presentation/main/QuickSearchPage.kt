@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.core.presentation.ui.ListHeader
@@ -15,7 +15,8 @@ import dev.arkbuilders.rate.core.presentation.ui.NoResult
 
 @Composable
 fun QuickSearchPage(
-    topResultsFiltered: List<CurrencyName>,
+    filter: String,
+    topResults: List<CurrencyInfo>,
     onNewCode: (CurrencyCode) -> Unit,
 ) {
     if (topResultsFiltered.isNotEmpty()) {

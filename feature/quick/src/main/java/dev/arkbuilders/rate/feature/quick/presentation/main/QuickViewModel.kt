@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.model.TimestampType
@@ -113,7 +113,7 @@ class QuickViewModel(
                 }
             }.launchIn(viewModelScope)
 
-            val allCurrencies = currencyRepo.getCurrencyNames()
+            val allCurrencies = currencyRepo.getCurrencyInfo()
             calcFrequentCurrUseCase.flow().drop(1).onEach {
                 val frequent =
                     calcFrequentCurrUseCase.invoke()

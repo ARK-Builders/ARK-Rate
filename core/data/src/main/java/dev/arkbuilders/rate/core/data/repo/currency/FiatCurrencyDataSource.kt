@@ -6,7 +6,7 @@ import arrow.core.right
 import dev.arkbuilders.rate.core.data.mapper.FiatRateResponseMapper
 import dev.arkbuilders.rate.core.data.network.api.FiatAPI
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.domain.model.CurrencyRate
 import dev.arkbuilders.rate.core.domain.model.CurrencyType
 import javax.inject.Inject
@@ -28,9 +28,9 @@ class FiatCurrencyDataSource @Inject constructor(
         }
     }
 
-    override suspend fun getCurrencyName(): Map<CurrencyCode, CurrencyName> =
+    override suspend fun getCurrencyInfo(): Map<CurrencyCode, CurrencyInfo> =
         fiatCodeToCurrency
-            .map { (code, desc) -> code to CurrencyName(code, desc) }
+            .map { (code, desc) -> code to CurrencyInfo(code, desc) }
             .toMap()
 }
 

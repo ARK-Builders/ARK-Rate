@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import dev.arkbuilders.rate.core.domain.AppConfig
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.domain.model.CurrencyRate
 import dev.arkbuilders.rate.core.domain.model.CurrencyType
 import dev.arkbuilders.rate.core.domain.model.TimestampType
@@ -49,26 +49,26 @@ class CurrencyRepoImpl @Inject constructor(
             }
         }
 
-    override suspend fun getCurrencyNames(): List<CurrencyName> {
+    override suspend fun getCurrencyInfo(): List<CurrencyInfo> {
         val rates = getCurrencyRates()
 
-        val fiatNames = fiatDataSource.getCurrencyName()
-        val cryptoNames = cryptoDataSource.getCurrencyName()
+        val fiatNames = fiatDataSource.getCurrencyInfo()
+        val cryptoNames = cryptoDataSource.getCurrencyInfo()
 
-        val names =
+        val infoList =
             rates.map { rate ->
-                var name =
+                var info =
                     when (rate.type) {
                         CurrencyType.FIAT -> fiatNames[rate.code]
                         CurrencyType.CRYPTO -> cryptoNames[rate.code]
                     }
-                if (name == null)
-                    name = CurrencyName(rate.code, "")
+                if (info == null)
+                    info = CurrencyInfo(rate.code, "")
 
-                name
+                info
             }
 
-        return names.sortedBy { it.code }
+        return infoList.sortedBy { it.code }
     }
 
     private suspend fun updateRates(): Either<Throwable, List<CurrencyRate>> =
