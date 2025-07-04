@@ -4,9 +4,9 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import dev.arkbuilders.rate.core.domain.AppConfig
+import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.domain.model.CurrencyRate
-import dev.arkbuilders.rate.core.domain.model.CurrencyType
 import dev.arkbuilders.rate.core.domain.model.TimestampType
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.NetworkStatus
@@ -28,10 +28,15 @@ class CurrencyRepoImpl @Inject constructor(
     private val cryptoDataSource: CryptoCurrencyDataSource,
     private val localCurrencyDataSource: LocalCurrencyDataSource,
     private val fallbackRatesProvider: FallbackRatesProvider,
+    private val currencyInfoDataSource: CurrencyInfoDataSource,
     private val timestampRepo: TimestampRepo,
     private val networkStatus: NetworkStatus,
 ) : CurrencyRepo {
     private val mutex = Mutex()
+
+    override suspend fun initialize() {
+        currencyInfoDataSource.initialize()
+    }
 
     override suspend fun getCurrencyRates(): List<CurrencyRate> =
         withContext(Dispatchers.IO) {
@@ -52,23 +57,18 @@ class CurrencyRepoImpl @Inject constructor(
     override suspend fun getCurrencyInfo(): List<CurrencyInfo> {
         val rates = getCurrencyRates()
 
-        val fiatNames = fiatDataSource.getCurrencyInfo()
-        val cryptoNames = cryptoDataSource.getCurrencyInfo()
+        val infoMap = currencyInfoDataSource.getAllMap()
 
-        val infoList =
+        val ratesInfo =
             rates.map { rate ->
-                var info =
-                    when (rate.type) {
-                        CurrencyType.FIAT -> fiatNames[rate.code]
-                        CurrencyType.CRYPTO -> cryptoNames[rate.code]
-                    }
-                if (info == null)
-                    info = CurrencyInfo(rate.code, "")
-
-                info
+                infoMap[rate.code] ?: CurrencyInfo.emptyWithCode(rate.code)
             }
 
-        return infoList.sortedBy { it.code }
+        return ratesInfo.sortedBy { it.code }
+    }
+
+    override suspend fun infoByCode(code: CurrencyCode): CurrencyInfo {
+        return currencyInfoDataSource.getInfoByCode(code)
     }
 
     private suspend fun updateRates(): Either<Throwable, List<CurrencyRate>> =

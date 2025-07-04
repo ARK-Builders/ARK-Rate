@@ -7,5 +7,7 @@ data class CurrencyInfo(
 ) {
     companion object {
         val EMPTY = CurrencyInfo("", "", emptyList())
+
+        fun emptyWithCode(code: CurrencyCode) = EMPTY.copy(code = code)
     }
 }

@@ -91,6 +91,8 @@ class QuickViewModel(
 
     private fun init() =
         intent {
+            currencyRepo.initialize()
+
             quickRepo.allFlow().drop(1).onEach { quick ->
                 intent {
                     val pages = mapPairsToPages(quick)
