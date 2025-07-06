@@ -6,6 +6,7 @@ import dev.arkbuilders.rate.core.domain.repo.GroupRepo
 import dev.arkbuilders.rate.core.domain.usecase.ValidateGroupNameUseCase
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
 import dev.arkbuilders.rate.feature.quick.domain.usecase.GetSortedPinnedQuickPairsUseCase
+import dev.arkbuilders.rate.feature.quick.domain.usecase.LaunchInAppReviewUseCase
 import dev.arkbuilders.rate.feature.quick.presentation.add.AddQuickViewModelFactory
 import dev.arkbuilders.rate.feature.quick.presentation.main.QuickViewModelFactory
 
@@ -23,4 +24,6 @@ interface QuickComponent {
     fun groupRepo(): GroupRepo
 
     fun validateGroupNameUseCase(): ValidateGroupNameUseCase
+
+    fun launchInAppReview(): LaunchInAppReviewUseCase
 }
