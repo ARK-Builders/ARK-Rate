@@ -8,8 +8,8 @@ import dev.arkbuilders.rate.core.data.preferences.PrefsImpl
 import dev.arkbuilders.rate.core.data.repo.AnalyticsManagerImpl
 import dev.arkbuilders.rate.core.data.repo.BuildConfigFieldsProviderImpl
 import dev.arkbuilders.rate.core.data.repo.CodeUseStatRepoImpl
+import dev.arkbuilders.rate.core.data.repo.GooglePlayInAppReviewManagerImpl
 import dev.arkbuilders.rate.core.data.repo.GroupRepoImpl
-import dev.arkbuilders.rate.core.data.repo.InAppReviewManagerImpl
 import dev.arkbuilders.rate.core.data.repo.TimestampRepoImpl
 import dev.arkbuilders.rate.core.data.repo.currency.CryptoCurrencyDataSource
 import dev.arkbuilders.rate.core.data.repo.currency.CurrencyInfoDataSource
@@ -92,5 +92,7 @@ class RepoModule {
 
     @Singleton
     @Provides
-    fun inAppReviewManager(): InAppReviewManager = InAppReviewManagerImpl()
+    fun inAppReviewManager(
+        buildConfigFieldsProvider: BuildConfigFieldsProvider,
+    ): InAppReviewManager = GooglePlayInAppReviewManagerImpl(buildConfigFieldsProvider.provide())
 }
