@@ -67,6 +67,10 @@ class PrefsImpl(val context: Context) : Prefs {
                     intPreferencesKey("FirstInstallVersionCode")
 
                 PreferenceKey.IsFirstLaunch -> booleanPreferencesKey("IsFirstLaunch")
+                PreferenceKey.InAppReviewAttemptCount ->
+                    intPreferencesKey(
+                        "InAppReviewAttemptCount",
+                    )
             }
 
         return result as Preferences.Key<T>

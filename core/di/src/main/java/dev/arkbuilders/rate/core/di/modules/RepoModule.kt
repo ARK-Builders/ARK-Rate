@@ -9,6 +9,7 @@ import dev.arkbuilders.rate.core.data.repo.AnalyticsManagerImpl
 import dev.arkbuilders.rate.core.data.repo.BuildConfigFieldsProviderImpl
 import dev.arkbuilders.rate.core.data.repo.CodeUseStatRepoImpl
 import dev.arkbuilders.rate.core.data.repo.GroupRepoImpl
+import dev.arkbuilders.rate.core.data.repo.InAppReviewManagerImpl
 import dev.arkbuilders.rate.core.data.repo.TimestampRepoImpl
 import dev.arkbuilders.rate.core.data.repo.currency.CryptoCurrencyDataSource
 import dev.arkbuilders.rate.core.data.repo.currency.CurrencyInfoDataSource
@@ -24,6 +25,7 @@ import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
+import dev.arkbuilders.rate.core.domain.repo.InAppReviewManager
 import dev.arkbuilders.rate.core.domain.repo.NetworkStatus
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
@@ -87,4 +89,8 @@ class RepoModule {
     @Provides
     fun defaultGroupNameProvider(context: Context): DefaultGroupNameProvider =
         DefaultGroupNameProviderImpl(context)
+
+    @Singleton
+    @Provides
+    fun inAppReviewManager(): InAppReviewManager = InAppReviewManagerImpl()
 }

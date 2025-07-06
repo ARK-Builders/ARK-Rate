@@ -19,6 +19,8 @@ sealed class PreferenceKey<out T>(val defaultValue: T) {
     data object FirstInstallVersionCode : PreferenceKey<Int?>(null)
 
     data object CurrentVersionCode : PreferenceKey<Int?>(null)
+
+    data object InAppReviewAttemptCount : PreferenceKey<Int>(0)
 }
 
 interface Prefs {

@@ -61,6 +61,8 @@ sealed class QuickScreenEffect {
 
     data class ShowRemovedSnackbar(val pair: QuickPair) : QuickScreenEffect()
 
+    data object LaunchInAppReview : QuickScreenEffect()
+
     data class SelectTab(val groupId: Long) : QuickScreenEffect()
 
     data object NavigateToPairOnboarding : QuickScreenEffect()
@@ -154,6 +156,7 @@ class QuickViewModel(
                     filter = "",
                 )
             }
+            postSideEffect(QuickScreenEffect.LaunchInAppReview)
             postSideEffect(QuickScreenEffect.SelectTab(pair.group.id))
             postSideEffect(QuickScreenEffect.ShowSnackbarAdded(pair))
         }

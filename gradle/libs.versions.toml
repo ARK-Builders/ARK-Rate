@@ -36,6 +36,7 @@ appcompat = "1.7.0"
 material = "1.12.0"
 gson = "2.11.0"
 reorderable = "2.4.3"
+playReview = "2.0.2"
 
 [libraries]
 ark-about = { module = "dev.arkbuilders.components:about", version.ref = "arkAbout" }
@@ -67,6 +68,9 @@ converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+play-review = { group = "com.google.android.play", name = "review", version.ref = "playReview" }
+play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReview" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version = "" }
