@@ -90,6 +90,11 @@ class RepoModule {
     @Singleton
     @Provides
     fun inAppReviewManager(
+        analyticsManager: AnalyticsManager,
         buildConfigFieldsProvider: BuildConfigFieldsProvider,
-    ): InAppReviewManager = GooglePlayInAppReviewManagerImpl(buildConfigFieldsProvider.provide())
+    ): InAppReviewManager =
+        GooglePlayInAppReviewManagerImpl(
+            analyticsManager,
+            buildConfigFieldsProvider.provide(),
+        )
 }
