@@ -103,6 +103,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
     implementation(project(":core:presentation"))
+    implementation(project(":feature:onboarding"))
     implementation(project(":feature:quick"))
     implementation(project(":feature:quickwidget"))
     implementation(project(":feature:portfolio"))

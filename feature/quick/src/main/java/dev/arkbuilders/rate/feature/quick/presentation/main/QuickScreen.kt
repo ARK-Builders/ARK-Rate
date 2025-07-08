@@ -54,6 +54,7 @@ import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
+import dev.arkbuilders.rate.feature.quick.presentation.QuickExternalNavigator
 import dev.arkbuilders.rate.feature.quick.presentation.ui.PinnedQuickSwipeItem
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickOptionsBottomSheet
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickSwipeItem
@@ -68,6 +69,7 @@ fun QuickScreen(
     navigator: DestinationsNavigator,
     // expect new pair id
     resultRecipient: ResultRecipient<AddQuickScreenDestination, Long>,
+    externalNavigator: QuickExternalNavigator,
 ) {
     val ctx = LocalContext.current
     val component =
@@ -108,6 +110,7 @@ fun QuickScreen(
         pagerState = pagerState,
         snackState = snackState,
         ctx = ctx,
+        externalNavigator = externalNavigator,
     )
 
     Scaffold(
