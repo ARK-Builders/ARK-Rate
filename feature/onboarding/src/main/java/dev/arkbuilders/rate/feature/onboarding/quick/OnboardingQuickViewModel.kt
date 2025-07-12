@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
-import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.feature.onboarding.di.OnboardingScope
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -29,7 +28,6 @@ sealed class OnboardingQuickEffect {
 
 class OnboardingQuickViewModel(
     private val prefs: Prefs,
-    private val getTopResultUseCase: GetTopResultUseCase,
 ) : ViewModel(), ContainerHost<OnboardingQuickState, OnboardingQuickEffect> {
     override val container: Container<OnboardingQuickState, OnboardingQuickEffect> =
         container(OnboardingQuickState())
@@ -71,12 +69,10 @@ class OnboardingQuickViewModel(
 @OnboardingScope
 class OnboardingQuickViewModelFactory @Inject constructor(
     private val prefs: Prefs,
-    private val getTopResultUseCase: GetTopResultUseCase,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return OnboardingQuickViewModel(
             prefs,
-            getTopResultUseCase,
         ) as T
     }
 }
