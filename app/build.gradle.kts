@@ -80,6 +80,40 @@ android {
         }
     }
 
+    productFlavors.all {
+        val cryptoRatesLastModified =
+            rootProject.file("core/data/src/main/assets/crypto-rates.json").lastModified()
+        val fiatRatesLastModified =
+            rootProject.file("core/data/src/main/assets/fiat-rates.json").lastModified()
+
+        buildConfigField(
+            "long",
+            "CRYPTO_LAST_MODIFIED",
+            cryptoRatesLastModified.toString(),
+        )
+        buildConfigField(
+            "long",
+            "FIAT_LAST_MODIFIED",
+            fiatRatesLastModified.toString(),
+        )
+
+        val cryptoIcons = collectCurrencyIcons(project.rootDir.resolve("cryptoicons"))
+        val fiatIcons = collectCurrencyIcons(project.rootDir.resolve("fiaticons"))
+        val allIcons = (cryptoIcons + fiatIcons).distinct()
+
+        buildConfigField(
+            "String[]",
+            "ICON_CODES",
+            allIcons.joinToString(
+                prefix = "new String[] {",
+                postfix = "}",
+                separator = ", ",
+            ) {
+                "\"$it\""
+            },
+        )
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -168,3 +202,10 @@ dependencies {
 tasks.getByPath(":app:preBuild").dependsOn("ktlintCheck")
 
 tasks.getByPath(":app:preBuild").dependsOn("ktlintFormat")
+
+fun collectCurrencyIcons(moduleDir: File): List<String> {
+    val drawableDir = moduleDir.resolve("src/main/res/drawable")
+    return drawableDir.listFiles()!!
+        .map { it.nameWithoutExtension.uppercase() }
+        .map { if (it == "curr_try") "try" else it }
+}

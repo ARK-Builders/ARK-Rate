@@ -19,8 +19,8 @@ import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.DefaultGroupNameProvider
 import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCase
-import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
+import dev.arkbuilders.rate.core.domain.usecase.SearchUseCase
 import dev.arkbuilders.rate.core.domain.usecase.ValidateGroupNameUseCase
 import javax.inject.Singleton
 
@@ -57,7 +57,7 @@ interface CoreComponent {
 
     fun calcFrequentCurrUseCase(): CalcFrequentCurrUseCase
 
-    fun getTopResultUseCase(): GetTopResultUseCase
+    fun searchUseCase(): SearchUseCase
 
     fun validateGroupNameUseCase(): ValidateGroupNameUseCase
 

@@ -6,9 +6,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
-import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
 import org.orbitmvi.orbit.Container
@@ -38,7 +38,7 @@ sealed class OnboardingQuickPairEffect {
 class OnboardingQuickPairViewModel(
     private val quickRepo: QuickRepo,
     private val prefs: Prefs,
-    private val getTopResultUseCase: GetTopResultUseCase,
+    private val currencyRepo: CurrencyRepo,
 ) : ViewModel(), ContainerHost<OnboardingQuickPairState, OnboardingQuickPairEffect> {
     override val container: Container<OnboardingQuickPairState, OnboardingQuickPairEffect> =
         container(OnboardingQuickPairState())
@@ -46,7 +46,7 @@ class OnboardingQuickPairViewModel(
     init {
         intent {
             val pair = quickRepo.getAll().first()
-            val currencies = getTopResultUseCase.invoke()
+            val currencies = currencyRepo.getCurrencyNames()
             reduce {
                 state.copy(
                     pair = pair,
@@ -98,13 +98,13 @@ class OnboardingQuickPairViewModel(
 class OnboardingQuickPairViewModelFactory @AssistedInject constructor(
     @Assisted private val quickRepo: QuickRepo,
     private val prefs: Prefs,
-    private val getTopResultUseCase: GetTopResultUseCase,
+    private val currencyRepo: CurrencyRepo,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return OnboardingQuickPairViewModel(
             quickRepo,
             prefs,
-            getTopResultUseCase,
+            currencyRepo,
         ) as T
     }
 
