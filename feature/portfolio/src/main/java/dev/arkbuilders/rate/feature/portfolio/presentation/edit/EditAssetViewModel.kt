@@ -7,7 +7,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.core.domain.CurrUtils
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.Prefs
@@ -24,7 +24,7 @@ import org.orbitmvi.orbit.viewmodel.container
 
 data class EditAssetScreenState(
     val asset: Asset = Asset.EMPTY,
-    val name: CurrencyName = CurrencyName.EMPTY,
+    val info: CurrencyInfo = CurrencyInfo.EMPTY,
     val value: String = "",
     val initialized: Boolean = false,
 )
@@ -50,7 +50,7 @@ class EditAssetViewModel(
 
         intent {
             val asset = assetsRepo.getById(assetId)
-            val name = currencyRepo.nameByCode(asset!!.code)
+            val name = currencyRepo.infoByCode(asset!!.code)
 
             inputFlow.debounce(PERSIST_AMOUNT_DEBOUNCE).onEach {
                 assetsRepo.setAsset(asset.copy(value = it.toBigDecimalArk()))

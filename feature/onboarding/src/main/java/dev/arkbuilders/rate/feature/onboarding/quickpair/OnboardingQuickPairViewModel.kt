@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
@@ -25,7 +25,7 @@ enum class OnboardingQuickPairStep {
 data class OnboardingQuickPairState(
     val pair: QuickPair = QuickPair.empty(),
     val stepIndex: Int = 0,
-    val currencies: List<CurrencyName> = emptyList(),
+    val currencies: List<CurrencyInfo> = emptyList(),
     val initialized: Boolean = false,
 )
 
@@ -46,7 +46,7 @@ class OnboardingQuickPairViewModel(
     init {
         intent {
             val pair = quickRepo.getAll().first()
-            val currencies = currencyRepo.getCurrencyNames()
+            val currencies = currencyRepo.getCurrencyInfo()
             reduce {
                 state.copy(
                     pair = pair,

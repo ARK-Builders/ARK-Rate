@@ -33,7 +33,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.domain.CurrUtils
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
@@ -75,7 +75,7 @@ fun EditAssetScreen(
             if (state.initialized) {
                 Content(
                     navigator = navigator,
-                    name = state.name,
+                    info = state.info,
                     value = state.value,
                     onValueChange = viewModel::onValueChange,
                 )
@@ -89,7 +89,7 @@ fun EditAssetScreen(
 @Composable
 private fun Content(
     navigator: DestinationsNavigator,
-    name: CurrencyName,
+    info: CurrencyInfo,
     value: String,
     onValueChange: (String) -> Unit,
 ) {
@@ -126,10 +126,10 @@ private fun Content(
                 .verticalScroll(rememberScrollState()),
     ) {
         val title =
-            if (name.name.isNotEmpty()) {
-                "${name.name} (${name.code})"
+            if (info.name.isNotEmpty()) {
+                "${info.name} (${info.code})"
             } else {
-                name.code
+                info.code
             }
         Text(
             modifier = Modifier.padding(top = 32.dp),
@@ -162,7 +162,7 @@ private fun Content(
                     Modifier
                         .padding(start = 2.dp, top = 2.dp)
                         .align(Alignment.Top),
-                text = CurrUtils.getSymbolOrCode(name.code),
+                text = CurrUtils.getSymbolOrCode(info.code),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
                 color = ArkColor.TextPrimary,

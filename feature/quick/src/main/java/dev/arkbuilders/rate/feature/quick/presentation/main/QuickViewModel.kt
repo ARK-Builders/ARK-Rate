@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.model.TimestampType
@@ -43,9 +43,9 @@ data class PairOptionsData(val pair: QuickPair)
 
 data class QuickScreenState(
     val filter: String = "",
-    val currencies: List<CurrencyName> = emptyList(),
-    val frequent: List<CurrencyName> = emptyList(),
-    val topResultsFiltered: List<CurrencyName> = emptyList(),
+    val currencies: List<CurrencyInfo> = emptyList(),
+    val frequent: List<CurrencyInfo> = emptyList(),
+    val topResultsFiltered: List<CurrencyInfo> = emptyList(),
     val pages: List<QuickScreenPage> = emptyList(),
     val pairOptionsData: PairOptionsData? = null,
     val editGroupReorderSheetState: EditGroupReorderSheetState? = null,
@@ -113,11 +113,11 @@ class QuickViewModel(
                 }
             }.launchIn(viewModelScope)
 
-            val allCurrencies = currencyRepo.getCurrencyNames()
+            val allCurrencies = currencyRepo.getCurrencyInfo()
             calcFrequentCurrUseCase.flow().drop(1).onEach {
                 val frequent =
                     calcFrequentCurrUseCase.invoke()
-                        .map { currencyRepo.nameByCode(it) }
+                        .map { currencyRepo.infoByCode(it) }
                 reduce {
                     state.copy(
                         frequent = frequent,
@@ -127,7 +127,7 @@ class QuickViewModel(
 
             val frequent =
                 calcFrequentCurrUseCase()
-                    .map { currencyRepo.nameByCode(it) }
+                    .map { currencyRepo.infoByCode(it) }
             val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
                 state.copy(

@@ -3,6 +3,7 @@ package dev.arkbuilders.rate.presentation.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dev.arkbuilders.rate.core.domain.BuildConfigFields
+import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.feature.portfolio.domain.repo.PortfolioRepo
@@ -22,11 +23,14 @@ class SplashViewModel(
     private val portfolioRepo: PortfolioRepo,
     private val prefs: Prefs,
     private val buildConfigFields: BuildConfigFields,
+    private val currencyRepo: CurrencyRepo,
 ) : ViewModel(), ContainerHost<Unit, SplashScreenEffect> {
     override val container: Container<Unit, SplashScreenEffect> = container(Unit)
 
     init {
         intent {
+            currencyRepo.initialize()
+
             val currentVersionCode = buildConfigFields.versionCode
             val previousVersionCode = prefs.get(PreferenceKey.CurrentVersionCode)
 
@@ -70,6 +74,7 @@ class SplashViewModelFactory(
     private val portfolioRepo: PortfolioRepo,
     private val prefs: Prefs,
     private val buildConfigFields: BuildConfigFields,
+    private val currencyRepo: CurrencyRepo,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SplashViewModel(
@@ -77,6 +82,7 @@ class SplashViewModelFactory(
             portfolioRepo,
             prefs,
             buildConfigFields,
+            currencyRepo,
         ) as T
     }
 }

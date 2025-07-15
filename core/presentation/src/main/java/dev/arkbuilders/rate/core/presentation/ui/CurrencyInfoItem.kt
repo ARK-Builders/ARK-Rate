@@ -14,35 +14,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
 @Composable
 fun CurrencyInfoItem(
-    name: CurrencyName,
-    onClick: (CurrencyName) -> Unit,
+    info: CurrencyInfo,
+    onClick: (CurrencyInfo) -> Unit,
 ) {
     Column {
         Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .clickable { onClick(name) }
+                    .clickable { onClick(info) }
                     .padding(horizontal = 24.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CurrIcon(modifier = Modifier.size(40.dp), code = name.code)
+            CurrIcon(modifier = Modifier.size(40.dp), code = info.code)
             Column(
                 modifier = Modifier.padding(start = 12.dp),
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = name.code,
+                    text = info.code,
                     fontWeight = FontWeight.Medium,
                     color = ArkColor.TextPrimary,
                 )
-                if (name.name.isNotEmpty()) {
-                    Text(text = name.name, color = ArkColor.TextTertiary)
+                if (info.name.isNotEmpty()) {
+                    Text(text = info.name, color = ArkColor.TextTertiary)
                 }
             }
         }
