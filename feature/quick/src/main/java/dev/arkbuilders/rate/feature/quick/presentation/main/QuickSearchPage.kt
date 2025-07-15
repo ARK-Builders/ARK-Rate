@@ -15,8 +15,7 @@ import dev.arkbuilders.rate.core.presentation.ui.NoResult
 
 @Composable
 fun QuickSearchPage(
-    filter: String,
-    topResults: List<CurrencyInfo>,
+    topResultsFiltered: List<CurrencyInfo>,
     onNewCode: (CurrencyCode) -> Unit,
 ) {
     if (topResultsFiltered.isNotEmpty()) {

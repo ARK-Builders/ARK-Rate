@@ -18,10 +18,10 @@ import org.orbitmvi.orbit.viewmodel.container
 
 data class SearchScreenState(
     val prohibitedCodes: List<CurrencyCode> = emptyList(),
-    val frequent: List<CurrencyName> = emptyList(),
-    val all: List<CurrencyName> = emptyList(),
+    val frequent: List<CurrencyInfo> = emptyList(),
+    val all: List<CurrencyInfo> = emptyList(),
     val filter: String = "",
-    val topResultsFiltered: List<CurrencyName> = emptyList(),
+    val topResultsFiltered: List<CurrencyInfo> = emptyList(),
     val initialized: Boolean = false,
     val showCodeProhibitedDialog: Boolean = false,
 )
@@ -47,8 +47,8 @@ class SearchViewModel(
         analyticsManager.trackScreen("SearchScreen")
 
         intent {
-            val all = currencyRepo.getCurrencyNames()
-            val frequent = calcFrequentCurrUseCase.invoke().map { currencyRepo.nameByCode(it) }
+            val all = currencyRepo.getCurrencyInfo()
+            val frequent = calcFrequentCurrUseCase.invoke().map { currencyRepo.infoByCode(it) }
 
             reduce {
                 state.copy(
@@ -75,7 +75,7 @@ class SearchViewModel(
             }
         }
 
-    fun onClick(model: CurrencyName) =
+    fun onClick(model: CurrencyInfo) =
         intent {
             prohibitedCodes?.let {
                 if (model.code in prohibitedCodes) {

@@ -21,7 +21,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
@@ -117,10 +117,10 @@ private fun Input(
 private fun Results(
     filter: String,
     prohibitedCodes: List<CurrencyCode>,
-    frequent: List<CurrencyName>,
-    all: List<CurrencyName>,
-    topResultsFiltered: List<CurrencyName>,
-    onClick: (CurrencyName) -> Unit,
+    frequent: List<CurrencyInfo>,
+    all: List<CurrencyInfo>,
+    topResultsFiltered: List<CurrencyInfo>,
+    onClick: (CurrencyInfo) -> Unit,
 ) {
     when {
         filter.isNotEmpty() -> {
