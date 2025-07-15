@@ -14,9 +14,10 @@ class SearchUseCase(
     ): List<CurrencyInfo> {
         val filtered =
             all
-                .filter {
-                    it.name.contains(query, ignoreCase = true) ||
-                        it.code.contains(query, ignoreCase = true)
+                .filter { info ->
+                    info.name.contains(query, ignoreCase = true) ||
+                        info.code.contains(query, ignoreCase = true) ||
+                        info.country.any { county -> county.contains(query, ignoreCase = true) }
                 }.sortedBy { it.code }
 
         val prefixAndIcons =
