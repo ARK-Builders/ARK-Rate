@@ -17,12 +17,8 @@ import javax.inject.Singleton
 class CurrencyInfoDataSource @Inject constructor(
     private val ctx: Context,
 ) {
-    private var infoMap: Map<CurrencyCode, CurrencyInfo> = emptyMap()
-
-    suspend fun initialize() =
+    suspend fun provide(): Map<CurrencyCode, CurrencyInfo> =
         withContext(Dispatchers.IO) {
-            if (infoMap.isNotEmpty()) return@withContext
-
             val nameDef: Deferred<Map<String, String>> =
                 async {
                     val codeNameText =
@@ -46,14 +42,8 @@ class CurrencyInfoDataSource @Inject constructor(
             val codeToName = nameDef.await()
             val codeToCountry = countryDef.await()
 
-            infoMap =
-                codeToName.mapValues { (code, name) ->
-                    CurrencyInfo(code, name, codeToCountry[code] ?: emptyList())
-                }
+            return@withContext codeToName.mapValues { (code, name) ->
+                CurrencyInfo(code, name, codeToCountry[code] ?: emptyList())
+            }
         }
-
-    fun getAllMap() = infoMap
-
-    fun getInfoByCode(code: CurrencyCode): CurrencyInfo =
-        infoMap[code] ?: CurrencyInfo.emptyWithCode(code)
 }

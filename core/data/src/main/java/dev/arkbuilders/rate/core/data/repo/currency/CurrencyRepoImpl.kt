@@ -32,10 +32,12 @@ class CurrencyRepoImpl @Inject constructor(
     private val timestampRepo: TimestampRepo,
     private val networkStatus: NetworkStatus,
 ) : CurrencyRepo {
-    private val mutex = Mutex()
+    private val updateRatesMutex = Mutex()
+    private val loadInfoMutex = Mutex()
+    private var infoMap: Map<CurrencyCode, CurrencyInfo> = emptyMap()
 
     override suspend fun initialize() {
-        currencyInfoDataSource.initialize()
+        loadInfo()
     }
 
     override suspend fun getCurrencyRates(): List<CurrencyRate> =
@@ -57,7 +59,7 @@ class CurrencyRepoImpl @Inject constructor(
     override suspend fun getCurrencyInfo(): List<CurrencyInfo> {
         val rates = getCurrencyRates()
 
-        val infoMap = currencyInfoDataSource.getAllMap()
+        infoMap.ifEmpty { loadInfo() }
 
         val ratesInfo =
             rates.map { rate ->
@@ -68,11 +70,13 @@ class CurrencyRepoImpl @Inject constructor(
     }
 
     override suspend fun infoByCode(code: CurrencyCode): CurrencyInfo {
-        return currencyInfoDataSource.getInfoByCode(code)
+        infoMap.ifEmpty { loadInfo() }
+
+        return infoMap[code] ?: CurrencyInfo.emptyWithCode(code)
     }
 
     private suspend fun updateRates(): Either<Throwable, List<CurrencyRate>> =
-        mutex.withLock {
+        updateRatesMutex.withLock {
             val updatedDate =
                 timestampRepo
                     .getTimestamp(TimestampType.FetchRates)
@@ -95,6 +99,13 @@ class CurrencyRepoImpl @Inject constructor(
         timestampRepo.rememberTimestamp(TimestampType.FetchRates, fetchDate)
         return rates
     }
+
+    private suspend fun loadInfo() =
+        loadInfoMutex.withLock {
+            if (infoMap.isNotEmpty()) return@withLock
+
+            infoMap = currencyInfoDataSource.provide()
+        }
 
     private fun hasUpdateIntervalPassed(updatedDate: OffsetDateTime?) =
         updatedDate == null ||
