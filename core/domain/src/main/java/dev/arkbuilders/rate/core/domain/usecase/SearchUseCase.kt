@@ -2,21 +2,22 @@ package dev.arkbuilders.rate.core.domain.usecase
 
 import dev.arkbuilders.rate.core.domain.BuildConfigFields
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 
 class SearchUseCase(
     private val buildConfigFields: BuildConfigFields,
 ) {
     operator fun invoke(
-        all: List<CurrencyName>,
+        all: List<CurrencyInfo>,
         frequent: List<CurrencyCode>,
         query: String,
-    ): List<CurrencyName> {
+    ): List<CurrencyInfo> {
         val filtered =
             all
-                .filter {
-                    it.name.contains(query, ignoreCase = true) ||
-                        it.code.contains(query, ignoreCase = true)
+                .filter { info ->
+                    info.name.contains(query, ignoreCase = true) ||
+                        info.code.contains(query, ignoreCase = true) ||
+                        info.country.any { county -> county.contains(query, ignoreCase = true) }
                 }.sortedBy { it.code }
 
         val prefixAndIcons =

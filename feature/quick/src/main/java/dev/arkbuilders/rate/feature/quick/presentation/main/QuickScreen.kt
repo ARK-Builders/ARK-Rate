@@ -37,7 +37,7 @@ import com.ramcosta.composedestinations.result.ResultRecipient
 import com.ramcosta.composedestinations.result.onResult
 import dev.arkbuilders.rate.core.domain.model.Amount
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv16
@@ -318,8 +318,8 @@ private fun Content(
 
 @Composable
 private fun GroupPage(
-    frequent: List<CurrencyName>,
-    currencies: List<CurrencyName>,
+    frequent: List<CurrencyInfo>,
+    currencies: List<CurrencyInfo>,
     pinned: List<PinnedQuickPair>,
     notPinned: List<QuickPair>,
     onDelete: (QuickPair) -> Unit,
