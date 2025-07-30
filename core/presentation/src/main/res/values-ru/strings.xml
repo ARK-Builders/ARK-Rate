@@ -131,29 +131,6 @@
 
 
     <string name="about">О приложении</string>
-    <string name="about_download_qr_image">Скачать изображение QR-кода</string>
-    <string name="about_wallet_copied">Кошелек скопирован!</string>
-    <string name="ark_support_email">support@ark-builders.dev</string>
-    <string name="about_send_email_part_1">"Отправьте нам ID транзакции по электронной почте "</string>
-    <string name="about_send_email_part_2">" чтобы получить премиум-поддержку. Мы сделаем все возможное, чтобы помочь вам с любыми проблемами, с которыми вы столкнетесь при использовании нашего программного обеспечения."</string>
-    <string name="about_btc_wallet">bc1qx8n9r4uwpgrhgnamt2uew53lmrxd8tuevp7lv5</string>
-    <string name="about_eth_wallet">0x9765C5aC38175BFbd2dC7a840b63e50762B80a1b</string>
-    <string name="about_donate_eth">Пожертвовать с помощью Ethereum</string>
-    <string name="about_donate_btc">Пожертвовать с помощью Bitcoin</string>
-    <string name="ark_website_url">https://www.ark-builders.dev/</string>
-    <string name="ark_tg_url" translatable="false">https://t.me/ark_builders</string>
-    <string name="ark_contribute_url" translatable="false">https://www.ark-builders.dev/contribute/?tab=goodFirstIssue</string>
-    <string name="about_ark_buy_coffee_url" translatable="false">https://buymeacoffee.com/arkbuilders</string>
-    <string name="about_ark_patreon_url" translatable="false">https://www.patreon.com/ARKBuilders</string>
-    <string name="ark_discord_url" translatable="false">https://discord.gg/tPUJTxud</string>
-    <string name="about_discover_issues_to_work_on">Узнайте про проблемы, над которыми можно поработать</string>
-    <string name="about_see_open_bounties">Посмотреть открытые премии</string>
-    <string name="about_buy_as_a_coffee">Купите нам кофе</string>
-    <string name="about_donate_on_patreon">Пожертвовать на Patreon</string>
-    <string name="about_donate_using_eth">Пожертвовать с помощью ETH</string>
-    <string name="about_donate_using_btc">Пожертвовать с помощью BTC</string>
-    <string name="about_we_greatly_appreciate_every_bit_of_support">Мы очень ценим любую вашу поддержку!</string>
-    <string name="about_support_us">Поддержите нас</string>
     <string name="alert_notification_title">Оповещение о цене ARK Rate</string>
     <string name="alert_notification_desc">%1$s сейчас %2$s %3$s %4$s</string>
     <string name="collect_analytics">Собирать аналитику</string>
