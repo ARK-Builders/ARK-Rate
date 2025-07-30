@@ -16,9 +16,10 @@
     <string name="quick_empty_desc">Select your currencies and enter an amount to start converting. Your exchange results will appear here.</string>
     <string name="quick_add_new_calculation">Add new calculation</string>
     <string name="quick_edit_pair">Edit pair</string>
-    <string name="quick_last_refreshed">Last refreshed %1$s ago</string>
+    <string name="quick_last_refreshed_ago">Last refreshed %1$s ago</string>
     <string name="quick_calculations">Calculations</string>
     <string name="quick_pinned_calculations">Pinned calculations</string>
+    <string name="quick_calculated_ago">Calculated %1$s ago</string>
     <string name="quick_calculated_on">Calculated on %1$s</string>
     <string name="quick_snackbar_new_title">New calculation has been created</string>
     <string name="quick_snackbar_new_desc">"You added %1$s calculation "</string>

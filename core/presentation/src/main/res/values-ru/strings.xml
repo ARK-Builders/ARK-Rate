@@ -17,9 +17,10 @@
     <string name="quick_empty_desc">Выберите валюты и введите сумму для начала конвертации. Результаты обмена появятся здесь.</string>
     <string name="quick_add_new_calculation">Добавить новый расчет</string>
     <string name="quick_edit_pair">Редактировать пару</string>
-    <string name="quick_last_refreshed">Последнее обновление %1$s назад</string>
+    <string name="quick_last_refreshed_ago">Последнее обновление %1$s назад</string>
     <string name="quick_calculations">Расчеты</string>
     <string name="quick_pinned_calculations">Закрепленные расчеты</string>
+    <string name="quick_calculated_ago">Рассчитано %1$s назад</string>
     <string name="quick_calculated_on">Рассчитано на %1$s</string>
     <string name="quick_snackbar_new_title">Новый расчет создан</string>
     <string name="quick_snackbar_new_desc">"Вы добавили расчет %1$s "</string>
