@@ -14,8 +14,8 @@ import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.utils.findActivity
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
-import kotlinx.coroutines.CoroutineScope
 import dev.arkbuilders.rate.feature.quick.presentation.QuickExternalNavigator
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

@@ -2,6 +2,7 @@ package dev.arkbuilders.rate.feature.quick.domain.usecase
 
 import android.app.Activity
 import dev.arkbuilders.rate.core.domain.BuildConfigFieldsProvider
+import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.InAppReviewManager
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
@@ -14,6 +15,7 @@ class LaunchInAppReviewUseCase @Inject constructor(
     private val prefs: Prefs,
     private val quickRepo: QuickRepo,
     private val buildConfigFieldsProvider: BuildConfigFieldsProvider,
+    private val analyticsManager: AnalyticsManager,
 ) {
     suspend operator fun invoke(activity: Activity) {
         val buildConfig = buildConfigFieldsProvider.provide()
@@ -23,12 +25,10 @@ class LaunchInAppReviewUseCase @Inject constructor(
         }
 
         Timber.d("Quick feature: in-app review flow started")
+        analyticsManager.logEvent("quick_inapp_review_flow_started")
 
         val moreThan2Pairs = quickRepo.getAll().size > 2
         if (moreThan2Pairs.not()) return
-
-//        val isFirstLaunch = false
-//        if (isFirstLaunch) return
 
         val attemptCount = prefs.get(PreferenceKey.InAppReviewAttemptCount)
         val moreThan10Attempts = attemptCount > 10
