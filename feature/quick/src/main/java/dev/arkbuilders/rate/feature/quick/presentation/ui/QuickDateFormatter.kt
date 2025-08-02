@@ -14,14 +14,23 @@ object QuickDateFormatter {
         val now = OffsetDateTime.now()
         val dur = Duration.between(date, now)
 
-        val days = dur.toDays()
-        return if (days >= 7) {
-            ctx.getString(CoreRString.quick_calculated_on, DateFormatUtils.formatDateOnly(date))
-        } else {
-            ctx.getString(
-                CoreRString.quick_calculated_ago,
-                DateFormatUtils.formatElapsedTime(ctx, now, date),
-            )
+        return when {
+            dur.toDays() >= 7 ->
+                ctx.getString(
+                    CoreRString.quick_calculated_on,
+                    DateFormatUtils.formatDateOnly(date),
+                )
+
+            dur.toDays() == 0L &&
+                dur.toHours() == 0L &&
+                dur.toMinutes() == 0L &&
+                dur.seconds <= 5L -> ctx.getString(CoreRString.quick_calculated_just_now)
+
+            else ->
+                ctx.getString(
+                    CoreRString.quick_calculated_ago,
+                    DateFormatUtils.formatElapsedTime(ctx, now, date),
+                )
         }
     }
 
@@ -30,9 +39,19 @@ object QuickDateFormatter {
         date: OffsetDateTime,
     ): String {
         val now = OffsetDateTime.now()
-        return ctx.getString(
-            CoreRString.quick_last_refreshed_ago,
-            DateFormatUtils.formatElapsedTime(ctx, now, date),
-        )
+        val dur = Duration.between(date, now)
+
+        return when {
+            dur.toDays() == 0L &&
+                dur.toHours() == 0L &&
+                dur.toMinutes() == 0L &&
+                dur.seconds <= 5L -> ctx.getString(CoreRString.quick_last_refreshed_now)
+
+            else ->
+                ctx.getString(
+                    CoreRString.quick_last_refreshed_ago,
+                    DateFormatUtils.formatElapsedTime(ctx, now, date),
+                )
+        }
     }
 }
