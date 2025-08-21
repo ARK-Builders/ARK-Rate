@@ -54,7 +54,6 @@ import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.CurrencyInfoItem
 import dev.arkbuilders.rate.core.presentation.ui.ListHeader
 import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
-import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.onboarding.di.OnboardingComponentHolder
 import dev.arkbuilders.rate.feature.onboarding.quick.MockBottomNavigation
 import dev.arkbuilders.rate.feature.onboarding.quick.MockQuickItem
@@ -63,6 +62,7 @@ import dev.arkbuilders.rate.feature.onboarding.spotlight.SpotlightShape
 import dev.arkbuilders.rate.feature.onboarding.spotlight.SpotlightTooltip
 import dev.arkbuilders.rate.feature.onboarding.spotlight.TooltipPosition
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
+import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickDateFormatter
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -188,9 +188,9 @@ fun OnboardingQuickPairScreen(navigator: DestinationsNavigator) {
                         from = Amount(state.pair.from, state.pair.amount),
                         to = state.pair.to,
                         dateText =
-                            stringResource(
-                                CoreRString.quick_calculated_on,
-                                DateFormatUtils.calculatedOn(state.pair.calculatedDate),
+                            QuickDateFormatter.pairCalculatedTime(
+                                ctx,
+                                state.pair.calculatedDate,
                             ),
                     ) { }
                 }

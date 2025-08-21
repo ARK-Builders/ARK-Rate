@@ -87,8 +87,8 @@ private fun Content(
         val now = OffsetDateTime.now()
 
         fun formatTime(date: OffsetDateTime): String {
-            val elapsed = DateFormatUtils.latestCheckElapsedTime(ctx, now, date)
-            val time = DateFormatUtils.latestCheckTime(date)
+            val elapsed = DateFormatUtils.formatElapsedTime(ctx, now, date)
+            val time = DateFormatUtils.formatFullDateTime(date)
             return ctx.getString(CoreRString.settings_elapsed_ago, elapsed) + time
         }
 

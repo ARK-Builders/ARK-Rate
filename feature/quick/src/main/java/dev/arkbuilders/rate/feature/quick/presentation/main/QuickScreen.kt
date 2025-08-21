@@ -50,17 +50,16 @@ import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomSheet
-import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickPair
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
 import dev.arkbuilders.rate.feature.quick.presentation.QuickExternalNavigator
 import dev.arkbuilders.rate.feature.quick.presentation.ui.PinnedQuickSwipeItem
+import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickDateFormatter
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickOptionsBottomSheet
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickSwipeItem
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
-import java.time.OffsetDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<ExternalModuleGraph>
@@ -340,15 +339,7 @@ private fun GroupPage(
                         QuickItem(
                             from = Amount(it.pair.from, it.pair.amount),
                             to = it.actualTo,
-                            dateText =
-                                stringResource(
-                                    CoreRString.quick_last_refreshed,
-                                    DateFormatUtils.latestCheckElapsedTime(
-                                        ctx,
-                                        OffsetDateTime.now(),
-                                        it.refreshDate,
-                                    ),
-                                ),
+                            dateText = QuickDateFormatter.pairRefreshedTime(ctx, it.refreshDate),
                             onClick = { onClick(it.pair) },
                         )
                     },
@@ -370,9 +361,9 @@ private fun GroupPage(
                             from = Amount(it.from, it.amount),
                             to = it.to,
                             dateText =
-                                stringResource(
-                                    CoreRString.quick_calculated_on,
-                                    DateFormatUtils.calculatedOn(it.calculatedDate),
+                                QuickDateFormatter.pairCalculatedTime(
+                                    ctx,
+                                    it.calculatedDate,
                                 ),
                             onClick = { onClick(it) },
                         )
