@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
@@ -42,6 +43,14 @@ class PrefsImpl(val context: Context) : Prefs {
             pref[prefKey] ?: key.defaultValue
         }
 
+    override suspend fun incrementAppLaunchCount() {
+        dataStore.edit { prefs ->
+            val prefKey = resolveKey(PreferenceKey.AppLaunchCount)
+            val current = prefs[prefKey] ?: PreferenceKey.AppLaunchCount.defaultValue
+            prefs[prefKey] = current + 1
+        }
+    }
+
     private fun <T> resolveKey(key: PreferenceKey<T>): Preferences.Key<T> {
         val result =
             when (key) {
@@ -66,11 +75,12 @@ class PrefsImpl(val context: Context) : Prefs {
                 PreferenceKey.FirstInstallVersionCode ->
                     intPreferencesKey("FirstInstallVersionCode")
 
-                PreferenceKey.IsFirstLaunch -> booleanPreferencesKey("IsFirstLaunch")
                 PreferenceKey.InAppReviewAttemptCount ->
                     intPreferencesKey(
                         "InAppReviewAttemptCount",
                     )
+
+                PreferenceKey.AppLaunchCount -> longPreferencesKey("AppLaunchCount")
             }
 
         return result as Preferences.Key<T>

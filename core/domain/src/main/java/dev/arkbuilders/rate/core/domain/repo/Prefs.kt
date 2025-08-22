@@ -14,7 +14,7 @@ sealed class PreferenceKey<out T>(val defaultValue: T) {
 
     data object IsOnboardingQuickPairCompleted : PreferenceKey<Boolean>(false)
 
-    data object IsFirstLaunch : PreferenceKey<Boolean>(true)
+    data object AppLaunchCount : PreferenceKey<Long>(0)
 
     data object FirstInstallVersionCode : PreferenceKey<Int?>(null)
 
@@ -32,4 +32,6 @@ interface Prefs {
     )
 
     fun <T> flow(key: PreferenceKey<T>): Flow<T>
+
+    suspend fun incrementAppLaunchCount()
 }
