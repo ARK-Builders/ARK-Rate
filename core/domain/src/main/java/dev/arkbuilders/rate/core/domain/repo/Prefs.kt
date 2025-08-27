@@ -2,6 +2,7 @@ package dev.arkbuilders.rate.core.domain.repo
 
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
 import kotlinx.coroutines.flow.Flow
+import java.time.OffsetDateTime
 
 sealed class PreferenceKey<out T>(val defaultValue: T) {
     data object CollectCrashReports : PreferenceKey<Boolean>(true)
@@ -21,6 +22,8 @@ sealed class PreferenceKey<out T>(val defaultValue: T) {
     data object CurrentVersionCode : PreferenceKey<Int?>(null)
 
     data object InAppReviewAttemptCount : PreferenceKey<Int>(0)
+
+    data object LastInAppReviewTimestamp : PreferenceKey<String?>(null)
 }
 
 interface Prefs {
@@ -34,4 +37,8 @@ interface Prefs {
     fun <T> flow(key: PreferenceKey<T>): Flow<T>
 
     suspend fun incrementAppLaunchCount()
+
+    suspend fun getLastInAppReviewTimestamp(): OffsetDateTime?
+
+    suspend fun setLastInAppReviewTimestamp(date: OffsetDateTime)
 }

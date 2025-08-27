@@ -12,6 +12,7 @@ import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import java.time.OffsetDateTime
 
 class PrefsImpl(val context: Context) : Prefs {
     private val sharedPreferencesKey = "user_preferences"
@@ -51,6 +52,15 @@ class PrefsImpl(val context: Context) : Prefs {
         }
     }
 
+    override suspend fun getLastInAppReviewTimestamp(): OffsetDateTime? {
+        val str = get(PreferenceKey.LastInAppReviewTimestamp)
+        return str?.let { OffsetDateTime.parse(it) }
+    }
+
+    override suspend fun setLastInAppReviewTimestamp(date: OffsetDateTime) {
+        set(PreferenceKey.LastInAppReviewTimestamp, date.toString())
+    }
+
     private fun <T> resolveKey(key: PreferenceKey<T>): Preferences.Key<T> {
         val result =
             when (key) {
@@ -81,6 +91,9 @@ class PrefsImpl(val context: Context) : Prefs {
                     )
 
                 PreferenceKey.AppLaunchCount -> longPreferencesKey("AppLaunchCount")
+
+                PreferenceKey.LastInAppReviewTimestamp ->
+                    stringPreferencesKey("LastInAppReviewTimestamp")
             }
 
         return result as Preferences.Key<T>
