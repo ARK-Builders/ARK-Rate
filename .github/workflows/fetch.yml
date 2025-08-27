@@ -35,7 +35,9 @@ jobs:
         run: python fetch-rates.py
         
       - name: Fetch fiat
-        run: curl -X GET "https://openexchangerates.org/api/latest.json?app_id=$APP_ID" --output core/data/src/main/assets/fiat-rates.json
+        run: |
+          curl -s -X GET "https://openexchangerates.org/api/latest.json?app_id=$APP_ID" |
+          jq ' .rates |= with_entries(select(.key | IN("BTC", "XAG", "XAU", "XPD", "XPT") | not)) ' > core/data/src/main/assets/fiat-rates.json
 
       - name: Check if APP_ID secret is set
         run: |
