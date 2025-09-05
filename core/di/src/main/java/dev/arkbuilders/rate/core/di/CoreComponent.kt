@@ -12,6 +12,7 @@ import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
+import dev.arkbuilders.rate.core.domain.repo.InAppReviewManager
 import dev.arkbuilders.rate.core.domain.repo.NetworkStatus
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
@@ -68,6 +69,8 @@ interface CoreComponent {
     fun groupReorderSwapUseCase(): GroupReorderSwapUseCase
 
     fun analyticsManager(): AnalyticsManager
+
+    fun inAppReviewManager(): InAppReviewManager
 
     @Component.Factory
     interface Factory {

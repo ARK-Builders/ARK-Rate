@@ -34,12 +34,13 @@ class SplashViewModel(
             val currentVersionCode = buildConfigFields.versionCode
             val previousVersionCode = prefs.get(PreferenceKey.CurrentVersionCode)
 
-            val firstLaunch = prefs.get(PreferenceKey.IsFirstLaunch)
+            val firstLaunch = prefs.get(PreferenceKey.AppLaunchCount) == 0L
             if (firstLaunch) {
                 skipOnboardingIfUserHasData()
                 prefs.set(PreferenceKey.FirstInstallVersionCode, buildConfigFields.versionCode)
-                prefs.set(PreferenceKey.IsFirstLaunch, false)
             }
+
+            prefs.incrementAppLaunchCount()
 
             if (previousVersionCode != null && previousVersionCode < currentVersionCode) {
                 onAppUpdate(previousVersionCode, currentVersionCode)
