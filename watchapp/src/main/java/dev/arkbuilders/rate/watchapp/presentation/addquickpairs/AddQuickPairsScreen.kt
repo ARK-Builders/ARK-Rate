@@ -1,5 +1,6 @@
 package dev.arkbuilders.rate.watchapp.presentation.addquickpairs
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material.Text
+import dev.arkbuilders.rate.core.presentation.theme.ArkColor
+import dev.arkbuilders.rate.watchapp.presentation.addquickpairs.composables.CurrencyInputField
 
 @Composable
 fun AddQuickPairsScreen(modifier: Modifier = Modifier) {
@@ -42,7 +45,7 @@ fun AddQuickPairsScreen(modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
 
     ScalingLazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().background(ArkColor.BGSecondaryAlt),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -50,25 +53,36 @@ fun AddQuickPairsScreen(modifier: Modifier = Modifier) {
             Text(
                 modifier = modifier.fillMaxWidth(),
                 text = "Add",
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = ArkColor.TextPrimary
             )
         }
 
         item {
-            Text(
-                modifier = modifier.fillMaxWidth(),
-                text = "From",
-            )
-        }
+            CurrencyInputField(
+                label = "To",
+                currencyCode = "EUR",
+                value = "0.92",
+                onValueChange = {  },
+                onCurrencyClick = {
 
-        item {
-
-            BasicTextField(
-                modifier = modifier.fillMaxWidth(),
-                value = "",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                onValueChange = { text ->
                 },
+                showLabel = true,
+                showDeleteButton = false,
+                onDeleteClick = {}
+            )
+        }
+
+        item {
+            CurrencyInputField(
+                label = "To",
+                currencyCode = "EUR",
+                value = "0.92",
+                onValueChange = {  },
+                onCurrencyClick = {},
+                showLabel = false,
+                showDeleteButton = false,
+                onDeleteClick = {}
             )
         }
 

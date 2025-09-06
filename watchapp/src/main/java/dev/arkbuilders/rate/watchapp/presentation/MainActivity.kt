@@ -12,6 +12,7 @@ import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import dev.arkbuilders.rate.watchapp.presentation.addquickpairs.AddQuickPairsScreen
 import dev.arkbuilders.rate.watchapp.presentation.options.OptionsScreen
+import dev.arkbuilders.rate.watchapp.presentation.quickpairs.QuickPairsScreen
 import dev.arkbuilders.rate.watchapp.presentation.theme.ArkrateTheme
 
 class MainActivity : ComponentActivity() {
@@ -35,12 +36,12 @@ class MainActivity : ComponentActivity() {
                         startDestination = "list"
                     ) {
                         composable("list") {
-                            OptionsScreen()
-//                            QuickPairsScreen(
-//                                onNavigateToAdd = {
-////                                    navController.navigate("addquickpairs")
-//                                }
-//                            )
+//                            OptionsScreen()
+                            QuickPairsScreen(
+                                onNavigateToAdd = {
+                                    navController.navigate("addquickpairs")
+                                }
+                            )
                         }
                         composable("addquickpairs") {
                             AddQuickPairsScreen(
