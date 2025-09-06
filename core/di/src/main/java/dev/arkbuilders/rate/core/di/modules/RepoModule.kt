@@ -3,6 +3,8 @@ package dev.arkbuilders.rate.core.di.modules
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import dev.arkbuilders.rate.core.data.mapper.CryptoRateResponseMapper
+import dev.arkbuilders.rate.core.data.mapper.FiatRateResponseMapper
 import dev.arkbuilders.rate.core.data.network.NetworkStatusImpl
 import dev.arkbuilders.rate.core.data.preferences.PrefsImpl
 import dev.arkbuilders.rate.core.data.repo.AnalyticsManagerImpl
@@ -35,6 +37,34 @@ import javax.inject.Singleton
 
 @Module
 class RepoModule {
+    @Singleton
+    @Provides
+    fun provideFCryptoRateResponseMapper(): CryptoRateResponseMapper {
+        return CryptoRateResponseMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideFiatRateResponseMapper(): FiatRateResponseMapper {
+        return FiatRateResponseMapper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideFallbackRatesProvider(
+        context: Context,
+        fiatRateResponseMapper: FiatRateResponseMapper,
+        cryptoRateResponseMapper: CryptoRateResponseMapper,
+        buildConfigFieldsProvider: BuildConfigFieldsProvider,
+    ): FallbackRatesProvider {
+        return FallbackRatesProvider(
+            context,
+            fiatRateResponseMapper,
+            cryptoRateResponseMapper,
+            buildConfigFieldsProvider,
+        )
+    }
+
     @Singleton
     @Provides
     fun currencyRepo(
