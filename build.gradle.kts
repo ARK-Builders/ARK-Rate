@@ -8,6 +8,7 @@ plugins {
     id("com.google.gms.google-services") version "4.4.2" apply false
     id("com.google.firebase.crashlytics") version "3.0.1" apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("com.google.dagger.hilt.android") version "2.56.2" apply false
 }
 
 allprojects {
