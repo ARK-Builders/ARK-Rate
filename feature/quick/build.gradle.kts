@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -14,7 +15,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         ksp {
-            arg("compose-destinations.mode", "destinations")
+            arg("compose-destinations.moduleName", "quick")
         }
     }
 
@@ -27,18 +28,12 @@ android {
             )
         }
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 }
 
@@ -52,10 +47,12 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.navigation.compose)
     implementation(libs.material3)
+    implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.constraintlayout.compose)
+    implementation(libs.reorderable)
 
     implementation(libs.timber)
 
@@ -68,7 +65,7 @@ dependencies {
     implementation(libs.arrow.core)
     implementation(libs.arrow.fx.coroutines)
 
-    implementation(libs.compose.destinations.animations)
+    implementation(libs.compose.destinations.core)
     ksp(libs.compose.destinations.compiler)
 
     implementation(libs.androidx.core.ktx)

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Конвертер валют</string>
+    <string name="app_name_debug">Конвертер валют [Отладка]</string>
+
+    <string name="info_dialog_market_capitalization">Рыночная капитализация</string>
+    <string name="info_dialog_market_capitalization_description">Общая рыночная стоимость криптовалюты, находящейся в обращении. Это аналог капитализации акций в свободном обращении на фондовом рынке.\n\nКапитализация = Текущая цена х Денежная масса в обращении.</string>
+    <string name="info_dialog_value_of_circulating">Валюта, находящаяся в обращении</string>
+    <string name="info_dialog_value_of_circulating_description">Валюта, находящаяся в обращении — это количество наличных денег, в форме бумажных купюр или монет, внутри страны, которые физически используются для проведения транзакций между потребителями и бизнесами.</string>
+
+    <string name="bottom_nav_portfolio">Портфели</string>
+    <string name="bottom_nav_alerts">Оповещения</string>
+    <string name="bottom_nav_quick">Быстрые</string>
+    <string name="bottom_nav_settings">Настройки</string>
+
+    <string name="quick_empty_title">Готово к расчету!</string>
+    <string name="quick_empty_desc">Выберите валюты и введите сумму для начала конвертации. Результаты обмена появятся здесь.</string>
+    <string name="quick_add_new_calculation">Добавить новый расчет</string>
+    <string name="quick_edit_pair">Редактировать пару</string>
+    <string name="quick_last_refreshed_ago">Последнее обновление %1$s назад</string>
+    <string name="quick_last_refreshed_now">Обновлено только что</string>
+    <string name="quick_calculations">Расчеты</string>
+    <string name="quick_pinned_calculations">Закрепленные расчеты</string>
+    <string name="quick_calculated_ago">Рассчитано %1$s назад</string>
+    <string name="quick_calculated_on">Рассчитано на %1$s</string>
+    <string name="quick_calculated_just_now">Рассчитано только что</string>
+    <string name="quick_snackbar_new_title">Новый расчет создан</string>
+    <string name="quick_snackbar_new_desc">"Вы добавили расчет %1$s "</string>
+    <string name="quick_snackbar_removed_title">Расчет удален</string>
+    <string name="quick_snackbar_removed_desc">Вы удалили расчет %1$s</string>
+    <string name="quick_snackbar_new_added_to">%1$s в %2$s</string>
+    <string name="quick_open_app">Открыть приложение</string>
+    <string name="quick_from">Из</string>
+    <string name="quick_to">В</string>
+
+
+    <string name="asset_detail">Детали актива</string>
+    <string name="portfolio_empty_title">Ваш портфель пуст</string>
+    <string name="portfolio_empty_desc">Добавьте валюты вручную для отслеживания и сравнения. Ваш портфель помогает отслеживать и управлять вашими любимыми или часто используемыми валютами.</string>
+    <string name="portfolio_empty_new_assets">Новые активы</string>
+    <string name="portfolio_default_portfolio">Портфель по умолчанию</string>
+    <string name="portfolio_total_assets">Всего активов</string>
+    <string name="portfolio_add_new_assets">Добавить новые активы</string>
+    <string name="portfolio_new_asset">Новый актив</string>
+    <string name="portfolio_new_portfolio">Новый портфель</string>
+    <string name="portfolio_name_dialog_title">Создать портфель</string>
+    <string name="portfolio_name_dialog_desc">Пожалуйста, введите имя для этого портфеля.</string>
+    <string name="portfolio_name_dialog_portfolio_name">Имя портфеля</string>
+    <string name="portfolio_name_dialog_placeholder">например, Портфель 1</string>
+    <string name="portfolio_snackbar_new_title">Новый актив добавлен</string>
+    <string name="portfolio_snackbar_new_desc">Вы добавили %1$s в свой портфель</string>
+    <string name="portfolio_snackbar_removed_title">Актив удален</string>
+    <string name="portfolio_snackbar_removed_desc">Вы удалили %1$s из своего портфеля</string>
+
+
+    <string name="alerts">Оповещения</string>
+    <string name="alert_edit_alert">Редактировать оповещение</string>
+    <string name="alert_notified_on">Уведомлено на %1$s</string>
+    <string name="alert_empty_title">На данный момент оповещений нет</string>
+    <string name="alert_empty_desc">Оставайтесь в курсе! Мы опубликуем здесь любые важные уведомления или изменения в обменных курсах.</string>
+    <string name="new_alert">Новое оповещение</string>
+    <string name="alert_post_notification_permission_explanation">Приложению требуется разрешение на отправку уведомлений c оповещениями по парам.</string>
+    <string name="alert_snackbar_new_title">Оповещение для %1$s создано</string>
+    <string name="alert_snackbar_new_desc">Вы получите уведомление, когда цена %1$s будет %2$s %3$s %4$s</string>
+    <string name="alert_snackbar_removed_title">Оповещение для %1$s удалено</string>
+    <string name="alert_snackbar_removed_desc">Вы удалили оповещение для %1$s к %2$s</string>
+    <string name="add_new_alert">Добавить новое оповещение</string>
+    <string name="create_alert">Создать оповещение</string>
+    <string name="alert_current_price">Текущая цена = %1$s</string>
+
+    <string name="settings_quick_portfolio_alerts">Быстрые/Портфель/Оповещения</string>
+    <string name="settings_elapsed_ago">"%1$s назад · "</string>
+    <string name="settings_latest_rates_refresh">Последнее обновление курсов</string>
+    <string name="settings_latest_alerts_check">Последняя проверка оповещений</string>
+
+    <string name="search_currency_already_selected">Валюта уже выбрана</string>
+    <string name="search_currency_already_selected_desc">Пожалуйста, выберите другую валюту. Одинаковые валюты не могут быть использованы вместе.</string>
+
+    <string name="group_create_group">Создать папку</string>
+    <string name="group_please_enter_a_name_for_this_group">Пожалуйста, введите имя для этой папки.</string>
+    <string name="group_name">Имя папки</string>
+    <string name="e_g_group_1">например, Папка 1</string>
+    <string name="group_default_name">По умолчанию</string>
+    <string name="new_group">Новая папка</string>
+
+    <string name="crash_reports">Отчеты о сбоях</string>
+    <string name="all_currencies">Все валюты</string>
+
+    <string name="oops_something_went_wrong">Упс! Что-то пошло не так</string>
+
+
+    <string name="privacy_policy_url" translatable="false">https://www.ark-builders.dev/apps/rate/privacy-policy</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+
+    <string name="add">Добавить</string>
+    <string name="close">Закрыть</string>
+    <string name="expand">Развернуть</string>
+    <string name="collapse">Свернуть</string>
+    <string name="back">Назад</string>
+
+    <string name="get_started">Начать</string>
+    <string name="next">Далее</string>
+    <string name="skip">Пропустить</string>
+    <string name="okay">Хорошо</string>
+    <string name="finish">Закончить</string>
+    <string name="calculate">Рассчитать</string>
+    <string name="add_group">Добавить папку</string>
+    <string name="save">Сохранить</string>
+    <string name="input_value">Введите значение</string>
+    <string name="result">Результат</string>
+    <string name="new_currency">Новая валюта</string>
+    <string name="change_base_currency">Сменить базовую валюту</string>
+    <string name="market_capitalization">Рыночная капитализация</string>
+    <string name="n_a">Н/Д</string>
+    <string name="value_of_circulating_currency">Валюта, находящаяся в обращении</string>
+    <string name="above">выше</string>
+    <string name="below">ниже</string>
+    <string name="above_c">Выше</string>
+    <string name="below_c">Ниже</string>
+    <string name="by_price">По цене</string>
+    <string name="by_percent">По проценту</string>
+    <string name="when_">Когда</string>
+    <string name="price_is">цена</string>
+    <string name="every">"каждый "</string>
+    <string name="every_c">Каждый</string>
+    <string name="one_time">Однократно</string>
+    <string name="recurrent">Повторяющийся</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="cancel">Отмена</string>
+    <string name="no_result">Нет результата</string>
+    <string name="search">Поиск</string>
+    <string name="copy">Копировать</string>
+
+
+    <string name="about">О приложении</string>
+    <string name="alert_notification_title">Оповещение о цене ARK Rate</string>
+    <string name="alert_notification_desc">%1$s сейчас %2$s %3$s %4$s</string>
+    <string name="collect_analytics">Собирать аналитику</string>
+    <string name="search_currency">Поиск валюты</string>
+    <string name="undo">Отменить</string>
+    <string name="frequent_currencies">Часто используемые валюты</string>
+    <string name="top_results">Топ результатов</string>
+    <string name="unpin">Открепить</string>
+    <string name="pin">Закрепить</string>
+    <string name="delete">Удалить</string>
+    <string name="re_use">Повторно использовать</string>
+    <string name="edit">Редактировать</string>
+    <string name="options">Параметры</string>
+    <string name="oops_request_time_out">Упс, время запроса истекло!</string>
+    <string name="check_connection_and_refresh">Пожалуйста, проверьте ваше соединение и обновите страницу, чтобы попробовать снова.</string>
+    <string name="refresh">Обновить</string>
+    <string name="online">Онлайн</string>
+    <string name="your_connection_is_back">Ваше соединение восстановлено.</string>
+    <string name="offline">Офлайн</string>
+    <string name="your_network_is_offline">Ваша сеть офлайн.</string>
+    <string name="edit_group">Редактировать папку</string>
+    <string name="rename_group">Переименовать папку</string>
+    <string name="edit_group_name">Редактировать папку \"%1$s\"</string>
+    <string name="rename">Переименовать</string>
+    <string name="groups">Папки</string>
+
+    <string name="onboarding_1_title">Добро пожаловать в ARK Rate!</string>
+    <string name="onboarding_2_title">Простая мультивалютная конвертация</string>
+    <string name="onboarding_2_desc">Легко и мгновенно конвертируйте одну валюту в несколько других.</string>
+    <string name="onboarding_3_title">Оставайтесь впереди с закрепленными курсами обмена</string>
+    <string name="onboarding_3_desc">Следите за наиболее часто используемыми валютными парами для быстрых и удобных конвертаций.</string>
+    <string name="onboarding_4_title">Отслеживайте свой портфель в режиме реального времени</string>
+    <string name="onboarding_4_desc">Получайте информацию об изменениях общего объема ваших активов и стоимости валюты в одном месте.</string>
+
+    <string name="onboarding_quick_empty_1_title">Запустите быстрый расчёт</string>
+    <string name="onboarding_quick_empty_1_desc">Конвертируйте любую валюту в одну или несколько валют одновременно. Сохраните результат, чтобы вспомнить его позже.</string>
+    <string name="onboarding_quick_empty_2_title">Следите за своими активами</string>
+    <string name="onboarding_quick_empty_2_desc">Используйте функцию Портфелей, чтобы добавить свои активы на всех кошельках и картах.</string>
+    <string name="onboarding_quick_empty_3_title">Оповещения позволят вам узнать об изменениях цен</string>
+    <string name="onboarding_quick_empty_3_desc">Чтобы настроить оповещения, нажмите на меню “Оповещения”.</string>
+
+    <string name="onboarding_quick_calc_1_title">Проведите пальцем по расчёту вправо, чтобы закрепить</string>
+    <string name="onboarding_quick_calc_1_desc">Закрепленные расчёты обновляются каждый день!</string>
+    <string name="onboarding_quick_calc_2_title">Проведите пальцем по расчёту влево, чтобы удалить</string>
+    <string name="onboarding_quick_calc_2_desc">Быстро удалите расчёт, проведя пальцем влево.</string>
+    <string name="onboarding_quick_calc_3_title">Проведите пальцем по закрепленному расчёту вправо, чтобы открепить</string>
+    <string name="onboarding_quick_calc_3_desc">Открепите расчёт, чтобы переместить его в историю расчётов.</string>
+    <string name="onboarding_quick_calc_4_title">Контекстное меню расчёта</string>
+    <string name="onboarding_quick_calc_4_desc">Нажмите, чтобы открыть полное меню.</string>
+
+</resources>

@@ -14,16 +14,16 @@ class AddNewPairAction : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters,
     ) {
-        var group: String? = null
+        var groupId: Long? = null
 
         updateAppWidgetState(context, glanceId) { pref ->
-            group = pref[QuickPairsWidgetReceiver.currentGroupKey]
+            groupId = pref[QuickPairsWidgetReceiver.currentGroupIdKey]
         }
         context.startActivity(
             Intent().apply {
                 setClassName(context, "dev.arkbuilders.rate.presentation.MainActivity")
                 putExtra(ADD_NEW_PAIR, "ADD_NEW_PAIR")
-                putExtra(ADD_NEW_PAIR_GROUP_KEY, group)
+                putExtra(ADD_NEW_PAIR_GROUP_KEY, groupId)
                 setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             },
         )

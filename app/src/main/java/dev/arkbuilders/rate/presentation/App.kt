@@ -17,13 +17,13 @@ import dev.arkbuilders.rate.core.di.DaggerCoreComponent
 import dev.arkbuilders.rate.core.domain.AppConfig
 import dev.arkbuilders.rate.core.domain.BuildConfigFields
 import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
-import dev.arkbuilders.rate.feature.pairalert.data.worker.CurrencyMonitorWorker
-import dev.arkbuilders.rate.feature.pairalert.di.PairAlertComponentHolder
 import dev.arkbuilders.rate.feature.quickwidget.worker.QuickPairsWidgetRefreshWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.Instant
+import java.time.ZoneOffset
 import java.util.concurrent.TimeUnit
 
 class App : Application(), Configuration.Provider, CoreComponentProvider {
@@ -33,19 +33,29 @@ class App : Application(), Configuration.Provider, CoreComponentProvider {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
         coreComponent = DaggerCoreComponent.factory().create(this, applicationContext)
+        initBuildConfigFields()
+        instance = this
+
+        initCrashlytics()
+        initWorker(QuickPairsWidgetRefreshWorker::class.java, QuickPairsWidgetRefreshWorker.NAME)
+    }
+
+    private fun initBuildConfigFields() {
+        val fallbackCryptoRatesFetchDate =
+            Instant.ofEpochMilli(BuildConfig.CRYPTO_LAST_MODIFIED).atOffset(ZoneOffset.UTC)
+        val fallbackFiatRatesFetchDate =
+            Instant.ofEpochMilli(BuildConfig.FIAT_LAST_MODIFIED).atOffset(ZoneOffset.UTC)
         coreComponent.buildConfigFieldsProvider().init(
             BuildConfigFields(
                 buildType = BuildConfig.BUILD_TYPE,
                 versionCode = BuildConfig.VERSION_CODE,
                 versionName = BuildConfig.VERSION_NAME,
                 isGooglePlayBuild = BuildConfig.GOOGLE_PLAY_BUILD,
+                fallbackCryptoRatesFetchDate = fallbackCryptoRatesFetchDate,
+                fallbackFiatRatesFetchDate = fallbackFiatRatesFetchDate,
+                availableIconCodes = BuildConfig.ICON_CODES.toSet(),
             ),
         )
-        instance = this
-
-        initCrashlytics()
-        initWorker(CurrencyMonitorWorker::class.java, CurrencyMonitorWorker.NAME)
-        initWorker(QuickPairsWidgetRefreshWorker::class.java, QuickPairsWidgetRefreshWorker.NAME)
     }
 
     private fun initCrashlytics() =
@@ -88,16 +98,10 @@ class App : Application(), Configuration.Provider, CoreComponentProvider {
     override fun getWorkManagerConfiguration() =
         Configuration.Builder()
             .setMinimumLoggingLevel(android.util.Log.INFO)
-            .setWorkerFactory(buildAppWorkerFactory())
+            .setWorkerFactory(AppWorkerFactory())
             .build()
 
     override fun provideCoreComponent() = coreComponent
-
-    private fun buildAppWorkerFactory() =
-        AppWorkerFactory(
-            PairAlertComponentHolder.provide(this).handlePairAlertCheckUseCase(),
-            coreComponent.timestampRepo(),
-        )
 
     companion object {
         lateinit var instance: App

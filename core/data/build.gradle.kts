@@ -25,11 +25,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 }
 
@@ -49,6 +49,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     implementation(libs.timber)
+
+    implementation(libs.play.review)
+    implementation(libs.play.review.ktx)
 
     implementation(libs.arrow.core)
     implementation(libs.arrow.fx.coroutines)

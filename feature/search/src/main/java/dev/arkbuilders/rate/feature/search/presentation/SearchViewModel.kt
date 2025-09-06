@@ -5,62 +5,55 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
-import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
-import dev.arkbuilders.rate.core.presentation.AppSharedFlowKey
+import dev.arkbuilders.rate.core.domain.usecase.SearchUseCase
 import dev.arkbuilders.rate.feature.search.di.SearchScope
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.syntax.simple.blockingIntent
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
-import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
 data class SearchScreenState(
-    val frequent: List<CurrencyName> = emptyList(),
-    val all: List<CurrencyName> = emptyList(),
+    val prohibitedCodes: List<CurrencyCode> = emptyList(),
+    val frequent: List<CurrencyInfo> = emptyList(),
+    val all: List<CurrencyInfo> = emptyList(),
     val filter: String = "",
-    val topResults: List<CurrencyName> = emptyList(),
-    val topResultsFiltered: List<CurrencyName> = emptyList(),
+    val topResultsFiltered: List<CurrencyInfo> = emptyList(),
     val initialized: Boolean = false,
+    val showCodeProhibitedDialog: Boolean = false,
 )
 
 sealed class SearchScreenEffect {
-    data object NavigateBack : SearchScreenEffect()
+    data class NavigateBackWithResult(val result: SearchNavResult) : SearchScreenEffect()
 }
 
 class SearchViewModel(
-    private val appSharedFlowKeyString: String,
-    private val pos: Int?,
+    private val navKey: String?,
+    private val navPos: Int?,
+    private val prohibitedCodes: List<CurrencyCode>?,
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
-    private val getTopResultUseCase: GetTopResultUseCase,
+    private val searchUseCase: SearchUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ContainerHost<SearchScreenState, SearchScreenEffect>,
     ViewModel() {
     override val container: Container<SearchScreenState, SearchScreenEffect> =
-        container(SearchScreenState())
+        container(SearchScreenState(prohibitedCodes = prohibitedCodes ?: emptyList()))
 
     init {
         analyticsManager.trackScreen("SearchScreen")
 
         intent {
-            val all = currencyRepo.getCurrencyNameUnsafe()
-            val frequent =
-                calcFrequentCurrUseCase.invoke()
-                    .map { currencyRepo.nameByCodeUnsafe(it) }
-            val topResults = getTopResultUseCase()
+            val all = currencyRepo.getCurrencyInfo()
+            val frequent = calcFrequentCurrUseCase.invoke().map { currencyRepo.infoByCode(it) }
 
             reduce {
                 state.copy(
                     frequent = frequent,
                     all = all,
-                    topResults = topResults,
                     initialized = true,
                 )
             }
@@ -69,62 +62,57 @@ class SearchViewModel(
 
     fun onInputChange(input: String) =
         blockingIntent {
-            val filtered =
-                state.topResults
-                    .filter {
-                        it.name.contains(input, ignoreCase = true) ||
-                            it.code.contains(input, ignoreCase = true)
-                    }
-            reduce { state.copy(filter = input, topResultsFiltered = filtered) }
+            reduce {
+                state.copy(
+                    filter = input,
+                    topResultsFiltered =
+                        searchUseCase(
+                            state.all,
+                            state.frequent.map { it.code },
+                            input,
+                        ),
+                )
+            }
         }
 
-    fun onClick(name: CurrencyName) =
+    fun onClick(model: CurrencyInfo) =
         intent {
-            emitResult(name)
-            postSideEffect(SearchScreenEffect.NavigateBack)
+            prohibitedCodes?.let {
+                if (model.code in prohibitedCodes) {
+                    reduce {
+                        state.copy(showCodeProhibitedDialog = true)
+                    }
+                    return@intent
+                }
+            }
+
+            val result = SearchNavResult(navKey, navPos, model.code)
+            postSideEffect(SearchScreenEffect.NavigateBackWithResult(result))
         }
 
-    private suspend fun emitResult(name: CurrencyName) {
-        val appFlowKey = AppSharedFlowKey.valueOf(appSharedFlowKeyString)
-        when (appFlowKey) {
-            AppSharedFlowKey.SetAssetCode ->
-                AppSharedFlow.SetAssetCode.flow.emit(pos!! to name.code)
-
-            AppSharedFlowKey.AddAsset -> AppSharedFlow.AddAsset.flow.emit(name.code)
-
-            AppSharedFlowKey.AddPairAlertBase ->
-                AppSharedFlow.AddPairAlertBase.flow.emit(name.code)
-
-            AppSharedFlowKey.AddPairAlertTarget ->
-                AppSharedFlow.AddPairAlertTarget.flow.emit(name.code)
-
-            AppSharedFlowKey.SetQuickCode ->
-                AppSharedFlow.SetQuickCode.flow.emit(pos!! to name.code)
-
-            AppSharedFlowKey.PickBaseCurrency ->
-                AppSharedFlow.PickBaseCurrency.flow.emit(name.code)
-
-            AppSharedFlowKey.AddQuickCode ->
-                AppSharedFlow.AddQuickCode.flow.emit(name.code)
+    fun onCodeProhibitedDialogDismiss() =
+        intent {
+            reduce { state.copy(showCodeProhibitedDialog = false) }
         }
-    }
 }
 
 class SearchViewModelFactory @AssistedInject constructor(
-    @Assisted private val appSharedFlowKeyString: String,
-    @Assisted private val pos: Int?,
+    @Assisted private val navKey: String?,
+    @Assisted private val navPos: Int?,
+    @Assisted private val prohibitedCodes: List<CurrencyCode>?,
     private val currencyRepo: CurrencyRepo,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
-    private val getTopResultUseCase: GetTopResultUseCase,
+    private val searchUseCase: SearchUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SearchViewModel(
-            appSharedFlowKeyString,
-            pos,
+            navKey,
+            navPos,
+            prohibitedCodes,
             currencyRepo,
             calcFrequentCurrUseCase,
-            getTopResultUseCase,
+            searchUseCase,
             analyticsManager,
         ) as T
     }
@@ -133,8 +121,9 @@ class SearchViewModelFactory @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            appSharedFlowKeyString: String,
-            pos: Int?,
+            navKey: String?,
+            navPos: Int?,
+            prohibitedCodes: List<CurrencyCode>?,
         ): SearchViewModelFactory
     }
 }

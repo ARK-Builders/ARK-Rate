@@ -11,12 +11,18 @@ import dev.arkbuilders.rate.core.domain.BuildConfigFieldsProvider
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.core.domain.repo.GroupRepo
+import dev.arkbuilders.rate.core.domain.repo.InAppReviewManager
 import dev.arkbuilders.rate.core.domain.repo.NetworkStatus
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
-import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
+import dev.arkbuilders.rate.core.domain.usecase.DefaultGroupNameProvider
+import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCase
+import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
+import dev.arkbuilders.rate.core.domain.usecase.SearchUseCase
+import dev.arkbuilders.rate.core.domain.usecase.ValidateGroupNameUseCase
 import javax.inject.Singleton
 
 @Singleton
@@ -34,6 +40,8 @@ interface CoreComponent {
 
     fun codesUseStatRepo(): CodeUseStatRepo
 
+    fun groupRepo(): GroupRepo
+
     fun appContext(): Context
 
     fun buildConfigFieldsProvider(): BuildConfigFieldsProvider
@@ -50,9 +58,19 @@ interface CoreComponent {
 
     fun calcFrequentCurrUseCase(): CalcFrequentCurrUseCase
 
-    fun getTopResultUseCase(): GetTopResultUseCase
+    fun searchUseCase(): SearchUseCase
+
+    fun validateGroupNameUseCase(): ValidateGroupNameUseCase
+
+    fun prepopulateDefaultGroupUseCase(): GetGroupByIdOrCreateDefaultUseCase
+
+    fun defaultGroupNameProvider(): DefaultGroupNameProvider
+
+    fun groupReorderSwapUseCase(): GroupReorderSwapUseCase
 
     fun analyticsManager(): AnalyticsManager
+
+    fun inAppReviewManager(): InAppReviewManager
 
     @Component.Factory
     interface Factory {

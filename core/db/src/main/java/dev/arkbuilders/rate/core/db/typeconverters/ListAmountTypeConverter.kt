@@ -8,7 +8,7 @@ import dev.arkbuilders.rate.core.domain.model.AmountStr
 import dev.arkbuilders.rate.core.domain.model.toAmount
 import dev.arkbuilders.rate.core.domain.model.toStrAmount
 
-class ListAmountTypeConverter {
+object ListAmountTypeConverter {
     @TypeConverter
     fun fromListAmount(list: List<Amount>): String {
         val type = object : TypeToken<List<AmountStr>>() {}.type

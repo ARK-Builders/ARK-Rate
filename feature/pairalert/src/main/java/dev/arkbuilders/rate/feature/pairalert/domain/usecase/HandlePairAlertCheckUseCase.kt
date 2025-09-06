@@ -1,9 +1,5 @@
 package dev.arkbuilders.rate.feature.pairalert.domain.usecase
 
-import arrow.core.Either
-import arrow.core.getOrElse
-import arrow.core.left
-import arrow.core.right
 import dev.arkbuilders.rate.core.domain.divideArk
 import dev.arkbuilders.rate.core.domain.model.Amount
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
@@ -21,11 +17,8 @@ class HandlePairAlertCheckUseCase(
     private val convertUseCase: ConvertWithRateUseCase,
 ) {
     // PairAlert to current rate
-    suspend operator fun invoke(): Either<Throwable, List<Pair<PairAlert, BigDecimal>>> {
-        val rates =
-            currencyRepo.getCodeToCurrencyRate().getOrElse {
-                return it.left()
-            }
+    suspend operator fun invoke(): List<Pair<PairAlert, BigDecimal>> {
+        val rates = currencyRepo.getCodeToCurrencyRate()
         val pairsToNotify =
             pairAlertRepo.getAll()
                 .filter { it.enabled }
@@ -44,7 +37,7 @@ class HandlePairAlertCheckUseCase(
                     return@mapNotNull null
                 }
 
-        return pairsToNotify.right()
+        return pairsToNotify
     }
 
     private suspend fun handleOneTimePair(pairAlert: PairAlert) {

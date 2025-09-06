@@ -4,8 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    
+
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 
     <application
@@ -13,17 +12,16 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="${appIcon}"
+        android:icon="@mipmap/ic_launcher"
         android:label="${appLabel}"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Exchange"
+        android:theme="@style/Theme.ARKRate"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Exchange"
+            android:theme="@style/Theme.ARKRate"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

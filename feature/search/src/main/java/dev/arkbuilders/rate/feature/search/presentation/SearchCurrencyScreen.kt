@@ -18,12 +18,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
+import com.ramcosta.composedestinations.result.ResultBackNavigator
+import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
-import dev.arkbuilders.rate.core.presentation.ui.CurrencyInfoItem
+import dev.arkbuilders.rate.core.presentation.ui.InfoDialog
 import dev.arkbuilders.rate.core.presentation.ui.ListHeader
 import dev.arkbuilders.rate.core.presentation.ui.LoadingScreen
 import dev.arkbuilders.rate.core.presentation.ui.NoResult
@@ -32,12 +34,14 @@ import dev.arkbuilders.rate.feature.search.di.SearchComponentHolder
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
-@Destination
+@Destination<ExternalModuleGraph>
 @Composable
 fun SearchCurrencyScreen(
-    appSharedFlowKeyString: String,
-    pos: Int? = null,
-    navigator: DestinationsNavigator,
+    title: String? = null,
+    navKey: String? = null,
+    navPos: Int? = null,
+    prohibitedCodes: Array<CurrencyCode>? = null,
+    resultNavigator: ResultBackNavigator<SearchNavResult>,
 ) {
     val ctx = LocalContext.current
     val component =
@@ -48,21 +52,30 @@ fun SearchCurrencyScreen(
         viewModel(
             factory =
                 component.searchVMFactory()
-                    .create(appSharedFlowKeyString, pos),
+                    .create(navKey, navPos, prohibitedCodes?.toList()),
         )
     val state by viewModel.collectAsState()
 
     viewModel.collectSideEffect { effect ->
         when (effect) {
-            SearchScreenEffect.NavigateBack -> navigator.popBackStack()
+            is SearchScreenEffect.NavigateBackWithResult ->
+                resultNavigator.navigateBack(effect.result)
         }
+    }
+
+    if (state.showCodeProhibitedDialog) {
+        InfoDialog(
+            title = stringResource(CoreRString.search_currency_already_selected),
+            desc = stringResource(CoreRString.search_currency_already_selected_desc),
+            onDismiss = viewModel::onCodeProhibitedDialogDismiss,
+        )
     }
 
     Scaffold(
         topBar = {
             AppTopBarBack(
-                title = stringResource(CoreRString.search_currency),
-                onBackClick = { navigator.popBackStack() },
+                title = title ?: stringResource(CoreRString.search_currency),
+                onBackClick = { resultNavigator.navigateBack() },
             )
         },
     ) {
@@ -71,6 +84,7 @@ fun SearchCurrencyScreen(
                 Input(state.filter, viewModel::onInputChange)
                 Results(
                     filter = state.filter,
+                    prohibitedCodes = state.prohibitedCodes,
                     frequent = state.frequent,
                     all = state.all,
                     topResultsFiltered = state.topResultsFiltered,
@@ -102,18 +116,22 @@ private fun Input(
 @Composable
 private fun Results(
     filter: String,
-    frequent: List<CurrencyName>,
-    all: List<CurrencyName>,
-    topResultsFiltered: List<CurrencyName>,
-    onClick: (CurrencyName) -> Unit,
+    prohibitedCodes: List<CurrencyCode>,
+    frequent: List<CurrencyInfo>,
+    all: List<CurrencyInfo>,
+    topResultsFiltered: List<CurrencyInfo>,
+    onClick: (CurrencyInfo) -> Unit,
 ) {
     when {
         filter.isNotEmpty() -> {
             if (topResultsFiltered.isNotEmpty()) {
                 LazyColumn {
                     item { ListHeader(stringResource(CoreRString.top_results)) }
-                    items(topResultsFiltered) { name ->
-                        CurrencyInfoItem(name) { onClick(it) }
+                    items(topResultsFiltered) { model ->
+                        SearchCurrencyInfoItem(
+                            model,
+                            model.code in prohibitedCodes,
+                        ) { onClick(it) }
                     }
                 }
             } else {
@@ -125,13 +143,19 @@ private fun Results(
             LazyColumn {
                 if (frequent.isNotEmpty()) {
                     item { ListHeader(stringResource(CoreRString.frequent_currencies)) }
-                    items(frequent) { name ->
-                        CurrencyInfoItem(name) { onClick(it) }
+                    items(frequent) { model ->
+                        SearchCurrencyInfoItem(
+                            model,
+                            model.code in prohibitedCodes,
+                        ) { onClick(it) }
                     }
                 }
                 item { ListHeader(stringResource(CoreRString.all_currencies)) }
-                items(all) { name ->
-                    CurrencyInfoItem(name) { onClick(it) }
+                items(all) { model ->
+                    SearchCurrencyInfoItem(
+                        model,
+                        model.code in prohibitedCodes,
+                    ) { onClick(it) }
                 }
             }
         }

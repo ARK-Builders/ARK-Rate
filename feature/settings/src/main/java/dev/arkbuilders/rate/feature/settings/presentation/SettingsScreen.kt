@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
+import com.ramcosta.composedestinations.generated.settings.destinations.AboutScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.arkbuilders.rate.core.presentation.CoreRDrawable
 import dev.arkbuilders.rate.core.presentation.CoreRString
@@ -32,12 +34,11 @@ import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv16
 import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.settings.di.SettingsComponentHolder
-import dev.arkbuilders.rate.feature.settings.presentation.destinations.AboutScreenDestination
 import org.orbitmvi.orbit.compose.collectAsState
 import java.time.Duration
 import java.time.OffsetDateTime
 
-@Destination
+@Destination<ExternalModuleGraph>
 @Composable
 fun SettingsScreen(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current
@@ -86,8 +87,8 @@ private fun Content(
         val now = OffsetDateTime.now()
 
         fun formatTime(date: OffsetDateTime): String {
-            val elapsed = DateFormatUtils.latestCheckElapsedTime(ctx, now, date)
-            val time = DateFormatUtils.latestCheckTime(date)
+            val elapsed = DateFormatUtils.formatElapsedTime(ctx, now, date)
+            val time = DateFormatUtils.formatFullDateTime(date)
             return ctx.getString(CoreRString.settings_elapsed_ago, elapsed) + time
         }
 
@@ -102,10 +103,6 @@ private fun Content(
         LatestRefresh(
             title = stringResource(CoreRString.settings_latest_rates_refresh),
             description = refreshDesc,
-        )
-        LatestRefresh(
-            title = stringResource(CoreRString.settings_latest_alerts_check),
-            description = pairAlertDesc,
         )
         AppHorDiv16(modifier = Modifier.padding(top = 20.dp))
         if (state.showCrashReports) {
@@ -154,7 +151,7 @@ private fun Content(
         ) {
             Icon(
                 painter = painterResource(CoreRDrawable.ic_info),
-                contentDescription = "",
+                contentDescription = null,
                 tint = ArkColor.TextTertiary,
             )
             Text(

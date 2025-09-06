@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 
@@ -71,7 +72,7 @@ fun NotifyRemovedSnackbarContent(
                     .align(Alignment.TopStart)
                     .padding(top = 7.dp, start = 7.dp),
             painter = painterResource(id = R.drawable.ic_info_red),
-            contentDescription = "",
+            contentDescription = null,
             tint = Color.Unspecified,
         )
         IconButton(
@@ -85,7 +86,7 @@ fun NotifyRemovedSnackbarContent(
             Icon(
                 modifier = Modifier,
                 painter = painterResource(id = R.drawable.ic_close),
-                contentDescription = "",
+                contentDescription = stringResource(CoreRString.close),
                 tint = ArkColor.FGQuinary,
             )
         }

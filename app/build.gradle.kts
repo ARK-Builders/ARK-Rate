@@ -6,6 +6,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("org.jlleitschuh.gradle.ktlint")
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -16,8 +17,8 @@ android {
         applicationId = "dev.arkbuilders.rate"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.compileSdk.get().toInt()
-        versionCode = 6
-        versionName = "2.0.2"
+        versionCode = 8
+        versionName = "2.1.1"
         setProperty("archivesBaseName", "ark-rate")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -44,7 +45,6 @@ android {
             isDebuggable = true
             addManifestPlaceholders(
                 mapOf(
-                    "appIcon" to "@mipmap/ic_launcher_debug",
                     "appLabel" to "@string/app_name_debug",
                 ),
             )
@@ -61,7 +61,6 @@ android {
 
             addManifestPlaceholders(
                 mapOf(
-                    "appIcon" to "@mipmap/ic_launcher",
                     "appLabel" to "@string/app_name",
                 ),
             )
@@ -81,20 +80,50 @@ android {
         }
     }
 
+    productFlavors.all {
+        val cryptoRatesLastModified =
+            rootProject.file("core/data/src/main/assets/crypto-rates.json").lastModified()
+        val fiatRatesLastModified =
+            rootProject.file("core/data/src/main/assets/fiat-rates.json").lastModified()
+
+        buildConfigField(
+            "long",
+            "CRYPTO_LAST_MODIFIED",
+            cryptoRatesLastModified.toString(),
+        )
+        buildConfigField(
+            "long",
+            "FIAT_LAST_MODIFIED",
+            fiatRatesLastModified.toString(),
+        )
+
+        val cryptoIcons = collectCurrencyIcons(project.rootDir.resolve("cryptoicons"))
+        val fiatIcons = collectCurrencyIcons(project.rootDir.resolve("fiaticons"))
+        val allIcons = (cryptoIcons + fiatIcons).distinct()
+
+        buildConfigField(
+            "String[]",
+            "ICON_CODES",
+            allIcons.joinToString(
+                prefix = "new String[] {",
+                postfix = "}",
+                separator = ", ",
+            ) {
+                "\"$it\""
+            },
+        )
+    }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 
     buildFeatures {
         buildConfig = true
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     packaging {
         resources {
@@ -108,10 +137,10 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
     implementation(project(":core:presentation"))
+    implementation(project(":feature:onboarding"))
     implementation(project(":feature:quick"))
     implementation(project(":feature:quickwidget"))
     implementation(project(":feature:portfolio"))
-    implementation(project(":feature:pairalert"))
     implementation(project(":feature:search"))
     implementation(project(":feature:settings"))
     implementation(project(":fiaticons"))
@@ -151,7 +180,7 @@ dependencies {
 
     implementation(libs.qrgenerator)
 
-    implementation(libs.compose.destinations.animations)
+    implementation(libs.compose.destinations.core)
     ksp(libs.compose.destinations.compiler)
 
     implementation(libs.retrofit)
@@ -173,3 +202,10 @@ dependencies {
 tasks.getByPath(":app:preBuild").dependsOn("ktlintCheck")
 
 tasks.getByPath(":app:preBuild").dependsOn("ktlintFormat")
+
+fun collectCurrencyIcons(moduleDir: File): List<String> {
+    val drawableDir = moduleDir.resolve("src/main/res/drawable")
+    return drawableDir.listFiles()!!
+        .map { it.nameWithoutExtension.uppercase() }
+        .map { if (it == "curr_try") "try" else it }
+}

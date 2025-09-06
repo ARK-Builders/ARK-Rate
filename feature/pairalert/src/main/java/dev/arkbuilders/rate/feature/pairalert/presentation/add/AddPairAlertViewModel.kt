@@ -2,7 +2,6 @@ package dev.arkbuilders.rate.feature.pairalert.presentation.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import arrow.core.Either
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -10,23 +9,21 @@ import dagger.assisted.AssistedInject
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.divideArk
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.Group
+import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
+import dev.arkbuilders.rate.core.domain.repo.GroupRepo
 import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.domain.toDoubleArk
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
-import dev.arkbuilders.rate.core.presentation.AppSharedFlow
+import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCase
 import dev.arkbuilders.rate.feature.pairalert.domain.model.PairAlert
 import dev.arkbuilders.rate.feature.pairalert.domain.repo.PairAlertRepo
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.syntax.simple.blockingIntent
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
-import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import java.math.BigDecimal
 
@@ -36,25 +33,39 @@ data class AddPairAlertScreenState(
     val priceOrPercent: Either<String, String> = Either.Left(""),
     val currentPrice: BigDecimal = BigDecimal.ZERO,
     val aboveNotBelow: Boolean = true,
-    val group: String? = null,
+    val group: Group = Group.empty(),
     val oneTimeNotRecurrent: Boolean = true,
-    val availableGroups: List<String> = emptyList(),
+    val availableGroups: List<Group> = emptyList(),
     val finishEnabled: Boolean = true,
     val editExisting: Boolean = false,
 )
 
 sealed class AddPairAlertScreenEffect {
-    data object NavigateBack : AddPairAlertScreenEffect()
+    data class NavigateBackWithResult(val newPairId: Long) : AddPairAlertScreenEffect()
 
-    class NotifyPairAdded(val pair: PairAlert) : AddPairAlertScreenEffect()
+    data class NavigateSearchTarget(
+        val prohibitedCodes: List<CurrencyCode>,
+    ) : AddPairAlertScreenEffect()
+
+    data class NavigateSearchBase(
+        val prohibitedCodes: List<CurrencyCode>,
+    ) : AddPairAlertScreenEffect()
+}
+
+enum class SearchNavResultType {
+    TARGET,
+    BASE,
 }
 
 class AddPairAlertViewModel(
     private val pairAlertId: Long?,
+    private val groupId: Long?,
     private val currencyRepo: CurrencyRepo,
     private val pairAlertRepo: PairAlertRepo,
+    private val groupRepo: GroupRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase,
+    private val getGroupByIdOrCreateDefaultUseCase: GetGroupByIdOrCreateDefaultUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModel(), ContainerHost<AddPairAlertScreenState, AddPairAlertScreenEffect> {
     override val container: Container<AddPairAlertScreenState, AddPairAlertScreenEffect> =
@@ -63,27 +74,25 @@ class AddPairAlertViewModel(
     init {
         analyticsManager.trackScreen("AddPairAlertScreen")
 
-        AppSharedFlow.AddPairAlertTarget.flow.onEach {
-            initOnCodeChange(newTarget = it)
-        }.launchIn(viewModelScope)
-
-        AppSharedFlow.AddPairAlertBase.flow.onEach {
-            initOnCodeChange(newBase = it)
-        }.launchIn(viewModelScope)
-
         pairAlertId?.let {
             setupFromExisting()
-            intent {
-                checkAboveNotBelow()
-            }
+            checkAboveNotBelow()
         } ?: initOnCodeChange()
 
         intent {
-            val groups =
-                pairAlertRepo.getAll().mapNotNull { it.group }.distinct()
+            val group = getGroupByIdOrCreateDefaultUseCase(groupId, GroupFeatureType.PairAlert)
+            val groups = groupRepo.getAllSorted(GroupFeatureType.PairAlert)
             reduce {
-                state.copy(availableGroups = groups)
+                state.copy(availableGroups = groups, group = group)
             }
+        }
+    }
+
+    fun onNavResult(result: SearchNavResult) {
+        val type = SearchNavResultType.valueOf(result.key!!)
+        when (type) {
+            SearchNavResultType.TARGET -> initOnCodeChange(newTarget = result.code)
+            SearchNavResultType.BASE -> initOnCodeChange(newBase = result.code)
         }
     }
 
@@ -91,7 +100,7 @@ class AddPairAlertViewModel(
         newTarget: CurrencyCode? = null,
         newBase: CurrencyCode? = null,
     ) {
-        intent {
+        blockingIntent {
             val target = newTarget ?: state.targetCode
             val base = newBase ?: state.baseCode
             val (_, currentPrice) =
@@ -193,6 +202,8 @@ class AddPairAlertViewModel(
 
             val id = if (state.editExisting) pairAlertId!! else 0
 
+            val group = groupRepo.getByNameOrCreateNew(state.group.name, GroupFeatureType.PairAlert)
+
             val pairAlert =
                 PairAlert(
                     id = id,
@@ -204,15 +215,32 @@ class AddPairAlertViewModel(
                     oneTimeNotRecurrent = state.oneTimeNotRecurrent,
                     enabled = true,
                     lastDateTriggered = null,
-                    group = state.group,
+                    group = group,
                 )
-            pairAlertRepo.insert(pairAlert)
+            val newPairId = pairAlertRepo.insert(pairAlert)
             codeUseStatRepo.codesUsed(pairAlert.baseCode, pairAlert.targetCode)
-            postSideEffect(AddPairAlertScreenEffect.NotifyPairAdded(pairAlert))
-            postSideEffect(AddPairAlertScreenEffect.NavigateBack)
+            postSideEffect(AddPairAlertScreenEffect.NavigateBackWithResult(newPairId))
         }
 
-    fun onGroupSelect(group: String?) =
+    fun onGroupCreate(name: String) =
+        intent {
+            val group = Group.empty(name = name)
+            val inAvailable = state.availableGroups.any { it.name == group.name }
+            reduce {
+                if (inAvailable) {
+                    state.copy(
+                        group = group,
+                    )
+                } else {
+                    state.copy(
+                        group = group,
+                        availableGroups = state.availableGroups + group,
+                    )
+                }
+            }
+        }
+
+    fun onGroupSelect(group: Group) =
         intent {
             reduce { state.copy(group = group) }
         }
@@ -346,6 +374,18 @@ class AddPairAlertViewModel(
             reduce { state.copy(finishEnabled = enabled) }
         }
 
+    fun onNavigateSearchBase() =
+        intent {
+            val prohibitedCodes = listOf(state.targetCode)
+            postSideEffect(AddPairAlertScreenEffect.NavigateSearchBase(prohibitedCodes))
+        }
+
+    fun onNavigateSearchTarget() =
+        intent {
+            val prohibitedCodes = listOf(state.baseCode)
+            postSideEffect(AddPairAlertScreenEffect.NavigateSearchTarget(prohibitedCodes))
+        }
+
     companion object {
         private val INITIAL_ONE_TIME_SCALE = BigDecimal.valueOf(1.1)
         private val INITIAL_RECURRENT_SCALE = BigDecimal.valueOf(10)
@@ -353,26 +393,35 @@ class AddPairAlertViewModel(
 }
 
 class AddPairAlertViewModelFactory @AssistedInject constructor(
-    @Assisted private val pairAlertId: Long?,
+    @Assisted("pairAlertId") private val pairAlertId: Long?,
+    @Assisted("groupId") private val groupId: Long?,
     private val currencyRepo: CurrencyRepo,
     private val pairAlertRepo: PairAlertRepo,
+    private val groupRepo: GroupRepo,
     private val codeUseStatRepo: CodeUseStatRepo,
     private val convertUseCase: ConvertWithRateUseCase,
+    private val getGroupByIdOrCreateDefaultUseCase: GetGroupByIdOrCreateDefaultUseCase,
     private val analyticsManager: AnalyticsManager,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddPairAlertViewModel(
             pairAlertId,
+            groupId,
             currencyRepo,
             pairAlertRepo,
+            groupRepo,
             codeUseStatRepo,
             convertUseCase,
+            getGroupByIdOrCreateDefaultUseCase,
             analyticsManager,
         ) as T
     }
 
     @AssistedFactory
     interface Factory {
-        fun create(pairAlertId: Long?): AddPairAlertViewModelFactory
+        fun create(
+            @Assisted("pairAlertId") pairAlertId: Long?,
+            @Assisted("groupId") groupId: Long?,
+        ): AddPairAlertViewModelFactory
     }
 }

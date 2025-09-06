@@ -3,10 +3,14 @@ package dev.arkbuilders.rate.core.db.typeconverters
 import androidx.room.TypeConverter
 import java.time.OffsetDateTime
 
-class OffsetDateTimeTypeConverter {
+object OffsetDateTimeTypeConverter {
     @TypeConverter
     fun fromOffsetDateTime(date: OffsetDateTime): String = date.toString()
 
     @TypeConverter
-    fun toOffsetDateTime(date: String): OffsetDateTime = OffsetDateTime.parse(date)
+    fun toOffsetDateTime(dateString: String): OffsetDateTime {
+        val date = OffsetDateTime.parse(dateString)
+        val offset = OffsetDateTime.now().offset
+        return date.withOffsetSameInstant(offset)
+    }
 }
