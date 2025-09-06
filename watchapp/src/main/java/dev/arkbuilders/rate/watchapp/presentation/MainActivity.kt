@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable("list") {
 //                            OptionsScreen()
+//                            SearchScreen()
                             QuickPairsScreen(
                                 onNavigateToAdd = {
                                     navController.navigate("addquickpairs")
