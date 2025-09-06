@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material.Text
@@ -21,7 +21,7 @@ import dev.arkbuilders.rate.watchapp.presentation.theme.WearButtonStyle
 @Composable
 fun QuickPairsScreen(
     modifier: Modifier = Modifier,
-    viewModel: QuickPairsViewModel = QuickPairsViewModel(),
+    viewModel: QuickPairsViewModel = hiltViewModel(),
     onNavigateToAdd: () -> Unit
 ) {
     val quickPairsList = viewModel.quickPairs.collectAsStateWithLifecycle().value
