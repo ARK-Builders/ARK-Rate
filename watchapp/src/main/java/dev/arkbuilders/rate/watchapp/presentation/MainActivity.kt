@@ -10,12 +10,14 @@ import androidx.wear.compose.material.VignettePosition
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import dagger.hilt.android.AndroidEntryPoint
 import dev.arkbuilders.rate.watchapp.presentation.addquickpairs.AddQuickPairsScreen
-import dev.arkbuilders.rate.watchapp.presentation.options.OptionsScreen
 import dev.arkbuilders.rate.watchapp.presentation.quickpairs.QuickPairsScreen
 import dev.arkbuilders.rate.watchapp.presentation.theme.ArkrateTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
