@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material.Text
 import dev.arkbuilders.rate.watchapp.presentation.quickpairs.composables.QuickPairItem
@@ -19,7 +20,7 @@ fun QuickPairsScreen(
     viewModel: QuickPairsViewModel = QuickPairsViewModel(),
     onNavigateToAdd: () -> Unit
 ) {
-    val quickPairsList = viewModel.quickPairs.collectAsState().value
+    val quickPairsList = viewModel.quickPairs.collectAsStateWithLifecycle().value
 
     if (quickPairsList.isEmpty()) {
         QuickPairsEmpty(modifier = modifier.fillMaxSize())

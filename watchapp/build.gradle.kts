@@ -1,6 +1,7 @@
 plugins {
-    id("com.android.application")  version "8.1.3"
+    id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.compose.compiler)
 }
 android {
     namespace = "dev.arkbuilders.rate.watchapp"
@@ -52,18 +53,19 @@ dependencies {
     implementation(project(":feature:quick"))
     implementation(project(":core:domain"))
     implementation(project(":core:presentation"))
-    implementation(libs.androidx.compose.material.v140)
 
     implementation(libs.play.services.wearable)
-    implementation(platform(libs.androidx.compose.bom))
+//    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
+    implementation (libs.androidx.compose.navigation )// Or the latest version
+
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.material3.android)
-    implementation(libs.androidx.compose.navigation)
+    implementation(libs.material3)
+    implementation(libs.navigation.compose)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)

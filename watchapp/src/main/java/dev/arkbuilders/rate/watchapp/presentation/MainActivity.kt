@@ -11,7 +11,7 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import dev.arkbuilders.rate.watchapp.presentation.addquickpairs.AddQuickPairsScreen
-import dev.arkbuilders.rate.watchapp.presentation.quickpairs.QuickPairsScreen
+import dev.arkbuilders.rate.watchapp.presentation.options.OptionsScreen
 import dev.arkbuilders.rate.watchapp.presentation.theme.ArkrateTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,17 +30,17 @@ class MainActivity : ComponentActivity() {
                         Vignette(vignettePosition = VignettePosition.TopAndBottom)
                     }
                 ) {
-                    AddQuickPairsScreen()
                     SwipeDismissableNavHost(
                         navController = navController,
                         startDestination = "list"
                     ) {
                         composable("list") {
-                            QuickPairsScreen(
-                                onNavigateToAdd = {
-                                    navController.navigate("addquickpairs")
-                                }
-                            )
+                            OptionsScreen()
+//                            QuickPairsScreen(
+//                                onNavigateToAdd = {
+////                                    navController.navigate("addquickpairs")
+//                                }
+//                            )
                         }
                         composable("addquickpairs") {
                             AddQuickPairsScreen(

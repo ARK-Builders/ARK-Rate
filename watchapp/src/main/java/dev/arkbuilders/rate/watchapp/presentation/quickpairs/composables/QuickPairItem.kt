@@ -31,6 +31,7 @@ import androidx.wear.compose.material.Text
 import dev.arkbuilders.rate.core.domain.CurrUtils
 import dev.arkbuilders.rate.core.domain.model.Amount
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.utils.IconUtils
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
@@ -160,7 +161,7 @@ fun QuickPairItemPreview() {
             ),
             calculatedDate = OffsetDateTime.now(),
             pinnedDate = null,
-            group = null
+            group = Group.empty()
         ),
         onClick = {}
     )
