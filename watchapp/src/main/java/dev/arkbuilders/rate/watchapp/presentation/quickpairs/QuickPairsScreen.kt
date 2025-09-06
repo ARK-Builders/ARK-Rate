@@ -3,6 +3,8 @@ package dev.arkbuilders.rate.watchapp.presentation.quickpairs
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -13,6 +15,8 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material.Text
 import dev.arkbuilders.rate.watchapp.presentation.quickpairs.composables.QuickPairItem
 import dev.arkbuilders.rate.watchapp.presentation.quickpairs.composables.QuickPairsEmpty
+import dev.arkbuilders.rate.watchapp.presentation.theme.WearButton
+import dev.arkbuilders.rate.watchapp.presentation.theme.WearButtonStyle
 
 @Composable
 fun QuickPairsScreen(
@@ -34,6 +38,14 @@ fun QuickPairsScreen(
                     modifier = modifier.fillMaxWidth(),
                     text = "Quick",
                     textAlign = TextAlign.Center
+                )
+            }
+            item {
+                WearButton(
+                    text = "Add",
+                    onClick = onNavigateToAdd,
+                    style = WearButtonStyle.Primary,
+                    leadingIcon = Icons.Outlined.Add
                 )
             }
             items(quickPairsList.size, key = null) { idx ->
