@@ -16,10 +16,13 @@
     <string name="quick_empty_desc">Select your currencies and enter an amount to start converting. Your exchange results will appear here.</string>
     <string name="quick_add_new_calculation">Add new calculation</string>
     <string name="quick_edit_calc">Edit calculation</string>
-    <string name="quick_last_refreshed">Last refreshed %1$s ago</string>
+    <string name="quick_last_refreshed_ago">Last refreshed %1$s ago</string>
+    <string name="quick_last_refreshed_now">Updated just now</string>
     <string name="quick_calculations">Calculations</string>
     <string name="quick_pinned_calculations">Pinned calculations</string>
+    <string name="quick_calculated_ago">Calculated %1$s ago</string>
     <string name="quick_calculated_on">Calculated on %1$s</string>
+    <string name="quick_calculated_just_now">Calculated just now</string>
     <string name="quick_snackbar_new_title">New calculation has been created</string>
     <string name="quick_snackbar_new_desc">"You added %1$s calculation "</string>
     <string name="quick_snackbar_removed_title">The calculation has been deleted</string>
@@ -94,6 +97,11 @@
     <string name="collapse">Collapse</string>
     <string name="back">Back</string>
 
+    <string name="get_started">Get started</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="okay">Okay</string>
+    <string name="finish">Finish</string>
     <string name="calculate">Calculate</string>
     <string name="add_group">Add folder</string>
     <string name="save">Save</string>
@@ -124,29 +132,6 @@
 
 
     <string name="about">About</string>
-    <string name="about_download_qr_image">Download QR Image</string>
-    <string name="about_wallet_copied">Wallet copied!</string>
-    <string name="ark_support_email">support@ark-builders.dev</string>
-    <string name="about_send_email_part_1">"Send us the transaction id by email "</string>
-    <string name="about_send_email_part_2">" to receive premium support. We’ll make our best to help you with any issue you encounter while using our Software."</string>
-    <string name="about_btc_wallet">bc1qx8n9r4uwpgrhgnamt2uew53lmrxd8tuevp7lv5</string>
-    <string name="about_eth_wallet">0x9765C5aC38175BFbd2dC7a840b63e50762B80a1b</string>
-    <string name="about_donate_eth">Donate using Ethereum</string>
-    <string name="about_donate_btc">Donate using Bitcoin</string>
-    <string name="ark_website_url">https://www.ark-builders.dev/</string>
-    <string name="ark_tg_url" translatable="false">https://t.me/ark_builders</string>
-    <string name="ark_contribute_url" translatable="false">https://www.ark-builders.dev/contribute/?tab=goodFirstIssue</string>
-    <string name="about_ark_buy_coffee_url" translatable="false">https://buymeacoffee.com/arkbuilders</string>
-    <string name="about_ark_patreon_url" translatable="false">https://www.patreon.com/ARKBuilders</string>
-    <string name="ark_discord_url" translatable="false">https://discord.gg/tPUJTxud</string>
-    <string name="about_discover_issues_to_work_on">Discover issues to work on</string>
-    <string name="about_see_open_bounties">See open bounties</string>
-    <string name="about_buy_as_a_coffee">Buy us a coffee</string>
-    <string name="about_donate_on_patreon">Donate on Patreon</string>
-    <string name="about_donate_using_eth">Donate using ETH</string>
-    <string name="about_donate_using_btc">Donate using BTC</string>
-    <string name="about_we_greatly_appreciate_every_bit_of_support">We greatly appreciate every bit of support!</string>
-    <string name="about_support_us">Support us</string>
     <string name="alert_notification_title">ARK Rate Price Alert</string>
     <string name="alert_notification_desc">%1$s is now %2$s %3$s %4$s</string>
     <string name="collect_analytics">Collect analytics</string>
@@ -172,5 +157,32 @@
     <string name="edit_group_name">Edit folder \"%1$s\"</string>
     <string name="rename">Rename</string>
     <string name="groups">Folders</string>
+
+
+
+    <string name="onboarding_1_title">Welcome to ARK Rate!</string>
+    <string name="onboarding_2_title">Effortless Multi-Currency Conversion</string>
+    <string name="onboarding_2_desc">Convert a single currency into multiple currencies instantly with ease.</string>
+    <string name="onboarding_3_title">Stay Ahead with Pinned Exchange Rates</string>
+    <string name="onboarding_3_desc">Keep track of your most-used currency pairs for quick and convenient conversions.</string>
+    <string name="onboarding_4_title">Monitor Your Portfolio in Real-Time</string>
+    <string name="onboarding_4_desc">Stay updated on your total assets and currency value changes in one place.</string>
+
+    <string name="onboarding_quick_empty_1_title">Start a quick calculation</string>
+    <string name="onboarding_quick_empty_1_desc">Convert any currency to one or more currencies at same time. Save the result to recall it later.</string>
+    <string name="onboarding_quick_empty_2_title">Keep track of your assets</string>
+    <string name="onboarding_quick_empty_2_desc">Use the Portfolio feature to add your assets across all wallets and cards.</string>
+    <string name="onboarding_quick_empty_3_title">Alerts to let you know about price changes</string>
+    <string name="onboarding_quick_empty_3_desc">To set up the alerts, click on the “Alerts” menu.</string>
+
+    <string name="onboarding_quick_calc_1_title">Swipe the calculation to the right to pin</string>
+    <string name="onboarding_quick_calc_1_desc">Pinned calculations are updated every day!</string>
+    <string name="onboarding_quick_calc_2_title">Swipe the calculation to the left to delete</string>
+    <string name="onboarding_quick_calc_2_desc">Delete a calculation quickly by swiping left.</string>
+    <string name="onboarding_quick_calc_3_title">Swipe the pinned calculation to the right to unpin</string>
+    <string name="onboarding_quick_calc_3_desc">Unpin a calculation to move it to calculation history.</string>
+    <string name="onboarding_quick_calc_4_title">Calculation context menu</string>
+    <string name="onboarding_quick_calc_4_desc">Tap to show the complete menu.</string>
+
 
 </resources>

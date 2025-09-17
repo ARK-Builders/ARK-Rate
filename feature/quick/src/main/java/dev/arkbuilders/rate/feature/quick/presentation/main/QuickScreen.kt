@@ -37,7 +37,7 @@ import com.ramcosta.composedestinations.result.ResultRecipient
 import com.ramcosta.composedestinations.result.onResult
 import dev.arkbuilders.rate.core.domain.model.Amount
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv16
@@ -50,16 +50,15 @@ import dev.arkbuilders.rate.core.presentation.ui.SearchTextField
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameBottomSheet
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomSheet
-import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickCalculation
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickCalculation
 import dev.arkbuilders.rate.feature.quick.presentation.ui.PinnedQuickSwipeItem
+import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickDateFormatter
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickOptionsBottomSheet
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickSwipeItem
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
-import java.time.OffsetDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<ExternalModuleGraph>
@@ -68,6 +67,7 @@ fun QuickScreen(
     navigator: DestinationsNavigator,
     // expect new calculation id
     resultRecipient: ResultRecipient<AddQuickScreenDestination, Long>,
+    externalNavigator: QuickExternalNavigator,
 ) {
     val ctx = LocalContext.current
     val component =
@@ -108,6 +108,7 @@ fun QuickScreen(
         pagerState = pagerState,
         snackState = snackState,
         ctx = ctx,
+        externalNavigator = externalNavigator,
     )
 
     Scaffold(
@@ -274,8 +275,7 @@ private fun Content(
         }
         if (state.filter.isNotEmpty()) {
             QuickSearchPage(
-                filter = state.filter,
-                topResults = state.topResults,
+                topResultsFiltered = state.topResultsFiltered,
                 onNewCode = onNewCode,
             )
         } else {
@@ -316,8 +316,8 @@ private fun Content(
 
 @Composable
 private fun GroupPage(
-    frequent: List<CurrencyName>,
-    currencies: List<CurrencyName>,
+    frequent: List<CurrencyInfo>,
+    currencies: List<CurrencyInfo>,
     pinned: List<PinnedQuickCalculation>,
     notPinned: List<QuickCalculation>,
     onDelete: (QuickCalculation) -> Unit,
@@ -338,15 +338,7 @@ private fun GroupPage(
                         QuickItem(
                             from = Amount(it.calculation.from, it.calculation.amount),
                             to = it.actualTo,
-                            dateText =
-                                stringResource(
-                                    CoreRString.quick_last_refreshed,
-                                    DateFormatUtils.latestCheckElapsedTime(
-                                        ctx,
-                                        OffsetDateTime.now(),
-                                        it.refreshDate,
-                                    ),
-                                ),
+                            dateText = QuickDateFormatter.pairRefreshedTime(ctx, it.refreshDate),
                             onClick = { onClick(it.calculation) },
                         )
                     },
@@ -368,9 +360,9 @@ private fun GroupPage(
                             from = Amount(it.from, it.amount),
                             to = it.to,
                             dateText =
-                                stringResource(
-                                    CoreRString.quick_calculated_on,
-                                    DateFormatUtils.calculatedOn(it.calculatedDate),
+                                QuickDateFormatter.pairCalculatedTime(
+                                    ctx,
+                                    it.calculatedDate,
                                 ),
                             onClick = { onClick(it) },
                         )

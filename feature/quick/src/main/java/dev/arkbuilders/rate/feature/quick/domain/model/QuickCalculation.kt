@@ -16,6 +16,19 @@ data class QuickCalculation(
     val group: Group,
 ) {
     fun isPinned() = pinnedDate != null
+
+    companion object {
+        fun empty() =
+            QuickPair(
+                id = 0,
+                from = "USD",
+                amount = BigDecimal(10),
+                to = listOf(),
+                calculatedDate = OffsetDateTime.now(),
+                pinnedDate = null,
+                group = Group.empty(),
+            )
+    }
 }
 
 data class PinnedQuickCalculation(

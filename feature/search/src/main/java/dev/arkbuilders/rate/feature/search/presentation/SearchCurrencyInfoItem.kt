@@ -15,15 +15,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.presentation.theme.ArkColor
 import dev.arkbuilders.rate.core.presentation.ui.CurrIcon
 
 @Composable
 fun SearchCurrencyInfoItem(
-    model: CurrencySearchModel,
-    onClick: (CurrencySearchModel) -> Unit,
+    model: CurrencyInfo,
+    isProhibited: Boolean,
+    onClick: (CurrencyInfo) -> Unit,
 ) {
-    val contentAlpha = if (model.isProhibited) 0.4f else 1f
+    val contentAlpha = if (isProhibited) 0.4f else 1f
     Column {
         Row(
             modifier =

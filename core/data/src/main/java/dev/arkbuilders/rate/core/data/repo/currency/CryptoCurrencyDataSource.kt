@@ -5,8 +5,6 @@ import arrow.core.left
 import arrow.core.right
 import dev.arkbuilders.rate.core.data.mapper.CryptoRateResponseMapper
 import dev.arkbuilders.rate.core.data.network.api.CryptoAPI
-import dev.arkbuilders.rate.core.domain.model.CurrencyCode
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
 import dev.arkbuilders.rate.core.domain.model.CurrencyRate
 import dev.arkbuilders.rate.core.domain.model.CurrencyType
 import javax.inject.Inject
@@ -27,6 +25,4 @@ class CryptoCurrencyDataSource @Inject constructor(
             e.left()
         }
     }
-
-    override suspend fun getCurrencyName(): Map<CurrencyCode, CurrencyName> = emptyMap()
 }

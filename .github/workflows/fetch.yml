@@ -4,9 +4,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 0,8,16 * * *"
-  push:
-    branches:
-      - main
 
 env:
   APP_ID: ${{ secrets.APP_ID }}

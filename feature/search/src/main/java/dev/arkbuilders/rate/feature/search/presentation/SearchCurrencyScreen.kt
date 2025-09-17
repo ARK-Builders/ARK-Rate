@@ -21,6 +21,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.ExternalModuleGraph
 import com.ramcosta.composedestinations.result.ResultBackNavigator
 import dev.arkbuilders.rate.core.domain.model.CurrencyCode
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.presentation.CoreRString
 import dev.arkbuilders.rate.core.presentation.ui.AppHorDiv
 import dev.arkbuilders.rate.core.presentation.ui.AppTopBarBack
@@ -83,6 +84,7 @@ fun SearchCurrencyScreen(
                 Input(state.filter, viewModel::onInputChange)
                 Results(
                     filter = state.filter,
+                    prohibitedCodes = state.prohibitedCodes,
                     frequent = state.frequent,
                     all = state.all,
                     topResultsFiltered = state.topResultsFiltered,
@@ -114,10 +116,11 @@ private fun Input(
 @Composable
 private fun Results(
     filter: String,
-    frequent: List<CurrencySearchModel>,
-    all: List<CurrencySearchModel>,
-    topResultsFiltered: List<CurrencySearchModel>,
-    onClick: (CurrencySearchModel) -> Unit,
+    prohibitedCodes: List<CurrencyCode>,
+    frequent: List<CurrencyInfo>,
+    all: List<CurrencyInfo>,
+    topResultsFiltered: List<CurrencyInfo>,
+    onClick: (CurrencyInfo) -> Unit,
 ) {
     when {
         filter.isNotEmpty() -> {
@@ -125,7 +128,10 @@ private fun Results(
                 LazyColumn {
                     item { ListHeader(stringResource(CoreRString.top_results)) }
                     items(topResultsFiltered) { model ->
-                        SearchCurrencyInfoItem(model) { onClick(it) }
+                        SearchCurrencyInfoItem(
+                            model,
+                            model.code in prohibitedCodes,
+                        ) { onClick(it) }
                     }
                 }
             } else {
@@ -138,12 +144,18 @@ private fun Results(
                 if (frequent.isNotEmpty()) {
                     item { ListHeader(stringResource(CoreRString.frequent_currencies)) }
                     items(frequent) { model ->
-                        SearchCurrencyInfoItem(model) { onClick(it) }
+                        SearchCurrencyInfoItem(
+                            model,
+                            model.code in prohibitedCodes,
+                        ) { onClick(it) }
                     }
                 }
                 item { ListHeader(stringResource(CoreRString.all_currencies)) }
                 items(all) { model ->
-                    SearchCurrencyInfoItem(model) { onClick(it) }
+                    SearchCurrencyInfoItem(
+                        model,
+                        model.code in prohibitedCodes,
+                    ) { onClick(it) }
                 }
             }
         }

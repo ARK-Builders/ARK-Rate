@@ -8,9 +8,11 @@ import dev.arkbuilders.rate.core.data.preferences.PrefsImpl
 import dev.arkbuilders.rate.core.data.repo.AnalyticsManagerImpl
 import dev.arkbuilders.rate.core.data.repo.BuildConfigFieldsProviderImpl
 import dev.arkbuilders.rate.core.data.repo.CodeUseStatRepoImpl
+import dev.arkbuilders.rate.core.data.repo.GooglePlayInAppReviewManagerImpl
 import dev.arkbuilders.rate.core.data.repo.GroupRepoImpl
 import dev.arkbuilders.rate.core.data.repo.TimestampRepoImpl
 import dev.arkbuilders.rate.core.data.repo.currency.CryptoCurrencyDataSource
+import dev.arkbuilders.rate.core.data.repo.currency.CurrencyInfoDataSource
 import dev.arkbuilders.rate.core.data.repo.currency.CurrencyRepoImpl
 import dev.arkbuilders.rate.core.data.repo.currency.FallbackRatesProvider
 import dev.arkbuilders.rate.core.data.repo.currency.FiatCurrencyDataSource
@@ -23,6 +25,7 @@ import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CodeUseStatRepo
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
+import dev.arkbuilders.rate.core.domain.repo.InAppReviewManager
 import dev.arkbuilders.rate.core.domain.repo.NetworkStatus
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
@@ -38,6 +41,7 @@ class RepoModule {
         fiatCurrencyDataSource: FiatCurrencyDataSource,
         cryptoCurrencyDataSource: CryptoCurrencyDataSource,
         localCurrencyDataSource: LocalCurrencyDataSource,
+        currencyInfoDataSource: CurrencyInfoDataSource,
         timestampRepo: TimestampRepo,
         networkStatus: NetworkStatus,
         fallbackRatesProvider: FallbackRatesProvider,
@@ -47,6 +51,7 @@ class RepoModule {
             cryptoCurrencyDataSource,
             localCurrencyDataSource,
             fallbackRatesProvider,
+            currencyInfoDataSource,
             timestampRepo,
             networkStatus,
         )
@@ -84,4 +89,15 @@ class RepoModule {
     @Provides
     fun defaultGroupNameProvider(context: Context): DefaultGroupNameProvider =
         DefaultGroupNameProviderImpl(context)
+
+    @Singleton
+    @Provides
+    fun inAppReviewManager(
+        analyticsManager: AnalyticsManager,
+        buildConfigFieldsProvider: BuildConfigFieldsProvider,
+    ): InAppReviewManager =
+        GooglePlayInAppReviewManagerImpl(
+            analyticsManager,
+            buildConfigFieldsProvider.provide(),
+        )
 }

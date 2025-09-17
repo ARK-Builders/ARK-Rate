@@ -13,10 +13,15 @@ import dev.arkbuilders.rate.core.presentation.R
 import dev.arkbuilders.rate.core.presentation.ui.NotifyAddedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.NotifyRemovedSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.utils.findActivity
+import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
+import dev.arkbuilders.rate.feature.quick.presentation.QuickExternalNavigator
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectSideEffect
 import timber.log.Timber
+import kotlin.coroutines.coroutineContext
 
 // Workaround for SelectTab SideEffect:
 // We must wait for Compose to fully render the updated state before calling scrollToPage
@@ -30,6 +35,7 @@ fun HandleQuickSideEffects(
     pagerState: PagerState,
     snackState: SnackbarHostState,
     ctx: Context,
+    externalNavigator: QuickExternalNavigator,
 ) {
     val selectTabEffect = remember { mutableStateOf<QuickScreenEffect.SelectTab?>(null) }
 
@@ -42,6 +48,7 @@ fun HandleQuickSideEffects(
                 viewModel = viewModel,
                 snackState = snackState,
                 ctx = ctx,
+                externalNavigator = externalNavigator,
             )
         }
     }
@@ -79,6 +86,7 @@ suspend fun handleQuickSideEffect(
     viewModel: QuickViewModel,
     snackState: SnackbarHostState,
     ctx: Context,
+    externalNavigator: QuickExternalNavigator,
 ) {
     when (effect) {
         is QuickScreenEffect.ShowSnackbarAdded -> {
@@ -127,5 +135,15 @@ suspend fun handleQuickSideEffect(
         }
 
         QuickScreenEffect.NavigateBack -> ctx.findActivity()?.finish()
+
+        QuickScreenEffect.LaunchInAppReview -> {
+            CoroutineScope(coroutineContext).launch {
+                val launchInAppReview = QuickComponentHolder.provide(ctx).launchInAppReview()
+                ctx.findActivity()?.let {
+                    launchInAppReview(it)
+                }
+            }
+        }
+        QuickScreenEffect.NavigateToPairOnboarding -> externalNavigator.navigateToPairOnboarding()
     }
 }

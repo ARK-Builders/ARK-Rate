@@ -5,18 +5,20 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dev.arkbuilders.rate.core.domain.model.CurrencyName
+import dev.arkbuilders.rate.core.domain.model.CurrencyInfo
 import dev.arkbuilders.rate.core.domain.model.Group
 import dev.arkbuilders.rate.core.domain.model.GroupFeatureType
 import dev.arkbuilders.rate.core.domain.model.TimestampType
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.CurrencyRepo
 import dev.arkbuilders.rate.core.domain.repo.GroupRepo
+import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
+import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.core.domain.usecase.CalcFrequentCurrUseCase
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
-import dev.arkbuilders.rate.core.domain.usecase.GetTopResultUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GroupReorderSwapUseCase
+import dev.arkbuilders.rate.core.domain.usecase.SearchUseCase
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupOptionsSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupRenameSheetState
 import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderSheetState
@@ -41,9 +43,9 @@ data class PairOptionsData(val pair: QuickCalculation)
 
 data class QuickScreenState(
     val filter: String = "",
-    val currencies: List<CurrencyName> = emptyList(),
-    val frequent: List<CurrencyName> = emptyList(),
-    val topResults: List<CurrencyName> = emptyList(),
+    val currencies: List<CurrencyInfo> = emptyList(),
+    val frequent: List<CurrencyInfo> = emptyList(),
+    val topResultsFiltered: List<CurrencyInfo> = emptyList(),
     val pages: List<QuickScreenPage> = emptyList(),
     val pairOptionsData: PairOptionsData? = null,
     val editGroupReorderSheetState: EditGroupReorderSheetState? = null,
@@ -59,7 +61,11 @@ sealed class QuickScreenEffect {
 
     data class ShowRemovedSnackbar(val pair: QuickCalculation) : QuickScreenEffect()
 
+    data object LaunchInAppReview : QuickScreenEffect()
+
     data class SelectTab(val groupId: Long) : QuickScreenEffect()
+
+    data object NavigateToPairOnboarding : QuickScreenEffect()
 
     data object NavigateBack : QuickScreenEffect()
 }
@@ -72,8 +78,9 @@ class QuickViewModel(
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val groupReorderSwapUseCase: GroupReorderSwapUseCase,
-    private val getTopResultUseCase: GetTopResultUseCase,
+    private val searchUseCase: SearchUseCase,
     private val analyticsManager: AnalyticsManager,
+    private val prefs: Prefs,
 ) : ViewModel(), ContainerHost<QuickScreenState, QuickScreenEffect> {
     override val container: Container<QuickScreenState, QuickScreenEffect> =
         container(QuickScreenState())
@@ -108,30 +115,26 @@ class QuickViewModel(
                 }
             }.launchIn(viewModelScope)
 
-            val allCurrencies = currencyRepo.getCurrencyNames()
+            val allCurrencies = currencyRepo.getCurrencyInfo()
             calcFrequentCurrUseCase.flow().drop(1).onEach {
                 val frequent =
                     calcFrequentCurrUseCase.invoke()
-                        .map { currencyRepo.nameByCode(it) }
-                val topResults = getTopResultUseCase()
+                        .map { currencyRepo.infoByCode(it) }
                 reduce {
                     state.copy(
                         frequent = frequent,
-                        topResults = topResults,
                     )
                 }
             }.launchIn(viewModelScope)
 
             val frequent =
                 calcFrequentCurrUseCase()
-                    .map { currencyRepo.nameByCode(it) }
-            val topResults = getTopResultUseCase()
+                    .map { currencyRepo.infoByCode(it) }
             val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
                 state.copy(
                     currencies = allCurrencies,
                     frequent = frequent,
-                    topResults = topResults,
                     pages = pages,
                     initialized = true,
                 )
@@ -140,6 +143,11 @@ class QuickViewModel(
 
     fun onNavResultValue(newPairId: Long) =
         intent {
+            if (prefs.get(PreferenceKey.IsOnboardingQuickPairCompleted).not()) {
+                postSideEffect(QuickScreenEffect.NavigateToPairOnboarding)
+                return@intent
+            }
+
             val pair = quickRepo.getById(newPairId) ?: return@intent
             val pages = mapPairsToPages(quickRepo.getAll())
             reduce {
@@ -148,6 +156,7 @@ class QuickViewModel(
                     filter = "",
                 )
             }
+            postSideEffect(QuickScreenEffect.LaunchInAppReview)
             postSideEffect(QuickScreenEffect.SelectTab(pair.group.id))
             postSideEffect(QuickScreenEffect.ShowSnackbarAdded(pair))
         }
@@ -185,7 +194,17 @@ class QuickViewModel(
 
     fun onFilterChanged(filter: String) =
         blockingIntent {
-            reduce { state.copy(filter = filter) }
+            reduce {
+                state.copy(
+                    filter = filter,
+                    topResultsFiltered =
+                        searchUseCase(
+                            state.currencies,
+                            state.frequent.map { it.code },
+                            filter,
+                        ),
+                )
+            }
         }
 
     fun onDelete(pair: QuickCalculation) =
@@ -347,8 +366,9 @@ class QuickViewModelFactory @AssistedInject constructor(
     private val convertUseCase: ConvertWithRateUseCase,
     private val calcFrequentCurrUseCase: CalcFrequentCurrUseCase,
     private val groupReorderSwapUseCase: GroupReorderSwapUseCase,
-    private val getTopResultUseCase: GetTopResultUseCase,
+    private val searchUseCase: SearchUseCase,
     private val analyticsManager: AnalyticsManager,
+    private val prefs: Prefs,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return QuickViewModel(
@@ -359,8 +379,9 @@ class QuickViewModelFactory @AssistedInject constructor(
             convertUseCase,
             calcFrequentCurrUseCase,
             groupReorderSwapUseCase,
-            getTopResultUseCase,
+            searchUseCase,
             analyticsManager,
+            prefs,
         ) as T
     }
 

@@ -5,10 +5,9 @@ import dev.arkbuilders.rate.core.presentation.R
 import java.time.Duration
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 object DateFormatUtils {
-    fun latestCheckElapsedTime(
+    fun formatElapsedTime(
         ctx: Context,
         now: OffsetDateTime,
         date: OffsetDateTime,
@@ -49,23 +48,23 @@ object DateFormatUtils {
         )
     }
 
-    fun latestCheckTime(date: OffsetDateTime): String {
+    fun formatFullDateTime(date: OffsetDateTime): String {
         val format =
             DateTimeFormatter
-                .ofPattern("hh:mm a, dd MMM yyyy", Locale.ENGLISH)
+                .ofPattern("hh:mm a, dd MMM yyyy")
         return format.format(date)
     }
 
-    fun calculatedOn(date: OffsetDateTime): String {
+    fun formatDateOnly(date: OffsetDateTime): String {
         val format =
             DateTimeFormatter
-                .ofPattern("dd MMM yyyy", Locale.ENGLISH)
+                .ofPattern("dd MMM yyyy")
         return format.format(date)
     }
 
     fun notifiedOn(date: OffsetDateTime): String {
         val format =
-            DateTimeFormatter.ofPattern("MMM dd - hh:mm a", Locale.ENGLISH)
+            DateTimeFormatter.ofPattern("MMM dd - hh:mm a")
         return format.format(date)
     }
 }

@@ -53,6 +53,7 @@ include(":feature:pairalert")
 include(":feature:quickwidget")
 include(":feature:search")
 include(":feature:settings")
+include(":feature:onboarding")
 
 fun getLocalProps(): Properties {
     val props = Properties()
