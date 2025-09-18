@@ -36,7 +36,7 @@ data class AddQuickScreenState(
 )
 
 sealed class AddQuickScreenEffect {
-    data class NavigateBackWithResult(val newPairId: Long) : AddQuickScreenEffect()
+    data class NavigateBackWithResult(val newCalculationId: Long) : AddQuickScreenEffect()
 
     data class NavigateSearchSet(val index: Int, val prohibitedCodes: List<CurrencyCode>) :
         AddQuickScreenEffect()

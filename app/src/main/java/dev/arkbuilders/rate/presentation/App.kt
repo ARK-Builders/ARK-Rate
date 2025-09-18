@@ -37,7 +37,10 @@ class App : Application(), Configuration.Provider, CoreComponentProvider {
         instance = this
 
         initCrashlytics()
-        initWorker(QuickPairsWidgetRefreshWorker::class.java, QuickPairsWidgetRefreshWorker.NAME)
+        initWorker(
+            QuickCalculationsWidgetRefreshWorker::class.java,
+            QuickCalculationsWidgetRefreshWorker.NAME,
+        )
     }
 
     private fun initBuildConfigFields() {

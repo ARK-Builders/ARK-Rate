@@ -39,7 +39,7 @@ data class QuickScreenPage(
     val notPinned: List<QuickCalculation>,
 )
 
-data class PairOptionsData(val pair: QuickCalculation)
+data class PairOptionsData(val calculation: QuickCalculation)
 
 data class QuickScreenState(
     val filter: String = "",
@@ -56,7 +56,7 @@ data class QuickScreenState(
 
 sealed class QuickScreenEffect {
     data class ShowSnackbarAdded(
-        val pair: QuickCalculation,
+        val calculation: QuickCalculation,
     ) : QuickScreenEffect()
 
     data class ShowRemovedSnackbar(val pair: QuickCalculation) : QuickScreenEffect()
@@ -65,7 +65,7 @@ sealed class QuickScreenEffect {
 
     data class SelectTab(val groupId: Long) : QuickScreenEffect()
 
-    data object NavigateToPairOnboarding : QuickScreenEffect()
+    data object NavigateToCalculationOnboarding : QuickScreenEffect()
 
     data object NavigateBack : QuickScreenEffect()
 }
@@ -95,7 +95,7 @@ class QuickViewModel(
         intent {
             quickRepo.allFlow().drop(1).onEach { quick ->
                 intent {
-                    val pages = mapPairsToPages(quick)
+                    val pages = mapCalculationsToPages(quick)
                     reduce {
                         state.copy(
                             pages = pages,
@@ -106,7 +106,7 @@ class QuickViewModel(
 
             groupRepo.allFlow(GroupFeatureType.Quick).drop(1).onEach {
                 intent {
-                    val pages = mapPairsToPages(quickRepo.getAll())
+                    val pages = mapCalculationsToPages(quickRepo.getAll())
                     reduce {
                         state.copy(
                             pages = pages,
@@ -130,7 +130,7 @@ class QuickViewModel(
             val frequent =
                 calcFrequentCurrUseCase()
                     .map { currencyRepo.infoByCode(it) }
-            val pages = mapPairsToPages(quickRepo.getAll())
+            val pages = mapCalculationsToPages(quickRepo.getAll())
             reduce {
                 state.copy(
                     currencies = allCurrencies,
@@ -144,12 +144,12 @@ class QuickViewModel(
     fun onNavResultValue(newPairId: Long) =
         intent {
             if (prefs.get(PreferenceKey.IsOnboardingQuickPairCompleted).not()) {
-                postSideEffect(QuickScreenEffect.NavigateToPairOnboarding)
+                postSideEffect(QuickScreenEffect.NavigateToCalculationOnboarding)
                 return@intent
             }
 
             val pair = quickRepo.getById(newPairId) ?: return@intent
-            val pages = mapPairsToPages(quickRepo.getAll())
+            val pages = mapCalculationsToPages(quickRepo.getAll())
             reduce {
                 state.copy(
                     pages = pages,
@@ -231,12 +231,14 @@ class QuickViewModel(
             }
         }
 
-    private suspend fun mapPairsToPages(pairs: List<QuickCalculation>): List<QuickScreenPage> {
+    private suspend fun mapCalculationsToPages(
+        calculations: List<QuickCalculation>,
+    ): List<QuickScreenPage> {
         val refreshDate = timestampRepo.getTimestamp(TimestampType.FetchRates)
         val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
         val pages =
             groups.map { group ->
-                val filteredPairs = pairs.filter { it.group.id == group.id }.toMutableList()
+                val filteredPairs = calculations.filter { it.group.id == group.id }.toMutableList()
                 filteredPairs.reverse()
                 val (pinned, notPinned) = filteredPairs.partition { it.isPinned() }
                 val pinnedMapped = pinned.map { mapPairToPinned(it, refreshDate!!) }

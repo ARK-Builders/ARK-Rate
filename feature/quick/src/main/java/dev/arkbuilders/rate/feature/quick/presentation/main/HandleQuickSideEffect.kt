@@ -93,8 +93,8 @@ suspend fun handleQuickSideEffect(
             val added =
                 ctx.getString(
                     R.string.quick_snackbar_new_added_to,
-                    effect.pair.from,
-                    effect.pair.to.joinToString { it.code },
+                    effect.calculation.from,
+                    effect.calculation.to.joinToString { it.code },
                 )
             val visuals =
                 NotifyAddedSnackbarVisuals(
@@ -144,6 +144,7 @@ suspend fun handleQuickSideEffect(
                 }
             }
         }
-        QuickScreenEffect.NavigateToPairOnboarding -> externalNavigator.navigateToPairOnboarding()
+        QuickScreenEffect.NavigateToCalculationOnboarding ->
+            externalNavigator.navigateToCalcOnboarding()
     }
 }

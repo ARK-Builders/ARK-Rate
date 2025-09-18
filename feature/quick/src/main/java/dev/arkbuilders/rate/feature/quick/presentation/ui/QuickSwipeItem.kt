@@ -69,7 +69,7 @@ fun PinnedQuickSwipeItem(
 @Composable
 fun QuickSwipeItem(
     content: @Composable () -> Unit,
-    pair: QuickCalculation,
+    calculation: QuickCalculation,
     onPin: (QuickCalculation) -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -78,7 +78,7 @@ fun QuickSwipeItem(
             confirmValueChange = {
                 when (it) {
                     SwipeToDismissBoxValue.StartToEnd -> {
-                        onPin(pair)
+                        onPin(calculation)
                         true
                     }
 
@@ -97,7 +97,7 @@ fun QuickSwipeItem(
         backgroundContent = {
             DismissBackground(
                 state = dismissState,
-                isPinned = pair.isPinned(),
+                isPinned = calculation.isPinned(),
             )
         },
         content = { content() },

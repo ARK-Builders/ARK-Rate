@@ -53,6 +53,7 @@ import dev.arkbuilders.rate.core.presentation.ui.group.EditGroupReorderBottomShe
 import dev.arkbuilders.rate.feature.quick.di.QuickComponentHolder
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickCalculation
 import dev.arkbuilders.rate.feature.quick.domain.model.QuickCalculation
+import dev.arkbuilders.rate.feature.quick.presentation.QuickExternalNavigator
 import dev.arkbuilders.rate.feature.quick.presentation.ui.PinnedQuickSwipeItem
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickDateFormatter
 import dev.arkbuilders.rate.feature.quick.presentation.ui.QuickOptionsBottomSheet
@@ -169,7 +170,7 @@ fun QuickScreen(
         state.pairOptionsData?.let {
             QuickOptionsBottomSheet(
                 pairOptionsSheetState,
-                calculation = it.pair,
+                calculation = it.calculation,
                 onPin = viewModel::onPin,
                 onUnpin = viewModel::onUnpin,
                 onEdit = {
@@ -367,7 +368,7 @@ private fun GroupPage(
                             onClick = { onClick(it) },
                         )
                     },
-                    pair = it,
+                    calculation = it,
                     onDelete = { onDelete(it) },
                     onPin = onPin,
                 )

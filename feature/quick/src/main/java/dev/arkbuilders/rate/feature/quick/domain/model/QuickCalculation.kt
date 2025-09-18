@@ -19,7 +19,7 @@ data class QuickCalculation(
 
     companion object {
         fun empty() =
-            QuickPair(
+            QuickCalculation(
                 id = 0,
                 from = "USD",
                 amount = BigDecimal(10),

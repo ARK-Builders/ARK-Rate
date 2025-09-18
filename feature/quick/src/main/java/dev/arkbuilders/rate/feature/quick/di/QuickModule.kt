@@ -14,13 +14,13 @@ class QuickModule {
     @QuickScope
     @Provides
     fun quickRepo(
-        quickPairDao: QuickCalculationDao,
+        quickCalculationDao: QuickCalculationDao,
         groupRepo: GroupRepo,
-    ): QuickRepo = QuickRepoImpl(quickPairDao, groupRepo)
+    ): QuickRepo = QuickRepoImpl(quickCalculationDao, groupRepo)
 
     @QuickScope
     @Provides
-    fun getSortedPinnedQuickPairsUseCase(
+    fun getSortedPinnedQuickCalculationsUseCase(
         quickRepo: QuickRepo,
         convertWithRateUseCase: ConvertWithRateUseCase,
     ) = GetSortedPinnedQuickCalculationsUseCase(
