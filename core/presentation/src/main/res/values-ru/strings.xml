@@ -16,7 +16,7 @@
     <string name="quick_empty_title">Готово к расчету!</string>
     <string name="quick_empty_desc">Выберите валюты и введите сумму для начала конвертации. Результаты обмена появятся здесь.</string>
     <string name="quick_add_new_calculation">Добавить новый расчет</string>
-    <string name="quick_edit_pair">Редактировать пару</string>
+    <string name="quick_edit_calc">Редактировать расчёт</string>
     <string name="quick_last_refreshed_ago">Последнее обновление %1$s назад</string>
     <string name="quick_last_refreshed_now">Обновлено только что</string>
     <string name="quick_calculations">Расчеты</string>
