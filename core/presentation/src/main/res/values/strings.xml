@@ -157,6 +157,10 @@
     <string name="edit_group_name">Edit folder \"%1$s\"</string>
     <string name="rename">Rename</string>
     <string name="groups">Folders</string>
+    <string name="language">Language</string>
+    <string name="language_system">System default</string>
+    <string name="language_en" translatable="false">English</string>
+    <string name="language_ru" translatable="false">Русский</string>
 
 
 

@@ -158,6 +158,8 @@
     <string name="edit_group_name">Редактировать папку \"%1$s\"</string>
     <string name="rename">Переименовать</string>
     <string name="groups">Папки</string>
+    <string name="language">Язык</string>
+    <string name="language_system">Как в системе</string>
 
     <string name="onboarding_1_title">Добро пожаловать в ARK Rate!</string>
     <string name="onboarding_2_title">Простая мультивалютная конвертация</string>

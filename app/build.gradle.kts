@@ -155,6 +155,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.constraintlayout.compose)
+    implementation(libs.androidx.appcompat)
 
     implementation(libs.androidx.glance.appwidget)
 
