@@ -90,7 +90,7 @@ class OnboardingQuickCalculationViewModel(
 
     private fun finish() =
         intent {
-            prefs.set(PreferenceKey.IsOnboardingQuickPairCompleted, true)
+            prefs.set(PreferenceKey.IsOnboardingQuickCalculationCompleted, true)
             postSideEffect(OnboardingQuickCalcEffect.Finish)
         }
 }

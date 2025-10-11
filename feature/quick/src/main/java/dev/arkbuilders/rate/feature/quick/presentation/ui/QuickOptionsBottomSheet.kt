@@ -51,7 +51,7 @@ fun QuickOptionsBottomSheet(
         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
     ) {
         Content(
-            pair = calculation,
+            calculation = calculation,
             onPin = onPin,
             onUnpin = onUnpin,
             onEdit = onEdit,
@@ -64,7 +64,7 @@ fun QuickOptionsBottomSheet(
 
 @Composable
 private fun Content(
-    pair: QuickCalculation,
+    calculation: QuickCalculation,
     onPin: (QuickCalculation) -> Unit,
     onUnpin: (QuickCalculation) -> Unit,
     onEdit: (QuickCalculation) -> Unit,
@@ -109,10 +109,10 @@ private fun Content(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     onDismiss()
-                    if (pair.isPinned())
-                        onUnpin(pair)
+                    if (calculation.isPinned())
+                        onUnpin(calculation)
                     else
-                        onPin(pair)
+                        onPin(calculation)
                 },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, ArkColor.Border),
@@ -126,7 +126,7 @@ private fun Content(
                 Text(
                     modifier = Modifier.padding(start = 6.dp),
                     text =
-                        if (pair.isPinned())
+                        if (calculation.isPinned())
                             stringResource(CoreRString.unpin)
                         else
                             stringResource(CoreRString.pin),
@@ -139,7 +139,7 @@ private fun Content(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     onDismiss()
-                    onEdit(pair)
+                    onEdit(calculation)
                 },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, ArkColor.Border),
@@ -162,7 +162,7 @@ private fun Content(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     onDismiss()
-                    onReuse(pair)
+                    onReuse(calculation)
                 },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, ArkColor.Border),
@@ -185,7 +185,7 @@ private fun Content(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     onDismiss()
-                    onDelete(pair)
+                    onDelete(calculation)
                 },
                 shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, ArkColor.BorderError),

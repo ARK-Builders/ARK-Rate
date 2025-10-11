@@ -24,7 +24,7 @@ import dev.arkbuilders.rate.core.presentation.utils.IconUtils
 import dev.arkbuilders.rate.feature.quick.domain.model.PinnedQuickCalculation
 
 @Composable
-fun QuickPairItem(
+fun QuickCalculationItem(
     quick: PinnedQuickCalculation,
     context: Context,
 ) {

@@ -96,7 +96,7 @@ fun QuickScreen(
     val isEmpty = state.pages.isEmpty()
 
     val scope = rememberCoroutineScope()
-    val pairOptionsSheetState = rememberModalBottomSheetState()
+    val calculationOptionsSheetState = rememberModalBottomSheetState()
     val editGroupReorderSheetState = rememberModalBottomSheetState()
     val editGroupOptionsSheetState = rememberModalBottomSheetState()
     val editGroupRenameSheetState = rememberModalBottomSheetState()
@@ -167,9 +167,9 @@ fun QuickScreen(
                     )
             }
         }
-        state.pairOptionsData?.let {
+        state.calculationOptionsData?.let {
             QuickOptionsBottomSheet(
-                pairOptionsSheetState,
+                calculationOptionsSheetState,
                 calculation = it.calculation,
                 onPin = viewModel::onPin,
                 onUnpin = viewModel::onUnpin,
@@ -193,7 +193,7 @@ fun QuickScreen(
                 onDelete = viewModel::onDelete,
                 onDismiss = {
                     scope.launch {
-                        pairOptionsSheetState.hide()
+                        calculationOptionsSheetState.hide()
                         viewModel.onHideOptions()
                     }
                 },
@@ -339,7 +339,11 @@ private fun GroupPage(
                         QuickItem(
                             from = Amount(it.calculation.from, it.calculation.amount),
                             to = it.actualTo,
-                            dateText = QuickDateFormatter.pairRefreshedTime(ctx, it.refreshDate),
+                            dateText =
+                                QuickDateFormatter.calculationRefreshedTime(
+                                    ctx,
+                                    it.refreshDate,
+                                ),
                             onClick = { onClick(it.calculation) },
                         )
                     },
@@ -361,7 +365,7 @@ private fun GroupPage(
                             from = Amount(it.from, it.amount),
                             to = it.to,
                             dateText =
-                                QuickDateFormatter.pairCalculatedTime(
+                                QuickDateFormatter.calculationCalculatedTime(
                                     ctx,
                                     it.calculatedDate,
                                 ),

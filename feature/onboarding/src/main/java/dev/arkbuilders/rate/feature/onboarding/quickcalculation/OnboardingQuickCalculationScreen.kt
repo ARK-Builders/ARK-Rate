@@ -188,7 +188,7 @@ fun OnboardingQuickCalculationScreen(navigator: DestinationsNavigator) {
                         from = Amount(state.calculation.from, state.calculation.amount),
                         to = state.calculation.to,
                         dateText =
-                            QuickDateFormatter.pairCalculatedTime(
+                            QuickDateFormatter.calculationCalculatedTime(
                                 ctx,
                                 state.calculation.calculatedDate,
                             ),

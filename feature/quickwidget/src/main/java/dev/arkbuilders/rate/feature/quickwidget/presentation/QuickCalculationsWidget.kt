@@ -52,7 +52,7 @@ class QuickCalculationsWidget : GlanceAppWidget() {
         provideContent {
             val prefs = currentState<Preferences>()
             val groupId = prefs[QuickCalculationsWidgetReceiver.currentGroupIdKey]
-            val quickPairsList = pinned.filter { it.calculation.group.id == groupId }
+            val quickCalculationsList = pinned.filter { it.calculation.group.id == groupId }
             val displayGroup = groups.find { it.id == groupId }
             displayGroup ?: return@provideContent
             Column(
@@ -130,9 +130,9 @@ class QuickCalculationsWidget : GlanceAppWidget() {
                     )
                 }
                 LazyColumn(modifier = GlanceModifier.fillMaxHeight()) {
-                    items(quickPairsList) { quick ->
+                    items(quickCalculationsList) { quick ->
                         Column {
-                            QuickPairItem(
+                            QuickCalculationItem(
                                 quick = quick,
                                 context = context,
                             )
