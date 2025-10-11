@@ -59,13 +59,6 @@ class App : Application(), Configuration.Provider, CoreComponentProvider {
                 availableIconCodes = BuildConfig.ICON_CODES.toSet(),
             ),
         )
-        instance = this
-
-        initCrashlytics()
-        initWorker(
-            QuickCalculationsWidgetRefreshWorker::class.java,
-            QuickCalculationsWidgetRefreshWorker.NAME,
-        )
     }
 
     private fun initCrashlytics() =
