@@ -18,6 +18,7 @@ import dev.arkbuilders.rate.core.db.entity.RoomFetchTimestamp
 import dev.arkbuilders.rate.core.db.entity.RoomGroup
 import dev.arkbuilders.rate.core.db.entity.RoomPairAlert
 import dev.arkbuilders.rate.core.db.entity.RoomQuickCalculation
+import dev.arkbuilders.rate.core.db.migration.MIGRATION_14_15
 import dev.arkbuilders.rate.core.db.migration.MIGRATION_15_16
 import dev.arkbuilders.rate.core.db.typeconverters.BigDecimalTypeConverter
 import dev.arkbuilders.rate.core.db.typeconverters.ListAmountTypeConverter
@@ -61,7 +62,7 @@ abstract class Database : RoomDatabase() {
 
         fun build(app: Application) =
             Room.databaseBuilder(app, Database::class.java, DB_NAME)
-                .addMigrations(MIGRATION_15_16)
+                .addMigrations(MIGRATION_14_15, MIGRATION_15_16)
                 .build()
     }
 }
