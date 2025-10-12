@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 15,
-    "identityHash": "1c3caa9d7cd1afc3a7f793eb06c2a128",
+    "identityHash": "d89aa92edab6a35b3b27eb40b4f49a91",
     "entities": [
       {
         "tableName": "RoomAsset",
@@ -199,7 +199,7 @@
         ]
       },
       {
-        "tableName": "RoomQuickCalculation",
+        "tableName": "RoomQuickPair",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `from` TEXT NOT NULL, `amount` TEXT NOT NULL, `to` TEXT NOT NULL, `calculatedDate` TEXT NOT NULL, `pinnedDate` TEXT, `groupId` INTEGER NOT NULL, FOREIGN KEY(`groupId`) REFERENCES `RoomGroup`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
@@ -346,7 +346,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1c3caa9d7cd1afc3a7f793eb06c2a128')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd89aa92edab6a35b3b27eb40b4f49a91')"
     ]
   }
 }
