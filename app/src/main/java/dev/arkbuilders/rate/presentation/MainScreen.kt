@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -25,7 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.SplashScreenDestination
-import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingQuickPairScreenDestination
+import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingQuickCalculationScreenDestination
 import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingQuickScreenDestination
 import com.ramcosta.composedestinations.generated.onboarding.destinations.OnboardingScreenDestination
 import com.ramcosta.composedestinations.generated.portfolio.destinations.PortfolioScreenDestination
@@ -47,8 +46,8 @@ import dev.arkbuilders.rate.feature.onboarding.OnboardingExternalNavigator
 import dev.arkbuilders.rate.feature.onboarding.quick.OnboardingQuickScreen
 import dev.arkbuilders.rate.feature.quick.presentation.QuickExternalNavigator
 import dev.arkbuilders.rate.feature.quick.presentation.main.QuickScreen
-import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR
-import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewPairAction.Companion.ADD_NEW_PAIR_GROUP_KEY
+import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewCalculationAction.Companion.ADD_NEW_CALCULATION
+import dev.arkbuilders.rate.feature.quickwidget.presentation.action.AddNewCalculationAction.Companion.ADD_NEW_CALCULATION_GROUP_KEY
 import dev.arkbuilders.rate.presentation.navigation.AnimatedRateBottomNavigation
 import kotlinx.coroutines.flow.drop
 
@@ -56,7 +55,7 @@ private val dontApplySafeDrawingPaddingRoutes =
     listOf(
         OnboardingScreenDestination.route,
         OnboardingQuickScreenDestination.route,
-        OnboardingQuickPairScreenDestination.route,
+        OnboardingQuickCalculationScreenDestination.route,
     )
 
 private val showBottomBarRoutes =
@@ -76,12 +75,12 @@ fun MainScreen() {
     LaunchedEffect(key1 = Unit) {
         val activity = ctx.findActivity()
         val intent = activity?.intent
-        val createNewPair = intent?.getStringExtra(ADD_NEW_PAIR) ?: ""
-        if (createNewPair.isNotEmpty()) {
-            val groupId = intent?.getLongExtra(ADD_NEW_PAIR_GROUP_KEY, 0L)
+        val createNewCalc = intent?.getStringExtra(ADD_NEW_CALCULATION) ?: ""
+        if (createNewCalc.isNotEmpty()) {
+            val groupId = intent?.getLongExtra(ADD_NEW_CALCULATION_GROUP_KEY, 0L)
             navController.navigate(AddQuickScreenDestination(groupId = groupId))
-            intent?.removeExtra(ADD_NEW_PAIR_GROUP_KEY)
-            intent?.removeExtra(ADD_NEW_PAIR)
+            intent?.removeExtra(ADD_NEW_CALCULATION_GROUP_KEY)
+            intent?.removeExtra(ADD_NEW_CALCULATION)
         }
     }
     LaunchedEffect(key1 = Unit) {
@@ -190,8 +189,10 @@ fun MainScreen() {
                 val externalNavigator =
                     remember {
                         object : QuickExternalNavigator {
-                            override fun navigateToPairOnboarding() {
-                                destinationsNavigator.navigate(OnboardingQuickPairScreenDestination)
+                            override fun navigateToCalcOnboarding() {
+                                destinationsNavigator.navigate(
+                                    OnboardingQuickCalculationScreenDestination,
+                                )
                             }
                         }
                     }

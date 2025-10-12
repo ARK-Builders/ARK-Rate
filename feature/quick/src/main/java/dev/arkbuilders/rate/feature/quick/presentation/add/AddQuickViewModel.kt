@@ -18,7 +18,7 @@ import dev.arkbuilders.rate.core.domain.toBigDecimalArk
 import dev.arkbuilders.rate.core.domain.toDoubleArk
 import dev.arkbuilders.rate.core.domain.usecase.ConvertWithRateUseCase
 import dev.arkbuilders.rate.core.domain.usecase.GetGroupByIdOrCreateDefaultUseCase
-import dev.arkbuilders.rate.feature.quick.domain.model.QuickPair
+import dev.arkbuilders.rate.feature.quick.domain.model.QuickCalculation
 import dev.arkbuilders.rate.feature.quick.domain.repo.QuickRepo
 import dev.arkbuilders.rate.feature.search.presentation.SearchNavResult
 import org.orbitmvi.orbit.Container
@@ -27,7 +27,7 @@ import org.orbitmvi.orbit.viewmodel.container
 import java.time.OffsetDateTime
 
 data class AddQuickScreenState(
-    val quickPairId: Long? = null,
+    val quickCalculationId: Long? = null,
     val currencies: List<AmountStr> = listOf(AmountStr("USD", "")),
     val group: Group = Group.empty(),
     val availableGroups: List<Group> = emptyList(),
@@ -36,7 +36,7 @@ data class AddQuickScreenState(
 )
 
 sealed class AddQuickScreenEffect {
-    data class NavigateBackWithResult(val newPairId: Long) : AddQuickScreenEffect()
+    data class NavigateBackWithResult(val newCalculationId: Long) : AddQuickScreenEffect()
 
     data class NavigateSearchSet(val index: Int, val prohibitedCodes: List<CurrencyCode>) :
         AddQuickScreenEffect()
@@ -51,7 +51,7 @@ enum class SearchNavResultType {
 }
 
 class AddQuickViewModel(
-    private val quickPairId: Long?,
+    private val quickCalculationId: Long?,
     private val newCode: CurrencyCode?,
     private val reuseNotEdit: Boolean,
     private val groupId: Long?,
@@ -70,22 +70,22 @@ class AddQuickViewModel(
 
         intent {
             val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
-            val quickPair = quickPairId?.let { quickRepo.getById(it) }
-            quickPair?.let {
+            val quickCalculation = quickCalculationId?.let { quickRepo.getById(it) }
+            quickCalculation?.let {
                 val currencies =
                     listOf(
                         AmountStr(
-                            quickPair.from,
-                            quickPair.amount.toPlainString(),
+                            quickCalculation.from,
+                            quickCalculation.amount.toPlainString(),
                         ),
-                    ) + quickPair.to.map { AmountStr(it.code, "") }
+                    ) + quickCalculation.to.map { AmountStr(it.code, "") }
                 val calc = calcToResult(currencies)
 
                 reduce {
                     state.copy(
-                        quickPairId = quickPairId,
+                        quickCalculationId = quickCalculationId,
                         currencies = calc,
-                        group = quickPair.group,
+                        group = quickCalculation.group,
                         availableGroups = groups,
                         initialized = true,
                     )
@@ -197,7 +197,7 @@ class AddQuickViewModel(
             }
         }
 
-    fun onPairsSwap(
+    fun onCurrenciesSwap(
         from: Int,
         to: Int,
     ) = intent {
@@ -210,12 +210,12 @@ class AddQuickViewModel(
         }
     }
 
-    fun onAddQuickPair() =
+    fun onAddQuickCalculation() =
         intent {
             val from = state.currencies.first()
             val id =
-                if (quickPairId != null) {
-                    if (reuseNotEdit) 0 else quickPairId
+                if (quickCalculationId != null) {
+                    if (reuseNotEdit) 0 else quickCalculationId
                 } else {
                     0
                 }
@@ -223,7 +223,7 @@ class AddQuickViewModel(
             val group = groupRepo.getByNameOrCreateNew(state.group.name, GroupFeatureType.Quick)
 
             val quick =
-                QuickPair(
+                QuickCalculation(
                     id = id,
                     from = from.code,
                     amount = from.value.toBigDecimalArk(),
@@ -291,7 +291,7 @@ class AddQuickViewModel(
 }
 
 class AddQuickViewModelFactory @AssistedInject constructor(
-    @Assisted("pairId") private val quickPairId: Long?,
+    @Assisted("calculationId") private val quickCalculationId: Long?,
     @Assisted("newCode") private val newCode: CurrencyCode?,
     @Assisted private val reuseNotEdit: Boolean,
     @Assisted("groupId") private val groupId: Long?,
@@ -304,7 +304,7 @@ class AddQuickViewModelFactory @AssistedInject constructor(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddQuickViewModel(
-            quickPairId,
+            quickCalculationId,
             newCode,
             reuseNotEdit,
             groupId,
@@ -320,7 +320,7 @@ class AddQuickViewModelFactory @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(
-            @Assisted("pairId") quickPairId: Long?,
+            @Assisted("calculationId") quickCalculationId: Long?,
             @Assisted("newCode") newCode: CurrencyCode?,
             reuseNotEdit: Boolean,
             @Assisted("groupId") group: Long?,
