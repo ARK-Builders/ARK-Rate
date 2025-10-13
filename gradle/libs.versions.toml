@@ -3,7 +3,7 @@ kotlin = "2.1.20"
 agp = "8.1.4"
 coreKtx = "1.15.0"
 minSdk = "26"
-compileSdk = "35"
+compileSdk = "36"
 ksp = "2.1.20-1.0.32"
 
 arkAbout = "0.2.0"
