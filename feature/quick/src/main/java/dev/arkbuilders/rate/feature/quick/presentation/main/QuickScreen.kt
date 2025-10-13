@@ -109,6 +109,7 @@ fun QuickScreen(
         pagerState = pagerState,
         snackState = snackState,
         ctx = ctx,
+        navigator = navigator,
         externalNavigator = externalNavigator,
     )
 
@@ -151,6 +152,9 @@ fun QuickScreen(
                         onFilterChanged = viewModel::onFilterChanged,
                         onDelete = viewModel::onDelete,
                         onClick = {
+                            viewModel.onReuse(it)
+                        },
+                        onLongClick = {
                             viewModel.onShowGroupOptions(it)
                         },
                         onPin = viewModel::onPin,
@@ -174,21 +178,7 @@ fun QuickScreen(
                 onPin = viewModel::onPin,
                 onUnpin = viewModel::onUnpin,
                 onEdit = {
-                    navigator.navigate(
-                        AddQuickScreenDestination(
-                            quickCalculationId = it.id,
-                            reuseNotEdit = false,
-                            groupId = getCurrentGroup()?.id,
-                        ),
-                    )
-                },
-                onReuse = {
-                    navigator.navigate(
-                        AddQuickScreenDestination(
-                            quickCalculationId = it.id,
-                            groupId = getCurrentGroup()?.id,
-                        ),
-                    )
+                    viewModel.onEdit(it)
                 },
                 onDelete = viewModel::onDelete,
                 onDismiss = {
@@ -256,6 +246,7 @@ private fun Content(
     onFilterChanged: (String) -> Unit,
     onDelete: (QuickCalculation) -> Unit,
     onClick: (QuickCalculation) -> Unit,
+    onLongClick: (QuickCalculation) -> Unit = {},
     onPin: (QuickCalculation) -> Unit,
     onUnpin: (QuickCalculation) -> Unit,
     onNewCode: (CurrencyCode) -> Unit,
@@ -288,6 +279,7 @@ private fun Content(
                     notPinned = state.pages.first().notPinned,
                     onDelete = onDelete,
                     onClick = onClick,
+                    onLongClick = onLongClick,
                     onPin = onPin,
                     onUnpin = onUnpin,
                     onNewCode = onNewCode,
@@ -305,6 +297,7 @@ private fun Content(
                         notPinned = state.pages[index].notPinned,
                         onDelete = onDelete,
                         onClick = onClick,
+                        onLongClick = onLongClick,
                         onPin = onPin,
                         onUnpin = onUnpin,
                         onNewCode = onNewCode,
@@ -325,6 +318,7 @@ private fun GroupPage(
     onPin: (QuickCalculation) -> Unit,
     onUnpin: (QuickCalculation) -> Unit,
     onClick: (QuickCalculation) -> Unit = {},
+    onLongClick: (QuickCalculation) -> Unit = {},
     onNewCode: (CurrencyCode) -> Unit,
 ) {
     val ctx = LocalContext.current
@@ -345,6 +339,7 @@ private fun GroupPage(
                                     it.refreshDate,
                                 ),
                             onClick = { onClick(it.calculation) },
+                            onLongClick = { onLongClick(it.calculation) },
                         )
                     },
                     calculation = it.calculation,
@@ -370,6 +365,7 @@ private fun GroupPage(
                                     it.calculatedDate,
                                 ),
                             onClick = { onClick(it) },
+                            onLongClick = { onLongClick(it) },
                         )
                     },
                     calculation = it,
@@ -404,5 +400,6 @@ private fun PreviewItem() {
         to = listOf(Amount("USD", 30.0.toBigDecimal())),
         dateText = "Calculated on",
         onClick = {},
+        onLongClick = {},
     )
 }
