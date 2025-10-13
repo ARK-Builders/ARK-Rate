@@ -183,7 +183,7 @@ private fun Content(
             Box {
                 Popup(
                     offset = IntOffset(0, 0),
-                    properties = PopupProperties(),
+                    properties = PopupProperties(focusable = true),
                     onDismissRequest = { onToggleLanguagePopup(false) },
                 ) {
                     Spacer(Modifier.height(4.dp))
