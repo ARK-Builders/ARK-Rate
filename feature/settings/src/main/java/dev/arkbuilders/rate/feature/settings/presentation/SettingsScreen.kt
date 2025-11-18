@@ -57,20 +57,20 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         remember {
             SettingsComponentHolder.provide(ctx)
         }
-    val vm: SettingsViewModel =
+    val viewModel: SettingsViewModel =
         viewModel(factory = component.settingsVMFactory())
 
-    val state by vm.collectAsState()
+    val state by viewModel.collectAsState()
 
     Scaffold {
         Box(modifier = Modifier.padding(it)) {
             Content(
                 state = state,
                 navigator = navigator,
-                onCrashReportsToggle = vm::onCrashReportToggle,
-                onAnalyticsToggle = vm::onAnalyticsToggle,
-                onToggleLanguagePopup = vm::onToggleLanguagePopup,
-                onChangeLanguage = vm::onChangeLanguage,
+                onCrashReportsToggle = viewModel::onCrashReportToggle,
+                onAnalyticsToggle = viewModel::onAnalyticsToggle,
+                onToggleLanguagePopup = viewModel::onToggleLanguagePopup,
+                onChangeLanguage = viewModel::onChangeLanguage,
             )
         }
     }
