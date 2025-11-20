@@ -177,9 +177,8 @@ fun QuickScreen(
                 calculation = it.calculation,
                 onPin = viewModel::onPin,
                 onUnpin = viewModel::onUnpin,
-                onEdit = {
-                    viewModel.onEdit(it)
-                },
+                onEdit = viewModel::onEdit,
+                onReuse = viewModel::onReuse,
                 onDelete = viewModel::onDelete,
                 onDismiss = {
                     scope.launch {

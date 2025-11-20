@@ -38,6 +38,7 @@ fun QuickOptionsBottomSheet(
     onPin: (QuickCalculation) -> Unit,
     onUnpin: (QuickCalculation) -> Unit,
     onEdit: (QuickCalculation) -> Unit,
+    onReuse: (QuickCalculation) -> Unit,
     onDelete: (QuickCalculation) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -54,6 +55,7 @@ fun QuickOptionsBottomSheet(
             onPin = onPin,
             onUnpin = onUnpin,
             onEdit = onEdit,
+            onReuse = onReuse,
             onDelete = onDelete,
             onDismiss = onDismiss,
         )
@@ -66,6 +68,7 @@ private fun Content(
     onPin: (QuickCalculation) -> Unit,
     onUnpin: (QuickCalculation) -> Unit,
     onEdit: (QuickCalculation) -> Unit,
+    onReuse: (QuickCalculation) -> Unit,
     onDelete: (QuickCalculation) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -150,6 +153,29 @@ private fun Content(
                 Text(
                     modifier = Modifier.padding(start = 6.dp),
                     text = stringResource(CoreRString.edit),
+                    color = ArkColor.TextSecondary,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp,
+                )
+            }
+            OutlinedButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    onDismiss()
+                    onReuse(calculation)
+                },
+                shape = RoundedCornerShape(8.dp),
+                border = BorderStroke(1.dp, ArkColor.Border),
+            ) {
+                Icon(
+                    modifier = Modifier,
+                    painter = painterResource(id = CoreRDrawable.ic_reuse),
+                    contentDescription = null,
+                    tint = ArkColor.TextSecondary,
+                )
+                Text(
+                    modifier = Modifier.padding(start = 6.dp),
+                    text = stringResource(CoreRString.re_use),
                     color = ArkColor.TextSecondary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
