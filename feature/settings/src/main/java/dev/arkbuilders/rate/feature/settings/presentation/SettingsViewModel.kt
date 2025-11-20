@@ -14,6 +14,8 @@ import dev.arkbuilders.rate.core.domain.repo.PreferenceKey
 import dev.arkbuilders.rate.core.domain.repo.Prefs
 import dev.arkbuilders.rate.core.domain.repo.TimestampRepo
 import dev.arkbuilders.rate.feature.settings.di.SettingsScope
+import dev.arkbuilders.rate.feature.settings.domain.model.AppLanguage
+import dev.arkbuilders.rate.feature.settings.domain.repository.AppLanguageRepo
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -29,6 +31,8 @@ data class SettingsScreenState(
     val showCrashReports: Boolean = false,
     val crashReportsEnabled: Boolean = false,
     val analyticsEnabled: Boolean = false,
+    val language: AppLanguage = AppLanguage.SYSTEM,
+    val showLanguagePopup: Boolean = false,
 )
 
 sealed class SettingsScreenEffect()
@@ -38,6 +42,7 @@ class SettingsViewModel(
     private val timestampRepo: TimestampRepo,
     private val analyticsManager: AnalyticsManager,
     private val buildConfigFields: BuildConfigFields,
+    private val languageRepo: AppLanguageRepo,
 ) : ViewModel(), ContainerHost<SettingsScreenState, SettingsScreenEffect> {
     override val container: Container<SettingsScreenState, SettingsScreenEffect> =
         container(SettingsScreenState(showCrashReports = buildConfigFields.isGooglePlayBuild.not()))
@@ -72,6 +77,7 @@ class SettingsViewModel(
                     latestPairAlertCheck = pairAlertCheck,
                     crashReportsEnabled = crashReports,
                     analyticsEnabled = analytics,
+                    language = languageRepo.getLanguage(),
                 )
             }
         }
@@ -94,6 +100,23 @@ class SettingsViewModel(
                 state.copy(analyticsEnabled = enabled)
             }
         }
+
+    fun onToggleLanguagePopup(enabled: Boolean) =
+        intent {
+            reduce {
+                state.copy(
+                    showLanguagePopup = enabled,
+                )
+            }
+        }
+
+    fun onChangeLanguage(language: AppLanguage) =
+        intent {
+            languageRepo.setLanguage(language)
+            reduce {
+                state.copy(language = language)
+            }
+        }
 }
 
 @SettingsScope
@@ -102,6 +125,7 @@ class SettingsViewModelFactory @Inject constructor(
     private val timestampRepo: TimestampRepo,
     private val analyticsManager: AnalyticsManager,
     private val buildConfigFieldsProvider: BuildConfigFieldsProvider,
+    private val languageRepo: AppLanguageRepo,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SettingsViewModel(
@@ -109,6 +133,7 @@ class SettingsViewModelFactory @Inject constructor(
             timestampRepo,
             analyticsManager,
             buildConfigFieldsProvider.provide(),
+            languageRepo,
         ) as T
     }
 }

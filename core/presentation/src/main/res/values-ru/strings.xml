@@ -10,7 +10,7 @@
 
     <string name="bottom_nav_portfolio">Портфели</string>
     <string name="bottom_nav_alerts">Оповещения</string>
-    <string name="bottom_nav_quick">Быстрые</string>
+    <string name="bottom_nav_quick">Расчёты</string>
     <string name="bottom_nav_settings">Настройки</string>
 
     <string name="quick_empty_title">Готово к расчету!</string>
@@ -68,7 +68,7 @@
     <string name="create_alert">Создать оповещение</string>
     <string name="alert_current_price">Текущая цена = %1$s</string>
 
-    <string name="settings_quick_portfolio_alerts">Быстрые/Портфель/Оповещения</string>
+    <string name="settings_quick_portfolio_alerts">Расчёты/Портфель/Оповещения</string>
     <string name="settings_elapsed_ago">"%1$s назад · "</string>
     <string name="settings_latest_rates_refresh">Последнее обновление курсов</string>
     <string name="settings_latest_alerts_check">Последняя проверка оповещений</string>
@@ -158,6 +158,8 @@
     <string name="edit_group_name">Редактировать папку \"%1$s\"</string>
     <string name="rename">Переименовать</string>
     <string name="groups">Папки</string>
+    <string name="language">Язык</string>
+    <string name="language_system">Как в системе</string>
 
     <string name="onboarding_1_title">Добро пожаловать в ARK Rate!</string>
     <string name="onboarding_2_title">Простая мультивалютная конвертация</string>
