@@ -182,7 +182,7 @@
     <string name="onboarding_quick_calc_2_desc">Быстро удалите расчёт, проведя пальцем влево.</string>
     <string name="onboarding_quick_calc_3_title">Проведите пальцем по закрепленному расчёту вправо, чтобы открепить</string>
     <string name="onboarding_quick_calc_3_desc">Открепите расчёт, чтобы переместить его в историю расчётов.</string>
-    <string name="onboarding_quick_calc_4_title">Контекстное меню расчёта</string>
-    <string name="onboarding_quick_calc_4_desc">Нажмите, чтобы открыть полное меню.</string>
+    <string name="onboarding_quick_calc_4_title">Нажмите, чтобы переиспользовать расчёт</string>
+    <string name="onboarding_quick_calc_4_desc">Удерживайте, чтобы открыть полное меню.</string>
 
 </resources>
