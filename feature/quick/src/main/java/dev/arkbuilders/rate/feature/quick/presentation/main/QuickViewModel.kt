@@ -61,6 +61,10 @@ sealed class QuickScreenEffect {
 
     data class ShowRemovedSnackbar(val calculation: QuickCalculation) : QuickScreenEffect()
 
+    data class NavigateToEdit(val calc: QuickCalculation) : QuickScreenEffect()
+
+    data class NavigateToReuse(val calc: QuickCalculation) : QuickScreenEffect()
+
     data object LaunchInAppReview : QuickScreenEffect()
 
     data class SelectTab(val groupId: Long) : QuickScreenEffect()
@@ -190,6 +194,16 @@ class QuickViewModel(
         intent {
             val newCalculation = calculation.copy(pinnedDate = null)
             quickRepo.insert(newCalculation)
+        }
+
+    fun onEdit(calc: QuickCalculation) =
+        intent {
+            postSideEffect(QuickScreenEffect.NavigateToEdit(calc))
+        }
+
+    fun onReuse(calc: QuickCalculation) =
+        intent {
+            postSideEffect(QuickScreenEffect.NavigateToReuse(calc))
         }
 
     fun onFilterChanged(filter: String) =

@@ -220,6 +220,13 @@ class AddQuickViewModel(
                     0
                 }
 
+            val pinnedDate =
+                if (id == quickCalculationId) {
+                    quickRepo.getById(id)?.pinnedDate
+                } else {
+                    null
+                }
+
             val group = groupRepo.getByNameOrCreateNew(state.group.name, GroupFeatureType.Quick)
 
             val quick =
@@ -229,7 +236,7 @@ class AddQuickViewModel(
                     amount = from.value.toBigDecimalArk(),
                     to = state.currencies.drop(1).map { it.toAmount() },
                     calculatedDate = OffsetDateTime.now(),
-                    pinnedDate = null,
+                    pinnedDate = pinnedDate,
                     group = group,
                 )
             val newId = quickRepo.insert(quick)
