@@ -61,8 +61,6 @@ class AddAssetViewModel(
         container(AddAssetState())
 
     init {
-        analyticsManager.trackScreen("AddAssetScreen")
-
         intent {
             val group = getGroupByIdOrCreateDefaultUseCase(groupId, GroupFeatureType.Portfolio)
             val groups = groupRepo.getAllSorted(GroupFeatureType.Portfolio)

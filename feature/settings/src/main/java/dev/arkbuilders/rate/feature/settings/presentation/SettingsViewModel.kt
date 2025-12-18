@@ -48,8 +48,6 @@ class SettingsViewModel(
         container(SettingsScreenState(showCrashReports = buildConfigFields.isGooglePlayBuild.not()))
 
     init {
-        analyticsManager.trackScreen("SettingsScreen")
-
         intent {
             timestampRepo
                 .timestampFlow(TimestampType.FetchRates)

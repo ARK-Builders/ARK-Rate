@@ -66,8 +66,6 @@ class AddQuickViewModel(
         container(AddQuickScreenState())
 
     init {
-        analyticsManager.trackScreen("AddQuickScreen")
-
         intent {
             val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
             val quickCalculation = quickCalculationId?.let { quickRepo.getById(it) }

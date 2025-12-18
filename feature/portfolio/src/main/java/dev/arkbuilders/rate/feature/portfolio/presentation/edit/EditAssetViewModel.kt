@@ -46,8 +46,6 @@ class EditAssetViewModel(
     private val inputFlow = MutableSharedFlow<String>()
 
     init {
-        analyticsManager.trackScreen("EditAssetScreen")
-
         intent {
             val asset = assetsRepo.getById(assetId)
             val name = currencyRepo.infoByCode(asset!!.code)

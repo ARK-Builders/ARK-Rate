@@ -75,8 +75,6 @@ class PortfolioViewModel(
         container(PortfolioScreenState())
 
     init {
-        analyticsManager.trackScreen("PortfolioScreen")
-
         init()
     }
 

@@ -44,8 +44,6 @@ class SearchViewModel(
         container(SearchScreenState(prohibitedCodes = prohibitedCodes ?: emptyList()))
 
     init {
-        analyticsManager.trackScreen("SearchScreen")
-
         intent {
             val all = currencyRepo.getCurrencyInfo()
             val frequent = calcFrequentCurrUseCase.invoke().map { currencyRepo.infoByCode(it) }

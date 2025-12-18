@@ -90,8 +90,6 @@ class QuickViewModel(
         container(QuickScreenState())
 
     init {
-        analyticsManager.trackScreen("QuickScreen")
-
         init()
     }
 

@@ -12,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -36,6 +38,8 @@ import com.ramcosta.composedestinations.navargs.primitives.longNavType
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.scope.resultRecipient
 import com.ramcosta.composedestinations.utils.startDestination
+import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
+import dev.arkbuilders.rate.core.domain.repo.NetworkStatus
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbar
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOfflineSnackbarVisuals
 import dev.arkbuilders.rate.core.presentation.ui.ConnectivityOnlineSnackbar
@@ -70,31 +74,19 @@ fun MainScreen() {
     val engine = rememberNavHostEngine()
     val navController = engine.rememberNavController()
     val snackState = remember { SnackbarHostState() }
-    val ctx = LocalContext.current
+    val coreComponent = App.instance.coreComponent
 
-    LaunchedEffect(key1 = Unit) {
-        val activity = ctx.findActivity()
-        val intent = activity?.intent
-        val createNewCalc = intent?.getStringExtra(ADD_NEW_CALCULATION) ?: ""
-        if (createNewCalc.isNotEmpty()) {
-            val groupId = intent?.getLongExtra(ADD_NEW_CALCULATION_GROUP_KEY, 0L)
-            navController.navigate(AddQuickScreenDestination(groupId = groupId))
-            intent?.removeExtra(ADD_NEW_CALCULATION_GROUP_KEY)
-            intent?.removeExtra(ADD_NEW_CALCULATION)
-        }
-    }
-    LaunchedEffect(key1 = Unit) {
-        App.instance.coreComponent.networkStatus().onlineStatus
-            .drop(1)
-            .collect { online ->
-                val visuals =
-                    if (online)
-                        ConnectivityOnlineSnackbarVisuals
-                    else
-                        ConnectivityOfflineSnackbarVisuals
-                snackState.showSnackbar(visuals)
-            }
-    }
+    HandleAddQuickCalculationIntentEffect(navController)
+
+    ObserveNetworkStatusEffect(
+        networkStatus = coreComponent.networkStatus(),
+        snackState = snackState,
+    )
+
+    ObserveNavigationAnalyticsEffect(
+        navController = navController,
+        analyticsManager = coreComponent.analyticsManager(),
+    )
 
     val isKeyboardOpen by keyboardAsState()
     val bottomBarVisible = rememberSaveable { mutableStateOf(false) }
@@ -204,4 +196,70 @@ fun MainScreen() {
             }
         }
     }
+}
+
+@Composable
+private fun HandleAddQuickCalculationIntentEffect(navController: NavController) {
+    val ctx = LocalContext.current
+    LaunchedEffect(key1 = Unit) {
+        val activity = ctx.findActivity()
+        val intent = activity?.intent
+        val createNewCalc = intent?.getStringExtra(ADD_NEW_CALCULATION) ?: ""
+        if (createNewCalc.isNotEmpty()) {
+            val groupId = intent?.getLongExtra(ADD_NEW_CALCULATION_GROUP_KEY, 0L)
+            navController.navigate(AddQuickScreenDestination(groupId = groupId))
+            intent?.removeExtra(ADD_NEW_CALCULATION_GROUP_KEY)
+            intent?.removeExtra(ADD_NEW_CALCULATION)
+        }
+    }
+}
+
+@Composable
+private fun ObserveNetworkStatusEffect(
+    networkStatus: NetworkStatus,
+    snackState: SnackbarHostState,
+) {
+    LaunchedEffect(key1 = Unit) {
+        networkStatus.onlineStatus
+            .drop(1)
+            .collect { online ->
+                val visuals =
+                    if (online)
+                        ConnectivityOnlineSnackbarVisuals
+                    else
+                        ConnectivityOfflineSnackbarVisuals
+                snackState.showSnackbar(visuals)
+            }
+    }
+}
+
+@Composable
+private fun ObserveNavigationAnalyticsEffect(
+    navController: NavController,
+    analyticsManager: AnalyticsManager,
+) {
+    DisposableEffect(navController) {
+        val listener =
+            NavController.OnDestinationChangedListener { _, destination, _ ->
+                destination.route?.let { route ->
+                    val name = extractScreenName(route)
+                    analyticsManager.trackScreen(name)
+                }
+            }
+        navController.addOnDestinationChangedListener(listener)
+        onDispose {
+            navController.removeOnDestinationChangedListener(listener)
+        }
+    }
+}
+
+private fun extractScreenName(route: String): String {
+    val routeWithoutArguments = route.substringBefore("?")
+
+    val name =
+        routeWithoutArguments.split("/").findLast {
+            it.contains("{").not()
+        }
+
+    return name ?: route
 }
