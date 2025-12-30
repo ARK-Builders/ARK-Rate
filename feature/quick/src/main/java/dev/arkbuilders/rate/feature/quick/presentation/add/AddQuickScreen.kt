@@ -2,6 +2,7 @@
 
 package dev.arkbuilders.rate.feature.quick.presentation.add
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -98,6 +99,10 @@ fun AddQuickScreen(
         }
     }
 
+    BackHandler {
+        viewModel.onBackClick()
+    }
+
     val state by viewModel.collectAsState()
 
     viewModel.collectSideEffect { effect ->
@@ -112,7 +117,7 @@ fun AddQuickScreen(
                     R.string.quick_edit_calc
             AppTopBarBack(
                 title = stringResource(title),
-                onBackClick = { navigator.popBackStack() },
+                onBackClick = { viewModel.onBackClick() },
             )
         },
     ) {

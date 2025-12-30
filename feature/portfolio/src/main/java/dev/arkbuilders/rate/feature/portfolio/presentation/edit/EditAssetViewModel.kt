@@ -29,7 +29,9 @@ data class EditAssetScreenState(
     val initialized: Boolean = false,
 )
 
-sealed class EditAssetScreenEffect
+sealed class EditAssetScreenEffect {
+    data object NavigateBack : EditAssetScreenEffect()
+}
 
 private val PERSIST_AMOUNT_DEBOUNCE = 300L
 
@@ -67,6 +69,12 @@ class EditAssetViewModel(
             reduce {
                 state.copy(value = validated)
             }
+        }
+
+    fun onBackClick() =
+        intent {
+            analyticsManager.logEvent("edit_asset_back_clicked")
+            postSideEffect(EditAssetScreenEffect.NavigateBack)
         }
 }
 

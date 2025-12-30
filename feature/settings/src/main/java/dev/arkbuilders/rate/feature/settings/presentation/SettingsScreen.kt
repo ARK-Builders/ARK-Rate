@@ -1,6 +1,7 @@
 package dev.arkbuilders.rate.feature.settings.presentation
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ import dev.arkbuilders.rate.core.presentation.utils.DateFormatUtils
 import dev.arkbuilders.rate.feature.settings.di.SettingsComponentHolder
 import dev.arkbuilders.rate.feature.settings.domain.model.AppLanguage
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.Duration
 import java.time.OffsetDateTime
 
@@ -62,6 +64,19 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
 
     val state by viewModel.collectAsState()
 
+    BackHandler {
+        viewModel.onBackClick()
+    }
+
+    viewModel.collectSideEffect { effect ->
+        when (effect) {
+            SettingsScreenEffect.NavigateToAbout ->
+                navigator.navigate(AboutScreenDestination)
+
+            SettingsScreenEffect.NavigateBack -> navigator.popBackStack()
+        }
+    }
+
     Scaffold {
         Box(modifier = Modifier.padding(it)) {
             Content(
@@ -71,6 +86,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
                 onAnalyticsToggle = viewModel::onAnalyticsToggle,
                 onToggleLanguagePopup = viewModel::onToggleLanguagePopup,
                 onChangeLanguage = viewModel::onChangeLanguage,
+                onAboutClick = viewModel::onAboutClick,
             )
         }
     }
@@ -84,6 +100,7 @@ private fun Content(
     onAnalyticsToggle: (Boolean) -> Unit,
     onToggleLanguagePopup: (Boolean) -> Unit,
     onChangeLanguage: (AppLanguage) -> Unit,
+    onAboutClick: () -> Unit,
 ) {
     val ctx = LocalContext.current
     Column(
@@ -201,7 +218,7 @@ private fun Content(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .clickable { navigator.navigate(AboutScreenDestination) }
+                    .clickable { onAboutClick() }
                     .padding(horizontal = 16.dp, vertical = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
