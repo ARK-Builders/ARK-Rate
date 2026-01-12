@@ -43,6 +43,8 @@ sealed class AddQuickScreenEffect {
 
     data class NavigateSearchAdd(val prohibitedCodes: List<CurrencyCode>) :
         AddQuickScreenEffect()
+
+    data object NavigateBack : AddQuickScreenEffect()
 }
 
 enum class SearchNavResultType {
@@ -66,8 +68,6 @@ class AddQuickViewModel(
         container(AddQuickScreenState())
 
     init {
-        analyticsManager.trackScreen("AddQuickScreen")
-
         intent {
             val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
             val quickCalculation = quickCalculationId?.let { quickRepo.getById(it) }
@@ -138,6 +138,7 @@ class AddQuickViewModel(
 
     fun onCurrencyRemove(removeIndex: Int) =
         intent {
+            analyticsManager.logEvent("add_quick_currency_removed")
             reduce {
                 state.copy(
                     currencies =
@@ -150,11 +151,13 @@ class AddQuickViewModel(
 
     fun onGroupSelect(group: Group) =
         intent {
+            analyticsManager.logEvent("add_quick_group_selected")
             reduce { state.copy(group = group) }
         }
 
     fun onGroupCreate(name: String) =
         intent {
+            analyticsManager.logEvent("add_quick_group_created")
             val group = Group.empty(name = name)
             val inAvailable = state.availableGroups.any { it.name == group.name }
             reduce {
@@ -185,6 +188,8 @@ class AddQuickViewModel(
             if (state.currencies.size < 2)
                 return@intent
 
+            analyticsManager.logEvent("add_quick_swap_clicked")
+
             val newFrom = state.currencies.last()
             val newCurrencies =
                 state.currencies.toMutableList().apply {
@@ -201,6 +206,7 @@ class AddQuickViewModel(
         from: Int,
         to: Int,
     ) = intent {
+        analyticsManager.logEvent("add_quick_currencies_reordered")
         val new =
             state.currencies.toMutableList().apply {
                 add(to, removeAt(from))
@@ -219,6 +225,13 @@ class AddQuickViewModel(
                 } else {
                     0
                 }
+
+            val isNew = id == 0L
+            if (isNew) {
+                analyticsManager.logEvent("add_quick_calculation_added")
+            } else {
+                analyticsManager.logEvent("add_quick_calculation_edited")
+            }
 
             val pinnedDate =
                 if (id == quickCalculationId) {
@@ -283,6 +296,7 @@ class AddQuickViewModel(
 
     fun onSetCode(index: Int) =
         intent {
+            analyticsManager.logEvent("add_quick_set_code_clicked")
             val prohibitedCodes =
                 state.currencies.map { it.code }.toMutableList().apply {
                     removeAt(index)
@@ -292,8 +306,15 @@ class AddQuickViewModel(
 
     fun onAddCode() =
         intent {
+            analyticsManager.logEvent("add_quick_add_code_clicked")
             val prohibitedCodes = state.currencies.map { it.code }
             postSideEffect(AddQuickScreenEffect.NavigateSearchAdd(prohibitedCodes))
+        }
+
+    fun onBackClick() =
+        intent {
+            analyticsManager.logEvent("quick_back_clicked")
+            postSideEffect(AddQuickScreenEffect.NavigateBack)
         }
 }
 

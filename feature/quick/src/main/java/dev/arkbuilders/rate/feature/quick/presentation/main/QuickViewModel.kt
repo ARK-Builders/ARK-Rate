@@ -90,8 +90,6 @@ class QuickViewModel(
         container(QuickScreenState())
 
     init {
-        analyticsManager.trackScreen("QuickScreen")
-
         init()
     }
 
@@ -176,33 +174,39 @@ class QuickViewModel(
 
     fun onShowGroupOptions(calculation: QuickCalculation) =
         intent {
+            analyticsManager.logEvent("quick_group_options_opened")
             reduce { state.copy(calculationOptionsData = CalculationOptionsData(calculation)) }
         }
 
     fun onHideOptions() =
         intent {
+            analyticsManager.logEvent("quick_group_options_closed")
             reduce { state.copy(calculationOptionsData = null) }
         }
 
     fun onPin(calculation: QuickCalculation) =
         intent {
+            analyticsManager.logEvent("quick_calculation_pinned")
             val newCalculation = calculation.copy(pinnedDate = OffsetDateTime.now())
             quickRepo.insert(newCalculation)
         }
 
     fun onUnpin(calculation: QuickCalculation) =
         intent {
+            analyticsManager.logEvent("quick_calculation_unpinned")
             val newCalculation = calculation.copy(pinnedDate = null)
             quickRepo.insert(newCalculation)
         }
 
     fun onEdit(calc: QuickCalculation) =
         intent {
+            analyticsManager.logEvent("quick_calculation_edit_clicked")
             postSideEffect(QuickScreenEffect.NavigateToEdit(calc))
         }
 
     fun onReuse(calc: QuickCalculation) =
         intent {
+            analyticsManager.logEvent("quick_calculation_reuse_clicked")
             postSideEffect(QuickScreenEffect.NavigateToReuse(calc))
         }
 
@@ -223,6 +227,7 @@ class QuickViewModel(
 
     fun onDelete(calculation: QuickCalculation) =
         intent {
+            analyticsManager.logEvent("quick_calculation_deleted")
             val deleted = quickRepo.delete(calculation.id)
             if (deleted) {
                 postSideEffect(QuickScreenEffect.ShowRemovedSnackbar(calculation))
@@ -231,16 +236,19 @@ class QuickViewModel(
 
     fun undoDelete(calculation: QuickCalculation) =
         intent {
+            analyticsManager.logEvent("quick_calculation_undo_delete")
             quickRepo.insert(calculation)
         }
 
     fun onBackClick() =
         intent {
             if (state.filter.isNotEmpty()) {
+                analyticsManager.logEvent("quick_filter_cleared_via_back")
                 reduce {
                     state.copy(filter = "")
                 }
             } else {
+                analyticsManager.logEvent("quick_back_clicked")
                 postSideEffect(QuickScreenEffect.NavigateBack)
             }
         }
@@ -292,6 +300,7 @@ class QuickViewModel(
 
     fun onShowGroupsReorder() =
         intent {
+            analyticsManager.logEvent("quick_group_reorder_opened")
             val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
             reduce {
                 state.copy(
@@ -304,6 +313,7 @@ class QuickViewModel(
         from: Int,
         to: Int,
     ) = intent {
+        analyticsManager.logEvent("quick_group_reordered")
         val newGroups =
             groupReorderSwapUseCase(
                 state.editGroupReorderSheetState!!.groups,
@@ -324,16 +334,19 @@ class QuickViewModel(
 
     fun onDismissGroupsReorder() =
         intent {
+            analyticsManager.logEvent("quick_group_reorder_closed")
             reduce { state.copy(editGroupReorderSheetState = null) }
         }
 
     fun onShowGroupOptions(group: Group) =
         intent {
+            analyticsManager.logEvent("quick_group_options_opened")
             reduce { state.copy(editGroupOptionsSheetState = EditGroupOptionsSheetState(group)) }
         }
 
     fun onGroupDelete(group: Group) =
         intent {
+            analyticsManager.logEvent("quick_group_deleted")
             groupRepo.delete(group.id)
             val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
             reduce {
@@ -350,11 +363,13 @@ class QuickViewModel(
 
     fun onDismissGroupOptions() =
         intent {
+            analyticsManager.logEvent("quick_group_options_closed")
             reduce { state.copy(editGroupOptionsSheetState = null) }
         }
 
     fun onShowGroupRename(group: Group) =
         intent {
+            analyticsManager.logEvent("quick_group_rename_opened")
             reduce { state.copy(editGroupRenameSheetState = EditGroupRenameSheetState(group)) }
         }
 
@@ -362,6 +377,7 @@ class QuickViewModel(
         group: Group,
         newName: String,
     ) = intent {
+        analyticsManager.logEvent("quick_group_renamed")
         val renamed = group.copy(name = newName)
         groupRepo.update(renamed, GroupFeatureType.Quick)
         val groups = groupRepo.getAllSorted(GroupFeatureType.Quick)
@@ -379,6 +395,7 @@ class QuickViewModel(
 
     fun onDismissGroupRename() =
         intent {
+            analyticsManager.logEvent("quick_group_rename_closed")
             reduce { state.copy(editGroupRenameSheetState = null) }
         }
 

@@ -30,5 +30,7 @@ suspend fun handleAddQuickSideEffect(
                     prohibitedCodes = effect.prohibitedCodes.toTypedArray(),
                 ),
             )
+
+        AddQuickScreenEffect.NavigateBack -> navigator.popBackStack()
     }
 }

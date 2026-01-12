@@ -35,7 +35,11 @@ data class SettingsScreenState(
     val showLanguagePopup: Boolean = false,
 )
 
-sealed class SettingsScreenEffect()
+sealed class SettingsScreenEffect() {
+    data object NavigateToAbout : SettingsScreenEffect()
+
+    data object NavigateBack : SettingsScreenEffect()
+}
 
 class SettingsViewModel(
     private val prefs: Prefs,
@@ -48,8 +52,6 @@ class SettingsViewModel(
         container(SettingsScreenState(showCrashReports = buildConfigFields.isGooglePlayBuild.not()))
 
     init {
-        analyticsManager.trackScreen("SettingsScreen")
-
         intent {
             timestampRepo
                 .timestampFlow(TimestampType.FetchRates)
@@ -94,6 +96,13 @@ class SettingsViewModel(
 
     fun onAnalyticsToggle(enabled: Boolean) =
         intent {
+            analyticsManager.logEvent(
+                if (enabled)
+                    "settings_analytics_enabled"
+                else
+                    "settings_analytics_disabled",
+            )
+
             Firebase.analytics.setAnalyticsCollectionEnabled(enabled)
             prefs.set(PreferenceKey.CollectAnalytics, enabled)
             reduce {
@@ -112,10 +121,23 @@ class SettingsViewModel(
 
     fun onChangeLanguage(language: AppLanguage) =
         intent {
+            analyticsManager.logEvent("settings_language_changed")
             languageRepo.setLanguage(language)
             reduce {
                 state.copy(language = language)
             }
+        }
+
+    fun onAboutClick() =
+        intent {
+            analyticsManager.logEvent("settings_about_clicked")
+            postSideEffect(SettingsScreenEffect.NavigateToAbout)
+        }
+
+    fun onBackClick() =
+        intent {
+            analyticsManager.logEvent("settings_back_clicked")
+            postSideEffect(SettingsScreenEffect.NavigateBack)
         }
 }
 
