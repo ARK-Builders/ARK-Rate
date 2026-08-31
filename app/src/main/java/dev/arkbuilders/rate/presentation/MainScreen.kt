@@ -35,8 +35,10 @@ import com.ramcosta.composedestinations.generated.quick.destinations.QuickScreen
 import com.ramcosta.composedestinations.generated.settings.destinations.SettingsScreenDestination
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navargs.primitives.longNavType
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.scope.resultRecipient
+import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import com.ramcosta.composedestinations.utils.startDestination
 import dev.arkbuilders.rate.core.domain.repo.AnalyticsManager
 import dev.arkbuilders.rate.core.domain.repo.NetworkStatus
@@ -67,10 +69,11 @@ private val showBottomBarRoutes =
 fun MainScreen() {
     val engine = rememberNavHostEngine()
     val navController = engine.rememberNavController()
+    val destinationsNavigator = navController.rememberDestinationsNavigator()
     val snackState = remember { SnackbarHostState() }
     val coreComponent = App.instance.coreComponent
 
-    HandleAddQuickCalculationIntentEffect(navController)
+    HandleAddQuickCalculationIntentEffect(destinationsNavigator)
 
     ObserveNetworkStatusEffect(
         networkStatus = coreComponent.networkStatus(),
@@ -184,7 +187,7 @@ fun MainScreen() {
 }
 
 @Composable
-private fun HandleAddQuickCalculationIntentEffect(navController: NavController) {
+private fun HandleAddQuickCalculationIntentEffect(navigator: DestinationsNavigator) {
     val ctx = LocalContext.current
     LaunchedEffect(key1 = Unit) {
         val activity = ctx.findActivity()
@@ -192,7 +195,7 @@ private fun HandleAddQuickCalculationIntentEffect(navController: NavController) 
         val createNewCalc = intent?.getStringExtra(ADD_NEW_CALCULATION) ?: ""
         if (createNewCalc.isNotEmpty()) {
             val groupId = intent?.getLongExtra(ADD_NEW_CALCULATION_GROUP_KEY, 0L)
-            navController.navigate(AddQuickScreenDestination(groupId = groupId))
+            navigator.navigate(AddQuickScreenDestination(groupId = groupId))
             intent?.removeExtra(ADD_NEW_CALCULATION_GROUP_KEY)
             intent?.removeExtra(ADD_NEW_CALCULATION)
         }
