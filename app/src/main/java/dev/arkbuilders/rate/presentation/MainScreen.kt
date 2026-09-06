@@ -194,7 +194,10 @@ private fun HandleAddQuickCalculationIntentEffect(navigator: DestinationsNavigat
         val intent = activity?.intent
         val createNewCalc = intent?.getStringExtra(ADD_NEW_CALCULATION) ?: ""
         if (createNewCalc.isNotEmpty()) {
-            val groupId = intent?.getLongExtra(ADD_NEW_CALCULATION_GROUP_KEY, 0L)
+            val groupId =
+                intent
+                    ?.takeIf { it.hasExtra(ADD_NEW_CALCULATION_GROUP_KEY) }
+                    ?.getLongExtra(ADD_NEW_CALCULATION_GROUP_KEY, 0L)
             navigator.navigate(AddQuickScreenDestination(groupId = groupId))
             intent?.removeExtra(ADD_NEW_CALCULATION_GROUP_KEY)
             intent?.removeExtra(ADD_NEW_CALCULATION)
